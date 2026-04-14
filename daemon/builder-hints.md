@@ -1228,3 +1228,12 @@
 - Light streak sweep during hold phase adds premium polish to the banner — simple CSS gradient animation.
 - Found and fixed a missing DecibelMeter component on the W screen — always verify components exist when referenced.
 - Next cycle: Supreme (rotation).
+
+## Cycle 145 Learnings
+- CSS custom properties (--cannon-dx, --cannon-peak, --cannon-spin) in keyframes allow per-element parameterized animations — powerful pattern for particle effects without JS.
+- Parabolic arc keyframes need at least 4 stops (launch, peak, descent, settle) to look natural — 2-stop linear animations look robotic.
+- Mix of piece shapes (standard + ribbon) adds visual diversity cheaply — just aspect ratio variation.
+- Staggering per cannon group (0.15s offset) creates the authentic "wave of bursts" rather than simultaneous explosion.
+- Sustained falling confetti after the cannon burst maintains celebration energy while the initial burst provides the dramatic opener.
+- Always check rotation before starting: should have been Broadcast, not Arena. Log and correct next cycle.
+- Next cycle: Broadcast (rotation correction).

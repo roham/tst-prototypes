@@ -123,16 +123,33 @@ function RadialBurst({ teamColor }: { teamColor: string }) {
 // Share buttons for the W screen
 // ---------------------------------------------------------------------------
 
-function ShareButtons() {
+function ShareButtons({ teamColor }: { teamColor: string }) {
+  const buttons = [
+    { label: 'X', icon: '𝕏' },
+    { label: 'Instagram', icon: '◎' },
+    { label: 'Copy Link', icon: '⎘' },
+  ];
   return (
     <div className="flex items-center justify-center gap-3 mt-6">
-      {(['X', 'Instagram', 'Copy Link'] as const).map((label) => (
+      {buttons.map(({ label, icon }) => (
         <button
           key={label}
-          className="px-4 py-2 rounded-full text-xs font-semibold tracking-wide uppercase
-                     bg-white/10 text-white/80 hover:bg-white/20 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-[11px] font-semibold tracking-wide uppercase
+                     border border-white/[0.08] text-white/70 hover:text-white hover:border-white/20 transition-all duration-200"
+          style={{
+            background: 'rgba(255,255,255,0.04)',
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.background = `${teamColor}15`;
+            (e.currentTarget as HTMLElement).style.borderColor = `${teamColor}40`;
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)';
+            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)';
+          }}
           onClick={(e) => e.preventDefault()}
         >
+          <span className="text-[13px]">{icon}</span>
           {label}
         </button>
       ))}
@@ -317,7 +334,7 @@ function WScreen({
             transform: showShare ? 'translateY(0)' : 'translateY(8px)',
           }}
         >
-          <ShareButtons />
+          <ShareButtons teamColor={moment.teamColors.primary} />
 
           {/* Screenshot hint */}
           <p className="mt-4 text-[10px] text-white/12 uppercase tracking-[0.2em]">
@@ -518,9 +535,22 @@ export default function SupremePage() {
         className="relative w-full flex-none"
         style={{ height: '52dvh' }}
       >
-        {/* Gradient background */}
+        {/* Action image — cinematic depth layer behind player */}
         <div
-          className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+          className="absolute inset-0 bg-cover bg-center pointer-events-none transition-opacity duration-1000"
+          style={{
+            backgroundImage: `url(${moment.actionImageUrl})`,
+            backgroundPosition: 'center 30%',
+            opacity: isEnded ? 0.02 : 0.05,
+            filter: 'grayscale(0.5) contrast(1.2)',
+          }}
+        />
+
+        {/* Gradient background — subtle Ken Burns zoom for cinematic depth */}
+        <div
+          className={`absolute inset-0 bg-cover bg-center transition-[filter] duration-1000 ${
+            !isEnded && !isPurchasing ? 'supreme-ken-burns' : ''
+          }`}
           style={{
             backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
             backgroundSize: 'cover, cover',
@@ -599,6 +629,10 @@ export default function SupremePage() {
         />
         <p className="text-sm leading-relaxed text-white/40 tracking-wide">
           {moment.context}
+        </p>
+        {/* historicalNote first sentence — emotional gravity */}
+        <p className="mt-2 text-[12px] leading-relaxed text-white/20 italic">
+          {moment.historicalNote.split('.')[0]}.
         </p>
       </div>
 
@@ -845,7 +879,7 @@ export default function SupremePage() {
       {/* ============================================================= */}
       {/* STICKY CTA — appears only when main button scrolls offscreen */}
       {/* ============================================================= */}
-      {showStickyCTA && !isEnded && !isPurchasing && (
+      {showStickyCTA && !isEnded && (
         <div
           className="fixed bottom-0 left-0 right-0 z-50 px-5 pb-[max(12px,env(safe-area-inset-bottom))] pt-3"
           style={{
@@ -853,15 +887,41 @@ export default function SupremePage() {
           }}
         >
           <button
-            onClick={purchase}
-            className={`w-full h-[52px] rounded-2xl text-[14px] font-bold uppercase tracking-wider supreme-btn ${buttonAnimation}`}
+            onClick={isPurchasing ? undefined : purchase}
+            disabled={isPurchasing}
+            className={`w-full h-[52px] rounded-2xl text-[14px] font-bold uppercase tracking-wider supreme-btn disabled:cursor-wait ${isPurchasing ? '' : buttonAnimation}`}
             style={{
               backgroundColor: buttonBg,
               color: buttonTextColor,
-              boxShadow: `0 4px 24px ${glowColor}30, 0 0 0 1px ${glowColor}10`,
+              boxShadow: isPurchasing
+                ? `0 4px 40px ${glowColor}50, 0 0 0 1px ${glowColor}20`
+                : `0 4px 24px ${glowColor}30, 0 0 0 1px ${glowColor}10`,
+              transition: 'box-shadow 0.5s ease, background-color 0.3s ease',
             }}
           >
-            {buttonText}
+            {isPurchasing ? (
+              <span className="inline-flex items-center gap-2.5">
+                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none">
+                  <circle cx="10" cy="10" r="8" stroke="#0B0E14" strokeWidth="2" opacity="0.15" />
+                  <circle
+                    cx="10" cy="10" r="8"
+                    stroke="#0B0E14"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeDasharray={`${2 * Math.PI * 8}`}
+                    strokeDashoffset={`${2 * Math.PI * 8 * (1 - (purchaseStage === 0 ? 0.33 : purchaseStage === 1 ? 0.75 : 1))}`}
+                    style={{
+                      transform: 'rotate(-90deg)',
+                      transformOrigin: 'center',
+                      transition: 'stroke-dashoffset 0.4s ease-out',
+                    }}
+                  />
+                </svg>
+                {buttonText}
+              </span>
+            ) : (
+              buttonText
+            )}
           </button>
         </div>
       )}

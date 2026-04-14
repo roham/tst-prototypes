@@ -1204,3 +1204,11 @@
 - Team-color gradient in header bar ties the scoreboard to the moment's team identity.
 - The matchup card completes Arena's W screen competitive narrative: you competed against the crowd and won.
 - Next cycle: Supreme (rotation).
+
+## Cycle 141 Learnings
+- Specialist's notes add enormous institutional authority with minimal code — a single paragraph per moment.
+- Georgia serif italic is the editorial/expert voice in Supreme — consistent with how auction catalogues typeset specialist essays.
+- Left border accent (0.5px, team-color at 15%) creates the pull-quote/sidebar feel of a catalogue essay without adding visual weight.
+- "Buyer's Premium: Waived" is a subtle flex — digital means no surcharge. Adds realism while highlighting a benefit.
+- At this maturity level, the most impactful additions are ones that complete a document metaphor (catalogue, receipt) rather than add new visual layers.
+- Next cycle: Broadcast (rotation).

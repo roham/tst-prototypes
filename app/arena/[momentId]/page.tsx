@@ -1009,6 +1009,76 @@ function CelebrationScreen({
   );
 }
 
+/* ─── Arena Buzzer — red LED flash + FINAL overlay when drop ends ── */
+
+function useArenaBuzzer(isEnded: boolean) {
+  const [active, setActive] = useState(false);
+  const wasEnded = useRef(isEnded);
+
+  useEffect(() => {
+    // Detect transition from not-ended → ended
+    if (isEnded && !wasEnded.current) {
+      setActive(true);
+      const t = setTimeout(() => setActive(false), 2200);
+      wasEnded.current = true;
+      return () => clearTimeout(t);
+    }
+    wasEnded.current = isEnded;
+  }, [isEnded]);
+
+  return active;
+}
+
+function BuzzerOverlay({ active, teamColor }: { active: boolean; teamColor: string }) {
+  if (!active) return null;
+
+  return (
+    <>
+      {/* Red LED edge flash — mimics NBA backboard LED strips */}
+      <div
+        className="pointer-events-none fixed inset-0 z-[45]"
+        style={{
+          boxShadow: 'inset 0 0 100px rgba(239,68,68,0.5), inset 0 0 200px rgba(239,68,68,0.2)',
+          animation: 'arena-buzzer-flash 2s ease-out forwards',
+        }}
+      />
+      {/* Red border strips — top and bottom like LED scorer table */}
+      <div
+        className="pointer-events-none fixed top-0 left-0 right-0 z-[46] h-[3px]"
+        style={{
+          backgroundColor: '#EF4444',
+          animation: 'arena-buzzer-flash 2s ease-out forwards',
+        }}
+      />
+      <div
+        className="pointer-events-none fixed bottom-0 left-0 right-0 z-[46] h-[3px]"
+        style={{
+          backgroundColor: '#EF4444',
+          animation: 'arena-buzzer-flash 2s ease-out forwards',
+        }}
+      />
+      {/* FINAL text — jumbotron announcement */}
+      <div
+        className="pointer-events-none fixed inset-0 z-[47] flex items-center justify-center"
+        style={{ animation: 'arena-buzzer-shake 0.5s ease-out' }}
+      >
+        <span
+          className="text-6xl uppercase tracking-[0.15em] sm:text-7xl"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            fontWeight: 700,
+            color: '#EF4444',
+            textShadow: '0 0 40px rgba(239,68,68,0.6), 0 0 80px rgba(239,68,68,0.3)',
+            animation: 'arena-buzzer-text 2.2s ease-out forwards',
+          }}
+        >
+          FINAL
+        </span>
+      </div>
+    </>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
@@ -1130,6 +1200,9 @@ export default function ArenaPage({
     return () => clearInterval(id);
   }, [moment]);
 
+  /* ── Arena buzzer — fires once when drop transitions to ended ── */
+  const buzzerActive = useArenaBuzzer(countdown.isEnded);
+
   /* ── Sticky CTA — show when main button scrolls out of view ── */
   useEffect(() => {
     const el = ctaRef.current;
@@ -1210,6 +1283,9 @@ export default function ArenaPage({
           }}
         />
       )}
+
+      {/* ─── Arena Buzzer — red LED flash + FINAL when drop ends ─── */}
+      <BuzzerOverlay active={buzzerActive} teamColor={moment.teamColors.primary} />
 
       {/* ─── Fixed Header Bar ─── */}
       <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between border-b border-white/[0.06] bg-[#0B0E14]/90 px-4 py-3 backdrop-blur-md">
@@ -1363,6 +1439,16 @@ export default function ArenaPage({
             <span className="inline-block h-1 w-1 rounded-full bg-[#00E5A0] animate-pulse" />
             Trending #1 on Top Shot This
           </p>
+          {/* Arena section badge — ticket stub grounding, you're in the building */}
+          {!countdown.isEnded && (
+            <div className="mt-2 flex items-center gap-1.5">
+              <span
+                className="text-[8px] font-mono uppercase tracking-[0.2em] text-white/15 px-1.5 py-0.5 rounded border border-white/[0.06] bg-white/[0.02]"
+              >
+                SEC {(moment.id.charCodeAt(0) % 20) + 101} · ROW {String.fromCharCode(65 + (moment.id.charCodeAt(1) % 8))} · SEAT {(moment.id.charCodeAt(2) % 24) + 1}
+              </span>
+            </div>
+          )}
         </div>
       </section>
 

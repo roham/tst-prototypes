@@ -581,3 +581,11 @@
 - This is a foundational visual change — it affects the entire page uniformly. Supreme's minimalism means every surface improvement compounds because there's less to compete with.
 - The noise texture could theoretically be applied to Broadcast and Arena too, but each would need different treatment: Broadcast might want a more structured grain (like film grain, which it already has), Arena doesn't need it (too much visual activity already).
 - Next cycle: Broadcast (rotation). Broadcast could use a subtle editorial "chapter number" above the narrative section, or an animated "Now Showing" theater marquee above the hero.
+
+## Cycle 66 Learnings
+- Double-peak waveform (35% and 65% of cycle) is crucial — a single-peak sine wave reads as mechanical "breathing", but double-peak reads as organic heartbeat (systole/diastole). The second peak at 65% is slightly smaller (scale 1.003 vs 1.004) mimicking the real cardiac cycle.
+- 0.4% amplitude (scale 1.004) is at the threshold of conscious perception. You don't "see" the hero pulsing — you feel a subliminal tension. Higher amplitude (1%+) is obviously pulsing and feels cheap. Lower (0.2%) is truly invisible.
+- Applying heartbeat to the parallax wrapper (parent) rather than the image (child) means it layers with Ken Burns cleanly. Ken Burns is on the image div (scale + translate), heartbeat is on the wrapper (scale only). The transforms compose naturally.
+- CRITICAL quickening (1.8s → 1.1s) adds 60% more pulses per minute — a noticeable urgency increase that matches the viewer's elevated heart rate during final seconds. The effect mirrors how your own pulse quickens when time runs out.
+- Supreme hero now has 8 ambient effects: parallax, Ken Burns, light sweep, breathing vignette, name shimmer, particles, edge trace, and heartbeat. But the heartbeat is the most subliminal — it's the foundation pulse that makes everything else feel alive.
+- Next cycle: Broadcast (rotation). Broadcast could use a subtle "camera rack focus" blur shift on the hero, or a broadcast-style animated stat crawl along the bottom of the hero.

@@ -593,6 +593,19 @@ function StatsBar({
   const pct = Math.min(100, (claimed / total) * 100);
   const timeStr = isEnded ? '00:00' : `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
+  // Clock tick pulse — dramatic per-second visual "tick" in CRITICAL phase
+  const [clockTick, setClockTick] = useState(false);
+  const prevSeconds = useRef(totalSeconds);
+  useEffect(() => {
+    if (isCritical && !isEnded && totalSeconds !== prevSeconds.current) {
+      setClockTick(true);
+      const t = setTimeout(() => setClockTick(false), 200);
+      prevSeconds.current = totalSeconds;
+      return () => clearTimeout(t);
+    }
+    prevSeconds.current = totalSeconds;
+  }, [totalSeconds, isCritical, isEnded]);
+
   return (
     <div className="grid grid-cols-3 gap-2 px-4">
       {/* Claimed */}
@@ -634,7 +647,7 @@ function StatsBar({
         {/* Shot clock ring — circular countdown like NBA shot clock */}
         {!isEnded && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <svg width="58" height="58" viewBox="0 0 58 58" className="opacity-25">
+            <svg width="58" height="58" viewBox="0 0 58 58" className="transition-opacity duration-150" style={{ opacity: clockTick && isCritical ? 0.45 : 0.25 }}>
               <circle
                 cx="29" cy="29" r="25"
                 fill="none"
@@ -658,15 +671,24 @@ function StatsBar({
         )}
         <div className="relative text-center">
           <span
-            className={`font-bold font-mono tabular-nums transition-all duration-500 ${
+            className={`font-bold font-mono tabular-nums transition-all ${
               isEnded
-                ? 'text-lg text-white/25'
+                ? 'text-lg text-white/25 duration-500'
                 : isCritical
                   ? 'text-xl text-red-400 animate-urgency-fast'
                   : isClosing
-                    ? 'text-lg text-amber-400 animate-urgency'
-                    : 'text-lg text-white'
+                    ? 'text-lg text-amber-400 animate-urgency duration-500'
+                    : 'text-lg text-white duration-500'
             }`}
+            style={isCritical && !isEnded ? {
+              transform: clockTick ? 'scale(1.12)' : 'scale(1)',
+              textShadow: clockTick
+                ? '0 0 12px rgba(239,68,68,0.8), 0 0 24px rgba(239,68,68,0.4)'
+                : '0 0 4px rgba(239,68,68,0.3)',
+              transition: clockTick
+                ? 'transform 80ms cubic-bezier(0.16, 1, 0.3, 1), text-shadow 80ms ease-out'
+                : 'transform 150ms ease-out, text-shadow 200ms ease-out',
+            } : undefined}
           >
             {timeStr}
           </span>

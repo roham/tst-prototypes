@@ -1473,3 +1473,11 @@
 - Per-moment poll data (unique questions, different percentages) prevents the "template" feel. 91%/87%/94% — high but varied — feels more real than a uniform 90%.
 - The poll adds a new social proof category to Broadcast: fan consensus as data. Previously: viewer count (passive), analyst opinion (expert), commentator call (emotional). Now: fan verdict (democratic).
 - Next cycle: Arena (rotation).
+
+## Cycle 178 Learnings
+- Pure atmospheric elements (no text, no data) are the most "Supreme" additions possible at this polish level. The saleroom pulse is invisible until you notice it — then it adds immersion without competing with any conversion element.
+- Phase-reactive SVG paths via ternary operators are clean and maintainable. Each phase has its own pre-computed path string — no runtime path interpolation needed.
+- The waveform complexity (1→2→4 waves) maps intuitively to urgency: more oscillation = more energy = more tension. The flatline on ENDED is a satisfying resolution — the room goes silent.
+- Low z-index (z-5) and opacity (3-12%) ensure the pulse never competes with content. It's a background atmospheric detail, not a foreground feature.
+- translateX drift animation creates a "breathing" feel more effectively than opacity pulsing — the waveform appears to flow like a real audio signal.
+- Next cycle: Broadcast (rotation).

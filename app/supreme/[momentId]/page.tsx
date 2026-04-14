@@ -701,6 +701,19 @@ export default function SupremePage() {
         />
         </div>{/* End parallax wrapper */}
 
+        {/* Edge light trace — luminous point traveling along hero bottom edge */}
+        {!isEnded && !isPurchasing && (
+          <div className="absolute bottom-0 left-0 right-0 h-[1px] z-[11] pointer-events-none overflow-hidden">
+            <div
+              className="absolute top-0 w-12 h-[1px] supreme-edge-trace"
+              style={{
+                background: `radial-gradient(ellipse at center, ${moment.teamColors.primary}90 0%, ${moment.teamColors.primary}40 30%, transparent 70%)`,
+                boxShadow: `0 0 8px ${moment.teamColors.primary}50, 0 0 20px ${moment.teamColors.primary}25`,
+              }}
+            />
+          </div>
+        )}
+
         {/* Ambient particles — luminous dust motes in museum spotlight */}
         {!isEnded && !isPurchasing && (
           <AmbientParticles teamColor={moment.teamColors.primary} />

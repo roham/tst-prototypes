@@ -325,6 +325,17 @@ body {
   animation: supreme-name-shimmer 10s ease-in-out infinite;
 }
 
+/* Supreme hero edge light — luminous point tracing bottom border (luxury card edge) */
+@keyframes supreme-edge-trace {
+  0% { left: -5%; opacity: 0; }
+  5% { opacity: 1; }
+  95% { opacity: 1; }
+  100% { left: 105%; opacity: 0; }
+}
+.supreme-edge-trace {
+  animation: supreme-edge-trace 6s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+}
+
 /* Broadcast hero — slow cinematic Ken Burns drift for emotional tension */
 @keyframes broadcast-ken-burns {
   0% { transform: scale(1) translate(0, 0); }

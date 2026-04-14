@@ -19,4 +19,14 @@
 
 | 5 | broadcast | 7.0 | 5.0 | 6.0 | 4.5 | 7.5 | 6.00 | +0.65 | Drop cap, hero progress bar, tier accents, CTA hover/press, stat cards |
 
-**Weakest: Arena (5.35)** — Arena is next in rotation (Cycle 6).
+| 6 | arena | 6.0 | 5.5 | 5.5 | 5.5 | 7.0 | 5.85 | +0.50 | Celebration flash+stagger, player name in W, context line, team feed dots |
+
+### Full Scorecard — After Cycle 6 (all directions touched)
+
+| Direction | Visual | Conversion | Emotion | Interaction | Purity | Weighted |
+|-----------|--------|------------|---------|-------------|--------|----------|
+| Supreme | 6.5 | 5.0 | 5.0 | 5.0 | 7.5 | **5.75** |
+| Broadcast | 7.0 | 5.0 | 6.0 | 4.5 | 7.5 | **6.00** |
+| Arena | 6.0 | 5.5 | 5.5 | 5.5 | 7.0 | **5.85** |
+
+**Weakest: Supreme (5.75)** — Supreme next in Cycle 7 (URGENCY phase). All directions improved significantly in POLISH phase.

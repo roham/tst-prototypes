@@ -162,3 +162,23 @@ body {
 .supreme-social-enter {
   animation: supreme-info-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
 }
+
+/* Supreme urgency bar critical glow pulse */
+@keyframes supreme-urgency-glow {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px #EF4444, 0 0 20px #EF444460; }
+  50% { opacity: 0.6; box-shadow: 0 0 12px #EF4444, 0 0 30px #EF444480; }
+}
+.supreme-urgency-bar-critical {
+  animation: supreme-urgency-glow 0.8s ease-in-out infinite;
+}
+
+/* Supreme claim ticker fade */
+@keyframes supreme-claim-in {
+  0% { opacity: 0; transform: translateY(4px); }
+  15% { opacity: 1; transform: translateY(0); }
+  85% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+.supreme-claim-fade {
+  animation: supreme-claim-in 2.8s ease both;
+}

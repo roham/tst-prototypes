@@ -56,6 +56,43 @@ function useSocialProof(base: number) {
 }
 
 // ---------------------------------------------------------------------------
+// Live claim simulation — editions tick down, names appear
+// ---------------------------------------------------------------------------
+
+const CLAIM_NAMES = [
+  'Mike R.', 'Sarah K.', 'JayHoops', 'DunkCity', 'Alex M.',
+  'NBAFan99', 'Chris B.', 'TopShot_OG', 'BallDontLie', 'Maya W.',
+  'HoopsJunkie', 'TripleDbl', 'FastBreak', 'CourtVision', 'Dime_Drop',
+];
+
+function useClaimTicker(baseClaimed: number, editionSize: number) {
+  const [claimed, setClaimed] = useState(baseClaimed);
+  const [lastClaimer, setLastClaimer] = useState<string | null>(null);
+  const [claimFlash, setClaimFlash] = useState(false);
+
+  useEffect(() => {
+    // Random interval between 2-6s to simulate real claiming
+    let timeout: NodeJS.Timeout;
+    const tick = () => {
+      const delay = 2000 + Math.random() * 4000;
+      timeout = setTimeout(() => {
+        setClaimed((prev) => Math.min(prev + 1, editionSize));
+        const name = CLAIM_NAMES[Math.floor(Math.random() * CLAIM_NAMES.length)];
+        setLastClaimer(name);
+        setClaimFlash(true);
+        setTimeout(() => setClaimFlash(false), 600);
+        setTimeout(() => setLastClaimer(null), 2800);
+        tick();
+      }, delay);
+    };
+    tick();
+    return () => clearTimeout(timeout);
+  }, [editionSize]);
+
+  return { claimed, lastClaimer, claimFlash };
+}
+
+// ---------------------------------------------------------------------------
 // Confetti particle for W screen
 // ---------------------------------------------------------------------------
 
@@ -266,13 +303,16 @@ export default function SupremePage() {
   const { state: viewPhase, editionNumber, purchase, reset } = usePrototypeState(momentId);
 
   const watching = useSocialProof(moment ? 30 + moment.editionsClaimed % 40 : 30);
-  const claimedPerMin = moment
-    ? Math.max(3, Math.floor(moment.editionsClaimed / 200))
-    : 8;
 
   // Derive drop phase from countdown
   const dropPhase = derivePhase(countdown.totalSeconds);
   const timerDisplay = formatTimer(countdown.totalSeconds);
+
+  // Live claim ticker
+  const { claimed, lastClaimer, claimFlash } = useClaimTicker(
+    moment?.editionsClaimed ?? 0,
+    moment?.editionSize ?? 5000,
+  );
 
   if (!moment) {
     return (
@@ -282,7 +322,12 @@ export default function SupremePage() {
     );
   }
 
-  const progressPct = ((moment.editionsClaimed / moment.editionSize) * 100).toFixed(1);
+  const progressPct = ((claimed / moment.editionSize) * 100).toFixed(1);
+  const remaining = moment.editionSize - claimed;
+
+  // Time progress (0 = full time, 1 = ended)
+  const totalDuration = SALE_DURATION_MS[momentId] ?? 12 * 60 * 1000;
+  const timeProgressPct = Math.max(0, Math.min(100, ((totalDuration / 1000 - countdown.totalSeconds) / (totalDuration / 1000)) * 100));
 
   // ---- CONFIRMED state ----
   if (viewPhase === 'confirmed' || viewPhase === 'sharing') {
@@ -340,6 +385,34 @@ export default function SupremePage() {
       className="min-h-dvh flex flex-col relative overflow-hidden select-none transition-colors duration-1000"
       style={{ backgroundColor: bgColor }}
     >
+      {/* ============================================================= */}
+      {/* URGENCY BAR — full-width time depletion line */}
+      {/* ============================================================= */}
+      {!isEnded && (
+        <div className="absolute top-0 left-0 right-0 z-30 h-[2px] bg-white/[0.04]">
+          <div
+            className={`h-full transition-all duration-1000 ease-linear ${
+              dropPhase === 'CRITICAL' ? 'supreme-urgency-bar-critical' : ''
+            }`}
+            style={{
+              width: `${100 - timeProgressPct}%`,
+              backgroundColor:
+                dropPhase === 'CRITICAL'
+                  ? '#EF4444'
+                  : dropPhase === 'CLOSING'
+                    ? '#F59E0B'
+                    : '#00E5A0',
+              boxShadow:
+                dropPhase === 'CRITICAL'
+                  ? '0 0 8px #EF4444, 0 0 20px #EF444460'
+                  : dropPhase === 'CLOSING'
+                    ? '0 0 6px #F59E0B80'
+                    : 'none',
+            }}
+          />
+        </div>
+      )}
+
       {/* ============================================================= */}
       {/* HERO — fills top 52% */}
       {/* ============================================================= */}
@@ -426,15 +499,29 @@ export default function SupremePage() {
           )}
         </div>
 
-        {/* Edition counter */}
+        {/* Edition counter — live */}
         <div className="text-right">
           <div className="flex items-center gap-2 justify-end">
-            <span className="text-[9px] uppercase tracking-wider text-[#00E5A0]/60 font-semibold">
-              Open
+            <span
+              className="text-[9px] uppercase tracking-wider font-semibold transition-colors duration-300"
+              style={{
+                color: remaining < 500
+                  ? '#EF444490'
+                  : remaining < 1500
+                    ? '#F59E0B90'
+                    : '#00E5A060',
+              }}
+            >
+              {remaining < 500 ? 'Almost gone' : remaining < 1500 ? 'Going fast' : 'Open'}
             </span>
-            <p className="text-sm font-mono tabular-nums text-white/70">
+            <p
+              className="text-sm font-mono tabular-nums text-white/70 transition-all duration-300"
+              style={{
+                textShadow: claimFlash ? '0 0 8px rgba(0,229,160,0.5)' : 'none',
+              }}
+            >
               <span className="text-white font-semibold">
-                {moment.editionsClaimed.toLocaleString()}
+                {claimed.toLocaleString()}
               </span>
               <span className="text-white/20"> / </span>
               <span>{moment.editionSize.toLocaleString()}</span>
@@ -443,10 +530,11 @@ export default function SupremePage() {
           {/* Thin progress bar */}
           <div className="mt-1.5 w-32 h-[2px] rounded-full bg-white/[0.06] overflow-hidden ml-auto">
             <div
-              className="h-full rounded-full transition-all duration-1000"
+              className="h-full rounded-full transition-all duration-500"
               style={{
                 width: `${progressPct}%`,
-                backgroundColor: '#00E5A0',
+                backgroundColor:
+                  remaining < 500 ? '#EF4444' : remaining < 1500 ? '#F59E0B' : '#00E5A0',
               }}
             />
           </div>
@@ -503,11 +591,26 @@ export default function SupremePage() {
       </div>
 
       {/* ============================================================= */}
-      {/* SOCIAL PROOF — tiny, below button */}
+      {/* SOCIAL PROOF — claim ticker + watchers */}
       {/* ============================================================= */}
-      <p className="text-center text-[11px] text-white/20 pb-6 tabular-nums supreme-social-enter">
-        {watching} watching &middot; {claimedPerMin} claimed/min
-      </p>
+      <div className="px-5 pb-6 supreme-social-enter">
+        {/* Last claimer notification */}
+        <div className="h-5 flex items-center justify-center overflow-hidden">
+          {lastClaimer ? (
+            <p
+              className="text-[11px] text-white/30 tabular-nums supreme-claim-fade"
+              key={lastClaimer + Date.now()}
+            >
+              <span className="text-[#00E5A0]/60 font-semibold">{lastClaimer}</span>
+              {' '}just claimed
+            </p>
+          ) : (
+            <p className="text-[11px] text-white/15 tabular-nums">
+              {watching} watching now
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

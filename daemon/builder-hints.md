@@ -1166,3 +1166,11 @@
 - Duplicating the crawl text content creates seamless looping — when the first copy scrolls off-left, the second copy is already visible, and translateX(-50%) resets to the beginning.
 - The crawl only fires during CRITICAL (≤2 min) and hides during purchase — it shouldn't distract from the purchase flow or appear during casual browsing.
 - Next cycle: Arena (rotation).
+
+## Cycle 134 Learnings
+- Ghost segments (dim "88" behind lit digits) is the single most impactful visual detail for making LED displays look real — the unlit segments create physical materiality.
+- Three-layer text-shadow glow (tight, medium, ambient) at different blur radii mimics how LED light actually disperses in space — tight for character definition, medium for halo, ambient for spill.
+- useRef<ReturnType<typeof setInterval> | null>(null) — React 19+ requires explicit initial value for useRef, can't leave it empty.
+- IntersectionObserver with 0.3 threshold for activating the shot clock means it starts ticking before the user fully scrolls to it — creates a "you entered the zone" feeling.
+- The shot clock is distinctly Arena: Supreme would never have a ticking timer (the void is timeless), Broadcast would use a game clock format. Only Arena has the shot clock mounted above the backboard.
+- Next cycle: Supreme (rotation).

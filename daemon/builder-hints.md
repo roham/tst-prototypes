@@ -1057,3 +1057,11 @@
 - Placing it between tier selector and CTA catches the eye at the decision point without cluttering the button area.
 - Supreme's information architecture below the fold is now: context → info strip (timer + editions) → tiers → estimate → CTA. Each row adds one decision-relevant data point.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 121 Learnings
+- Tale of the Tape adds analytical depth between the raw stat cards and the emotional closing beat — the editorial flow is now: narrative → raw stats → comparative analysis → emotional thesis.
+- Dual-bar visualization (thick team-color for tonight, thin muted for avg) creates instant visual hierarchy — no legend needed, the eye reads it immediately.
+- "ABOVE AVG" badge activates endowment effect: the buyer sees data-validated exceptional performance, reinforcing "this moment is worth owning."
+- Season averages need to be realistic — checked against actual 2024-25 NBA stats. Bam ~21.5ppg, Jokic ~26.4ppg, SGA ~31.2ppg. Fake-looking numbers would undermine broadcast credibility.
+- Staggered bar fill animations (0.15s offset per row) create a "data loading in" broadcast graphic feel without being slow.
+- Next cycle: Arena (rotation).

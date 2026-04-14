@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { getMoment, SALE_DURATION_MS } from '@/lib/mock-data';
 import type { Moment, RarityTier } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
@@ -92,6 +92,68 @@ function fullTeam(abbr: string): string {
 // ESPN-style stat breakdown — animated cards
 // ---------------------------------------------------------------------------
 
+// Animated stat counter — counts from 0 to target with easeOutQuad
+function useAnimatedCounter(target: number, duration: number, started: boolean): number {
+  const [value, setValue] = useState(0);
+  const rafRef = useRef<number>(0);
+  useEffect(() => {
+    if (!started) { setValue(0); return; }
+    const start = performance.now();
+    function tick(now: number) {
+      const t = Math.min((now - start) / duration, 1);
+      // easeOutQuad
+      const eased = 1 - (1 - t) * (1 - t);
+      setValue(Math.round(eased * target));
+      if (t < 1) rafRef.current = requestAnimationFrame(tick);
+    }
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [target, duration, started]);
+  return value;
+}
+
+function AnimatedStatCard({ value, label, teamColor, delay, isVisible }: {
+  value: string; label: string; teamColor: string; delay: number; isVisible: boolean;
+}) {
+  const numericValue = parseInt(value, 10);
+  const isNumeric = !isNaN(numericValue);
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    const t = setTimeout(() => setStarted(true), delay * 1000);
+    return () => clearTimeout(t);
+  }, [isVisible, delay]);
+
+  const animatedValue = useAnimatedCounter(
+    isNumeric ? numericValue : 0,
+    1200,
+    started
+  );
+
+  return (
+    <div
+      className="flex-1 rounded-lg bg-white/[0.04] border border-white/[0.06] px-3 py-3 text-center relative overflow-hidden"
+      style={{ animation: isVisible ? `stat-fly-in 0.5s ease-out ${delay}s both` : 'none' }}
+    >
+      {/* Broadcast-style top accent */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[2px]"
+        style={{ backgroundColor: teamColor, opacity: 0.6 }}
+      />
+      <div
+        className="text-2xl font-bold tabular-nums"
+        style={{ fontFamily: 'var(--font-oswald), sans-serif', color: teamColor }}
+      >
+        {isNumeric ? animatedValue : value}
+      </div>
+      <div className="text-[10px] uppercase tracking-[0.15em] text-white/40 mt-0.5">
+        {label}
+      </div>
+    </div>
+  );
+}
+
 function StatBreakdown({ statLine, teamColor }: { statLine: string; teamColor: string }) {
   // Parse "30 PTS / 8 REB / 4 AST" into segments
   const stats = statLine.split('/').map((s) => {
@@ -100,29 +162,31 @@ function StatBreakdown({ statLine, teamColor }: { statLine: string; teamColor: s
     return match ? { value: match[1], label: match[2] } : { value: trimmed, label: '' };
   });
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); observer.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="mt-8 flex items-stretch gap-3">
+    <div ref={containerRef} className="mt-8 flex items-stretch gap-3">
       {stats.map((stat, i) => (
-        <div
+        <AnimatedStatCard
           key={stat.label}
-          className="flex-1 rounded-lg bg-white/[0.04] border border-white/[0.06] px-3 py-3 text-center relative overflow-hidden"
-          style={{ animation: `stat-fly-in 0.5s ease-out ${0.15 * i}s both` }}
-        >
-          {/* Broadcast-style top accent */}
-          <div
-            className="absolute top-0 left-0 right-0 h-[2px]"
-            style={{ backgroundColor: teamColor, opacity: 0.6 }}
-          />
-          <div
-            className="text-2xl font-bold tabular-nums"
-            style={{ fontFamily: 'var(--font-oswald), sans-serif', color: teamColor }}
-          >
-            {stat.value}
-          </div>
-          <div className="text-[10px] uppercase tracking-[0.15em] text-white/40 mt-0.5">
-            {stat.label}
-          </div>
-        </div>
+          value={stat.value}
+          label={stat.label}
+          teamColor={teamColor}
+          delay={0.15 * i}
+          isVisible={isVisible}
+        />
       ))}
     </div>
   );

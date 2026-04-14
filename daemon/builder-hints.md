@@ -950,3 +950,11 @@
 - Team-color REPLAY badge with circular arrow icon is a compact broadcast signifier — matches the Instant Replay tag that exists on the main browsing page.
 - W screen content density per direction is now: Supreme (W + YOURS + details + provenance chain), Broadcast (COLLECTED + certificate + replay + share + end credit), Arena (ticket stub + fan cam + crowd EQ + stats). Each tells a different post-purchase story.
 - Next cycle: Arena (rotation). Arena could explore a "crowd selfie" or "arena scoreboard final" treatment to deepen the post-game celebration feel.
+
+## Cycle 107 Learnings
+- Scoring run banner is conceptually distinct from streak badge: streak = individual rapid-fire combos (gap < 4s), scoring run = aggregate momentum over 10s window (4+ purchases). Both are basketball-native but at different scales.
+- Using a sliding window (filter timestamps within last 10s) is simpler and more reliable than tracking gaps between purchases for aggregate momentum.
+- z-32 for the scoring run banner sits above the streak badge (z-30) but below phase overlays (timeout z-38, buzzer z-45+), creating proper layering hierarchy.
+- The slide-in-from-right / hold / slide-out-left keyframe pattern creates a broadcast graphic feel — like an ESPN stat graphic that sweeps across screen during play.
+- Arena is extremely feature-dense now (LED flash, camera flash, flame jets, streak badge, scoring run, crowd reactions, crowd wave, spotlight sweep, buzzer, timeout, chant ticker, court lines, instant replay entrance, clock tick). Need to be careful about visual noise — future Arena cycles should focus on refinement/removal rather than addition.
+- Next cycle: Supreme (rotation).

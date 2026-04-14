@@ -256,3 +256,12 @@
 - Small delta (+0.10) because Emotion moved 8.0→8.5 but nothing else changed. Multi-dimension lifts produce bigger deltas.
 - Broadcast Emotion is now 8.5, matching Supreme. All dims ≥8.0 across all directions.
 - Next cycle: Arena (rotation). Arena at 8.48 — strongest overall but Emotion (8.0) is its weakest dim.
+
+## Cycle 30 Learnings
+- Action image layer works differently per direction: Broadcast uses it at 10% with cinematic grading, Arena uses it at 8% with contrast boost for jumbotron replay feel. Same technique, different identity.
+- Team-color stat accent (2px vertical bar) next to stat line creates visual weight — the stat line becomes a "scoreboard stat" instead of plain text. Cheap, high-impact.
+- First sentence of `historicalNote` as a hype excerpt gives Arena users quick emotional context without requiring them to read a full editorial paragraph. Arena users scan, they don't read — short punchy lines only.
+- Both Broadcast and Arena got +0.10 from emotion-focused changes. Emotion lifts are smaller per-cycle than structural changes (urgency, W screen) but compound well.
+- All 3 directions now have action image layers, historicalNote content in different forms, and team-color stat accents. Pattern is fully deployed.
+- Supreme and Broadcast tied at 8.38, both with Conversion (8.0) and Interaction (8.0) as drags. Arena leads at 8.58.
+- Next cycle: Supreme (rotation). Target Conversion or Interaction — both at 8.0.

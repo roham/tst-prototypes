@@ -184,42 +184,79 @@ export default function BroadcastPage() {
         <section className="relative h-[50dvh] min-h-[420px] overflow-hidden">
           {/* Thumbnail gradient background */}
           <div
-            className="absolute inset-0 bg-cover bg-center"
+            className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
             style={{
               backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
               backgroundSize: 'cover, cover',
               backgroundPosition: 'center top, center',
+              filter: countdown.isEnded ? 'grayscale(0.6) brightness(0.65)' :
+                      dropPhase === 'CRITICAL' ? 'saturate(1.15) contrast(1.05)' : 'none',
             }}
           />
           {/* Dark overlay from bottom for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/70 to-transparent" />
 
-          {/* Top bar: "INSTANT CLASSIC" + LIVE badge + countdown */}
+          {/* Top bar: editorial label + status badge + countdown */}
           <div className="absolute left-5 right-5 top-5 z-20 flex items-center justify-between md:left-10 md:right-10 md:top-10">
             <div className="flex items-center gap-2.5">
-              <div className="h-px w-6 bg-[#F59E0B]" />
-              <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#F59E0B]">
-                Instant Classic
+              <div
+                className="h-px w-6 transition-colors duration-500"
+                style={{
+                  backgroundColor: countdown.isEnded ? '#6B7A99' :
+                    dropPhase === 'CRITICAL' ? '#EF4444' : '#F59E0B',
+                }}
+              />
+              <span
+                className="text-[10px] font-semibold uppercase tracking-[0.25em] transition-colors duration-500"
+                style={{
+                  color: countdown.isEnded ? '#6B7A99' :
+                    dropPhase === 'CRITICAL' ? '#EF4444' : '#F59E0B',
+                }}
+              >
+                {countdown.isEnded ? 'Archived' :
+                 dropPhase === 'CRITICAL' ? 'Breaking' :
+                 dropPhase === 'CLOSING' ? 'Final Minutes' :
+                 'Instant Classic'}
               </span>
             </div>
-            {/* LIVE badge + countdown */}
+            {/* Status badge + countdown */}
             <div className="flex items-center gap-3">
-              {!countdown.isEnded && (
-                <div className="flex items-center gap-1.5 rounded-full bg-black/40 backdrop-blur-sm px-3 py-1">
-                  <div className="h-1.5 w-1.5 rounded-full bg-[#EF4444] animate-pulse" />
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-white/70">
-                    Live
-                  </span>
-                </div>
-              )}
+              <div
+                className="flex items-center gap-1.5 rounded-full backdrop-blur-sm px-3 py-1 transition-colors duration-500"
+                style={{
+                  backgroundColor: countdown.isEnded ? 'rgba(107,122,153,0.15)' :
+                    dropPhase === 'CRITICAL' ? 'rgba(239,68,68,0.2)' :
+                    'rgba(0,0,0,0.4)',
+                }}
+              >
+                {!countdown.isEnded && (
+                  <div
+                    className="h-1.5 w-1.5 rounded-full animate-pulse transition-colors duration-500"
+                    style={{
+                      backgroundColor: dropPhase === 'CRITICAL' ? '#EF4444' : '#EF4444',
+                    }}
+                  />
+                )}
+                <span
+                  className="text-[10px] font-semibold uppercase tracking-wider transition-colors duration-500"
+                  style={{
+                    color: countdown.isEnded ? 'rgba(107,122,153,0.6)' :
+                      dropPhase === 'CRITICAL' ? '#EF4444' : 'rgba(255,255,255,0.7)',
+                  }}
+                >
+                  {countdown.isEnded ? 'Concluded' : 'Live'}
+                </span>
+              </div>
               <span
-                className="font-mono text-sm font-semibold tabular-nums tracking-wider"
+                className="font-mono text-sm font-semibold tabular-nums tracking-wider transition-colors duration-500"
                 style={{
                   color: countdown.isEnded
                     ? 'rgba(255,255,255,0.25)'
-                    : isUrgent
-                      ? '#F59E0B'
-                      : 'rgba(255,255,255,0.5)',
+                    : dropPhase === 'CRITICAL'
+                      ? '#EF4444'
+                      : isUrgent
+                        ? '#F59E0B'
+                        : 'rgba(255,255,255,0.5)',
                 }}
               >
                 {countdown.isEnded ? 'ENDED' : formatCountdown(countdown.totalSeconds)}
@@ -279,10 +316,14 @@ export default function BroadcastPage() {
           {!countdown.isEnded && (
             <div className="absolute bottom-0 left-0 right-0 z-30 h-[2px] bg-white/[0.06]">
               <div
-                className="h-full transition-all duration-1000 ease-linear"
+                className={`h-full transition-all duration-1000 ease-linear ${
+                  dropPhase === 'CRITICAL' ? 'supreme-urgency-bar-critical' : ''
+                }`}
                 style={{
                   width: `${Math.min(100, (countdown.totalSeconds / ((SALE_DURATION_MS[momentId] ?? 720000) / 1000)) * 100)}%`,
-                  background: `linear-gradient(90deg, ${moment.teamColors.primary}, ${moment.teamColors.secondary || moment.teamColors.primary})`,
+                  background: dropPhase === 'CRITICAL'
+                    ? '#EF4444'
+                    : `linear-gradient(90deg, ${moment.teamColors.primary}, ${moment.teamColors.secondary || moment.teamColors.primary})`,
                 }}
               />
             </div>
@@ -414,15 +455,28 @@ export default function BroadcastPage() {
             <button
               onClick={proto.purchase}
               disabled={isPurchasing || countdown.isEnded}
-              className="group relative w-full max-w-md overflow-hidden rounded-lg border px-8 py-4 text-center text-base font-semibold tracking-wide transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 sm:text-lg"
+              className={`group relative w-full max-w-md overflow-hidden rounded-lg border px-8 py-4 text-center text-base font-semibold tracking-wide transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed sm:text-lg ${
+                dropPhase === 'CRITICAL' && !isPurchasing ? 'animate-urgency' : ''
+              }`}
               style={{
-                borderColor: isPurchasing
-                  ? 'rgba(255,255,255,0.12)'
-                  : moment.teamColors.primary,
-                backgroundColor: 'rgba(11,14,20,0.92)',
-                boxShadow: isPurchasing
+                borderColor: countdown.isEnded
+                  ? 'rgba(255,255,255,0.06)'
+                  : isPurchasing
+                    ? 'rgba(255,255,255,0.12)'
+                    : dropPhase === 'CRITICAL'
+                      ? '#EF4444'
+                      : moment.teamColors.primary,
+                backgroundColor: countdown.isEnded
+                  ? 'rgba(28,35,51,0.6)'
+                  : 'rgba(11,14,20,0.92)',
+                boxShadow: countdown.isEnded
                   ? 'none'
-                  : `0 0 20px rgba(${rgb},0.12), 0 0 60px rgba(${rgb},0.06)`,
+                  : isPurchasing
+                    ? 'none'
+                    : dropPhase === 'CRITICAL'
+                      ? `0 0 30px rgba(239,68,68,0.2), 0 0 80px rgba(239,68,68,0.08)`
+                      : `0 0 20px rgba(${rgb},0.12), 0 0 60px rgba(${rgb},0.06)`,
+                opacity: countdown.isEnded ? 0.5 : 1,
               }}
               onMouseEnter={(e) => {
                 if (!isPurchasing && !countdown.isEnded) {
@@ -435,39 +489,49 @@ export default function BroadcastPage() {
               onMouseLeave={(e) => {
                 if (!isPurchasing && !countdown.isEnded) {
                   (e.currentTarget as HTMLElement).style.boxShadow =
-                    `0 0 20px rgba(${rgb},0.12), 0 0 60px rgba(${rgb},0.06)`;
+                    dropPhase === 'CRITICAL'
+                      ? `0 0 30px rgba(239,68,68,0.2), 0 0 80px rgba(239,68,68,0.08)`
+                      : `0 0 20px rgba(${rgb},0.12), 0 0 60px rgba(${rgb},0.06)`;
                   (e.currentTarget as HTMLElement).style.backgroundColor =
                     'rgba(11,14,20,0.92)';
                 }
               }}
             >
-              {isPurchasing ? (
+              {countdown.isEnded ? (
+                <span className="text-white/30 uppercase tracking-[0.15em]">
+                  Drop Concluded
+                </span>
+              ) : isPurchasing ? (
                 <span className="flex items-center justify-center gap-3">
                   <LoadingDots />
                   <span className="text-white/60">Acquiring...</span>
                 </span>
               ) : (
                 <span className="text-white">
-                  Own This Piece of History
-                  <span className="text-white/40">
+                  {dropPhase === 'CRITICAL' ? 'Collect Now' : 'Own This Piece of History'}
+                  <span className={dropPhase === 'CRITICAL' ? 'text-white/60' : 'text-white/40'}>
                     {' '}&mdash; ${selectedTier.price}
                   </span>
                 </span>
               )}
             </button>
 
-            {/* Supply narrative — editorial urgency */}
+            {/* Supply narrative — editorial urgency / ended wrap-up */}
             <p
               className="mt-5 text-[13px] tracking-wide transition-colors duration-500"
               style={{
-                color: (moment.editionsClaimed / moment.editionSize) >= 0.8
-                  ? '#F59E0B90'
-                  : 'rgba(255,255,255,0.25)',
+                color: countdown.isEnded
+                  ? 'rgba(255,255,255,0.2)'
+                  : (moment.editionsClaimed / moment.editionSize) >= 0.8
+                    ? '#F59E0B90'
+                    : 'rgba(255,255,255,0.25)',
                 fontFamily: "Georgia, 'Times New Roman', serif",
                 fontStyle: 'italic',
               }}
             >
-              {supplyNarrative(moment.editionsClaimed, moment.editionSize)}
+              {countdown.isEnded
+                ? `${moment.editionsClaimed.toLocaleString()} collectors secured a piece of this moment`
+                : supplyNarrative(moment.editionsClaimed, moment.editionSize)}
             </p>
 
             {/* Competition signal */}

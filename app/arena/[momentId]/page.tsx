@@ -1540,6 +1540,39 @@ function usePATypewriter(text: string, startDelay: number, charSpeed = 35) {
   return { displayed, done: displayed.length >= text.length };
 }
 
+/* ─── Replay Timestamp — live counting timer for jumbotron replay ── */
+/* Arena jumbotrons show a running timecode on replays. This counts    */
+/* from 0:00 up to the duration, updating every ~100ms for smooth     */
+/* real-time feel. Starts after startDelay ms.                         */
+
+function ReplayTimestamp({ durationSec, startDelay }: { durationSec: number; startDelay: number }) {
+  const [elapsed, setElapsed] = useState(0);
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setStarted(true), startDelay);
+    return () => clearTimeout(t);
+  }, [startDelay]);
+
+  useEffect(() => {
+    if (!started) return;
+    if (elapsed >= durationSec) return;
+    const interval = setInterval(() => {
+      setElapsed((prev) => Math.min(prev + 0.1, durationSec));
+    }, 100);
+    return () => clearInterval(interval);
+  }, [started, elapsed >= durationSec, durationSec]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const secs = Math.floor(elapsed);
+  const display = `0:${secs.toString().padStart(2, '0')}`;
+
+  return (
+    <span className="text-[8px] font-mono tabular-nums text-white/40">
+      {display}
+    </span>
+  );
+}
+
 function CelebrationScreen({
   editionNumber,
   total,
@@ -1720,7 +1753,7 @@ function CelebrationScreen({
                   background: `linear-gradient(to top, ${moment.teamColors.primary}30 0%, transparent 40%, transparent 80%, rgba(11,14,20,0.3) 100%)`,
                 }}
               />
-              {/* INSTANT REPLAY badge — top-left */}
+              {/* INSTANT REPLAY badge — top-left with breathing play indicator */}
               <div
                 className="absolute top-2.5 left-2.5 flex items-center gap-1.5 rounded px-2 py-1"
                 style={{
@@ -1728,8 +1761,16 @@ function CelebrationScreen({
                   boxShadow: '0 0 10px rgba(239,68,68,0.3)',
                 }}
               >
-                {/* Play triangle icon */}
-                <svg className="h-2.5 w-2.5" viewBox="0 0 10 10" fill="white">
+                {/* Play triangle icon — pulses to suggest active playback */}
+                <svg
+                  className="h-2.5 w-2.5"
+                  viewBox="0 0 10 10"
+                  fill="white"
+                  style={{
+                    animation: 'pulse 2s ease-in-out infinite',
+                    filter: 'drop-shadow(0 0 2px rgba(255,255,255,0.5))',
+                  }}
+                >
                   <polygon points="1,0 10,5 1,10" />
                 </svg>
                 <span
@@ -1774,6 +1815,32 @@ function CelebrationScreen({
                 >
                   {moment.playType} · {moment.team} vs {moment.opponent}
                 </span>
+              </div>
+              {/* Jumbotron replay progress scrubber — video playback bar */}
+              <div className="absolute bottom-0 left-0 right-0 z-[2]">
+                {/* Timestamp + duration — bottom corners */}
+                <div
+                  className="flex items-center justify-between px-2.5 pb-[5px]"
+                  style={{ animation: 'arena-replay-timestamp 12s ease-out 0.5s both' }}
+                >
+                  <ReplayTimestamp durationSec={12} startDelay={500} />
+                  <span
+                    className="text-[8px] font-mono tabular-nums text-white/30"
+                  >
+                    0:12
+                  </span>
+                </div>
+                {/* Progress bar track */}
+                <div className="h-[3px] w-full bg-white/[0.08]">
+                  <div
+                    className="h-full rounded-r-full"
+                    style={{
+                      backgroundColor: moment.teamColors.primary,
+                      boxShadow: `0 0 6px ${moment.teamColors.primary}60`,
+                      animation: 'arena-replay-progress 12s linear 0.5s both',
+                    }}
+                  />
+                </div>
               </div>
             </div>
             {/* Stat line bar — key play stats in jumbotron ticker style */}

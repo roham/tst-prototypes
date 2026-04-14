@@ -1310,6 +1310,18 @@ body {
   animation: arena-replay-tracking 0.8s ease-out 0.1s forwards;
 }
 
+/* Arena Replay Progress — jumbotron video scrubber on W screen */
+@keyframes arena-replay-progress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+@keyframes arena-replay-timestamp {
+  0% { opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
 /* Arena Fan Cam — jumbotron frame on W screen */
 @keyframes arena-fancam-badge {
   0%, 85% { opacity: 1; }

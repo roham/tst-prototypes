@@ -745,3 +745,15 @@
 - The timecode fades in at 1.8s delay — after score bug (1.2s), ticker, and other overlays have settled. Production markers appear last because they're the most subtle/technical detail.
 - Broadcast production overlay count is now: ticker (top), network bug (top-right), score bug (top-left), replay tag (mid-right), lower-third (bottom-left), REC indicator, ISO CAM label, SMPTE timecode, progress bar (bottom), lens flare, scanlines, grain, Ken Burns drift. 13 distinct broadcast elements — this is a genuine production control room.
 - Next cycle: Arena (rotation).
+
+## Cycle 83 Learnings
+- Basketball court lines as spatial grounding is a strong Arena metaphor — you're literally standing on the court. The SVG uses viewBox with centered positioning and 120% scale for natural bleed.
+- 3.5% opacity is the sweet spot for court lines — visible enough to recognize, invisible enough to not compete with content.
+- Next cycle: Supreme (rotation).
+
+## Cycle 84 Learnings
+- "SOLD" watermark on ENDED state is very Supreme: one word, diagonal, 3% opacity. References Sotheby's/Christie's sold lot stamps. Gives the ended state visual finality instead of just dimming/desaturating.
+- The context section (between hero and info strip) was the only section missing an entrance animation. Adding `supreme-context-enter` at 0.3s stagger fills the gap in the orchestrated reveal: hero (0.1s) → context (0.3s) → info (0.4s) → social (0.7s).
+- Reusing the existing `supreme-info-in` keyframe with a different delay is cleaner than creating a new keyframe for the same motion.
+- ENDED state improvements are low-delta but high-polish — they complete the lifecycle rather than improving the conversion path.
+- Next cycle: Broadcast (rotation).

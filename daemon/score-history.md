@@ -80,3 +80,15 @@
 | 16 | supreme | 8.0 | 7.0 | 7.5 | 7.0 | 8.5 | 7.58 | +0.43 | State transitions: critical vignette, phase labels, hero desaturation on ended, timer scaling |
 
 | 17 | broadcast | 8.5 | 7.0 | 8.0 | 7.0 | 8.5 | 7.80 | +0.25 | Editorial state transitions: phase labels, LIVE→Concluded, hero desat, CRITICAL red CTA, ended wrap-up |
+
+| 18 | arena | 8.0 | 7.5 | 7.5 | 7.5 | 8.5 | 7.78 | +0.43 | Live commerce state transitions: phase labels, critical vignette, hero desat, CTA morphs, stats freeze |
+
+### Full Scorecard — After Cycle 18 (STATE TRANSITIONS phase complete)
+
+| Direction | Visual | Conversion | Emotion | Interaction | Purity | Weighted |
+|-----------|--------|------------|---------|-------------|--------|----------|
+| Supreme | 8.0 | 7.0 | 7.5 | 7.0 | 8.5 | **7.58** |
+| Broadcast | 8.5 | 7.0 | 8.0 | 7.0 | 8.5 | **7.80** |
+| Arena | 8.0 | 7.5 | 7.5 | 7.5 | 8.5 | **7.78** |
+
+**STATE TRANSITIONS phase complete.** All 3 directions have full lifecycle: live → closing → critical → ended. Broadcast leads (7.80) but Arena closed the gap significantly (+0.43). Supreme weakest (7.58) — Conversion (7.0) and Interaction (7.0) lag. Cycles 19+ = REFINEMENT. Agent chooses based on lowest-scoring dimension.

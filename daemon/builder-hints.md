@@ -138,3 +138,21 @@
 - ENDED social proof switches from claim ticker to "X editions collected" — past tense signals finality.
 - All these transitions use CSS `transition-all duration-500/1000` — smooth, no jarring state flips.
 - Supreme Purity jumped to 8.5 — all changes were minimal (a label, a vignette, a filter). That's the Supreme way.
+
+## Cycle 18 Learnings
+- Arena state transitions reuse the same pattern as Supreme/Broadcast (phase labels, vignette, hero desat) but each feels distinct because of direction-specific styling.
+- CTA morphing through 4 copy states (OWN → GOING FAST → LAST CHANCE → DROP CLOSED) creates natural urgency escalation.
+- Hiding the LiveFeed on ended creates a sudden silence effect — the "crowd leaving the arena" feeling. Very Arena.
+- Stats bar ended state: changing "Claimed" → "Collected" (past tense), velocity to "—", progress bar to gray. Small changes, clear finality.
+- Background gradient pulse stopping on ended reinforces the "lights off" feeling.
+- Arena-critical-vignette at 1.2s is faster than Supreme's 1.5s — Arena should feel more frantic.
+- All 3 Purity scores now at 8.5 — state transitions were an opportunity to reinforce each direction's identity.
+
+## Strategic Notes — Post State Transitions Phase
+- STATE TRANSITIONS phase complete (cycles 16-18). All 3 have full lifecycle.
+- Entering REFINEMENT phase (cycles 19+). Agent picks weakest dimension.
+- Supreme weakest at 7.58 — Conversion (7.0) and Interaction (7.0) are the drag.
+- Broadcast leads at 7.80 — strongest Emotion (8.0) and Visual (8.5).
+- Arena at 7.78 — highest Conversion (7.5) and Interaction (7.5) across all 3.
+- Weakest dimensions across all: Conversion (7.0-7.5) and Interaction (7.0-7.5).
+- Next cycle: Supreme (weakest overall). Focus on Conversion or Interaction.

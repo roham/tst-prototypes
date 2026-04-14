@@ -1550,6 +1550,38 @@ function CourtLines({ teamColor, isEnded }: { teamColor: string; isEnded: boolea
   );
 }
 
+/* ─── Arena Laser Show — criss-crossing team-color laser beams in hero ── */
+
+function ArenaLaserShow({ teamColor, isActive }: { teamColor: string; isActive: boolean }) {
+  if (!isActive) return null;
+
+  const beams = [
+    { animation: 'arena-laser-sweep-1 7s cubic-bezier(0.4,0,0.6,1) infinite', top: '15%', delay: '0s' },
+    { animation: 'arena-laser-sweep-2 9s cubic-bezier(0.4,0,0.6,1) infinite', top: '55%', delay: '2.5s' },
+    { animation: 'arena-laser-sweep-3 8s cubic-bezier(0.4,0,0.6,1) infinite', top: '35%', delay: '4s' },
+  ];
+
+  return (
+    <div className="pointer-events-none absolute inset-0 z-[8] overflow-hidden">
+      {beams.map((beam, i) => (
+        <div
+          key={i}
+          className="absolute left-0 h-[1.5px]"
+          style={{
+            top: beam.top,
+            width: '200%',
+            background: `linear-gradient(90deg, transparent 0%, ${teamColor}08 15%, ${teamColor}30 45%, white 50%, ${teamColor}30 55%, ${teamColor}08 85%, transparent 100%)`,
+            boxShadow: `0 0 6px ${teamColor}25, 0 0 12px ${teamColor}12`,
+            animation: beam.animation,
+            animationDelay: beam.delay,
+            opacity: 0,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
@@ -1907,6 +1939,9 @@ export default function ArenaPage({
             }}
           />
         )}
+        {/* Arena laser show — criss-crossing team-color beams like NBA arena light rig */}
+        <ArenaLaserShow teamColor={moment.teamColors.primary} isActive={!countdown.isEnded} />
+
         {/* Dark overlay for legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/40 to-transparent" />
 

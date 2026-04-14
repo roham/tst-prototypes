@@ -928,6 +928,29 @@ body {
   100% { transform: translateY(-180px) scale(0.7); opacity: 0; }
 }
 
+/* Arena laser show — thin diagonal beams sweep across hero like NBA arena laser rigs */
+@keyframes arena-laser-sweep-1 {
+  0% { transform: translateX(-100%) rotate(25deg); opacity: 0; }
+  8% { opacity: 1; }
+  50% { transform: translateX(200%) rotate(25deg); opacity: 1; }
+  58% { opacity: 0; }
+  100% { transform: translateX(200%) rotate(25deg); opacity: 0; }
+}
+@keyframes arena-laser-sweep-2 {
+  0% { transform: translateX(200%) rotate(-30deg); opacity: 0; }
+  10% { opacity: 1; }
+  55% { transform: translateX(-100%) rotate(-30deg); opacity: 1; }
+  63% { opacity: 0; }
+  100% { transform: translateX(-100%) rotate(-30deg); opacity: 0; }
+}
+@keyframes arena-laser-sweep-3 {
+  0% { transform: translateX(-80%) rotate(15deg); opacity: 0; }
+  12% { opacity: 1; }
+  48% { transform: translateX(180%) rotate(15deg); opacity: 1; }
+  56% { opacity: 0; }
+  100% { transform: translateX(180%) rotate(15deg); opacity: 0; }
+}
+
 /* Arena spotlight sweep — cone of light panning across hero like NBA intro light rig */
 @keyframes arena-spotlight-sweep {
   0% { left: -20%; opacity: 0; }

@@ -514,28 +514,41 @@ export default function SupremePage() {
           }}
         />
 
-        {/* Team color ambient glow — top center */}
+        {/* Team color ambient glow — dual-layer for richness */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: `radial-gradient(ellipse 80% 60% at 50% 30%, ${moment.teamColors.primary}30 0%, transparent 70%)`,
+            background: `radial-gradient(ellipse 80% 60% at 50% 25%, ${moment.teamColors.primary}30 0%, transparent 65%), radial-gradient(ellipse 60% 30% at 50% 80%, ${moment.teamColors.primary}12 0%, transparent 50%)`,
           }}
         />
 
-        {/* Dark overlay for text legibility */}
+        {/* Dark overlay for text legibility — deeper gradient with team-color warmth */}
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(to top, #0B0E14 0%, rgba(11,14,20,0.4) 40%, transparent 70%)',
+            background: `linear-gradient(to top, #0B0E14 0%, rgba(11,14,20,0.6) 35%, rgba(11,14,20,0.2) 60%, transparent 80%)`,
+          }}
+        />
+        {/* Hero bottom edge shadow — creates depth at content transition */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none z-10"
+          style={{
+            background: 'linear-gradient(to top, #0B0E14, transparent)',
           }}
         />
 
         {/* Player name + stat line — bottom-left */}
         <div className="absolute bottom-6 left-5 right-5 z-10 supreme-hero-enter">
-          {/* Play type — above name, small */}
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/35 mb-2">
-            {moment.playType}
-          </p>
+          {/* Play type + matchup — grounded context */}
+          <div className="flex items-center gap-2 mb-2">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/35">
+              {moment.playType}
+            </p>
+            <span className="text-white/10">·</span>
+            <p className="text-[11px] uppercase tracking-[0.15em] text-white/25">
+              {moment.team} vs {moment.opponent}
+            </p>
+          </div>
           <h1
             className="text-[52px] sm:text-[64px] uppercase leading-[0.88] text-white"
             style={{
@@ -553,6 +566,11 @@ export default function SupremePage() {
           >
             {moment.statLine}
           </p>
+          {/* Thin team-color accent under stat line */}
+          <div
+            className="mt-3 h-[1px] w-12"
+            style={{ backgroundColor: `${moment.teamColors.primary}40` }}
+          />
         </div>
       </div>
 
@@ -572,7 +590,7 @@ export default function SupremePage() {
       {/* ============================================================= */}
       {/* INFO STRIP — timer + edition counter */}
       {/* ============================================================= */}
-      <div className="flex items-center justify-between px-5 py-3.5 supreme-info-enter">
+      <div className="flex items-center justify-between px-5 py-3.5 supreme-info-enter border-t border-white/[0.04]">
         {/* Timer */}
         <div className="flex flex-col">
           {/* Phase label — subtle state indicator */}

@@ -774,3 +774,14 @@
 - Tier selected glow (`arena-tier-selected-glow` 2s breathing pulse) is subtle but important — during live drops, it visually confirms "this is your selection" without adding text. Live auction highlight energy.
 - All 3 directions now have ENDED-state visual treatments: Supreme (SOLD watermark), Broadcast (end slate card), Arena (post-game box score + buzzer effect). Arena's is the most data-driven, which is on-brand.
 - Next cycle: Supreme (rotation).
+
+## Cycle 87 Learnings
+- Tier ambient shift (page aura reacts to tier selection) adds an interactive dimension that deepens the tier-browsing experience. The void responds to your intention — you're not just picking, you're previewing.
+- `useMemo` keyed on `selectedTier.tier` (not `selectedTierIdx`) is more semantically correct — the accent color should change when the tier name changes, not the index.
+- Gold tint on Legendary (#D4A017 warm gold) and Ultimate (#FEC524 pure gold) creates immediate premium signaling before the user reads the price. Gold = expensive is universal psychology.
+- Rare → team-color primary is the right choice (not a generic blue). It ties the "rare" tier to the specific moment's identity — a Heat rare feels different from a Nuggets rare.
+- Four elements participate: breathing vignette (box-shadow), CTA glow (background), edge trace (gradient+shadow), tier underline (background-color). Each transitions independently at 1s ease for smooth, deliberate shifts.
+- Urgency phases (CLOSING/CRITICAL) still override the tier tint — urgency always wins. The tier ambient shift is a "browsing mode" enhancement that yields to urgency colors when time pressure kicks in.
+- The `tierAccentColor` variable is derived once via useMemo and reused across all 4 application points — DRY and efficient.
+- This is Supreme's first tier-reactive ambient effect. Previously, tier selection only changed the underline indicator color (team-color). Now the entire ambient layer responds.
+- Next cycle: Broadcast (rotation). Broadcast could explore a similar concept — editorial tone shift on tier selection (e.g., different editorial tagline emphasis, or hero treatment variation per tier).

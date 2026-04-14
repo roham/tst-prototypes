@@ -1220,3 +1220,11 @@
 - Right-aligned role labels + left-aligned names is the standard credit card format.
 - "A TST Broadcast Production" is the correct industry phrasing (vs "TST Broadcast · Program Complete").
 - Next cycle: Arena (rotation).
+
+## Cycle 143 Learnings
+- Velocity-triggered banners are effective urgency signals — basketball-specific language ("FAST BREAK") creates authentic arena energy.
+- 4-phase state machine (in→hold→out→done) is the clean pattern for timed overlay animations — reusable across all directions.
+- 20s cooldown prevents banner fatigue while still allowing multiple triggers during a session.
+- Light streak sweep during hold phase adds premium polish to the banner — simple CSS gradient animation.
+- Found and fixed a missing DecibelMeter component on the W screen — always verify components exist when referenced.
+- Next cycle: Supreme (rotation).

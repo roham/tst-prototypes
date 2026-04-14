@@ -972,6 +972,12 @@ body {
   animation: broadcast-end-slate-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
 }
 
+/* SMPTE color bars — classic test pattern fades in behind off-air card */
+@keyframes broadcast-color-bars-in {
+  0% { opacity: 0; }
+  100% { opacity: 0.06; }
+}
+
 /* Broadcast countdown leader — 3-2-1-LIVE intro sequence */
 @keyframes broadcast-leader-digit {
   0% { opacity: 0; transform: scale(1.4); }

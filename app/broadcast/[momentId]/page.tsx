@@ -1745,11 +1745,42 @@ export default function BroadcastPage() {
             />
           )}
 
-          {/* Broadcast END SLATE — off-air card when drop concludes */}
+          {/* Broadcast END SLATE — SMPTE color bars + off-air card when drop concludes */}
           {countdown.isEnded && (
             <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none broadcast-end-slate">
+              {/* SMPTE color bars — classic broadcast test pattern behind off-air card */}
               <div
-                className="text-center px-8 py-4 rounded-sm"
+                className="absolute inset-0 overflow-hidden"
+                style={{ opacity: 0.06, animation: 'broadcast-color-bars-in 2s ease-out forwards' }}
+              >
+                {/* Top row — 7 primary bars */}
+                <div className="flex h-[67%]">
+                  {['#C0C0C0', '#C0C000', '#00C0C0', '#00C000', '#C000C0', '#C00000', '#0000C0'].map((c, i) => (
+                    <div key={i} className="flex-1" style={{ backgroundColor: c }} />
+                  ))}
+                </div>
+                {/* Middle castellations row */}
+                <div className="flex h-[8%]">
+                  {['#0000C0', '#131313', '#C000C0', '#131313', '#00C0C0', '#131313', '#C0C0C0'].map((c, i) => (
+                    <div key={i} className="flex-1" style={{ backgroundColor: c }} />
+                  ))}
+                </div>
+                {/* Bottom row — PLUGE + gray ramp */}
+                <div className="flex h-[25%]">
+                  <div className="flex-[3]" style={{ backgroundColor: '#00214C' }} />
+                  <div className="flex-1" style={{ backgroundColor: '#FFFFFF' }} />
+                  <div className="flex-[2]" style={{ backgroundColor: '#32006A' }} />
+                  <div className="flex-[6]" style={{ backgroundColor: '#131313' }} />
+                  <div className="flex-1" style={{ backgroundColor: '#090909' }} />
+                  <div className="flex-1" style={{ backgroundColor: '#131313' }} />
+                  <div className="flex-1" style={{ backgroundColor: '#1D1D1D' }} />
+                  <div className="flex-[3]" style={{ backgroundColor: '#131313' }} />
+                </div>
+              </div>
+
+              {/* Off-air card */}
+              <div
+                className="relative text-center px-8 py-4 rounded-sm"
                 style={{
                   backgroundColor: 'rgba(11,14,20,0.75)',
                   backdropFilter: 'blur(6px)',
@@ -1766,6 +1797,11 @@ export default function BroadcastPage() {
                   style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
                 >
                   This Broadcast Has Concluded
+                </p>
+                <p
+                  className="mt-1.5 text-[7px] font-mono uppercase tracking-[0.25em] text-white/10"
+                >
+                  Please Stand By
                 </p>
                 <div
                   className="h-[1px] w-10 mx-auto mt-3"

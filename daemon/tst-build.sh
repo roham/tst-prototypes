@@ -47,8 +47,7 @@ run_cycle() {
         -p \
         --dangerously-skip-permissions \
         --model opus \
-        --max-turns 120 \
-        --max-budget-usd 30.00 \
+        --max-turns 200 \
         > "$CYCLE_LOG" 2>&1 || {
             echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) ERROR: cycle failed (exit $?)" >> "$LOGDIR/tst-build.log"
             return 1

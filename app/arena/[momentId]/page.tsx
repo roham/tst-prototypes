@@ -3754,6 +3754,20 @@ export default function ArenaPage({
     return () => clearTimeout(timer);
   }, [tierVisible, countdown.isEnded, proto.state]);
 
+  /* ── Fan Cam Spotlight — jumbotron puts the viewer on the big screen ── */
+  const [fanCamActive, setFanCamActive] = useState(false);
+  const fanCamFiredRef = useRef(false);
+  useEffect(() => {
+    if (!tierVisible || countdown.isEnded || proto.state !== 'browsing' || fanCamFiredRef.current) return;
+    // Fire after 8s of tier browsing — before the 15s timeout
+    const timer = setTimeout(() => {
+      fanCamFiredRef.current = true;
+      setFanCamActive(true);
+      setTimeout(() => setFanCamActive(false), 3000);
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, [tierVisible, countdown.isEnded, proto.state]);
+
   /* ── Not found ──────────────────────────────────────────────── */
   if (!moment) {
     return (
@@ -3907,6 +3921,111 @@ export default function ArenaPage({
               <div className="h-[1px] w-10" style={{ backgroundColor: `${moment.teamColors.primary}60` }} />
               <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: moment.teamColors.primary, boxShadow: `0 0 8px ${moment.teamColors.primary}80` }} />
               <div className="h-[1px] w-10" style={{ backgroundColor: `${moment.teamColors.primary}60` }} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Fan Cam Spotlight — jumbotron puts the viewer on the big screen ─── */}
+      {fanCamActive && (
+        <div className="pointer-events-none fixed inset-0 z-[38] flex items-center justify-center">
+          {/* Subtle dark backdrop */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse 70% 60% at center, transparent 0%, rgba(11,14,20,0.7) 100%)`,
+            }}
+          />
+          {/* Jumbotron frame — thick border like the arena big screen */}
+          <div
+            className="relative flex flex-col items-center gap-3 px-10 py-6"
+            style={{
+              animation: 'arena-timeout-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            }}
+          >
+            {/* Corner bracket frames — jumbotron viewfinder */}
+            <div className="absolute top-0 left-0 w-8 h-8">
+              <div className="absolute top-0 left-0 w-full h-[3px] rounded-full" style={{ backgroundColor: moment.teamColors.primary, boxShadow: `0 0 10px ${moment.teamColors.primary}80` }} />
+              <div className="absolute top-0 left-0 h-full w-[3px] rounded-full" style={{ backgroundColor: moment.teamColors.primary, boxShadow: `0 0 10px ${moment.teamColors.primary}80` }} />
+            </div>
+            <div className="absolute top-0 right-0 w-8 h-8">
+              <div className="absolute top-0 right-0 w-full h-[3px] rounded-full" style={{ backgroundColor: moment.teamColors.primary, boxShadow: `0 0 10px ${moment.teamColors.primary}80` }} />
+              <div className="absolute top-0 right-0 h-full w-[3px] rounded-full" style={{ backgroundColor: moment.teamColors.primary, boxShadow: `0 0 10px ${moment.teamColors.primary}80` }} />
+            </div>
+            <div className="absolute bottom-0 left-0 w-8 h-8">
+              <div className="absolute bottom-0 left-0 w-full h-[3px] rounded-full" style={{ backgroundColor: moment.teamColors.primary, boxShadow: `0 0 10px ${moment.teamColors.primary}80` }} />
+              <div className="absolute bottom-0 left-0 h-full w-[3px] rounded-full" style={{ backgroundColor: moment.teamColors.primary, boxShadow: `0 0 10px ${moment.teamColors.primary}80` }} />
+            </div>
+            <div className="absolute bottom-0 right-0 w-8 h-8">
+              <div className="absolute bottom-0 right-0 w-full h-[3px] rounded-full" style={{ backgroundColor: moment.teamColors.primary, boxShadow: `0 0 10px ${moment.teamColors.primary}80` }} />
+              <div className="absolute bottom-0 right-0 h-full w-[3px] rounded-full" style={{ backgroundColor: moment.teamColors.primary, boxShadow: `0 0 10px ${moment.teamColors.primary}80` }} />
+            </div>
+
+            {/* FAN CAM badge */}
+            <div
+              className="flex items-center gap-2 px-3 py-1 rounded-sm"
+              style={{
+                backgroundColor: `${moment.teamColors.primary}20`,
+                border: `1px solid ${moment.teamColors.primary}50`,
+              }}
+            >
+              {/* Camera icon */}
+              <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill={moment.teamColors.primary}>
+                <path d="M2 4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4Zm4 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z" />
+              </svg>
+              <span
+                className="text-[10px] font-bold uppercase tracking-[0.3em]"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: moment.teamColors.primary,
+                  textShadow: `0 0 6px ${moment.teamColors.primary}60`,
+                }}
+              >
+                Fan Cam
+              </span>
+              {/* Live dot */}
+              <div
+                className="h-[5px] w-[5px] rounded-full animate-pulse"
+                style={{
+                  backgroundColor: '#EF4444',
+                  boxShadow: '0 0 4px #EF444460',
+                }}
+              />
+            </div>
+
+            {/* YOU'RE ON THE BOARD! */}
+            <span
+              className="text-3xl uppercase tracking-[0.2em] sm:text-4xl"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                fontWeight: 700,
+                color: '#F0F2F5',
+                textShadow: `0 0 24px ${moment.teamColors.primary}80, 0 0 48px ${moment.teamColors.primary}40, 0 2px 4px rgba(0,0,0,0.5)`,
+              }}
+            >
+              YOU&apos;RE UP!
+            </span>
+
+            {/* Subtext */}
+            <span
+              className="text-[10px] uppercase tracking-[0.25em]"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                fontWeight: 400,
+                color: `${moment.teamColors.primary}BB`,
+              }}
+            >
+              The arena is watching — claim your moment
+            </span>
+
+            {/* Accent lines */}
+            <div className="flex items-center gap-3 mt-1">
+              <div className="h-[1px] w-8" style={{ backgroundColor: `${moment.teamColors.primary}50` }} />
+              <div
+                className="h-1.5 w-1.5 rounded-full animate-pulse"
+                style={{ backgroundColor: moment.teamColors.primary, boxShadow: `0 0 8px ${moment.teamColors.primary}80` }}
+              />
+              <div className="h-[1px] w-8" style={{ backgroundColor: `${moment.teamColors.primary}50` }} />
             </div>
           </div>
         </div>

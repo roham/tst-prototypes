@@ -1080,6 +1080,19 @@ export default function ArenaPage({
               'DROP CLOSED'
             ) : proto.state === 'purchasing' ? (
               <span className="flex items-center justify-center gap-2">
+                {purchaseStage === 2 && (
+                  /* Checkmark burst on SECURED! */
+                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none">
+                    <path
+                      d="M6 10.5 L9 13.5 L14 7"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="arena-checkmark-draw"
+                    />
+                  </svg>
+                )}
                 <span
                   className="text-sm font-bold uppercase tracking-wider"
                   style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
@@ -1091,12 +1104,18 @@ export default function ArenaPage({
                       : 'SECURED!'}
                 </span>
               </span>
-            ) : isCritical ? (
-              `LAST CHANCE — $${moment.rarityTiers[selectedTierIdx].price}`
-            ) : isClosing ? (
-              `GOING FAST — $${moment.rarityTiers[selectedTierIdx].price}`
             ) : (
-              `OWN THIS MOMENT — $${moment.rarityTiers[selectedTierIdx].price}`
+              <span className="flex items-center justify-center gap-2">
+                {/* Lock — instant secure purchase */}
+                <svg className="h-4 w-4 opacity-50" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M11 7V5a3 3 0 0 0-6 0v2H4a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-1Zm-4.5-2a1.5 1.5 0 0 1 3 0v2h-3V5Z" />
+                </svg>
+                {isCritical
+                  ? `LAST CHANCE — $${moment.rarityTiers[selectedTierIdx].price}`
+                  : isClosing
+                    ? `GOING FAST — $${moment.rarityTiers[selectedTierIdx].price}`
+                    : `OWN THIS MOMENT — $${moment.rarityTiers[selectedTierIdx].price}`}
+              </span>
             )}
           </span>
         </button>
@@ -1105,7 +1124,7 @@ export default function ArenaPage({
         <div className="mt-2 flex flex-col items-center gap-0.5">
           {!countdown.isEnded && proto.state !== 'purchasing' && (
             <p className="text-[10px] text-white/[0.15] tracking-wide">
-              Instant checkout · 1-tap purchase
+              Instant checkout · Visa ··4242
             </p>
           )}
           <p className="text-center text-xs text-white/40">
@@ -1189,7 +1208,24 @@ export default function ArenaPage({
                   }}
                 />
               )}
-              <span className="relative z-10">
+              <span className="relative z-10 flex items-center justify-center gap-1.5">
+                {proto.state === 'purchasing' && purchaseStage === 2 && (
+                  <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none">
+                    <path
+                      d="M6 10.5 L9 13.5 L14 7"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="arena-checkmark-draw"
+                    />
+                  </svg>
+                )}
+                {proto.state !== 'purchasing' && (
+                  <svg className="h-3.5 w-3.5 opacity-50" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M11 7V5a3 3 0 0 0-6 0v2H4a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-1Zm-4.5-2a1.5 1.5 0 0 1 3 0v2h-3V5Z" />
+                  </svg>
+                )}
                 {proto.state === 'purchasing'
                   ? (purchaseStage === 0 ? 'RESERVING...' : purchaseStage === 1 ? 'PROCESSING...' : 'SECURED!')
                   : isCritical ? 'LAST CHANCE' : isClosing ? 'BUY NOW' : 'OWN IT'}

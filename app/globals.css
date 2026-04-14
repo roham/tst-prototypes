@@ -246,6 +246,16 @@ body {
   animation: supreme-burst-expand 2.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
 }
 
+/* Arena checkmark draw — punchy SVG path animation for "SECURED!" confirmation */
+.arena-checkmark-draw {
+  stroke-dasharray: 22;
+  stroke-dashoffset: 22;
+  animation: arena-draw-check 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes arena-draw-check {
+  to { stroke-dashoffset: 0; }
+}
+
 /* Broadcast checkmark draw — elegant SVG path animation for "Acquired." confirmation */
 .broadcast-checkmark-draw {
   stroke-dasharray: 22;

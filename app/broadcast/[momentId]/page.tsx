@@ -271,6 +271,113 @@ const OPPONENT_COLORS: Record<string, string> = {
   PHX: '#E56020',
 };
 
+// Per-moment iconic commentator calls — every great NBA moment has an iconic call
+const COMMENTATOR_CALLS: Record<string, { call: string; announcer: string; network: string }> = {
+  bam:   { call: 'THROWS IT DOWN!', announcer: 'Mike Breen', network: 'ESPN' },
+  jokic: { call: 'ARE YOU KIDDING ME?!', announcer: 'Kevin Harlan', network: 'TNT' },
+  sga:   { call: 'HE IS ON FIRE!', announcer: 'Mark Jones', network: 'ESPN' },
+};
+
+// ---------------------------------------------------------------------------
+// Commentator Call Banner — iconic play-by-play announcer call on replay
+// ESPN/TNT replays always overlay the announcer's call as a dramatic text
+// treatment. "BANG!" "ARE YOU KIDDING ME?!" "THROWS IT DOWN!" — the voice
+// made visual. Slams in from left after replay tag, with audio wave bars.
+// ---------------------------------------------------------------------------
+
+function CommentatorCallBanner({ momentId, teamColor, rgb }: {
+  momentId: string; teamColor: string; rgb: string;
+}) {
+  const [phase, setPhase] = useState<'waiting' | 'in' | 'holding' | 'out' | 'done'>('waiting');
+  const callData = COMMENTATOR_CALLS[momentId] ?? COMMENTATOR_CALLS.bam;
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase('in'), 5200);     // After replay tag + telestrator
+    const t2 = setTimeout(() => setPhase('holding'), 6000); // Fully in
+    const t3 = setTimeout(() => setPhase('out'), 8500);     // Hold 2.5s
+    const t4 = setTimeout(() => setPhase('done'), 9200);    // Fade complete
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+  }, []);
+
+  if (phase === 'done' || phase === 'waiting') return null;
+
+  return (
+    <div
+      className="absolute left-0 right-0 z-[22] pointer-events-none"
+      style={{
+        top: '52%',
+        animation: phase === 'out'
+          ? 'broadcast-call-fade-out 0.7s ease-in forwards'
+          : 'broadcast-call-slam-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+      }}
+    >
+      <div className="flex items-stretch max-w-[85%]">
+        {/* Team-color accent bar — left edge */}
+        <div
+          className="w-[4px] flex-shrink-0"
+          style={{ backgroundColor: teamColor }}
+        />
+        <div
+          className="relative flex items-center gap-3 px-5 py-3 overflow-hidden"
+          style={{
+            backgroundColor: 'rgba(11,14,20,0.92)',
+            backdropFilter: 'blur(10px)',
+            boxShadow: `4px 0 20px rgba(0,0,0,0.4), inset 0 0 0 0.5px rgba(${rgb},0.1)`,
+          }}
+        >
+          {/* Audio waveform bars — behind text, simulating live mic */}
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-[2px] opacity-[0.06]">
+            {Array.from({ length: 18 }).map((_, i) => (
+              <div
+                key={i}
+                className="w-[2.5px] rounded-full"
+                style={{
+                  height: `${14 + Math.sin(i * 0.8) * 10}px`,
+                  backgroundColor: teamColor,
+                  animation: `broadcast-call-wave ${0.3 + (i % 5) * 0.08}s ease-in-out ${i * 0.04}s infinite`,
+                  transformOrigin: 'center',
+                }}
+              />
+            ))}
+          </div>
+          {/* Mic icon — small broadcast microphone indicator */}
+          <svg
+            width="14" height="14" viewBox="0 0 24 24" fill="none"
+            className="flex-shrink-0"
+            style={{ opacity: 0.35 }}
+          >
+            <rect x="9" y="2" width="6" height="12" rx="3" stroke={teamColor} strokeWidth="1.5" />
+            <path d="M5 11a7 7 0 0014 0" stroke={teamColor} strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="12" y1="18" x2="12" y2="22" stroke={teamColor} strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+          {/* Call text — dramatic Oswald */}
+          <div className="flex flex-col gap-0.5">
+            <span
+              className="text-[clamp(1.1rem,4vw,1.5rem)] font-bold uppercase tracking-[0.08em] leading-tight text-white/90"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                textShadow: `0 0 20px rgba(${rgb},0.25)`,
+              }}
+            >
+              &ldquo;{callData.call}&rdquo;
+            </span>
+            <span
+              className="text-[8px] uppercase tracking-[0.25em]"
+              style={{
+                color: `rgba(${rgb},0.5)`,
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontStyle: 'italic',
+              }}
+            >
+              &mdash; {callData.announcer}, {callData.network}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Live game clock — ticks down through Q4 while the drop is active
 function useGameClock(isEnded: boolean) {
   // Start at ~2:00 remaining in Q4 and tick down
@@ -1813,6 +1920,15 @@ export default function BroadcastPage() {
           {/* TELESTRATOR — analyst circle annotation drawn on replay footage */}
           {!countdown.isEnded && (
             <TelestatorCircle teamColor={moment.teamColors.primary} rgb={rgb} />
+          )}
+
+          {/* COMMENTATOR CALL — iconic announcer call overlay on replay */}
+          {!countdown.isEnded && leaderDone && (
+            <CommentatorCallBanner
+              momentId={moment.id}
+              teamColor={moment.teamColors.primary}
+              rgb={rgb}
+            />
           )}
 
           {/* Anamorphic lens flare — horizontal light streak, classic broadcast camera */}

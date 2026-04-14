@@ -1,26 +1,68 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0B0E14;
+  --foreground: #F0F2F5;
+  --surface: #141925;
+  --surface-raised: #1C2333;
+  --accent-teal: #00E5A0;
+  --accent-orange: #FF6B35;
+  --accent-blue: #3B82F6;
+  --urgency-red: #EF4444;
+  --urgency-amber: #F59E0B;
+  --text-muted: #6B7A99;
+  --text-dim: #3D4B66;
+  --border: #1E2A3D;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-accent: var(--accent-teal);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-blue: var(--accent-blue);
+  --color-urgency: var(--urgency-red);
+  --color-urgency-amber: var(--urgency-amber);
+  --color-muted: var(--text-muted);
+  --color-dim: var(--text-dim);
+  --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-display: var(--font-oswald);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
 }
+
+/* Scrollbar styling for dark mode */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--text-dim); border-radius: 3px; }
+
+/* Pulse animation for urgency */
+@keyframes urgency-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.animate-urgency { animation: urgency-pulse 1s ease-in-out infinite; }
+
+@keyframes urgency-pulse-fast {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+}
+.animate-urgency-fast { animation: urgency-pulse-fast 0.5s ease-in-out infinite; }
+
+/* Confetti burst for W screen */
+@keyframes confetti-fall {
+  0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* Glow effect */
+.glow-teal { box-shadow: 0 0 20px rgba(0, 229, 160, 0.3); }
+.glow-orange { box-shadow: 0 0 20px rgba(255, 107, 53, 0.3); }

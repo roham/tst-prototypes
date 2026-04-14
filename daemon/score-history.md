@@ -64,3 +64,15 @@
 | 13 | supreme | 7.5 | 7.0 | 7.0 | 6.5 | 8.0 | 7.15 | +0.15 | Rarity tier selector: minimal horizontal picker, underline indicator, dynamic CTA price |
 
 | 14 | broadcast | 8.5 | 6.5 | 7.5 | 7.0 | 8.5 | 7.55 | +0.37 | Prestige tier cards: editorial taglines, diamond hierarchy, edition context, shimmer, low-stock pulse |
+
+| 15 | arena | 7.5 | 7.0 | 7.0 | 7.5 | 8.0 | 7.35 | +0.32 | Selectable rarity tiers: all tiers visible, dynamic CTA price, tier colors, low-stock urgency pulse |
+
+### Full Scorecard — After Cycle 15 (RARITY TIERS phase complete)
+
+| Direction | Visual | Conversion | Emotion | Interaction | Purity | Weighted |
+|-----------|--------|------------|---------|-------------|--------|----------|
+| Supreme | 7.5 | 7.0 | 7.0 | 6.5 | 8.0 | **7.15** |
+| Broadcast | 8.5 | 6.5 | 7.5 | 7.0 | 8.5 | **7.55** |
+| Arena | 7.5 | 7.0 | 7.0 | 7.5 | 8.0 | **7.35** |
+
+**RARITY TIERS phase complete.** All 3 directions have selectable tier systems with dynamic pricing. Supreme is weakest (7.15) — Interaction (6.5) and Emotion (7.0) lag. Broadcast leads (7.55) with strongest Visual (8.5) and Purity (8.5). Cycles 16-18 = STATE TRANSITIONS.

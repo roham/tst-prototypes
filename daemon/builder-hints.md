@@ -111,3 +111,21 @@
 - Tier tagline in the W certificate adds editorial depth to the confirmation screen.
 - Removed dead QRPlaceholder component — clean up unused code as you find it.
 - Broadcast Visual jumped from 8.0→8.5 — editorial details compound. Purity also up (8.0→8.5) because prestige auction is core Broadcast identity.
+
+## Cycle 15 Learnings
+- Arena RarityCards were display-only — not selectable, CTA showed `moment.price` instead of selected tier price. Critical UX bug.
+- Moving tiers ABOVE the CTA (instead of below) gives better flow: see options → select → buy. Reduces cognitive load.
+- Tier-specific colors (Open=teal, Rare=blue, Legendary=purple, Ultimate=amber) create instant visual hierarchy — no labels needed.
+- All 4 tiers visible (including Open) is better than hiding Open — user sees the full price range and feels the relative value.
+- Low-stock pulse (`arena-tier-urgent`) on premium tiers with ≤5 remaining creates auction urgency — very Arena.
+- Arena's Interaction score jumped 7.0→7.5 — the selectable tiers + dynamic CTA was the missing piece.
+
+## Strategic Notes — Post Rarity Phase
+- RARITY TIERS phase complete (cycles 13-15). All 3 have selectable tier systems.
+- Supreme weakest at 7.15 — Interaction (6.5) is the drag. The tier selector works but the overall flow could be tighter.
+- Broadcast leads at 7.55 — editorial prestige identity is cohering well.
+- Cycles 16-18 = STATE TRANSITIONS. Pre-drop → Live drop → Closing → Sold out → Post-window.
+- Each state should feel designed, not just toggled. This is about the full lifecycle of a drop.
+- Supreme already has phase-based urgency (OPEN/CLOSING/CRITICAL/ENDED). Need to make each feel more distinct visually.
+- Broadcast has urgency banner for CLOSING/CRITICAL. Needs pre-drop and sold-out states.
+- Arena has PanicBanner for closing. Needs pre-drop hype and sold-out finality.

@@ -31,3 +31,5 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 *Note: Code shipped as v0.14 but daemon log was not updated. Logged retroactively in cycle 14.*
 
 ## Cycle 14 | Direction: Broadcast | Score: 7.55 (+0.37) | Built: Prestige rarity tier cards — editorial taglines (Collector Edition / Limited Series / Museum Edition / Vault Reserve), diamond hierarchy icons, "X of Y" edition context, shimmer animation on premium tiers, low-stock amber pulse, tier tagline + diamonds in W certificate, removed unused QRPlaceholder | Time: 18:25
+
+## Cycle 15 | Direction: Arena | Score: 7.35 (+0.32) | Built: Selectable rarity tiers (all 4 tiers visible), dynamic CTA price updates on selection, tier-specific colors (Open=teal, Rare=blue, Legendary=purple, Ultimate=amber), top accent bars, low-stock red urgency pulse, tier moved above CTA for better flow | Time: 18:45

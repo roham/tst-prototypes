@@ -1411,3 +1411,10 @@
 - Adding labels above the tier name (not below) maintains the visual hierarchy: section → tier name → price → remaining → bidders. Top-to-bottom information architecture.
 - The `Math.max(...bidderCounts)` + `indexOf` approach is simple but effective for finding the popular tier. No new state needed.
 - Next cycle: Supreme (rotation).
+
+## Cycle 169 Learnings
+- Found and fixed a real bug: W screen Sale Record was hardcoded to `rarityTiers[0].price`. Always verify that data flows correctly through components — props that should be dynamic might have been hardcoded during initial implementation.
+- The gallery closing announcement adds institutional urgency at the right intensity level — softer than the gavel countdown, earlier in the phase timeline. Urgency should escalate gradually: subtle text → bold announcement → dramatic countdown.
+- Georgia serif italic at 10-18% opacity is the perfect register for Supreme's ambient text. It's readable when you're looking for it, invisible when scanning.
+- Bug fixes are high-value improvements even in the polish phase — they address real user-facing issues.
+- Next cycle: Broadcast (rotation).

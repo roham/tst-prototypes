@@ -1348,3 +1348,10 @@
 - Placing the trivia card between the chant ticker and tier selector puts engagement content at the decision funnel entrance. The user sees the trivia right before they see the tiers.
 - The arena page has an enormous number of overlays and jumbotron effects. Future Arena improvements should focus on the W screen (celebration), the tier selector interaction, or conversion-focused elements rather than adding more browsing overlays.
 - Next cycle: Supreme (rotation).
+
+## Cycle 160 Learnings
+- Museum framing conventions translate well to dark mode: weighted bottom (14px vs 10px) prevents optical sinking, even with subtle borders. The principle is the same whether the mat is white (traditional) or dark (our context).
+- The gallery exhibition stack is now complete in Supreme's hero: wall → ambient (particles) → mount (passe-partout) → glass (vitrine) → edge lighting (trace) → identification (lot number, wall label). Each layer has its own z-index and visual function.
+- Bevel shadows on the mount (inset light-above, dark-below) add perceived depth even at very low opacity — the eye reads the material separation subconsciously.
+- The gilt fillet (inner hairline in team-color) is an extremely subtle detail but it connects the mat border to the moment's team palette without being heavy. 8% opacity is the sweet spot.
+- Next cycle: Broadcast (rotation).

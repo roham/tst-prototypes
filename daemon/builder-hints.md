@@ -157,6 +157,13 @@
 - Broadcast page now has 5 distinct broadcast UI layers: ticker, network bug, score bug, replay tag, lower-third. The metaphor is complete.
 - Next cycle: Arena (rotation). Consider what Arena atmospheric element hasn't been explored yet.
 
+## Cycle 65 Learnings
+- Crowd wave is a vertical complement to the spotlight sweep (horizontal) — two cross-axis light movements create rich arena atmosphere.
+- 8s cycle is slow enough to be subliminal but fast enough to be noticeable over a page visit.
+- The gradient band with soft edges (transparent→6%→10%→6%→transparent) looks like real arena lighting, not a hard bar.
+- z-6 puts it above background gradients but below everything else — it affects the feel without interfering with content.
+- Arena now has 4 ambient atmospheric layers: bg pulse, spotlight sweep, crowd wave, LED flash. Each on a different axis/timing.
+
 ## Strategic Notes — Post State Transitions Phase
 - STATE TRANSITIONS phase complete (cycles 16-18). All 3 have full lifecycle.
 - Entering REFINEMENT phase (cycles 19+). Agent picks weakest dimension.

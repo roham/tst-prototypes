@@ -85,3 +85,5 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 ## Cycle 40 | Direction: Broadcast | Score: 9.00 (+0.10) | Built: Emotion lift — cinematic Ken Burns hero drift, dramatic oversized pull quote with decorative quotation mark, editorial closing thesis line | Time: 02:10
 
 ## Cycle 41 | Direction: Arena | Score: 9.00 (beyond-9.0 polish) | Built: Jumbotron stat counter roll-up animation — numbers count from 0 to final value on page load with ease-out quad easing (1.4s) | Time: 02:25
+
+## Cycle 42 | Direction: Supreme | Score: 9.00 (beyond-9.0 polish) | Built: Scroll-based parallax on hero — background moves at 0.4x speed, text stays fixed, Apple product-page depth effect | Time: 02:40

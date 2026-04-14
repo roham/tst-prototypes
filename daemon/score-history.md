@@ -217,3 +217,7 @@
 | 41 | arena | 9.0 | 9.0 | 9.0 | 9.0+ | 9.0 | 9.00+ | — | Beyond-9.0: jumbotron stat counter roll-up animation |
 
 **Cycle 41: BEYOND-9.0 TERRITORY.** Arena gets animated stat counter that rolls up from 0 to final value on page load — pure jumbotron energy. Scoring model maxes at 9.0 but experiential polish continues. Next: Supreme (rotation).
+
+| 42 | supreme | 9.0 | 9.0 | 9.0 | 9.0+ | 9.0 | 9.00+ | — | Beyond-9.0: scroll parallax hero depth (0.4x) |
+
+**Cycle 42: Supreme parallax.** Hero background moves at 0.4x scroll speed while text stays fixed — creates Apple-product-page depth separation. Next: Broadcast (rotation).

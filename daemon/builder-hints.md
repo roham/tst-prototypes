@@ -370,3 +370,11 @@
 - The animated stat counter is deeply Arena — no other direction should have it. Supreme's stats are static (confident, already-known). Broadcast's stats fly in as cards. Arena's stats roll up like a scoreboard.
 - Beyond-9.0 improvements are experiential: they don't change the scoring model but make the page feel genuinely alive and surprising. These are the details that make someone say "whoa" on first visit.
 - Next cycle: Supreme (rotation). Supreme needs its own beyond-9.0 experiment — perhaps the hero image having a subtle parallax effect on scroll, or the edition number having a premium engraving-style appearance.
+
+## Cycle 42 Learnings
+- Scroll parallax at 0.4x creates noticeable but subtle depth — 0.5x is too much (hero disappears too fast), 0.3x is barely perceptible. 0.4x is the sweet spot.
+- `will-change: transform` on the parallax wrapper prevents layout thrashing. `{ passive: true }` on the scroll listener prevents scroll jank.
+- requestAnimationFrame wrapping on scroll handler ensures smooth 60fps updates — raw scroll handlers can fire 100+ times/sec.
+- The parallax wrapper contains only the background layers (action image, player image, gradients). The text overlay sits outside and stays fixed — this is the key to the depth effect.
+- Supreme is the only direction that benefits from scroll parallax because it's the only one designed as a single-screen experience that MIGHT scroll. Broadcast is always scrollable (editorial), Arena is dashboard-style.
+- Next cycle: Broadcast (rotation). Broadcast needs a beyond-9.0 experiment. Ideas: animated ESPN-style stat counter (numbers roll up in the stat breakdown cards), or a more dramatic hero reveal animation.

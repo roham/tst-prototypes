@@ -1571,3 +1571,11 @@
 - Avatar brightness hierarchy (lead analyst at rgba 0.18/CC vs others at 0.1/66) subtly establishes a visual pecking order matching broadcast desk seating where the lead commentator is center-frame and most prominent.
 - The "LIVE FROM STUDIO" production label with red ping dot and "3 analysts" count in the header creates the same "we're cutting to the studio" energy that TNT does between game action and analysis segments.
 - Next cycle: Arena (rotation).
+
+## Cycle 195 Learnings
+- The PA announcer intro is the Arena equivalent of Supreme's lot inscription ceremony and Broadcast's countdown leader — each direction needs a distinct entrance ritual that sets the emotional tone before commerce begins.
+- 3-phase text reveal with escalating size/opacity (40% → 50% → 100%, 13px → 15px → clamp 2.5-4.5rem) creates a natural crescendo. The final name slam should be dramatically larger than the preamble lines — like the PA voice getting louder.
+- scale(1.4) → 0.96 → 1.02 → 1 on the name slam creates an elastic "impact" feeling — the name slams in oversized and settles with a slight bounce. This is the same spring easing pattern used in crowd countdown numbers.
+- Timing matters: 1.2s initial delay lets the gate scan animation complete first, 1.6s between lines gives the "dramatic pause" a real PA announcer uses, and 1.8s hold on the player name before fade lets it register.
+- The spotlight cone intensifying (0.4 → 1.0 opacity) when the player name appears mimics the real arena experience where the spot operator narrows the beam on the announced player.
+- Next cycle: Supreme (rotation).

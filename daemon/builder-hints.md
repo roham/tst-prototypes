@@ -1122,3 +1122,11 @@
 - Opacity range (0.04-0.06) is subtle enough to be atmospheric without obscuring the hero content. Fog should be felt, not seen.
 - Arena hero now has 6 atmospheric layers: bg pulse, fog haze (z-5), crowd wave (z-6), spotlight sweep (z-7), laser beams (z-8), LED scan line. Each at a different z-index, speed, and axis — they don't compete, they compound.
 - Next cycle: Supreme (rotation).
+
+## Cycle 129 Learnings
+- Formal auction catalogue descriptions add institutional gravitas at almost zero visual cost — they're 8px and 12% opacity, barely visible but the eye catches "Lot NNNN" and "Minted on Flow" and processes "this is real."
+- Wax seal emboss effect: inset box-shadow (light top, dark bottom) + radial gradient creates convincing raised relief in CSS. No images needed.
+- Reusing existing supreme-holo-ring animation for the wax seal text ring keeps code DRY and maintains consistent rotation speed across authentication elements.
+- The W screen now has 7 distinct authentication layers — each maps to a real auction house document. When looking for future Supreme improvements, check what physical artifact from an auction house is still missing.
+- Italic within tracked uppercase (the play type in catalogue entry) creates the typographic variation that real catalogues use — "Lot 1234. Digital Collectible. Bam Adebayo, *Monster Dunk*, 2026."
+- Next cycle: Broadcast (rotation).

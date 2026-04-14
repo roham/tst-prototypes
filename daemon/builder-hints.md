@@ -507,3 +507,12 @@
 - Hidden during ENDED (the museum has closed — lights off, particles settle) and purchasing (blur effect + focus on CTA — no distractions). These state-based visibility rules are becoming a standard pattern across all Supreme ambient effects.
 - Supreme now has 6 simultaneous ambient effects on the hero. This is likely the practical maximum — adding more would risk perceptible performance impact on low-end mobile devices. Future Supreme improvements should target non-hero areas.
 - Next cycle: Broadcast (rotation). Broadcast could use a subtle editorial "chapter marker" between sections, or a network crawl/breaking-news lower-third for the urgency phase.
+
+## Cycle 58 Learnings
+- "INSTANT REPLAY" is a quintessential broadcast overlay element — like the network bug and score ticker, it's a signal that says "you are watching a live broadcast." Adding it to the hero makes the entire page feel like watching ESPN.
+- The slide-in-from-right animation (translateX(110%) → translateX(0)) with `cubic-bezier(0.16, 1, 0.3, 1)` creates a spring-deceleration that mimics real broadcast graphic motion — fast enter, soft settle.
+- 4s total keyframe with 12% enter / 75% hold / 100% fade-out means the tag is visible for ~2.5s. Long enough to register, short enough to not linger. Real broadcast replay markers work the same way.
+- Positioning at top-[38%] places it in the visual dead zone between the top status bar and the lower-third — a space that has no content competition. Right-aligned feels correct for broadcast (most ESPN overlays enter from the right).
+- The team-color accent bar (3px vertical) + dot + Oswald text is consistent with the broadcast lower-third's left-edge accent — same visual language, different position.
+- Broadcast hero now has 5 graphic overlay elements: score ticker (top), network bug (corner), instant replay tag (mid-right), lower-third (bottom-left), and lens flare (drifting). Together with film grain and scanlines, the broadcast illusion is nearly complete.
+- Next cycle: Arena (rotation). Arena could use a "timeout" or "challenge" themed overlay, or animated seat-filling visualization.

@@ -148,11 +148,13 @@ function WScreen({
   moment,
   editionNumber,
   purchaseTime,
+  tierName,
   onReset,
 }: {
   moment: Moment;
   editionNumber: number;
   purchaseTime: number | null;
+  tierName: string;
   onReset: () => void;
 }) {
   const [show, setShow] = useState(false);
@@ -276,6 +278,14 @@ function WScreen({
 
           {/* Edition serial — luxury serial number treatment */}
           <div className="mt-6 flex flex-col items-center">
+            {tierName !== 'Open' && (
+              <span
+                className="text-[9px] font-bold uppercase tracking-[0.3em] mb-2"
+                style={{ color: moment.teamColors.primary }}
+              >
+                {tierName} Edition
+              </span>
+            )}
             <div className="flex items-baseline gap-2">
               <span
                 className="text-[32px] font-mono font-bold tabular-nums tracking-tight"
@@ -341,6 +351,7 @@ export default function SupremePage() {
   const { state: viewPhase, editionNumber, purchaseTime, purchase, reset } = usePrototypeState(momentId);
 
   const watching = useSocialProof(moment ? 30 + moment.editionsClaimed % 40 : 30);
+  const [selectedTierIdx, setSelectedTierIdx] = useState(0);
 
   // Derive drop phase from countdown
   const dropPhase = derivePhase(countdown.totalSeconds);
@@ -360,6 +371,7 @@ export default function SupremePage() {
     );
   }
 
+  const selectedTier = moment.rarityTiers[selectedTierIdx];
   const progressPct = ((claimed / moment.editionSize) * 100).toFixed(1);
   const remaining = moment.editionSize - claimed;
 
@@ -374,6 +386,7 @@ export default function SupremePage() {
         moment={moment}
         editionNumber={editionNumber ?? moment.editionsClaimed + 1}
         purchaseTime={purchaseTime}
+        tierName={selectedTier.tier}
         onReset={reset}
       />
     );
@@ -384,7 +397,7 @@ export default function SupremePage() {
   const isEnded = dropPhase === 'ENDED';
 
   let buttonBg = '#00E5A0';
-  let buttonText = `OWN THIS MOMENT — $${moment.price}`;
+  let buttonText = `OWN THIS MOMENT — $${selectedTier.price}`;
   let buttonTextColor = '#0B0E14';
   let buttonAnimation = '';
 
@@ -398,7 +411,7 @@ export default function SupremePage() {
     buttonTextColor = '#6B7A99';
   } else if (dropPhase === 'CRITICAL') {
     buttonBg = '#EF4444';
-    buttonText = `OWN THIS MOMENT — $${moment.price}`;
+    buttonText = `OWN THIS MOMENT — $${selectedTier.price}`;
     buttonTextColor = '#FFFFFF';
     buttonAnimation = 'animate-urgency-fast';
   } else if (dropPhase === 'CLOSING') {
@@ -577,6 +590,57 @@ export default function SupremePage() {
               }}
             />
           </div>
+        </div>
+      </div>
+
+      {/* ============================================================= */}
+      {/* RARITY TIERS — minimal horizontal selector */}
+      {/* ============================================================= */}
+      <div className="px-5 mt-3 supreme-info-enter">
+        <div className="flex items-center justify-center gap-1">
+          {moment.rarityTiers.map((tier, idx) => {
+            const isSelected = idx === selectedTierIdx;
+            const isLow = tier.remaining <= 5;
+            return (
+              <button
+                key={tier.tier}
+                onClick={() => setSelectedTierIdx(idx)}
+                className="relative px-3 py-2 text-center transition-all duration-200"
+              >
+                <span
+                  className={`block text-[10px] uppercase tracking-[0.15em] font-semibold transition-colors duration-200 ${
+                    isSelected ? 'text-white/80' : 'text-white/25'
+                  }`}
+                >
+                  {tier.tier}
+                </span>
+                <span
+                  className={`block text-sm font-bold tabular-nums transition-colors duration-200 ${
+                    isSelected ? 'text-white' : 'text-white/30'
+                  }`}
+                >
+                  ${tier.price}
+                </span>
+                {tier.tier !== 'Open' && (
+                  <span
+                    className={`block text-[9px] tabular-nums transition-colors duration-200 ${
+                      isLow ? 'text-[#EF4444]/60' : isSelected ? 'text-white/25' : 'text-white/15'
+                    }`}
+                  >
+                    {tier.remaining} left
+                  </span>
+                )}
+                {/* Underline indicator */}
+                <div
+                  className="absolute bottom-0 left-3 right-3 h-[1px] transition-all duration-200"
+                  style={{
+                    backgroundColor: isSelected ? moment.teamColors.primary : 'transparent',
+                    opacity: isSelected ? 0.6 : 0,
+                  }}
+                />
+              </button>
+            );
+          })}
         </div>
       </div>
 

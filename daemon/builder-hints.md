@@ -1516,3 +1516,12 @@
 - Distributing interest counts realistically (Open=18-29, Rare=8-14, Legendary=3-6, Ultimate=1-2) prevents the "everything is equally popular" flatness. Premium tiers should show FEWER interests but each feels more significant — 2 interests on Ultimate is more intimidating than 25 on Open.
 - The flash animation (scale 1.08 + text-shadow) on interest count changes provides real-time "activity" signal without being disruptive. At 4-8s intervals, it's frequent enough to notice but not chaotic.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 186 Learnings
+- The final 10-second countdown is the highest-tension moment in any timed commerce experience. Making it visually overwhelming (massive numbers, expanding rings) rather than just adding more red glow to existing elements creates a qualitatively different urgency level.
+- Key by `num` prop to remount the CrowdCountdown component on each second change — this restarts all CSS animations cleanly without needing refs or state resets. React's reconciler handles the cleanup.
+- Size escalation (80px→140px) as numbers decrease is more powerful than constant size with color changes. The number "2" taking up more screen than "8" creates a sense of the countdown closing in on you — like the jumbotron zooming in.
+- z-index layering matters: at z-44, the crowd countdown sits below the buzzer (z-45-47), creating a natural hand-off: countdown... countdown... 1... FINAL. The buzzer's "FINAL" text replaces the countdown seamlessly.
+- 0.9s animation duration for a 1s tick leaves a 100ms gap before the next number — this creates the "breathe" between slams that makes each hit feel distinct. Without the gap, numbers blur together.
+- "GOING GOING GONE" at ≤3s is a live auction crossover that works perfectly in Arena's vocabulary. It's not institutional (that's Supreme's "FAIR WARNING → GOING ONCE → GOING TWICE") — it's the raw crowd version.
+- Next cycle: Supreme (rotation).

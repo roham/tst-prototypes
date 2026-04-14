@@ -165,3 +165,19 @@
 - Small delta (+0.20) because these are refinements, not structural changes. But Conversion and Interaction both lifted from 7.0 → 7.5.
 - All 3 directions now at 7.78-7.80. Very close. Next cycle should target whichever is NOT Supreme (can't repeat).
 - Broadcast next (7.80 but Conversion still 7.0 — lowest across all 3).
+
+## Cycle 21 Learnings
+- Multi-stage purchase progress (Reserving → Processing → Secured!) with a filling progress bar inside the button is far better than a generic spinner — deterministic-feeling progress feels faster.
+- Active buyer badge ("X buying this tier now") with ping animation adds live commerce urgency right at the point of decision — very Arena.
+- "Instant checkout · 1-tap purchase" at low opacity (15%) is subliminal friction reduction, consistent with Supreme's approach.
+- Progress bar inside the CTA button (absolute positioned, 30% opacity fill) creates a "racing" feel without adding extra UI elements.
+- All 3 directions now have stored-payment indicators and urgency CTA copy phases — conversion toolkit is standardized.
+- Conversion jumped 7.5→8.0, Interaction jumped 7.5→8.0. The purchase flow stages were the key lift.
+
+## Strategic Notes — Post Refinement Round 1
+- REFINEMENT round 1 complete. All 3 got conversion lift improvements.
+- Supreme weakest at 7.78 — Interaction (7.5) is the drag. Visual (8.0) also trails Broadcast's 8.5.
+- Broadcast leads at 8.00 — but Interaction (7.0) is the weakest dimension across ALL directions.
+- Arena at 7.98 — strongest Conversion (8.0) and tied for best Interaction (8.0).
+- Next cycle: Supreme (weakest overall, and hasn't been touched since cycle 19). Focus on Interaction or Visual.
+- Broadcast Interaction (7.0) is the single weakest dimension — cycle 23 should target that aggressively.

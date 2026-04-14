@@ -94,3 +94,15 @@
 **STATE TRANSITIONS phase complete.** All 3 directions have full lifecycle: live → closing → critical → ended. Broadcast leads (7.80) but Arena closed the gap significantly (+0.43). Supreme weakest (7.58) — Conversion (7.0) and Interaction (7.0) lag. Cycles 19+ = REFINEMENT. Agent chooses based on lowest-scoring dimension.
 
 | 19 | supreme | 8.0 | 7.5 | 7.5 | 7.5 | 8.5 | 7.78 | +0.20 | Conversion lift: CTA urgency copy phases, progress ring, stored-payment indicator, tier haptic |
+| 20 | broadcast | 8.5 | 7.5 | 8.0 | 7.0 | 8.5 | 8.00 | +0.20 | Conversion lift: CLOSING phase CTA copy, faster CRITICAL pulse, registered collector indicator, tier haptic |
+| 21 | arena | 8.0 | 8.0 | 7.5 | 8.0 | 8.5 | 7.98 | +0.20 | Conversion lift: multi-stage purchase progress, active buyer badge, 1-tap checkout indicator |
+
+### Full Scorecard — After Cycle 21 (all directions touched — REFINEMENT round 1 complete)
+
+| Direction | Visual | Conversion | Emotion | Interaction | Purity | Weighted |
+|-----------|--------|------------|---------|-------------|--------|----------|
+| Supreme | 8.0 | 7.5 | 7.5 | 7.5 | 8.5 | **7.78** |
+| Broadcast | 8.5 | 7.5 | 8.0 | 7.0 | 8.5 | **8.00** |
+| Arena | 8.0 | 8.0 | 7.5 | 8.0 | 8.5 | **7.98** |
+
+**REFINEMENT round 1 complete.** All 3 got conversion lift. Broadcast leads (8.00) but Arena nearly caught up (7.98). Supreme weakest (7.78) — Interaction (7.5) and Visual (8.0) are the drag. Weakest dimension: Broadcast Interaction (7.0). Next round should target weakest overall dims.

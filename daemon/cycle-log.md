@@ -43,3 +43,5 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 ## Cycle 19 | Direction: Supreme | Score: 7.78 (+0.20) | Built: Conversion lift — CLOSING SOON/LAST CHANCE CTA copy phases, SVG progress ring during purchase, "Instant checkout · Stored payment" indicator, tier selector active:scale haptic | Time: 20:00
 
 ## Cycle 20 | Direction: Broadcast | Score: 8.00 (+0.20) | Built: Conversion lift — "Closing Soon — Collect Now" CTA copy, faster CRITICAL pulse (animate-urgency-fast), "Registered collector · Instant acquisition" indicator, tier card active:scale haptic, CLOSING phase CTA pulse | Time: 20:15
+
+## Cycle 21 | Direction: Arena | Score: 7.98 (+0.20) | Built: Conversion lift — multi-stage purchase progress bar (Reserving→Processing→Secured), active buyer count badge near CTA, "Instant checkout · 1-tap purchase" indicator | Time: 20:35

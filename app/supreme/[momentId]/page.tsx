@@ -541,6 +541,18 @@ export default function SupremePage() {
       style={{ backgroundColor: bgColor }}
     >
       {/* ============================================================= */}
+      {/* AMBIENT BREATHING VIGNETTE — slow team-color edge pulse */}
+      {/* ============================================================= */}
+      {!isEnded && dropPhase !== 'CRITICAL' && (
+        <div
+          className="fixed inset-0 z-[5] pointer-events-none supreme-breathe-vignette"
+          style={{
+            boxShadow: `inset 0 0 120px ${moment.teamColors.primary}08, inset 0 0 60px ${moment.teamColors.primary}05`,
+          }}
+        />
+      )}
+
+      {/* ============================================================= */}
       {/* CRITICAL VIGNETTE — red-tinted edge glow */}
       {/* ============================================================= */}
       {dropPhase === 'CRITICAL' && (
@@ -671,7 +683,7 @@ export default function SupremePage() {
             style={{
               fontFamily: 'var(--font-oswald), sans-serif',
               fontWeight: 700,
-              textShadow: '0 2px 30px rgba(0,0,0,0.7)',
+              textShadow: `0 2px 30px rgba(0,0,0,0.7), 0 0 40px ${moment.teamColors.primary}18, 0 1px 0 rgba(255,255,255,0.04)`,
             }}
           >
             {moment.player}

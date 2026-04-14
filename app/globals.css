@@ -295,6 +295,15 @@ body {
   animation: supreme-light-sweep 8s ease-in-out infinite;
 }
 
+/* Supreme ambient breathing vignette — slow team-color edge glow */
+@keyframes supreme-breathe-vignette {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+.supreme-breathe-vignette {
+  animation: supreme-breathe-vignette 6s ease-in-out infinite;
+}
+
 /* Broadcast hero — slow cinematic Ken Burns drift for emotional tension */
 @keyframes broadcast-ken-burns {
   0% { transform: scale(1) translate(0, 0); }

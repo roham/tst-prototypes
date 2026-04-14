@@ -162,3 +162,14 @@
 
 | 31 | supreme | 8.5 | 8.5 | 8.5 | 8.5 | 9.0 | 8.58 | +0.20 | Conversion+interaction: minimal sticky CTA for overflow, hero blur during purchase |
 | 32 | broadcast | 8.5 | 8.5 | 8.5 | 8.5 | 9.0 | 8.58 | +0.20 | Conversion+interaction: sticky purchase progress, scroll chevron, scarcity in sticky |
+| 33 | arena | 8.5 | 8.5 | 8.5 | 9.0 | 9.0 | 8.65 | +0.07 | Interaction+visual: sticky purchase progress, feed item glow |
+
+### Full Scorecard — After Cycle 33 (all directions touched — REFINEMENT round 5 complete)
+
+| Direction | Visual | Conversion | Emotion | Interaction | Purity | Weighted |
+|-----------|--------|------------|---------|-------------|--------|----------|
+| Supreme | 8.5 | 8.5 | 8.5 | 8.5 | 9.0 | **8.58** |
+| Broadcast | 8.5 | 8.5 | 8.5 | 8.5 | 9.0 | **8.58** |
+| Arena | 8.5 | 8.5 | 8.5 | 9.0 | 9.0 | **8.65** |
+
+**REFINEMENT round 5 complete.** Arena leads again (8.65) with Interaction at 9.0 — first non-Purity dimension to hit 9. Supreme and Broadcast tied at 8.58 with all non-Purity dims at 8.5. Diminishing returns territory — each cycle needs targeted, specific improvements. Next round starts with Supreme.

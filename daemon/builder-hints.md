@@ -282,3 +282,11 @@
 - Broadcast's sticky bar during purchase uses shortened copy ("Reserving..." vs "Reserving your edition...") for the narrower sticky layout — adapt copy to container size.
 - All 3 directions now at 8.58. Dead heat. Arena's weakest dim is... all at 8.5. Supreme and Broadcast also 8.5 across non-Purity. Entering true polish territory.
 - Next cycle: Arena (rotation). All tied at 8.58 — any direction is valid, but rotation says Arena.
+
+## Cycle 33 Learnings
+- Sticky bar during purchase is now a standardized pattern across all 3 directions. Each one styles it differently: Supreme (just button + glow), Broadcast (progress wipe + editorial copy), Arena (progress bar + status + active buyers toggle).
+- Team-color glow on the latest feed item (`boxShadow: 0 0 12px ${teamColor}30`) makes the newest purchase visually pop in the scrolling feed. Cheap, high-impact.
+- Small delta (+0.07) — Arena was already strong. Only Interaction moved (8.5→9.0). Diminishing returns at this score level.
+- Arena Interaction at 9.0 is the first non-Purity dimension to hit 9 across any direction. The live-commerce sticky with purchase feedback is what pushed it over.
+- All 3 directions now show purchase progress in their sticky bars. The pattern is complete.
+- Next cycle: Supreme (rotation). Supreme at 8.58 — all dims at 8.5 except Purity 9.0. Need to find what pushes Supreme to 9.0 in any dimension.

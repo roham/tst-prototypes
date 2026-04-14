@@ -1450,3 +1450,11 @@
 - 36px digits in a bordered panel create far more visual urgency than 14px mono text. Size IS the urgency signal in broadcast language — the game clock gets bigger when time matters more.
 - Falling back to the standard elegant countdown during non-CRITICAL phases preserves the editorial calm of the browsing experience. The escalation only fires when it matters.
 - Next cycle: Arena (rotation).
+
+## Cycle 174 Learnings
+- Fixed-position floating notifications are high-impact for live commerce pages because social proof needs to persist at any scroll position. The LiveFeed was good but disappeared when scrolling — toasts solve this.
+- Max 2 stacked toasts prevents clutter while maintaining urgency. Whatnot caps at 2-3 visible — more becomes noise, fewer loses the "velocity" feel.
+- Slide-in from left (not right) avoids conflicting with potential sticky CTA or navigation elements on the right. Top-left placement below the header is the Whatnot convention.
+- The `exiting` flag pattern (set state to trigger exit animation, then remove after animation duration) keeps exit animations smooth without needing an animation library.
+- z-28 is the right layer: above page content (z-1) and crowd reactions (z-25), below the fixed header (z-30) and jumbotron overlays (z-60). The toasts should feel part of the environment, not interrupt it.
+- Next cycle: Supreme (rotation).

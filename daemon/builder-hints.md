@@ -1444,3 +1444,9 @@
 - Reactive tier pricing in the hero estimate (updating when the user selects a tier below fold) creates a subtle connection between above-fold and below-fold content. The hero stays alive as the user interacts below.
 - ENDED state showing "Sold · $X" in the hero is the auction-house equivalent of the lot result — every sold lot at Christie's/Sotheby's shows its hammer price in the catalogue.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 173 Learnings
+- Graphic escalation (making an existing element bigger/more prominent during urgency) is more effective than adding new elements. The countdown was already there — making it dominant during CRITICAL is a layout-preserving urgency amplifier.
+- 36px digits in a bordered panel create far more visual urgency than 14px mono text. Size IS the urgency signal in broadcast language — the game clock gets bigger when time matters more.
+- Falling back to the standard elegant countdown during non-CRITICAL phases preserves the editorial calm of the browsing experience. The escalation only fires when it matters.
+- Next cycle: Arena (rotation).

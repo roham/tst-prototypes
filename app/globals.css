@@ -661,6 +661,40 @@ body {
   opacity: 0;
 }
 
+/* Broadcast player name reveal wipe — ESPN pregame player intro graphic */
+@keyframes broadcast-name-reveal {
+  0% { clip-path: inset(0 100% 0 0); }
+  100% { clip-path: inset(0 0% 0 0); }
+}
+@keyframes broadcast-name-edge {
+  0% { left: 0%; opacity: 1; }
+  85% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+.broadcast-name-reveal {
+  clip-path: inset(0 100% 0 0);
+  animation: broadcast-name-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+}
+.broadcast-name-edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  pointer-events: none;
+  opacity: 0;
+  animation: broadcast-name-edge 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+}
+
+/* Broadcast SMPTE timecode — production feed running counter */
+@keyframes broadcast-tc-fadein {
+  0% { opacity: 0; }
+  100% { opacity: 0.2; }
+}
+.broadcast-timecode {
+  animation: broadcast-tc-fadein 0.5s ease-out 1.8s both;
+}
+
 /* Arena W screen — crowd roar EQ bars (dramatic spike on reveal) */
 @keyframes arena-roar-bar {
   0% { height: 8%; }

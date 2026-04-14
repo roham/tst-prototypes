@@ -87,6 +87,33 @@ function useTypewriter(text: string, started: boolean, speed = 28) {
   return { displayText: text.slice(0, charIndex), done, started };
 }
 
+// SMPTE timecode — running production counter (HH:MM:SS:FF format)
+function useSmpteTimecode(isEnded: boolean) {
+  const [tc, setTc] = useState('00:00:00:00');
+  const startRef = useRef(0);
+  const rafRef = useRef(0);
+  useEffect(() => {
+    if (isEnded) return;
+    startRef.current = performance.now();
+    function tick() {
+      const elapsed = performance.now() - startRef.current;
+      const totalFrames = Math.floor(elapsed / (1000 / 30)); // 30fps
+      const ff = totalFrames % 30;
+      const totalSec = Math.floor(totalFrames / 30);
+      const ss = totalSec % 60;
+      const mm = Math.floor(totalSec / 60) % 60;
+      const hh = Math.floor(totalSec / 3600);
+      setTc(
+        `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}:${String(ff).padStart(2, '0')}`
+      );
+      rafRef.current = requestAnimationFrame(tick);
+    }
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [isEnded]);
+  return tc;
+}
+
 // Full team name for the broadcast overlay
 const TEAM_FULL: Record<string, string> = {
   MIA: 'Miami Heat',
@@ -504,6 +531,7 @@ export default function BroadcastPage() {
   const dropPhase = derivePhase(countdown.totalSeconds);
   const urgencyCopy = editorialUrgencyCopy(dropPhase, countdown.totalSeconds);
   const recentCollectors = useRecentCollectors();
+  const smpteTimecode = useSmpteTimecode(countdown.isEnded);
 
   // ── Confirmed: Certificate of Ownership ────────────────────────────────
   if (proto.state === 'confirmed') {
@@ -698,16 +726,26 @@ export default function BroadcastPage() {
               </span>
             </div>
 
-            {/* Player name — Oswald condensed broadcast headline */}
-            <h1
-              className="text-[clamp(2.8rem,9vw,5.5rem)] uppercase leading-[0.88] tracking-tight text-white pl-3"
-              style={{
-                fontFamily: 'var(--font-oswald), sans-serif',
-                fontWeight: 700,
-              }}
-            >
-              {moment.player}
-            </h1>
+            {/* Player name — Oswald condensed broadcast headline with reveal wipe */}
+            <div className="relative pl-3">
+              <h1
+                className="text-[clamp(2.8rem,9vw,5.5rem)] uppercase leading-[0.88] tracking-tight text-white broadcast-name-reveal"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  fontWeight: 700,
+                }}
+              >
+                {moment.player}
+              </h1>
+              {/* Wipe edge highlight — bright team-color line traveling with the reveal */}
+              <div
+                className="broadcast-name-edge"
+                style={{
+                  backgroundColor: moment.teamColors.primary,
+                  boxShadow: `0 0 12px ${moment.teamColors.primary}, 0 0 28px ${moment.teamColors.primary}60`,
+                }}
+              />
+            </div>
 
             {/* Stat line — broadcast stat card style */}
             <div className="mt-3 pl-3 flex items-center gap-3">
@@ -794,6 +832,10 @@ export default function BroadcastPage() {
               {/* ISO CAM label — technical camera designation, updates on feed cut */}
               <span className="text-[7px] font-mono uppercase tracking-[0.15em] text-white/20 transition-opacity duration-200">
                 {camLabel}
+              </span>
+              {/* SMPTE timecode — running production counter */}
+              <span className="text-[7px] font-mono tabular-nums tracking-[0.08em] text-white/15 broadcast-timecode">
+                {smpteTimecode}
               </span>
             </div>
           )}

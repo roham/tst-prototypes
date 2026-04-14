@@ -2085,6 +2085,82 @@ export default function BroadcastPage() {
           {/* ESPN-style stat breakdown */}
           <StatBreakdown statLine={moment.statLine} teamColor={moment.teamColors.primary} />
 
+          {/* ── ANALYST REACTION — ESPN "SportsCenter" studio take ── */}
+          {/* Every broadcast cuts to the analyst desk for expert commentary. */}
+          <div className="mt-8 mb-8 relative">
+            {/* Broadcast lower-third style header */}
+            <div className="flex items-center gap-2 mb-3">
+              <span
+                className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
+                style={{
+                  backgroundColor: `rgba(${rgb},0.12)`,
+                  color: moment.teamColors.primary,
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                }}
+              >
+                Analysis
+              </span>
+              <div className="h-[1px] flex-1 bg-white/[0.06]" />
+            </div>
+            {/* Analyst card — studio desk energy */}
+            <div
+              className="relative rounded-md border overflow-hidden"
+              style={{
+                borderColor: `rgba(${rgb},0.12)`,
+                backgroundColor: 'rgba(20,25,37,0.5)',
+              }}
+            >
+              {/* Team-color top accent bar */}
+              <div
+                className="absolute top-0 left-0 right-0 h-[2px]"
+                style={{ backgroundColor: `${moment.teamColors.primary}40` }}
+              />
+              <div className="px-4 py-3.5 flex gap-3">
+                {/* Analyst avatar — circular initial */}
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                  style={{
+                    backgroundColor: `rgba(${rgb},0.15)`,
+                    border: `1px solid rgba(${rgb},0.2)`,
+                  }}
+                >
+                  <span
+                    className="text-[10px] font-bold"
+                    style={{ color: `${moment.teamColors.primary}80`, fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {moment.id === 'bam' ? 'RJ' : moment.id === 'jokic' ? 'JJ' : 'CW'}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  {/* Name + role */}
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="text-[11px] font-bold uppercase tracking-[0.08em] text-white/60"
+                      style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                    >
+                      {moment.id === 'bam' ? 'Richard Jefferson' : moment.id === 'jokic' ? 'JJ Redick' : 'Chiney Ogwumike'}
+                    </span>
+                    <span className="text-[8px] font-mono uppercase tracking-[0.15em] text-white/20">
+                      TST Analyst
+                    </span>
+                  </div>
+                  {/* Hot take — per-moment expert opinion */}
+                  <p
+                    className="mt-1.5 text-[12px] leading-relaxed text-white/35"
+                    style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+                  >
+                    &ldquo;{moment.id === 'bam'
+                      ? 'This is the Bam we\u2019ve been waiting for. When he\u2019s this aggressive, Miami is a different team. You don\u2019t see bigs take over games like this anymore.'
+                      : moment.id === 'jokic'
+                        ? 'There is no playbook for guarding Joki\u0107. He sees passes two moves ahead. This is the best passing big man in NBA history \u2014 and I don\u2019t think it\u2019s close.'
+                        : 'SGA is the most unguardable player in the league right now. That mid-range is automatic, and he\u2019s doing it in the biggest moments. This kid is special.'
+                    }&rdquo;
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Tale of the Tape — tonight vs season average comparison */}
           <TaleOfTheTape moment={moment} rgb={rgb} />
 

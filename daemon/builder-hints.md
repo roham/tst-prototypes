@@ -589,3 +589,11 @@
 - CRITICAL quickening (1.8s → 1.1s) adds 60% more pulses per minute — a noticeable urgency increase that matches the viewer's elevated heart rate during final seconds. The effect mirrors how your own pulse quickens when time runs out.
 - Supreme hero now has 8 ambient effects: parallax, Ken Burns, light sweep, breathing vignette, name shimmer, particles, edge trace, and heartbeat. But the heartbeat is the most subliminal — it's the foundation pulse that makes everything else feel alive.
 - Next cycle: Broadcast (rotation). Broadcast could use a subtle "camera rack focus" blur shift on the hero, or a broadcast-style animated stat crawl along the bottom of the hero.
+
+## Cycle 67 Learnings
+- Production markers (REC + ISO CAM) are instantly recognizable broadcast details without adding visual weight. At 25% opacity they're "found details" — you notice them on closer inspection, adding depth.
+- Bottom-right of hero (bottom-16 right-5) avoids collision with: score bug (top-left), network bug (top-right), editorial badge (top-left), lower-third (bottom-left), replay tag (mid-right). The hero has 6 distinct overlay zones now — layout matters to prevent crowding.
+- The REC dot reuses the existing `pulse` keyframe animation — no new CSS needed. Building on existing animation vocabulary keeps the CSS lean.
+- "ISO CAM 1" in mono font reads as technical metadata — it implies this is a raw production feed, not a finished broadcast. That rawness adds authenticity.
+- Broadcast hero now has production overlays at every edge: top-left (score bug), top-right (network bug), mid-right (replay tag), bottom-left (lower-third), bottom-right (production markers), bottom (progress bar). The hero is a fully dressed broadcast frame.
+- Next cycle: Arena (rotation). Arena could use a "section leader" indicator (like section 101, row A seating), or a jumbotron "timeout" screen effect during CLOSING phase.

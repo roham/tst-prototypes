@@ -729,6 +729,68 @@ function WScreen({
               />
             ))}
           </div>
+
+          {/* Sale Record placard — auction house results card */}
+          <div
+            className="mt-6 w-full max-w-[240px] mx-auto transition-all duration-600 ease-out"
+            style={{
+              opacity: showSeal ? 1 : 0,
+              transform: showSeal ? 'translateY(0)' : 'translateY(8px)',
+            }}
+          >
+            <div
+              className="border rounded-sm px-4 py-3"
+              style={{ borderColor: `${moment.teamColors.primary}15` }}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span
+                  className="text-[7px] font-bold uppercase tracking-[0.35em] text-white/20"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  Sale Record
+                </span>
+                <span
+                  className="text-[7px] font-bold uppercase tracking-[0.25em]"
+                  style={{ color: `${moment.teamColors.primary}50` }}
+                >
+                  Lot {lotNumber}
+                </span>
+              </div>
+              <div
+                className="h-[1px] mb-2"
+                style={{ backgroundColor: `${moment.teamColors.primary}10` }}
+              />
+              <div className="flex items-center justify-between">
+                <span className="text-[8px] uppercase tracking-[0.2em] text-white/15">
+                  Hammer Price
+                </span>
+                <span
+                  className="text-[11px] font-mono tabular-nums font-bold text-white/40"
+                >
+                  ${moment.rarityTiers[0].price.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-1">
+                <span className="text-[8px] uppercase tracking-[0.2em] text-white/15">
+                  Acquired
+                </span>
+                <span className="text-[8px] font-mono tabular-nums text-white/25">
+                  {dateStr}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-1">
+                <span className="text-[8px] uppercase tracking-[0.2em] text-white/15">
+                  Status
+                </span>
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.2em]"
+                  style={{ color: '#00E5A0' }}
+                >
+                  Sold
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Share section — appears last */}

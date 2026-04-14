@@ -606,3 +606,10 @@
 - The `useRef` pattern for detecting state transitions (wasEnded → isEnded) is clean for one-shot effects. Fire once, auto-dismiss via timeout.
 - Arena now has a complete lifecycle narrative: alive (live effects) → buzzer (dramatic punctuation) → stillness (ended state). Each direction should have meaningful state transitions, not just toggled visibility.
 - Next cycle: Supreme (rotation). Supreme could explore a closing-phase effect like dimming to near-black with the CTA as the only bright element, or a "last call" text flash.
+
+## Cycle 69 Learnings
+- Phase-specific atmosphere changes are high-impact, low-code. A single fixed div with a radial gradient creates a "spotlight narrowing" effect that dramatically changes page feel.
+- z-index composition is powerful: CRITICAL red vignette (z-40) + last-light dim (z-38) = both effects compound. Red urgency edges + darkened content = maximum purchase pressure.
+- Removing the dim during purchasing prevents obscuring the progress ring/checkmark feedback — phase-specific overlays should check purchase state.
+- Supreme's philosophy is "guide with light, not UI." The last-light dim adds zero new interface elements — it just manipulates brightness to funnel attention. That's peak Supreme.
+- Next cycle: Broadcast (rotation). Broadcast could use a "commercial break" bumper transition at phase changes, or an animated "BREAKING" chyron crawl during CRITICAL.

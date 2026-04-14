@@ -505,6 +505,15 @@ body {
   animation: arena-tier-selected-glow 2s ease-in-out infinite;
 }
 
+/* Arena crowd energy meter pulse — max velocity state */
+@keyframes arena-energy-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.arena-energy-pulse {
+  animation: arena-energy-pulse 0.8s ease-in-out infinite;
+}
+
 /* Broadcast film grain — cinematic texture overlay */
 @keyframes broadcast-grain {
   0%, 100% { transform: translate(0, 0); }

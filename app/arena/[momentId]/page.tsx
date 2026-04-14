@@ -1950,6 +1950,51 @@ export default function ArenaPage({
           </span>
         </button>
 
+        {/* Crowd energy meter — velocity-driven power gauge beneath CTA */}
+        {!countdown.isEnded && proto.state !== 'purchasing' && (
+          <div className="mt-2.5 mx-auto w-full max-w-[280px]">
+            <div className="flex items-center justify-between mb-1">
+              <span
+                className="text-[8px] font-bold uppercase tracking-[0.2em]"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: liveVelocity >= 18 ? '#EF4444' : liveVelocity >= 12 ? '#F59E0B' : 'rgba(255,255,255,0.25)',
+                }}
+              >
+                Crowd Energy
+              </span>
+              <span
+                className="text-[8px] font-mono tabular-nums"
+                style={{
+                  color: liveVelocity >= 18 ? '#EF4444' : liveVelocity >= 12 ? '#F59E0B' : 'rgba(255,255,255,0.2)',
+                }}
+              >
+                {liveVelocity >= 18 ? 'MAX' : liveVelocity >= 12 ? 'HIGH' : 'RISING'}
+              </span>
+            </div>
+            <div className="relative h-[3px] w-full overflow-hidden rounded-full bg-white/[0.06]">
+              <div
+                className={`h-full rounded-full transition-all duration-700 ease-out ${
+                  liveVelocity >= 18 ? 'arena-energy-pulse' : ''
+                }`}
+                style={{
+                  width: `${Math.min(100, (liveVelocity / 22) * 100)}%`,
+                  background: liveVelocity >= 18
+                    ? 'linear-gradient(90deg, #EF4444, #F59E0B, #EF4444)'
+                    : liveVelocity >= 12
+                      ? `linear-gradient(90deg, #00E5A0, #F59E0B)`
+                      : '#00E5A0',
+                  boxShadow: liveVelocity >= 18
+                    ? '0 0 8px rgba(239,68,68,0.5), 0 0 16px rgba(239,68,68,0.2)'
+                    : liveVelocity >= 12
+                      ? '0 0 6px rgba(245,158,11,0.3)'
+                      : '0 0 4px rgba(0,229,160,0.2)',
+                }}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Stored payment indicator + social proof */}
         <div className="mt-2 flex flex-col items-center gap-0.5">
           {!countdown.isEnded && proto.state !== 'purchasing' && (

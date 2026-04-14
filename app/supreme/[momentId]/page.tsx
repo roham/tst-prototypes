@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
-import { getMoment, getSaleEndsAt } from '@/lib/mock-data';
+import { getMoment, SALE_DURATION_MS } from '@/lib/mock-data';
 import type { Moment } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
 import { usePrototypeState } from '@/lib/use-prototype-state';
@@ -180,8 +180,7 @@ export default function SupremePage() {
 
   const moment = useMemo(() => getMoment(momentId), [momentId]);
 
-  const [saleEnd] = useState(() => getSaleEndsAt(momentId));
-  const countdown = useCountdown(saleEnd);
+  const countdown = useCountdown(SALE_DURATION_MS[momentId] ?? 12 * 60 * 1000);
   const { state: viewPhase, editionNumber, purchase, reset } = usePrototypeState(momentId);
 
   const watching = useSocialProof(moment ? 30 + moment.editionsClaimed % 40 : 30);
@@ -251,9 +250,11 @@ export default function SupremePage() {
       >
         {/* Gradient background */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 bg-cover bg-center"
           style={{
-            background: moment.thumbnailGradient,
+            backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
+            backgroundSize: 'cover, cover',
+            backgroundPosition: 'center top, center',
           }}
         />
 

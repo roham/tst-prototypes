@@ -22,16 +22,17 @@ export interface Moment {
   saleStartedAt: number;
   videoUrl: string;
   thumbnailGradient: string;
+  playerImageUrl: string;
+  actionImageUrl: string;
   teamColors: { primary: string; secondary: string };
 }
 
-// Sale ends far in the future so drops are always live during prototype demos
-// Bam: 14 min, Jokic: 9 min, SGA: 18 min — realistic mid-drop feel
-const SALE_MINUTES: Record<string, number> = { bam: 14, jokic: 9, sga: 18 };
-
-export function getSaleEndsAt(momentId: string): number {
-  return Date.now() + (SALE_MINUTES[momentId] ?? 12) * 60 * 1000;
-}
+// Sale duration per moment — used client-side only
+export const SALE_DURATION_MS: Record<string, number> = {
+  bam: 14 * 60 * 1000,
+  jokic: 9 * 60 * 1000,
+  sga: 18 * 60 * 1000,
+};
 
 export const MOMENTS: Moment[] = [
   {
@@ -57,6 +58,8 @@ export const MOMENTS: Moment[] = [
     saleStartedAt: Date.now() - 15 * 60 * 1000,
     videoUrl: "/videos/bam-dunk.mp4",
     thumbnailGradient: "linear-gradient(135deg, #98002E 0%, #F9A01B 100%)",
+    playerImageUrl: "https://cdn.nba.com/headshots/nba/latest/1040x760/1628389.png",
+    actionImageUrl: "https://cdn.nba.com/photos/actionshots/nba/latest/1040x760/1628389.jpg",
     teamColors: { primary: "#98002E", secondary: "#F9A01B" },
   },
   {
@@ -82,6 +85,8 @@ export const MOMENTS: Moment[] = [
     saleStartedAt: Date.now() - 15 * 60 * 1000,
     videoUrl: "/videos/jokic-triple.mp4",
     thumbnailGradient: "linear-gradient(135deg, #0E2240 0%, #FEC524 100%)",
+    playerImageUrl: "https://cdn.nba.com/headshots/nba/latest/1040x760/203999.png",
+    actionImageUrl: "https://cdn.nba.com/photos/actionshots/nba/latest/1040x760/203999.jpg",
     teamColors: { primary: "#0E2240", secondary: "#FEC524" },
   },
   {
@@ -107,6 +112,8 @@ export const MOMENTS: Moment[] = [
     saleStartedAt: Date.now() - 15 * 60 * 1000,
     videoUrl: "/videos/sga-40piece.mp4",
     thumbnailGradient: "linear-gradient(135deg, #007AC1 0%, #EF6100 100%)",
+    playerImageUrl: "https://cdn.nba.com/headshots/nba/latest/1040x760/1628983.png",
+    actionImageUrl: "https://cdn.nba.com/photos/actionshots/nba/latest/1040x760/1628983.jpg",
     teamColors: { primary: "#007AC1", secondary: "#EF6100" },
   },
 ];

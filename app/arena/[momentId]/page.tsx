@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useState, useEffect, useRef } from 'react';
-import { getMoment, getSaleEndsAt, type Moment, type RarityTier } from '@/lib/mock-data';
+import { getMoment, SALE_DURATION_MS, type Moment, type RarityTier } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
 import { usePrototypeState } from '@/lib/use-prototype-state';
 
@@ -308,8 +308,7 @@ export default function ArenaPage({
   const moment = getMoment(momentId);
 
   /* ── Hooks (called unconditionally) ─────────────────────────── */
-  const [saleEnd] = useState(() => getSaleEndsAt(momentId));
-  const countdown = useCountdown(saleEnd);
+  const countdown = useCountdown(SALE_DURATION_MS[momentId] ?? 12 * 60 * 1000);
   const proto = usePrototypeState(momentId);
 
   /* ── Live feed state ────────────────────────────────────────── */
@@ -454,7 +453,11 @@ export default function ArenaPage({
       {/* ─── Moment Hero Section (40vh) ─── */}
       <section className="relative flex h-[40vh] min-h-[260px] flex-col justify-end overflow-hidden">
         {/* Gradient "thumbnail" */}
-        <div className="absolute inset-0" style={{ background: moment.thumbnailGradient }} />
+        <div className="absolute inset-0 bg-cover bg-center" style={{
+          backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
+          backgroundSize: 'cover, cover',
+          backgroundPosition: 'center top, center',
+        }} />
         {/* Dark overlay for legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/40 to-transparent" />
 

@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
-import { getMoment, getSaleEndsAt } from '@/lib/mock-data';
+import { getMoment, SALE_DURATION_MS } from '@/lib/mock-data';
 import type { Moment, RarityTier } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
 import { usePrototypeState } from '@/lib/use-prototype-state';
@@ -61,8 +61,7 @@ export default function BroadcastPage() {
 
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
 
-  const [saleEnd] = useState(() => getSaleEndsAt(params.momentId as string));
-  const countdown = useCountdown(saleEnd);
+  const countdown = useCountdown(SALE_DURATION_MS[params.momentId as string] ?? 12 * 60 * 1000);
   const proto = usePrototypeState(momentId);
 
   if (!moment) {
@@ -108,8 +107,12 @@ export default function BroadcastPage() {
         <section className="relative h-[50dvh] min-h-[420px] overflow-hidden">
           {/* Thumbnail gradient background */}
           <div
-            className="absolute inset-0"
-            style={{ background: moment.thumbnailGradient }}
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
+              backgroundSize: 'cover, cover',
+              backgroundPosition: 'center top, center',
+            }}
           />
           {/* Dark overlay from bottom for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/70 to-transparent" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 export type CountdownPhase = "NEUTRAL" | "AMBER" | "RED" | "PULSING" | "ENDED";
 
@@ -45,20 +45,28 @@ function computeState(endTime: number): CountdownState {
   };
 }
 
-export function useCountdown(endTime: number): CountdownState {
-  const [state, setState] = useState<CountdownState>(() =>
-    computeState(endTime)
-  );
+const INITIAL_STATE: CountdownState = {
+  minutes: 12, seconds: 0, totalSeconds: 720,
+  isClosing: false, isCritical: false, isEnded: false, phase: "NEUTRAL",
+};
 
-  const tick = useCallback(() => {
-    setState(computeState(endTime));
-  }, [endTime]);
+/**
+ * useCountdown — pass a DURATION in ms, not a timestamp.
+ * The end time is computed on the client at mount time.
+ * This avoids SSR/hydration mismatch.
+ */
+export function useCountdown(durationMs: number): CountdownState {
+  const endTimeRef = useRef<number>(0);
+  const [state, setState] = useState<CountdownState>(INITIAL_STATE);
 
   useEffect(() => {
+    // Compute end time purely on client at mount
+    endTimeRef.current = Date.now() + durationMs;
+    const tick = () => setState(computeState(endTimeRef.current));
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [tick]);
+  }, [durationMs]);
 
   return state;
 }

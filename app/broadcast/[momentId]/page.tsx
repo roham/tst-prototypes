@@ -386,6 +386,25 @@ export default function BroadcastPage() {
     return () => observer.disconnect();
   }, []);
 
+  // Feed cut — brief static band on phase transition (camera feed switch)
+  const [feedCut, setFeedCut] = useState(false);
+  const [camLabel, setCamLabel] = useState('ISO CAM 1');
+  const prevBroadcastPhase = useRef<DropPhase>('OPEN');
+  useEffect(() => {
+    const currentPhase = derivePhase(countdown.totalSeconds);
+    const prev = prevBroadcastPhase.current;
+    prevBroadcastPhase.current = currentPhase;
+    if (
+      (prev === 'OPEN' && currentPhase === 'CLOSING') ||
+      (prev === 'CLOSING' && currentPhase === 'CRITICAL')
+    ) {
+      setFeedCut(true);
+      setCamLabel(currentPhase === 'CLOSING' ? 'ISO CAM 2' : 'ISO CAM 3');
+      const t = setTimeout(() => setFeedCut(false), 350);
+      return () => clearTimeout(t);
+    }
+  }, [countdown.totalSeconds]);
+
   if (!moment) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-[#0B0E14] text-white/40 text-sm">
@@ -427,6 +446,9 @@ export default function BroadcastPage() {
           background: `radial-gradient(ellipse 80% 60% at 50% 20%, rgba(${rgb},0.08) 0%, transparent 70%)`,
         }}
       />
+
+      {/* ━━━ FEED CUT — camera switch static band on phase transition ━━━ */}
+      {feedCut && <div className="broadcast-feed-cut" />}
 
       {/* ━━━ NETWORK BUG — ESPN/TNT corner watermark ━━━━━━━━━━━━━━━━━ */}
       <div
@@ -684,9 +706,9 @@ export default function BroadcastPage() {
                   Rec
                 </span>
               </div>
-              {/* ISO CAM label — technical camera designation */}
-              <span className="text-[7px] font-mono uppercase tracking-[0.15em] text-white/20">
-                ISO CAM 1
+              {/* ISO CAM label — technical camera designation, updates on feed cut */}
+              <span className="text-[7px] font-mono uppercase tracking-[0.15em] text-white/20 transition-opacity duration-200">
+                {camLabel}
               </span>
             </div>
           )}

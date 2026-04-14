@@ -603,6 +603,45 @@ body {
   100% { top: -15%; left: -15%; }
 }
 
+/* Broadcast feed cut — camera switch static band that sweeps on phase transition */
+@keyframes broadcast-feed-cut {
+  0%   { top: -8%; opacity: 1; }
+  60%  { opacity: 1; }
+  100% { top: 108%; opacity: 0; }
+}
+.broadcast-feed-cut {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 8%;
+  z-index: 42;
+  pointer-events: none;
+  animation: broadcast-feed-cut 350ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      rgba(255,255,255,0.06) 1px,
+      transparent 2px,
+      rgba(255,255,255,0.03) 3px,
+      transparent 4px
+    );
+}
+.broadcast-feed-cut::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255,255,255,0.04) 20%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 80%,
+    transparent 100%
+  );
+  mix-blend-mode: screen;
+}
+
 /* Arena W screen — crowd roar EQ bars (dramatic spike on reveal) */
 @keyframes arena-roar-bar {
   0% { height: 8%; }

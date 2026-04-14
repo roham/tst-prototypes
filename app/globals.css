@@ -709,6 +709,15 @@ body {
   animation: broadcast-tc-fadein 0.5s ease-out 1.8s both;
 }
 
+/* Broadcast end slate — off-air card fades in when drop concludes */
+@keyframes broadcast-end-slate-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+.broadcast-end-slate {
+  animation: broadcast-end-slate-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+
 /* Arena W screen — crowd roar EQ bars (dramatic spike on reveal) */
 @keyframes arena-roar-bar {
   0% { height: 8%; }

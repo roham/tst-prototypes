@@ -840,6 +840,36 @@ export default function BroadcastPage() {
             </div>
           )}
 
+          {/* Broadcast END SLATE — off-air card when drop concludes */}
+          {countdown.isEnded && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none broadcast-end-slate">
+              <div
+                className="text-center px-8 py-4 rounded-sm"
+                style={{
+                  backgroundColor: 'rgba(11,14,20,0.75)',
+                  backdropFilter: 'blur(6px)',
+                  border: `1px solid rgba(${rgb},0.12)`,
+                  boxShadow: `0 0 40px rgba(0,0,0,0.4)`,
+                }}
+              >
+                <div
+                  className="h-[1px] w-10 mx-auto mb-3"
+                  style={{ backgroundColor: `rgba(${rgb},0.3)` }}
+                />
+                <p
+                  className="text-[9px] font-bold uppercase tracking-[0.4em] text-white/25"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  This Broadcast Has Concluded
+                </p>
+                <div
+                  className="h-[1px] w-10 mx-auto mt-3"
+                  style={{ backgroundColor: `rgba(${rgb},0.3)` }}
+                />
+              </div>
+            </div>
+          )}
+
           {/* Scroll indicator — animated chevron that scrolls to transaction */}
           {!countdown.isEnded && (
             <div className="absolute bottom-14 left-0 right-0 z-20 flex justify-center">

@@ -1376,3 +1376,11 @@
 - Georgia serif italic at 14% white opacity is the sweet spot for Supreme's subliminal register — visible when reading, invisible when scanning. Matches specialist's note and catalogue text styling.
 - The "Final offer" variant for highest tier creates closing energy without adding urgency mechanics. The words alone carry the weight.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 164 Learnings
+- Surfacing price above the fold is a genuine conversion improvement, not just visual polish. The broadcast page had extensive editorial content above the fold but zero price visibility — requiring full editorial scroll before seeing cost.
+- Reusing the existing broadcast-data-wipe-text animation at a later delay (1.7s vs 1.0s/1.35s) keeps the lower-third cascade natural. No new CSS keyframes needed.
+- The price tag as a tappable button (scrollIntoView) dual-purposes as a conversion shortcut and a navigation aid. Users who see the price can immediately jump to purchase without scrolling.
+- "FROM $5" copy is more effective than just "$5" — the "FROM" prefix frames it as an entry point, implying value tiers above. Combined with Supreme's auctioneer bid call ("Do I hear $25?"), both directions now upsell via different psychological mechanisms: Broadcast invites exploration (FROM), Supreme invites escalation (Do I hear).
+- The price tag hidden during purchasing/ended prevents information overload during state transitions.
+- Next cycle: Arena (rotation).

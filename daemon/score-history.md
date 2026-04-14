@@ -109,3 +109,14 @@
 
 | 22 | supreme | 8.0 | 7.5 | 7.5 | 8.0 | 9.0 | 7.93 | +0.15 | Interaction lift: deterministic progress ring, 3-stage purchase copy, glow intensification |
 | 23 | broadcast | 8.5 | 7.5 | 8.0 | 7.5 | 9.0 | 8.08 | +0.08 | Interaction lift: editorial 3-stage purchase, lower-third wipe, Georgia italic copy |
+| 24 | arena | 8.0 | 8.0 | 8.0 | 8.0 | 8.5 | 8.08 | +0.10 | Emotion lift: crowd reaction bursts, Moment of the Night badge, enhanced context |
+
+### Full Scorecard — After Cycle 24 (all directions touched — REFINEMENT round 2 complete)
+
+| Direction | Visual | Conversion | Emotion | Interaction | Purity | Weighted |
+|-----------|--------|------------|---------|-------------|--------|----------|
+| Supreme | 8.0 | 7.5 | 7.5 | 8.0 | 9.0 | **7.93** |
+| Broadcast | 8.5 | 7.5 | 8.0 | 7.5 | 9.0 | **8.08** |
+| Arena | 8.0 | 8.0 | 8.0 | 8.0 | 8.5 | **8.08** |
+
+**REFINEMENT round 2 complete.** Broadcast and Arena tied at 8.08. Supreme weakest (7.93) — Emotion (7.5) and Conversion (7.5) are the drag. All Purity scores ≥8.5 — directions are staying true. Weakest dimensions: Supreme Emotion (7.5), Supreme Conversion (7.5), Broadcast Interaction (7.5). Next round targets Supreme.

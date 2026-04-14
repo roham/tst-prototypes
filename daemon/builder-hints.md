@@ -199,4 +199,13 @@
 - Small delta (+0.08) — Interaction improved from 7.0→7.5 but Broadcast still has the weakest Interaction across all 3.
 - Broadcast Interaction needs more work: the W screen transitions could be tighter, and the browsing flow scroll experience could be smoother.
 - All 3 directions now have multi-stage purchase flows. The standardized pattern works differently in each: Supreme (deterministic ring + "Yours."), Broadcast (lower-third wipe + "Acquired."), Arena (progress bar + "SECURED!").
-- Next cycle: Arena (rotation). Then Supreme. Broadcast Interaction still needs attention in cycle 26.
+- Next cycle: Supreme (weakest at 7.93). Broadcast Interaction still needs attention in cycle 26.
+
+## Cycle 24 Learnings
+- Crowd reaction emoji bursts (4-8 floating emojis per purchase) create immediate arena crowd energy — the page feels ALIVE, not just informational.
+- "Moment of the Night" badge with team-color styling frames the play as historically significant before the user reads any stats — emotional priming.
+- Enhanced context line (text-sm instead of text-xs, white/50 instead of white/30) is a cheap but meaningful lift — the story was there but invisible.
+- "Trending #1 on Top Shot This" with pulsing dot adds social proof of the moment's importance — FOMO for the moment itself, not just the purchase.
+- Emotion delta was +0.5 (7.5→8.0) — these were all cheap, high-impact changes. Emotional framing is underinvested across all directions.
+- Small overall delta (+0.10) because only Emotion moved. Next cycle should target Supreme Emotion or Conversion for bigger compound lift.
+- Arena's CrowdReactions component uses events.length as dependency — triggers batch on each new purchase. Memory-safe with slice(-24) cap.

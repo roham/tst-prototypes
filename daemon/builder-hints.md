@@ -237,3 +237,13 @@
 - All 3 directions now have sticky CTAs: Supreme doesn't need one (single-screen design), Broadcast has editorial sticky, Arena has live-commerce sticky.
 - All Purity scores now at 9.0 — each direction's sticky CTA and visual treatment is distinct and on-brand.
 - Next cycle: Supreme (weakest at 8.15). All dims at 8.0 except Purity 9.0. Visual and Emotion are the best targets for lift.
+
+## Cycle 28 Learnings
+- Dual-layer radial gradient (top + bottom) for team-color glow creates richer depth than a single layer — the lower glow warms the content-to-hero transition.
+- Hero-to-content depth shadow (8px gradient band at hero bottom edge) is a subtle but effective depth cue — feels more premium.
+- Matchup context ("MIA vs DEN") in the hero beside the play type adds temporal/emotional grounding with zero new components — just a flex row.
+- Stat line team-color accent (1px × 12px) creates a visual break between hero data and the content below. Small but architecturally important.
+- Info strip top border (border-t border-white/[0.04]) gives definition to the timer section — prevents it from blending into the context.
+- Supreme Visual lifted 8.0→8.5 from these micro-refinements. Lesson: in Supreme's minimal language, every pixel matters more.
+- Supreme Purity held at 9.0 — all additions were lines, dots, and gradients. Nothing structural. That's the Supreme way.
+- Next cycle: Broadcast (rotation). Broadcast at 8.28 — Emotion (8.0) is the weakest dimension to target.

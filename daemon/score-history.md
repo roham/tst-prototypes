@@ -145,3 +145,5 @@
 | Arena | 8.5 | 8.5 | 8.0 | 8.5 | 9.0 | **8.48** |
 
 **REFINEMENT round 3 complete.** Arena surged from weakest to strongest (+0.40) with sticky CTA + visual polish. All 3 directions now Purity ≥9.0. Supreme weakest (8.15) — Visual (8.0) and all non-Purity dims at 8.0. Weakest dimensions: Supreme Visual (8.0), Supreme Emotion (8.0), Broadcast Emotion (8.0). Next round starts with Supreme.
+
+| 28 | supreme | 8.5 | 8.0 | 8.5 | 8.0 | 9.0 | 8.38 | +0.23 | Visual+emotion: richer hero glow, matchup context, stat accent, info strip border |

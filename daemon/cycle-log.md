@@ -57,3 +57,5 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 ## Cycle 26 | Direction: Broadcast | Score: 8.28 (+0.20) | Built: Interaction lift — sticky bottom CTA bar (IntersectionObserver on main button), hero scroll indicator chevron, safe-area-inset for notch phones | Time: 21:50
 
 ## Cycle 27 | Direction: Arena | Score: 8.48 (+0.40) | Built: Visual+conversion lift — sticky bottom CTA bar with tier info + active buyers, scoreboard-style team-color top accents on stats cards, tighter hero badges with left-edge accent borders | Time: 22:05
+
+## Cycle 28 | Direction: Supreme | Score: 8.38 (+0.23) | Built: Visual+emotion lift — richer dual-layer hero glow, deeper hero gradient with content depth shadow, matchup context in hero, stat line team-color accent, info strip border definition | Time: 22:20

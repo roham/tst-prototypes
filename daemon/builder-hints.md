@@ -794,3 +794,13 @@
 - The 500ms total duration matches the feed cut (350ms) — both fire simultaneously but the zoom outlasts the static by 150ms, creating a subtle "settle after disruption" feel.
 - Broadcast phase transitions now have 4 coordinated signals: urgency banner text change, feed cut static band, camera crash zoom, and ISO CAM label switch. The most complete of any direction.
 - Next cycle: Arena (rotation). Arena could benefit from a similar phase-transition technique — perhaps a "jumbotron glitch" effect where the display briefly scrambles.
+
+## Cycle 89 Learnings
+- Jumbotron instant replay entrance is a high-recognition cultural moment — every NBA fan has seen the zoom + "INSTANT REPLAY" graphic on the arena screen. Strong purity play.
+- Applying the replay zoom to both image layers (action image + player gradient) keeps them in sync. A separate zoom per layer would look broken.
+- VHS tracking line (white gradient band with glow) sweeping top→bottom in 0.8s is the perfect analog video artifact — distinct from Broadcast's CRT scanlines (repeating horizontal pattern) and arena's LED scan (single line on text).
+- The replay badge uses the existing Oswald + team-color pattern from other arena badges. Consistency is key — new elements should use the established visual language.
+- 2.2s state lifetime with CSS animations of 1.8-2.0s ensures all animations complete before unmounting. The 200ms buffer prevents jarring mid-animation removal.
+- Each direction now has a distinct entrance ceremony: Supreme = grayscale→color reveal (cycle 81), Broadcast = name reveal wipe (cycle 82), Arena = instant replay zoom (cycle 89). All are identity-correct one-shot animations.
+- The `replayActive` boolean pattern (true on mount → false after timeout → conditionally render) is the same pattern used for buzzer, timeout, and camera flash. Proven, simple, reliable.
+- Next cycle: Supreme (rotation). Supreme could explore a glass morphism/frosted panel effect on the info strip, or a subtle counter animation on the edition scarcity text.

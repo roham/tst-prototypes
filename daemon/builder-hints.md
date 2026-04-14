@@ -1605,3 +1605,11 @@
 - The "Updated Xs ago" counter serves dual purpose: it signals the data is live (not static) and creates subtle micro-urgency as the counter climbs (implying the next update is imminent).
 - Placement above tier selector (after trivia, before "Select Tier") creates an information→decision flow: trivia builds engagement → odds show demand → tier cards let you act.
 - Next cycle: Supreme (rotation).
+
+## Cycle 199 Learnings
+- Ambient lighting effects (gradients, vignettes, spotlight cones) are the Supreme direction's most effective tool for creating emotional atmosphere without adding UI elements. Each new layer compounds: breathe vignette + critical vignette + spotlight narrowing creates a 3-layer atmosphere system.
+- Using `useMemo` for intensity values derived from countdown.totalSeconds keeps the gradient recalculation efficient — it only recomputes when the second changes, not on every render.
+- The spotlight cone at z-39 (below critical vignette z-40) creates natural depth layering. Always think about z-index as an atmospheric stack, not just UI priority.
+- Gradual effects (120s → 0s linear ramp) are more psychologically effective than sudden state changes — the user doesn't notice the darkness creeping in until they're already surrounded by it. This is how real auction houses control the room.
+- The `transition: background 1s ease` on the spotlight div smooths the per-second gradient updates into a continuous narrowing, preventing visible stepping as the ellipse shrinks by ~0.3% per second.
+- Next cycle: Broadcast (rotation).

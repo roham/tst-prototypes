@@ -923,6 +923,18 @@ export default function SupremePage() {
       <div className="flex-1" />
 
       {/* ============================================================= */}
+      {/* LAST LIGHT — spotlight dim funnels attention to CTA in CRITICAL */}
+      {/* ============================================================= */}
+      {dropPhase === 'CRITICAL' && !isPurchasing && (
+        <div
+          className="fixed inset-0 z-[38] pointer-events-none transition-opacity duration-1000"
+          style={{
+            background: 'radial-gradient(ellipse 90% 30% at 50% 85%, transparent 0%, rgba(11,14,20,0.35) 60%, rgba(11,14,20,0.5) 100%)',
+          }}
+        />
+      )}
+
+      {/* ============================================================= */}
       {/* CTA-ADJACENT TIMER — urgency right at point of decision */}
       {/* ============================================================= */}
       {(dropPhase === 'CLOSING' || dropPhase === 'CRITICAL') && !isPurchasing && (

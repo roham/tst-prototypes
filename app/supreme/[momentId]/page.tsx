@@ -589,12 +589,14 @@ function WScreen({
   editionNumber,
   purchaseTime,
   tierName,
+  tierPrice,
   onReset,
 }: {
   moment: Moment;
   editionNumber: number;
   purchaseTime: number | null;
   tierName: string;
+  tierPrice: number;
   onReset: () => void;
 }) {
   const [show, setShow] = useState(false);
@@ -850,7 +852,7 @@ function WScreen({
                 <span
                   className="text-[11px] font-mono tabular-nums font-bold text-white/40"
                 >
-                  ${moment.rarityTiers[0].price.toFixed(2)}
+                  ${tierPrice.toFixed(2)}
                 </span>
               </div>
               {/* Pre-sale estimate — shows buyer acquired below market estimate */}
@@ -859,7 +861,7 @@ function WScreen({
                   Pre-Sale Estimate
                 </span>
                 <span className="text-[8px] font-mono tabular-nums text-white/15">
-                  ${Math.round(moment.rarityTiers[0].price * 1.8).toFixed(2)}–${Math.round(moment.rarityTiers[0].price * 3.2).toFixed(2)}
+                  ${Math.round(tierPrice * 1.8).toFixed(2)}–${Math.round(tierPrice * 3.2).toFixed(2)}
                 </span>
               </div>
               <div className="flex items-center justify-between mt-1">
@@ -902,7 +904,7 @@ function WScreen({
                   className="text-[9px] font-mono tabular-nums font-bold"
                   style={{ color: `${moment.teamColors.primary}45` }}
                 >
-                  ${moment.rarityTiers[0].price.toFixed(2)}
+                  ${tierPrice.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -1249,6 +1251,7 @@ export default function SupremePage() {
         editionNumber={editionNumber ?? moment.editionsClaimed + 1}
         purchaseTime={purchaseTime}
         tierName={selectedTier.tier}
+        tierPrice={selectedTier.price}
         onReset={reset}
       />
     );
@@ -1984,6 +1987,33 @@ export default function SupremePage() {
           <span className="text-[7px] font-mono uppercase tracking-[0.15em] text-white/8">
             registered bidders
           </span>
+        </div>
+      )}
+
+      {/* ============================================================= */}
+      {/* GALLERY CLOSING NOTICE — institutional announcement when       */}
+      {/* auction enters final phases. At Christie's/Sotheby's, the     */}
+      {/* auctioneer announces "We are approaching the close of this    */}
+      {/* lot." This text appears in Supreme's subliminal register —    */}
+      {/* Georgia serif italic, barely visible, but psychologically     */}
+      {/* priming the bidder that time is running out.                  */}
+      {/* ============================================================= */}
+      {(dropPhase === 'CLOSING' || dropPhase === 'CRITICAL') && !isPurchasing && (
+        <div className="flex items-center justify-center px-5 py-1.5">
+          <p
+            className="text-[9px] text-center tracking-[0.1em]"
+            style={{
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+              color: dropPhase === 'CRITICAL'
+                ? 'rgba(239,68,68,0.18)'
+                : 'rgba(255,255,255,0.1)',
+            }}
+          >
+            {dropPhase === 'CRITICAL'
+              ? 'The auctioneer is about to bring down the gavel.'
+              : 'We are approaching the close of this lot.'}
+          </p>
         </div>
       )}
 

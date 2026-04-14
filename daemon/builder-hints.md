@@ -209,3 +209,12 @@
 - Emotion delta was +0.5 (7.5→8.0) — these were all cheap, high-impact changes. Emotional framing is underinvested across all directions.
 - Small overall delta (+0.10) because only Emotion moved. Next cycle should target Supreme Emotion or Conversion for bigger compound lift.
 - Arena's CrowdReactions component uses events.length as dependency — triggers batch on each new purchase. Memory-safe with slice(-24) cap.
+
+## Cycle 25 Learnings
+- Elevating context from text-xs/white/25 to text-sm/white/40 in its own section is a massive emotion lift with zero new content — just visibility.
+- Team-color divider (1px × 8 wide) above context creates a section break that signals "this matters" in Supreme's language.
+- Tier scarcity near CTA ("14 of 25 remaining") is the cheapest conversion lift — the number does the work, no extra UI needed.
+- Supreme Purity stays at 9.0 because all additions are minimal: a line, a sentence, a number. The direction hasn't drifted.
+- Context was always in the data (moment.context) — it was just invisible. Check all directions for hidden emotional content.
+- Both Emotion and Conversion jumped 7.5→8.0 from these tiny changes. Lesson: visibility of existing content > new features.
+- Next cycle: Broadcast (rotation). Interaction (7.5) is still the weakest dim for Broadcast. Target the browsing/scroll experience.

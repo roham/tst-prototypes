@@ -120,3 +120,5 @@
 | Arena | 8.0 | 8.0 | 8.0 | 8.0 | 8.5 | **8.08** |
 
 **REFINEMENT round 2 complete.** Broadcast and Arena tied at 8.08. Supreme weakest (7.93) — Emotion (7.5) and Conversion (7.5) are the drag. All Purity scores ≥8.5 — directions are staying true. Weakest dimensions: Supreme Emotion (7.5), Supreme Conversion (7.5), Broadcast Interaction (7.5). Next round targets Supreme.
+
+| 25 | supreme | 8.0 | 8.0 | 8.0 | 8.0 | 9.0 | 8.15 | +0.22 | Emotion+conversion: elevated context section, team-color accent, tier scarcity near CTA |

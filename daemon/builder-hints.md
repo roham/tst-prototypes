@@ -1465,3 +1465,11 @@
 - Georgia serif italic at team-color/18% opacity is the exact right register for Supreme's ambient text. Visible when looking for it, invisible when scanning. The institutional voice should never compete with the CTA or tier selector.
 - Social proof works differently per direction: Arena shouts it (floating toasts, bidder counts, crowd energy), Broadcast frames it editorially (viewer count, analyst commentary), Supreme whispers it (auctioneer's formal bid acknowledgment). Each creates the same psychological effect through direction-appropriate means.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 176 Learnings
+- Animated data visualizations (percentage bars, counters) are high-impact broadcast elements because they combine visual motion with information delivery. The bar filling up IS the content.
+- IntersectionObserver at 0.4 threshold ensures the poll is mostly in view before triggering the fill animation — the user sees the full animation, not a partially-completed bar.
+- ease-out cubic (`1 - Math.pow(1 - progress, 3)`) creates the right fill rhythm: fast initial burst (excitement) then gradual settling (precision).
+- Per-moment poll data (unique questions, different percentages) prevents the "template" feel. 91%/87%/94% — high but varied — feels more real than a uniform 90%.
+- The poll adds a new social proof category to Broadcast: fan consensus as data. Previously: viewer count (passive), analyst opinion (expert), commentator call (emotional). Now: fan verdict (democratic).
+- Next cycle: Arena (rotation).

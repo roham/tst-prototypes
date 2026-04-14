@@ -92,3 +92,5 @@
 | Arena | 8.0 | 7.5 | 7.5 | 7.5 | 8.5 | **7.78** |
 
 **STATE TRANSITIONS phase complete.** All 3 directions have full lifecycle: live → closing → critical → ended. Broadcast leads (7.80) but Arena closed the gap significantly (+0.43). Supreme weakest (7.58) — Conversion (7.0) and Interaction (7.0) lag. Cycles 19+ = REFINEMENT. Agent chooses based on lowest-scoring dimension.
+
+| 19 | supreme | 8.0 | 7.5 | 7.5 | 7.5 | 8.5 | 7.78 | +0.20 | Conversion lift: CTA urgency copy phases, progress ring, stored-payment indicator, tier haptic |

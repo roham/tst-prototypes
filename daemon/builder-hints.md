@@ -156,3 +156,12 @@
 - Arena at 7.78 — highest Conversion (7.5) and Interaction (7.5) across all 3.
 - Weakest dimensions across all: Conversion (7.0-7.5) and Interaction (7.0-7.5).
 - Next cycle: Supreme (weakest overall). Focus on Conversion or Interaction.
+
+## Cycle 19 Learnings
+- CTA copy phases add urgency for free: "OWN THIS MOMENT" → "CLOSING SOON" → "LAST CHANCE" maps to the countdown phases.
+- "Instant checkout · Stored payment" text at 10px/15% opacity is subliminal friction reduction — user sees it peripherally and feels safe clicking.
+- SVG progress ring > pulsing dot for the purchasing state — feels more premium and communicates progress.
+- active:scale-95 on tier selector gives mobile tap feedback with zero JS.
+- Small delta (+0.20) because these are refinements, not structural changes. But Conversion and Interaction both lifted from 7.0 → 7.5.
+- All 3 directions now at 7.78-7.80. Very close. Next cycle should target whichever is NOT Supreme (can't repeat).
+- Broadcast next (7.80 but Conversion still 7.0 — lowest across all 3).

@@ -227,3 +227,13 @@
 - Broadcast's editorial scroll model (hero → narrative → transaction) benefits from this pattern more than Supreme or Arena.
 - IntersectionObserver pattern: observe the main CTA, show sticky when !isIntersecting. Simple, reliable, no scroll listeners.
 - All 3 directions now have all dimensions ≥8.0. Entering polish territory — diminishing returns per cycle. Focus on the weakest direction each round.
+
+## Cycle 27 Learnings
+- Sticky CTA bar works differently for Arena than Broadcast: Arena's includes tier info + active buyers count (live commerce energy), not just a repeated button. Direction-specific adaptation matters.
+- Scoreboard-style top accents (2px team-color bars) on stats cards is a cheap, high-impact visual lift — transforms generic cards into jumbotron/scoreboard panels.
+- The accent color on the countdown card changes with urgency phase (teal → amber → red) — cheap extra urgency signal.
+- Tighter hero badges with left-edge accent borders (instead of rounded-full pills) feel more like scoreboard ticker overlays. Very Arena.
+- Arena jumped from weakest (8.08) to strongest (8.48) in one cycle — sticky CTA + visual polish was the combo. Sticky CTAs are consistently the highest-impact single change.
+- All 3 directions now have sticky CTAs: Supreme doesn't need one (single-screen design), Broadcast has editorial sticky, Arena has live-commerce sticky.
+- All Purity scores now at 9.0 — each direction's sticky CTA and visual treatment is distinct and on-brand.
+- Next cycle: Supreme (weakest at 8.15). All dims at 8.0 except Purity 9.0. Visual and Emotion are the best targets for lift.

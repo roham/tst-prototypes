@@ -133,3 +133,15 @@
 | Arena | 8.0 | 8.0 | 8.0 | 8.0 | 8.5 | **8.08** |
 
 **REFINEMENT round 3 in progress.** All dimensions now ≥8.0 across all directions. Arena weakest (8.08) — Visual (8.0) and Purity (8.5) are the drag vs others at 9.0. Broadcast leads (8.28) with strongest Visual (8.5). Supreme middle (8.15). Next: Arena (rotation completes round 3).
+
+| 27 | arena | 8.5 | 8.5 | 8.0 | 8.5 | 9.0 | 8.48 | +0.40 | Visual+conversion: sticky bottom CTA bar, scoreboard stats accents, tighter hero badges |
+
+### Full Scorecard — After Cycle 27 (all directions touched — REFINEMENT round 3 complete)
+
+| Direction | Visual | Conversion | Emotion | Interaction | Purity | Weighted |
+|-----------|--------|------------|---------|-------------|--------|----------|
+| Supreme | 8.0 | 8.0 | 8.0 | 8.0 | 9.0 | **8.15** |
+| Broadcast | 8.5 | 8.0 | 8.0 | 8.0 | 9.0 | **8.28** |
+| Arena | 8.5 | 8.5 | 8.0 | 8.5 | 9.0 | **8.48** |
+
+**REFINEMENT round 3 complete.** Arena surged from weakest to strongest (+0.40) with sticky CTA + visual polish. All 3 directions now Purity ≥9.0. Supreme weakest (8.15) — Visual (8.0) and all non-Purity dims at 8.0. Weakest dimensions: Supreme Visual (8.0), Supreme Emotion (8.0), Broadcast Emotion (8.0). Next round starts with Supreme.

@@ -2815,6 +2815,108 @@ function HornShockwave({ active, teamColor }: { active: boolean; teamColor: stri
   );
 }
 
+/* ─── Arena Crowd Countdown — final 10s jumbotron number sequence ── */
+/* In NBA arenas, the crowd counts down the final seconds of a close  */
+/* game: "10... 9... 8..." with each number blazing on the jumbotron. */
+/* This fires when totalSeconds ≤ 10, showing a massive number that   */
+/* pulses per second with increasing scale/glow as it approaches 0.   */
+
+function useCrowdCountdown(totalSeconds: number, isEnded: boolean) {
+  const [displayNum, setDisplayNum] = useState<number | null>(null);
+  const prevSeconds = useRef(totalSeconds);
+  const activeRef = useRef(false);
+
+  useEffect(() => {
+    if (isEnded) {
+      setDisplayNum(null);
+      activeRef.current = false;
+      return;
+    }
+    // Enter countdown zone at ≤10s
+    if (totalSeconds <= 10 && totalSeconds > 0) {
+      activeRef.current = true;
+      // Only update on actual second change
+      if (totalSeconds !== prevSeconds.current) {
+        setDisplayNum(totalSeconds);
+      } else if (!activeRef.current || displayNum === null) {
+        setDisplayNum(totalSeconds);
+      }
+    } else {
+      setDisplayNum(null);
+      activeRef.current = false;
+    }
+    prevSeconds.current = totalSeconds;
+  }, [totalSeconds, isEnded, displayNum]);
+
+  return displayNum;
+}
+
+function CrowdCountdown({ num, teamColor }: { num: number; teamColor: string }) {
+  // Key by num to remount on each tick → restart animation
+  const intensity = 1 - num / 10; // 0 at 10, 1 at 1
+  const fontSize = 80 + intensity * 60; // 80px at 10 → 140px at 1
+  const glowSpread = 30 + intensity * 50;
+  const glowAlpha = 0.3 + intensity * 0.5;
+  const bgAlpha = 0.4 + intensity * 0.35;
+  const isUrgent = num <= 3;
+
+  return (
+    <div
+      key={num}
+      className="pointer-events-none fixed inset-0 z-[44] flex items-center justify-center"
+    >
+      {/* Dark backdrop — intensifies as countdown progresses */}
+      <div
+        className="absolute inset-0 arena-crowd-countdown-bg"
+        style={{
+          backgroundColor: `rgba(11,14,20,${bgAlpha})`,
+        }}
+      />
+      {/* Radial pulse ring — expands outward from the number */}
+      <div
+        className="absolute arena-crowd-countdown-ring"
+        style={{
+          width: '200px',
+          height: '200px',
+          borderRadius: '50%',
+          border: `2px solid ${isUrgent ? '#EF4444' : teamColor}`,
+          boxShadow: `0 0 ${glowSpread}px ${isUrgent ? 'rgba(239,68,68,0.3)' : `${teamColor}40`}`,
+        }}
+      />
+      {/* The number */}
+      <span
+        className="relative arena-crowd-countdown-num"
+        style={{
+          fontFamily: 'var(--font-oswald), sans-serif',
+          fontWeight: 800,
+          fontSize: `${fontSize}px`,
+          lineHeight: 1,
+          color: isUrgent ? '#EF4444' : '#F0F2F5',
+          textShadow: `0 0 ${glowSpread}px ${isUrgent ? `rgba(239,68,68,${glowAlpha})` : `${teamColor}${Math.round(glowAlpha * 255).toString(16).padStart(2, '0')}`}, 0 0 ${glowSpread * 2}px ${isUrgent ? `rgba(239,68,68,${glowAlpha * 0.4})` : `${teamColor}30`}`,
+          letterSpacing: '-0.02em',
+        }}
+      >
+        {num}
+      </span>
+      {/* "CROWD COUNTDOWN" label — small jumbotron badge */}
+      <div
+        className="absolute arena-crowd-countdown-label"
+        style={{ bottom: 'calc(50% - 70px)' }}
+      >
+        <span
+          className="text-[9px] font-bold uppercase tracking-[0.3em]"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: isUrgent ? 'rgba(239,68,68,0.6)' : `${teamColor}99`,
+          }}
+        >
+          {isUrgent ? 'GOING GOING GONE' : 'CROWD COUNTDOWN'}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Arena Court Lines — basketball half-court SVG background ───── */
 
 function CourtLines({ teamColor, isEnded }: { teamColor: string; isEnded: boolean }) {
@@ -3781,6 +3883,9 @@ export default function ArenaPage({
   /* ── Horn shockwave — concentric rings when entering CRITICAL phase ── */
   const hornActive = useHornShockwave(countdown.totalSeconds, countdown.isEnded);
 
+  /* ── Crowd countdown — final 10s jumbotron numbers ── */
+  const crowdCountdownNum = useCrowdCountdown(countdown.totalSeconds, countdown.isEnded);
+
   /* ── Defense stomp — "DE-FENSE" jumbotron graphic at 80% claimed ── */
   const defenseStompVisible = useDefenseStomp(
     moment ? liveClaimed / moment.editionSize : 0,
@@ -3933,6 +4038,11 @@ export default function ArenaPage({
             boxShadow: 'inset 0 0 120px rgba(239,68,68,0.25), inset 0 0 60px rgba(239,68,68,0.15)',
           }}
         />
+      )}
+
+      {/* ─── Arena Crowd Countdown — final 10s jumbotron number blast ─── */}
+      {crowdCountdownNum !== null && proto.state !== 'purchasing' && proto.state !== 'confirmed' && (
+        <CrowdCountdown num={crowdCountdownNum} teamColor={moment.teamColors.primary} />
       )}
 
       {/* ─── Arena Buzzer — red LED flash + FINAL when drop ends ─── */}

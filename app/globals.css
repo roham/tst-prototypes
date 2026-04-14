@@ -1537,6 +1537,16 @@ body {
   0%   { opacity: 1; transform: translateY(0) scale(1); }
   100% { opacity: 0; transform: translateY(8px) scale(0.97); }
 }
+/* Broadcast acquisition lower-third — slide in from left, hold, slide out */
+@keyframes broadcast-acquisition-in {
+  0%   { opacity: 0; transform: translateX(-30px); }
+  12%  { opacity: 1; transform: translateX(0); }
+  80%  { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(-15px); }
+}
+.broadcast-acquisition-lower-third {
+  animation: broadcast-acquisition-in 3.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
 @keyframes supreme-bid-whisper {
   0%   { opacity: 0; transform: translateY(3px); }
   12%  { opacity: 1; transform: translateY(0); }
@@ -1564,4 +1574,43 @@ body {
 }
 .supreme-saleroom-pulse {
   animation: supreme-saleroom-pulse 8s ease-in-out infinite;
+}
+
+/* Arena crowd countdown — final 10s jumbotron sequence */
+@keyframes arena-crowd-countdown-bg {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+.arena-crowd-countdown-bg {
+  animation: arena-crowd-countdown-bg 0.9s ease-out forwards;
+}
+@keyframes arena-crowd-countdown-num {
+  0%   { opacity: 0; transform: scale(1.6); }
+  20%  { opacity: 1; transform: scale(0.95); }
+  30%  { opacity: 1; transform: scale(1.02); }
+  40%  { opacity: 1; transform: scale(1); }
+  80%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.3; transform: scale(0.92); }
+}
+.arena-crowd-countdown-num {
+  animation: arena-crowd-countdown-num 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes arena-crowd-countdown-ring {
+  0%   { opacity: 0.6; transform: scale(0.3); }
+  50%  { opacity: 0.3; transform: scale(2.5); }
+  100% { opacity: 0; transform: scale(4); }
+}
+.arena-crowd-countdown-ring {
+  animation: arena-crowd-countdown-ring 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes arena-crowd-countdown-label {
+  0%   { opacity: 0; transform: translateY(8px); }
+  30%  { opacity: 1; transform: translateY(0); }
+  80%  { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+.arena-crowd-countdown-label {
+  animation: arena-crowd-countdown-label 0.9s ease-out forwards;
 }

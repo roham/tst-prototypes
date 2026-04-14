@@ -2008,6 +2008,118 @@ function TeleprompterQuote({ moment, rgb }: { moment: Moment; rgb: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// Live Acquisition Lower-Third — ESPN-style "just claimed" social proof
+// At ESPN/TNT, breaking updates slide in as lower-third graphics during live
+// coverage. This simulates real-time purchases as broadcast news updates,
+// creating social proof at any scroll position. Distinctly Broadcast: Supreme
+// whispers bids, Arena shouts with floating toasts, Broadcast presents them
+// as editorial graphics with team-color accents and production labels.
+// ---------------------------------------------------------------------------
+
+const ACQUISITION_NAMES = [
+  'Mike R.', 'Sarah K.', 'JayHoops', 'DunkCity', 'Alex M.',
+  'NBAFan99', 'Chris B.', 'TopShot_OG', 'BallDontLie', 'Maya W.',
+  'HoopsJunkie', 'TripleDbl', 'FastBreak', 'CourtVision', 'Dime_Drop',
+];
+
+interface AcquisitionEvent {
+  id: number;
+  name: string;
+  edition: number;
+}
+
+function useAcquisitionFeed(baseClaimed: number, isEnded: boolean) {
+  const [latest, setLatest] = useState<AcquisitionEvent | null>(null);
+  const editionRef = useRef(baseClaimed);
+  const idRef = useRef(0);
+
+  useEffect(() => {
+    if (isEnded) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const fire = () => {
+      const delay = 3500 + Math.random() * 5000;
+      timer = setTimeout(() => {
+        editionRef.current += 1;
+        idRef.current += 1;
+        const name = ACQUISITION_NAMES[Math.floor(Math.random() * ACQUISITION_NAMES.length)];
+        setLatest({ id: idRef.current, name, edition: editionRef.current });
+        // Clear after display duration
+        setTimeout(() => setLatest(null), 3200);
+        fire();
+      }, delay);
+    };
+    fire();
+    return () => clearTimeout(timer);
+  }, [isEnded]);
+
+  return latest;
+}
+
+function AcquisitionLowerThird({ event, teamColor, rgb }: {
+  event: AcquisitionEvent;
+  teamColor: string;
+  rgb: string;
+}) {
+  return (
+    <div
+      key={event.id}
+      className="fixed bottom-20 left-4 right-4 z-[52] pointer-events-none flex justify-center"
+    >
+      <div
+        className="broadcast-acquisition-lower-third relative overflow-hidden rounded-sm max-w-sm w-full"
+        style={{
+          backgroundColor: `rgba(${rgb},0.08)`,
+          border: `1px solid rgba(${rgb},0.15)`,
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+        }}
+      >
+        {/* Team-color left accent bar */}
+        <div
+          className="absolute left-0 top-0 bottom-0 w-[3px]"
+          style={{ backgroundColor: teamColor }}
+        />
+        <div className="flex items-center gap-2.5 px-4 py-2.5">
+          {/* Live dot */}
+          <span className="relative flex h-[5px] w-[5px] shrink-0">
+            <span
+              className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-50"
+              style={{ backgroundColor: teamColor }}
+            />
+            <span
+              className="relative inline-flex h-[5px] w-[5px] rounded-full"
+              style={{ backgroundColor: teamColor }}
+            />
+          </span>
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5">
+              <span
+                className="text-[7px] font-bold uppercase tracking-[0.3em]"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif', color: teamColor, opacity: 0.8 }}
+              >
+                New Acquisition
+              </span>
+            </div>
+            <p className="text-[10px] text-white/50 mt-0.5 truncate">
+              <span className="font-semibold text-white/60">{event.name}</span>
+              {' '}claimed Edition{' '}
+              <span className="font-mono tabular-nums" style={{ color: `rgba(${rgb},0.7)` }}>
+                #{event.edition.toLocaleString()}
+              </span>
+            </p>
+          </div>
+          {/* SMPTE timestamp */}
+          <span className="text-[7px] font-mono tabular-nums text-white/15 shrink-0">
+            LIVE
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main Page
 // ---------------------------------------------------------------------------
 
@@ -2206,6 +2318,7 @@ export default function BroadcastPage() {
   const urgencyCopy = editorialUrgencyCopy(dropPhase, countdown.totalSeconds);
   const recentCollectors = useRecentCollectors();
   const smpteTimecode = useSmpteTimecode(countdown.isEnded);
+  const acquisitionEvent = useAcquisitionFeed(moment?.editionsClaimed ?? 0, countdown.isEnded);
 
   // ── Confirmed: Certificate of Ownership ────────────────────────────────
   if (proto.state === 'confirmed') {
@@ -3842,6 +3955,15 @@ export default function BroadcastPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ━━━ ACQUISITION LOWER-THIRD — ESPN-style live claim social proof ━━━ */}
+      {acquisitionEvent && !isPurchasing && !countdown.isEnded && (
+        <AcquisitionLowerThird
+          event={acquisitionEvent}
+          teamColor={moment.teamColors.primary}
+          rgb={rgb}
+        />
       )}
 
       {/* ━━━ STICKY BOTTOM CTA BAR — appears when main CTA scrolls out ━━━ */}

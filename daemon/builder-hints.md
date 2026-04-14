@@ -715,3 +715,13 @@
 - Footer attribution fading in only after typing completes creates a two-beat reveal: dramatic quote → source. Like a broadcast graphic adding the source line after the pull quote appears.
 - Extracted as `TeleprompterQuote` component (not inline in BroadcastPage) because it has its own ref, visibility state, and typewriter state — clean separation.
 - Next cycle: Arena (rotation). Arena could explore a purchase confetti cannon effect, or animated tier badge glow when a tier is about to sell out.
+
+## Cycle 80 Learnings
+- Multi-layer text-shadow (8px/24px/48px at diminishing opacity) is the key to LED board glow — single-layer looks flat, triple-layer creates convincing light bloom.
+- The scan line is distinct from Broadcast's CRT scanlines: one bright moving line vs many static repeating lines. Different visual metaphor — LED refresh vs TV monitor.
+- Using `inline-block` wrapper on the h1 lets the scan line be positioned relative to just the text width, not the full-width container.
+- The scan line's gradient (transparent→team-color→white→team-color→transparent) creates a natural light-peak profile, not a harsh bar.
+- `box-shadow` on the scan line adds a soft glow trail that reinforces the LED board look.
+- Hidden when ended via conditional render — the scoreboard powers off with the arena.
+- Arena hero now has: action image backdrop, player gradient, spotlight sweep, player name LED glow + scan. The jumbotron metaphor is layered but not competing.
+- Next cycle: Supreme (rotation).

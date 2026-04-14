@@ -1089,3 +1089,12 @@
 - Cubic-bezier(0.16, 1, 0.3, 1) for entrance gives that broadcast "snappy slide" feel vs linear or ease.
 - The special report bridges leader→content perfectly — gives narrative reason for the broadcast's existence.
 - Next cycle: Arena (rotation).
+
+## Cycle 125 Learnings
+- Full-screen intro overlays (z-100) create powerful first impressions — each direction now has one: Supreme (color reveal), Broadcast (countdown leader), Arena (gate scan).
+- Barcode vertical lines at varying widths (1-3px) instantly read as "ticket scan" without needing an actual barcode SVG.
+- Reusing the existing seat label (SEC/ROW/SEAT) from the hero badge in the gate scan creates continuity — "you scanned in with THIS ticket."
+- 2.1s is the sweet spot for intro overlays — long enough to register, short enough not to annoy returning visitors.
+- CSS animation `forwards` fill mode on the exit fade ensures clean removal without JS needing to track opacity state.
+- Arena's page load sequence is now: gate scan (0-2.1s) → instant replay (already running underneath) → content settles. The replay runs behind the gate overlay so there's no dead time between intro and content.
+- Next cycle: Supreme (rotation).

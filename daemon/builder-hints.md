@@ -932,3 +932,12 @@
 - The "FAN CAM" badge uses the same red pill + ping dot pattern as the LIVE badge in the main header — visual consistency within the Arena direction.
 - W screen feature density per direction: Supreme (auth seal + provenance chain — formal), Broadcast (wax seal + end credit + photographer flash + BREAKING chyron — cinematic), Arena (ticket stub + fan cam frame + crowd roar EQ + confetti — live entertainment). Each direction's W screen personality is clearly divergent.
 - Next cycle: Supreme (rotation). Supreme at 9.0+ — deep polish territory. Could explore a "collector's catalog" presentation or premium card tilt/3D effect on hover.
+
+## Cycle 105 Learnings
+- 3D card flip via CSS `perspective(1200px) rotateY()` creates an instantly recognizable physical metaphor — every trading card collector knows the flip-to-reveal moment.
+- Spring overshoot in the flip (180°→8°→-2°→0°) prevents the rotation from feeling mechanical. The slight wobble past 0° and back gives it physical weight.
+- Card-back overlay as a separate fixed layer (z-15) with its own fade animation is simpler than trying to do a true CSS backface-visibility two-sided card. The back just needs to be visible for the first ~40% of the flip, then disappear.
+- Diamond crosshatch pattern (`repeating-linear-gradient 45deg + -45deg`) at 6% opacity is the right density for a card back — visible as texture, not as a grid. The TST monogram at 15% is a ghost watermark.
+- The lot number on the card back matches the lot number on the hero (same formula) — continuity between the auction browsing experience and the post-purchase reveal.
+- Card-flip wrapper contains the burst rings outside it (they play simultaneously) — the burst expands while the card flips, creating layered reveal drama.
+- Next cycle: Broadcast (rotation). Broadcast could explore a "season highlight reel" film strip treatment on the W screen, or a dramatic camera dolly zoom entrance.

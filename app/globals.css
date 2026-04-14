@@ -510,6 +510,15 @@ body {
              supreme-fair-warning-hold 2.5s ease-out 1s forwards;
 }
 
+/* Supreme gavel tap — tiny strike motion on each second in CRITICAL phase */
+@keyframes supreme-gavel-tap {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(-18deg); }
+  45% { transform: rotate(3deg); }
+  65% { transform: rotate(-1deg); }
+  100% { transform: rotate(0deg); }
+}
+
 /* Supreme lot provenance label — vertical museum wall label */
 @keyframes supreme-provenance-label-in {
   0% { opacity: 0; transform: translateY(8px); }

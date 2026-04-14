@@ -2375,6 +2375,24 @@ export default function SupremePage() {
              'Live now'}
           </span>
           <div className="flex items-baseline gap-2">
+            {/* Auctioneer's gavel — taps on each second in CRITICAL phase */}
+            {dropPhase === 'CRITICAL' && !isEnded && (
+              <svg
+                key={countdown.totalSeconds}
+                className="self-center"
+                width="14" height="14" viewBox="0 0 14 14" fill="none"
+                style={{
+                  opacity: 0.3,
+                  transformOrigin: '10px 3px',
+                  animation: timerTick ? 'supreme-gavel-tap 180ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+                }}
+              >
+                {/* Gavel head */}
+                <rect x="5" y="1" width="7" height="3.5" rx="0.8" fill="#EF4444" opacity="0.7" />
+                {/* Handle */}
+                <line x1="8.5" y1="4.5" x2="3" y2="12" stroke="#EF4444" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+              </svg>
+            )}
             <div
               className={`font-mono font-bold tabular-nums transition-all duration-500 ${
                 isEnded ? 'text-lg' :
@@ -3092,6 +3110,75 @@ export default function SupremePage() {
           Catalogue designed and produced in New York
         </p>
       </div>
+
+      {/* ============================================================= */}
+      {/* CATALOGUE LOT NAVIGATION — adjacent lots in evening sale     */}
+      {/* Every auction catalogue and online platform shows the lots   */}
+      {/* before and after. This prevents dead-end bounces: if this    */}
+      {/* lot doesn't resonate, the next one might. Cycle through the  */}
+      {/* 3 moments as adjacent lots in the evening sale sequence.     */}
+      {/* ============================================================= */}
+      {(() => {
+        const momentIds = MOMENTS.map(m => m.id);
+        const currentIdx = momentIds.indexOf(moment.id);
+        const prevIdx = (currentIdx - 1 + momentIds.length) % momentIds.length;
+        const nextIdx = (currentIdx + 1) % momentIds.length;
+        const prevMoment = MOMENTS[prevIdx];
+        const nextMoment = MOMENTS[nextIdx];
+        const lotNum = (id: string) => ((id.charCodeAt(0) * 37 + id.charCodeAt(1) * 13) % 9000 + 1000);
+        return (
+          <div className="px-5 pb-4 pt-2 supreme-context-enter">
+            <div className="flex items-center justify-between">
+              {/* Previous lot */}
+              <a
+                href={`/supreme/${prevMoment.id}`}
+                className="group flex items-center gap-2 transition-opacity duration-300 hover:opacity-60"
+              >
+                <svg className="h-3 w-3 text-white/10 group-hover:text-white/20 transition-colors" viewBox="0 0 12 12" fill="none">
+                  <path d="M8 2L4 6L8 10" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <div className="flex flex-col">
+                  <span className="text-[6px] font-mono uppercase tracking-[0.3em] text-white/08">
+                    Lot {lotNum(prevMoment.id)} · Previous
+                  </span>
+                  <span
+                    className="text-[9px] uppercase tracking-[0.15em] text-white/15"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
+                  >
+                    {prevMoment.player}
+                  </span>
+                </div>
+              </a>
+
+              {/* Centre lot indicator */}
+              <span className="text-[6px] font-mono uppercase tracking-[0.3em] text-white/06">
+                {currentIdx + 1} of {momentIds.length}
+              </span>
+
+              {/* Next lot */}
+              <a
+                href={`/supreme/${nextMoment.id}`}
+                className="group flex items-center gap-2 transition-opacity duration-300 hover:opacity-60"
+              >
+                <div className="flex flex-col items-end">
+                  <span className="text-[6px] font-mono uppercase tracking-[0.3em] text-white/08">
+                    Next · Lot {lotNum(nextMoment.id)}
+                  </span>
+                  <span
+                    className="text-[9px] uppercase tracking-[0.15em] text-white/15"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
+                  >
+                    {nextMoment.player}
+                  </span>
+                </div>
+                <svg className="h-3 w-3 text-white/10 group-hover:text-white/20 transition-colors" viewBox="0 0 12 12" fill="none">
+                  <path d="M4 2L8 6L4 10" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ============================================================= */}
       {/* SALEROOM AMBIENT PULSE — the room's heartbeat as a waveform  */}

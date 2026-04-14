@@ -992,4 +992,11 @@
 - Timed overlays (show → hold → dismiss) keep the page dynamic without cluttering — each element has a lifecycle.
 - Arena data lookup tables are lightweight and easily extensible when new teams/moments are added.
 - Broadcast overlay inventory is now comprehensive: ticker, score bug, network bug, replay tag, location tag, lower-third, production markers, film frame, lens flare, PiP, countdown leader, end slate, feed cuts, channel switch. Consider focusing future broadcast cycles on the purchase flow and W screen rather than adding more overlays.
-- Next cycle: Arena (rotation).
+
+## Cycle 113 Learnings
+- Velocity-triggered overlays (≥16/min threshold) create a different trigger pattern from phase-shift triggers (timeout) or rapid-buy triggers (scoring run, streak). Arena now has 4 distinct jumbotron trigger types: load (replay), phase (timeout), burst (scoring run), and sustained velocity (noise prompt).
+- 35s cooldown prevents the prompt from becoming annoying — it fires once, then the excitement must rebuild. Real arena prompts don't repeat every 5 seconds.
+- The noise prompt was already implemented as uncommitted code — always check `git diff` before starting a new cycle. Building on existing work is faster than starting fresh.
+- The keyframe was missing from globals.css but the component referenced it — always check both component AND CSS when shipping pre-existing code.
+- Arena's jumbotron overlay system is now the richest interaction layer: replay → timeout → scoring run → noise prompt → buzzer. Each has a distinct trigger, visual treatment, and z-layer. Consider focusing future Arena cycles on the transaction flow or W screen rather than more overlays.
+- Next cycle: Supreme (rotation).

@@ -1428,3 +1428,12 @@
 - z-58 for the cut-in overlay sits above the SOLD TO lower-third (z-56) so the full-screen overlay dominates during processing, then the SOLD TO banner takes over for the brief period before the W screen appears.
 - Reusing the existing `broadcast-checkmark-draw` CSS class (from the CTA button) on the confirmed stage maintains visual consistency — same checkmark draw animation in both contexts.
 - Next cycle: Arena (rotation). Arena could add a "fan noise meter" that rises during browsing and peaks at purchase, or a jumbotron kiss-cam/dance-cam style engagement overlay during tier browsing.
+
+## Cycle 171 Learnings
+- Refining existing elements (adding a progress scrubber to the existing replay card) is higher ROI than adding new features at this density level. The replay card was already good but felt static — the scrubber makes it feel alive with minimal code.
+- ReplayTimestamp uses setInterval at 100ms for smooth counting. Using 1000ms (per-second) would feel jerky at the short 12s duration. The 100ms interval reads as "real-time video playback" even though only the seconds display (floored).
+- The progress bar's `animation: arena-replay-progress 12s linear 0.5s both` syncs with the timestamp's 500ms startDelay — both start at the same moment. Linear (not ease) is correct for a video scrubber — videos don't accelerate.
+- Breathing play triangle (`pulse` animation + drop-shadow) is a micro-detail but powerful affordance — it signals "this is playing" without video or complex state. Real jumbotrons have pulsing recording/play indicators.
+- z-2 on the scrubber sits above the bottom vignette gradient but below the player info text overlay (no z-index, natural stacking). This means the progress bar is visible but doesn't compete with the player name.
+- The `arena-replay-timestamp` keyframe handles opacity lifecycle (fade-in at 8%, sustained, dim at 92%) independently of the progress bar — each element animates autonomously but appears coordinated.
+- Next cycle: Supreme (rotation). Supreme could refine the lot clerk ceremony purchase overlay, or add a subtle "catalogue page turn" transition between browse and purchase states.

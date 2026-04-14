@@ -489,6 +489,30 @@ body {
              supreme-gavel-hold 4s ease-out 0.8s forwards;
 }
 
+/* Supreme fair warning — calm formal announcement before gavel sequence */
+@keyframes supreme-fair-warning-in {
+  0% { opacity: 0; letter-spacing: 0.6em; }
+  40% { opacity: 0.45; }
+  100% { opacity: 0.35; letter-spacing: 0.4em; }
+}
+@keyframes supreme-fair-warning-hold {
+  0%, 70% { opacity: 0.35; }
+  100% { opacity: 0; }
+}
+.supreme-fair-warning {
+  animation: supreme-fair-warning-in 1s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             supreme-fair-warning-hold 2.5s ease-out 1s forwards;
+}
+
+/* Supreme lot provenance label — vertical museum wall label */
+@keyframes supreme-provenance-label-in {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.supreme-provenance-label {
+  animation: supreme-provenance-label-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+}
+
 /* Supreme paddle raise — bidder paddle scales up when purchase starts */
 @keyframes supreme-paddle-raise {
   0% { transform: scale(1) translateY(0); opacity: 0.2; }

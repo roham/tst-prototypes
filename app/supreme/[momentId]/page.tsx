@@ -1125,8 +1125,8 @@ export default function SupremePage() {
     prevSecondsRef.current = countdown.totalSeconds;
   }, [countdown.totalSeconds, dropPhase]);
 
-  // Auction gavel countdown — "GOING ONCE..." at ≤10s, "GOING TWICE..." at ≤5s
-  const [gavelPhase, setGavelPhase] = useState<0 | 1 | 2>(0); // 0=none, 1=going once, 2=going twice
+  // Auction gavel countdown — "FAIR WARNING" at ≤20s, "GOING ONCE..." at ≤10s, "GOING TWICE..." at ≤5s
+  const [gavelPhase, setGavelPhase] = useState<0 | 1 | 2 | 3>(0); // 0=none, 1=fair warning, 2=going once, 3=going twice
   const gavelKeyRef = useRef(0);
   useEffect(() => {
     if (dropPhase !== 'CRITICAL' || viewPhase === 'purchasing') {
@@ -1134,11 +1134,16 @@ export default function SupremePage() {
       return;
     }
     if (countdown.totalSeconds <= 5 && countdown.totalSeconds > 0) {
+      if (gavelPhase !== 3) {
+        gavelKeyRef.current += 1;
+        setGavelPhase(3);
+      }
+    } else if (countdown.totalSeconds <= 10 && countdown.totalSeconds > 5) {
       if (gavelPhase !== 2) {
         gavelKeyRef.current += 1;
         setGavelPhase(2);
       }
-    } else if (countdown.totalSeconds <= 10 && countdown.totalSeconds > 5) {
+    } else if (countdown.totalSeconds <= 20 && countdown.totalSeconds > 10) {
       if (gavelPhase !== 1) {
         gavelKeyRef.current += 1;
         setGavelPhase(1);
@@ -1319,20 +1324,26 @@ export default function SupremePage() {
       {gavelPhase > 0 && viewPhase !== 'purchasing' && (
         <div
           key={gavelKeyRef.current}
-          className="fixed inset-0 z-[42] pointer-events-none flex items-center justify-center supreme-gavel-text"
+          className={`fixed inset-0 z-[42] pointer-events-none flex items-center justify-center ${
+            gavelPhase === 1 ? 'supreme-fair-warning' : 'supreme-gavel-text'
+          }`}
         >
           <span
-            className="text-[28px] sm:text-[34px] uppercase tracking-[0.3em] select-none"
+            className={`uppercase select-none ${
+              gavelPhase === 1 ? 'text-[22px] sm:text-[26px] tracking-[0.4em]' : 'text-[28px] sm:text-[34px] tracking-[0.3em]'
+            }`}
             style={{
               fontFamily: 'var(--font-oswald), sans-serif',
-              fontWeight: 700,
-              color: gavelPhase === 2 ? '#EF4444' : 'rgba(255,255,255,0.35)',
-              textShadow: gavelPhase === 2
+              fontWeight: gavelPhase === 1 ? 500 : 700,
+              color: gavelPhase === 3 ? '#EF4444' : gavelPhase === 1 ? `${moment.teamColors.primary}` : 'rgba(255,255,255,0.35)',
+              textShadow: gavelPhase === 3
                 ? `0 0 30px rgba(239,68,68,0.4), 0 0 60px rgba(239,68,68,0.15)`
-                : `0 0 30px ${moment.teamColors.primary}20`,
+                : gavelPhase === 1
+                  ? `0 0 40px ${moment.teamColors.primary}15`
+                  : `0 0 30px ${moment.teamColors.primary}20`,
             }}
           >
-            {gavelPhase === 1 ? 'GOING ONCE...' : 'GOING TWICE...'}
+            {gavelPhase === 1 ? 'FAIR WARNING' : gavelPhase === 2 ? 'GOING ONCE...' : 'GOING TWICE...'}
           </span>
         </div>
       )}
@@ -1587,6 +1598,37 @@ export default function SupremePage() {
         {!isEnded && !isPurchasing && (
           <PhoneBidders teamColor={moment.teamColors.primary} />
         )}
+
+        {/* Lot provenance wall label — museum gallery plaque on left edge */}
+        {/* Every gallery piece has a small label beside it: title, medium, date, provenance */}
+        <div
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-[11] pointer-events-none supreme-provenance-label"
+          style={{
+            writingMode: 'vertical-lr',
+            transform: 'translateY(-50%) rotate(180deg)',
+          }}
+        >
+          <div className="flex items-center gap-3" style={{ opacity: isEnded ? 0.06 : 0.1 }}>
+            <span className="text-[6px] font-mono uppercase tracking-[0.35em] text-white/30">
+              {moment.team}
+            </span>
+            <span className="text-[5px] text-white/10">·</span>
+            <span className="text-[6px] font-mono uppercase tracking-[0.25em] text-white/20">
+              {moment.playType}
+            </span>
+            <span className="text-[5px] text-white/10">·</span>
+            <span className="text-[6px] font-mono uppercase tracking-[0.25em] text-white/15">
+              {new Date().getFullYear()}
+            </span>
+            <span className="text-[5px] text-white/10">·</span>
+            <span
+              className="text-[6px] font-mono uppercase tracking-[0.25em]"
+              style={{ color: `${moment.teamColors.primary}20` }}
+            >
+              Digital
+            </span>
+          </div>
+        </div>
 
         {/* SOLD watermark — auction house finality on ended drops */}
         {isEnded && (

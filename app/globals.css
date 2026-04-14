@@ -583,6 +583,15 @@ body {
   100% { transform: translateX(110%); opacity: 0; }
 }
 
+/* Broadcast certificate — prestige border shimmer (traveling glow around card edges) */
+@keyframes broadcast-cert-shimmer {
+  0%   { top: -15%; left: -15%; }
+  25%  { top: -15%; left: 85%; }
+  50%  { top: 85%; left: 85%; }
+  75%  { top: 85%; left: -15%; }
+  100% { top: -15%; left: -15%; }
+}
+
 /* Arena W screen — crowd roar EQ bars (dramatic spike on reveal) */
 @keyframes arena-roar-bar {
   0% { height: 8%; }

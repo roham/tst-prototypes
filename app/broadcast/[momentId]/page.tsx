@@ -1489,6 +1489,17 @@ function CertificateScreen({
               style={{ backgroundColor: moment.teamColors.primary }}
             />
 
+            {/* Prestige border shimmer — traveling glow traces card edges */}
+            <div
+              className="absolute w-[30%] h-[30%] rounded-full pointer-events-none z-0"
+              style={{
+                background: `radial-gradient(circle, ${moment.teamColors.primary} 0%, transparent 70%)`,
+                opacity: 0.1,
+                filter: 'blur(16px)',
+                animation: 'broadcast-cert-shimmer 6s ease-in-out infinite',
+              }}
+            />
+
             {/* Certificate header */}
             <p className="text-center text-[9px] font-semibold uppercase tracking-[0.4em] text-white/30">
               Certificate of Ownership

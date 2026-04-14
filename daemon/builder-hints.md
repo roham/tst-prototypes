@@ -1613,3 +1613,10 @@
 - Gradual effects (120s → 0s linear ramp) are more psychologically effective than sudden state changes — the user doesn't notice the darkness creeping in until they're already surrounded by it. This is how real auction houses control the room.
 - The `transition: background 1s ease` on the spotlight div smooths the per-second gradient updates into a continuous narrowing, preventing visible stepping as the ellipse shrinks by ~0.3% per second.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 200 Learnings
+- The W screen (post-purchase confirmation) benefits from broadcast-specific content that makes the moment feel more significant. Each new card in the staggered reveal adds to the "unboxing" experience — the user discovers new layers of prestige as they scroll.
+- Gold (#D4A017) as an accent color for awards/prestige creates visual hierarchy above team colors. It signals league-level recognition vs team-level identity. Use sparingly — only for genuine prestige moments.
+- SVG trophy icons at small sizes (36×36) need simplified geometry — cup, handles, stem, base, and a single star emblem. Too much detail becomes noise at small scales. Stroke-only (no fill except the star) keeps it elegant.
+- The Broadcast W screen now has 10 distinct content sections in its staggered reveal. This is approaching the maximum — any more and the scroll depth becomes unwieldy. Future Broadcast W improvements should enhance existing sections rather than adding new ones.
+- Next cycle: Arena (rotation).

@@ -1243,6 +1243,41 @@ function TimeoutOverlay({ active, label, teamColor }: { active: boolean; label: 
   );
 }
 
+/* ─── Arena Court Lines — basketball half-court SVG background ───── */
+
+function CourtLines({ teamColor, isEnded }: { teamColor: string; isEnded: boolean }) {
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 overflow-hidden transition-opacity duration-700"
+      style={{ opacity: isEnded ? 0.015 : 0.035 }}
+    >
+      <svg
+        viewBox="0 0 300 400"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{ width: '120%', height: '120%' }}
+        fill="none"
+        stroke={teamColor}
+        strokeWidth="1"
+      >
+        {/* Half-court line */}
+        <line x1="0" y1="200" x2="300" y2="200" opacity="0.6" />
+        {/* Center circle */}
+        <circle cx="150" cy="200" r="36" opacity="0.5" />
+        {/* Center dot */}
+        <circle cx="150" cy="200" r="3" fill={teamColor} opacity="0.4" />
+        {/* Three-point arc (top half) */}
+        <path d="M 22 0 L 22 140 A 120 120 0 0 0 278 140 L 278 0" opacity="0.3" />
+        {/* Free throw box */}
+        <rect x="100" y="0" width="100" height="140" rx="0" opacity="0.25" />
+        {/* Free throw circle (top half visible) */}
+        <path d="M 100 140 A 50 50 0 0 0 200 140" opacity="0.2" />
+        {/* Baseline */}
+        <line x1="0" y1="0" x2="300" y2="0" opacity="0.15" />
+      </svg>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
@@ -1679,8 +1714,12 @@ export default function ArenaPage({
         isClosing={isClosing}
       />
 
+      {/* ─── Arena Court Lines — basketball half-court behind transaction area ─── */}
+      <div className="relative">
+        <CourtLines teamColor={moment.teamColors.primary} isEnded={countdown.isEnded} />
+
       {/* ─── Rarity Tiers — live auction selector ─── */}
-      <div className="mt-3">
+      <div className="mt-3 relative z-[1]">
         <p className="mb-2 px-4 text-[10px] font-semibold uppercase tracking-widest text-white/30">
           Select Tier
         </p>
@@ -1799,6 +1838,7 @@ export default function ArenaPage({
 
       {/* Bottom safe area */}
       <div className="h-20" />
+      </div>{/* Close court lines wrapper */}
 
       {/* ─── Sticky Bottom CTA — always-present buy pressure ─── */}
       {showStickyCTA && !countdown.isEnded && proto.state !== 'confirmed' && (

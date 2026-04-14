@@ -247,3 +247,12 @@
 - Supreme Visual lifted 8.0→8.5 from these micro-refinements. Lesson: in Supreme's minimal language, every pixel matters more.
 - Supreme Purity held at 9.0 — all additions were lines, dots, and gradients. Nothing structural. That's the Supreme way.
 - Next cycle: Broadcast (rotation). Broadcast at 8.28 — Emotion (8.0) is the weakest dimension to target.
+
+## Cycle 29 Learnings
+- CSS film grain overlay using SVG feTurbulence noise + steps() animation creates broadcast-quality cinematic texture with near-zero performance cost. The mix-blend-mode: overlay keeps it subtle on dark backgrounds.
+- Action image as a separate background layer (10% opacity, behind player headshot) adds cinematic depth — the hero feels like a broadcast opening shot instead of a flat headshot.
+- "Play of the Game" editorial badge with team-color tint primes the user to feel significance BEFORE reading any content — emotional framing is the cheapest emotion lift.
+- Pull quote was duplicating `moment.context` from the hero — wasteful. Using `historicalNote.split('.')[0]` as the pull quote with `context` as attribution creates two distinct emotional beats: the dramatic opener, then the statistical significance.
+- Small delta (+0.10) because Emotion moved 8.0→8.5 but nothing else changed. Multi-dimension lifts produce bigger deltas.
+- Broadcast Emotion is now 8.5, matching Supreme. All dims ≥8.0 across all directions.
+- Next cycle: Arena (rotation). Arena at 8.48 — strongest overall but Emotion (8.0) is its weakest dim.

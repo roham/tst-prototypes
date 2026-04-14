@@ -161,6 +161,47 @@ function ShareButtons({ teamColor }: { teamColor: string }) {
 // Confirmed / "W" Screen
 // ---------------------------------------------------------------------------
 
+// Edition number reveal — rapid count-up then lock (slot machine energy)
+function EditionRevealCounter({ target, teamColor, started }: {
+  target: number; teamColor: string; started: boolean;
+}) {
+  const [display, setDisplay] = useState(0);
+  const [locked, setLocked] = useState(false);
+  const rafRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (!started) return;
+    const duration = 800; // ms to count up
+    const startTime = performance.now();
+    function tick(now: number) {
+      const t = Math.min((now - startTime) / duration, 1);
+      // easeOutExpo — fast start, decelerating to lock
+      const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+      setDisplay(Math.round(eased * target));
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        setLocked(true);
+      }
+    }
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [started, target]);
+
+  return (
+    <span
+      className="text-[32px] font-mono font-bold tabular-nums tracking-tight transition-all duration-200"
+      style={{
+        color: teamColor,
+        textShadow: locked ? `0 0 20px ${teamColor}40` : 'none',
+        transform: locked ? 'scale(1.05)' : 'scale(1)',
+      }}
+    >
+      #{(started ? display : 0).toLocaleString()}
+    </span>
+  );
+}
+
 function WScreen({
   moment,
   editionNumber,
@@ -293,7 +334,7 @@ function WScreen({
           </h2>
           <p className="mt-1.5 text-sm text-white/30">{moment.playType}</p>
 
-          {/* Edition serial — luxury serial number treatment */}
+          {/* Edition serial — luxury serial number treatment with counter reveal */}
           <div className="mt-6 flex flex-col items-center">
             {tierName !== 'Open' && (
               <span
@@ -304,12 +345,11 @@ function WScreen({
               </span>
             )}
             <div className="flex items-baseline gap-2">
-              <span
-                className="text-[32px] font-mono font-bold tabular-nums tracking-tight"
-                style={{ color: moment.teamColors.primary }}
-              >
-                #{editionNumber.toLocaleString()}
-              </span>
+              <EditionRevealCounter
+                target={editionNumber}
+                teamColor={moment.teamColors.primary}
+                started={showDetails}
+              />
               <span className="text-[11px] font-mono text-white/15 tabular-nums">
                 / {moment.editionSize.toLocaleString()}
               </span>

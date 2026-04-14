@@ -136,6 +136,7 @@ export default function BroadcastPage() {
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=authenticating, 2=acquired
   const [showStickyBar, setShowStickyBar] = useState(false);
   const ctaRef = useRef<HTMLButtonElement>(null);
+  const transactionRef = useRef<HTMLElement>(null);
 
   const countdown = useCountdown(SALE_DURATION_MS[params.momentId as string] ?? 12 * 60 * 1000);
   const proto = usePrototypeState(momentId);
@@ -361,14 +362,18 @@ export default function BroadcastPage() {
             </p>
           </div>
 
-          {/* Scroll indicator — subtle animated chevron */}
+          {/* Scroll indicator — animated chevron that scrolls to transaction */}
           {!countdown.isEnded && (
             <div className="absolute bottom-14 left-0 right-0 z-20 flex justify-center">
-              <div className="animate-bounce opacity-30">
+              <button
+                onClick={() => transactionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                className="animate-bounce opacity-30 hover:opacity-50 transition-opacity cursor-pointer"
+                aria-label="Scroll to collect"
+              >
                 <svg width="20" height="10" viewBox="0 0 20 10" fill="none">
                   <path d="M2 2L10 8L18 2" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-              </div>
+              </button>
             </div>
           )}
 
@@ -487,7 +492,7 @@ export default function BroadcastPage() {
         </div>
 
         {/* ━━━ TRANSACTION SECTION ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="mx-auto max-w-3xl px-5 pt-10 pb-16 md:px-10 md:pb-24">
+        <section ref={transactionRef} className="mx-auto max-w-3xl px-5 pt-10 pb-16 md:px-10 md:pb-24 scroll-mt-4">
           {/* Section header */}
           <div className="flex items-center gap-3 mb-6">
             <div
@@ -664,7 +669,7 @@ export default function BroadcastPage() {
       </div>
 
       {/* ━━━ STICKY BOTTOM CTA BAR — appears when main CTA scrolls out ━━━ */}
-      {!countdown.isEnded && !isPurchasing && (
+      {!countdown.isEnded && (
         <div
           className="fixed bottom-0 left-0 right-0 z-50 transition-all duration-300"
           style={{
@@ -675,7 +680,7 @@ export default function BroadcastPage() {
           <div
             className="border-t px-5 py-3 backdrop-blur-xl flex items-center justify-between gap-4"
             style={{
-              borderColor: `rgba(${rgb},0.15)`,
+              borderColor: isPurchasing ? `rgba(${rgb},0.25)` : `rgba(${rgb},0.15)`,
               backgroundColor: 'rgba(11,14,20,0.92)',
             }}
           >
@@ -687,22 +692,63 @@ export default function BroadcastPage() {
                 {moment.player}
               </span>
               <span className="text-[10px] text-white/30 tracking-wide">
-                {selectedTier.tier} Edition · ${selectedTier.price}
+                {isPurchasing
+                  ? `${selectedTier.tier} Edition · Acquiring...`
+                  : `${selectedTier.tier} Edition · $${selectedTier.price}`}
               </span>
+              {!isPurchasing && selectedTier.remaining <= 20 && (
+                <span className={`text-[9px] tracking-wide mt-0.5 ${
+                  selectedTier.remaining <= 5 ? 'text-[#F59E0B]' : 'text-white/20'
+                }`}>
+                  {selectedTier.remaining <= 5
+                    ? `Only ${selectedTier.remaining} remain`
+                    : `${selectedTier.remaining} of ${selectedTier.size.toLocaleString()} left`}
+                </span>
+              )}
             </div>
-            <button
-              onClick={proto.purchase}
-              className={`shrink-0 rounded-lg border px-6 py-2.5 text-sm font-semibold tracking-wide transition-all active:scale-[0.97] ${
-                dropPhase === 'CRITICAL' ? 'animate-urgency-fast' : ''
-              }`}
-              style={{
-                borderColor: dropPhase === 'CRITICAL' ? '#EF4444' : moment.teamColors.primary,
-                backgroundColor: dropPhase === 'CRITICAL' ? 'rgba(239,68,68,0.12)' : `rgba(${rgb},0.08)`,
-                color: dropPhase === 'CRITICAL' ? '#EF4444' : 'white',
-              }}
-            >
-              {dropPhase === 'CRITICAL' ? 'Collect Now' : 'Own This Moment'}
-            </button>
+            {isPurchasing ? (
+              <div
+                className="shrink-0 relative rounded-lg border px-6 py-2.5 text-sm tracking-wide overflow-hidden"
+                style={{
+                  borderColor: `rgba(${rgb},0.3)`,
+                  backgroundColor: 'rgba(11,14,20,0.92)',
+                }}
+              >
+                {/* Progress wipe — mirrors main CTA */}
+                <div
+                  className="absolute inset-y-0 left-0 transition-all duration-500 ease-out"
+                  style={{
+                    width: purchaseStage === 0 ? '33%' : purchaseStage === 1 ? '75%' : '100%',
+                    backgroundColor: `rgba(${rgb},0.12)`,
+                    borderRight: purchaseStage < 2 ? `1px solid rgba(${rgb},0.3)` : 'none',
+                  }}
+                />
+                <span
+                  className="relative z-10 text-white/60"
+                  style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+                >
+                  {purchaseStage === 0
+                    ? 'Reserving...'
+                    : purchaseStage === 1
+                      ? 'Authenticating...'
+                      : 'Acquired.'}
+                </span>
+              </div>
+            ) : (
+              <button
+                onClick={proto.purchase}
+                className={`shrink-0 rounded-lg border px-6 py-2.5 text-sm font-semibold tracking-wide transition-all active:scale-[0.97] ${
+                  dropPhase === 'CRITICAL' ? 'animate-urgency-fast' : ''
+                }`}
+                style={{
+                  borderColor: dropPhase === 'CRITICAL' ? '#EF4444' : moment.teamColors.primary,
+                  backgroundColor: dropPhase === 'CRITICAL' ? 'rgba(239,68,68,0.12)' : `rgba(${rgb},0.08)`,
+                  color: dropPhase === 'CRITICAL' ? '#EF4444' : 'white',
+                }}
+              >
+                {dropPhase === 'CRITICAL' ? 'Collect Now' : 'Own This Moment'}
+              </button>
+            )}
           </div>
           {/* Safe area spacer for notch phones */}
           <div className="h-[env(safe-area-inset-bottom,0px)]" style={{ backgroundColor: 'rgba(11,14,20,0.92)' }} />

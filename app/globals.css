@@ -934,6 +934,16 @@ body {
   100% { transform: scaleY(0); opacity: 0; transform-origin: bottom; }
 }
 
+/* Arena scoring run — basketball broadcast "5-0 RUN" momentum banner */
+@keyframes arena-scoring-run-in {
+  0% { opacity: 0; transform: translateX(100%) scale(0.95); }
+  20% { opacity: 1; transform: translateX(-3%) scale(1.02); }
+  35% { transform: translateX(1%) scale(1); }
+  50% { transform: translateX(0) scale(1); }
+  80% { opacity: 1; transform: translateX(0) scale(1); }
+  100% { opacity: 0; transform: translateX(-100%) scale(0.95); }
+}
+
 /* Arena crowd chant ticker — jumbotron "LET'S GO [TEAM]" scrolling text */
 @keyframes arena-chant-scroll {
   0% { transform: translateX(0); }

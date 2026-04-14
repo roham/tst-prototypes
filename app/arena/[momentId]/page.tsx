@@ -397,6 +397,86 @@ function StreakBadge({ streak, visible, teamColor }: { streak: number; visible: 
   );
 }
 
+/* ─── Scoring Run Banner — basketball "5-0 RUN" momentum announcement ── */
+
+function useScoringRun(events: PurchaseEvent[]) {
+  const [run, setRun] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const timestamps = useRef<number[]>([]);
+  const hideTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    if (events.length === 0) return;
+    const now = Date.now();
+    timestamps.current = [...timestamps.current.filter((t) => now - t < 10000), now];
+    const rapid = timestamps.current.length;
+
+    if (rapid >= 4) {
+      setRun(rapid);
+      setVisible(true);
+      clearTimeout(hideTimer.current);
+      hideTimer.current = setTimeout(() => {
+        setVisible(false);
+        setTimeout(() => setRun(0), 500);
+      }, 3500);
+    }
+
+    return () => clearTimeout(hideTimer.current);
+  }, [events.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return { run, visible };
+}
+
+function ScoringRunBanner({ run, visible, teamColor }: { run: number; visible: boolean; teamColor: string }) {
+  if (run < 4 && !visible) return null;
+
+  return (
+    <div
+      className="pointer-events-none fixed top-28 left-0 right-0 z-[32] flex justify-center"
+      style={{
+        opacity: visible ? 1 : 0,
+        transition: 'opacity 0.4s ease-out',
+      }}
+    >
+      <div
+        className="flex items-center gap-3 rounded-lg px-5 py-2 backdrop-blur-md"
+        style={{
+          backgroundColor: `${teamColor}20`,
+          border: `1px solid ${teamColor}35`,
+          boxShadow: `0 0 24px ${teamColor}20, 0 4px 16px rgba(0,0,0,0.4)`,
+          animation: visible ? 'arena-scoring-run-in 3.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' : undefined,
+        }}
+      >
+        {/* Basketball icon */}
+        <span className="text-base">🏀</span>
+        <div className="flex items-baseline gap-2">
+          <span
+            className="text-2xl font-black tabular-nums"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: teamColor,
+              textShadow: `0 0 12px ${teamColor}60`,
+            }}
+          >
+            {run}-0
+          </span>
+          <span
+            className="text-[11px] font-bold uppercase tracking-[0.2em]"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: 'rgba(255,255,255,0.6)',
+            }}
+          >
+            SCORING RUN
+          </span>
+        </div>
+        {/* Momentum spark */}
+        <span className="text-base">⚡</span>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Crowd Noise Equalizer — mini bars suggesting live arena audio ── */
 
 function CrowdNoiseEQ({ teamColor, isActive }: { teamColor: string; isActive: boolean }) {
@@ -1495,6 +1575,9 @@ export default function ArenaPage({
   /* ── Purchase streak (combo multiplier on rapid buys) ──────── */
   const { streak, visible: streakVisible } = usePurchaseStreak(feedEvents);
 
+  /* ── Scoring run (momentum banner on rapid purchase sequences) ── */
+  const { run: scoringRun, visible: scoringRunVisible } = useScoringRun(feedEvents);
+
   /* ── Animated metrics ───────────────────────────────────────── */
   const [liveVelocity, setLiveVelocity] = useState(14);
   const [viewers, setViewers] = useState(847);
@@ -1658,6 +1741,9 @@ export default function ArenaPage({
 
       {/* ─── Purchase streak badge — combo multiplier on rapid buys ─── */}
       {!countdown.isEnded && <StreakBadge streak={streak} visible={streakVisible} teamColor={moment.teamColors.primary} />}
+
+      {/* ─── Scoring run banner — basketball momentum announcement ─── */}
+      {!countdown.isEnded && <ScoringRunBanner run={scoringRun} visible={scoringRunVisible} teamColor={moment.teamColors.primary} />}
 
       {/* ─── Animated background gradient pulse ─── */}
       <div

@@ -941,3 +941,12 @@
 - The lot number on the card back matches the lot number on the hero (same formula) — continuity between the auction browsing experience and the post-purchase reveal.
 - Card-flip wrapper contains the burst rings outside it (they play simultaneously) — the burst expands while the card flips, creating layered reveal drama.
 - Next cycle: Broadcast (rotation). Broadcast could explore a "season highlight reel" film strip treatment on the W screen, or a dramatic camera dolly zoom entrance.
+
+## Cycle 106 Learnings
+- The instant replay thumbnail adds a second emotional beat: certificate (ownership) → replay (the moment). This two-beat structure mirrors broadcast pacing — announce the result, then cut to the highlight.
+- Broadcast grading (saturate 0.85, contrast 1.15) gives the action image that post-game highlight reel look. Slightly desaturated + punchy contrast = professional broadcast color.
+- Play triangle in a frosted glass circle is a universal "this is video" affordance. Even though it's not functional, it makes the moment feel alive — not just a static card you bought.
+- transitionDelay '0.4s' on the replay frame creates staggered reveal: certificate slides up first, then the replay frame follows. Without the delay, both would appear simultaneously and compete for attention.
+- Team-color REPLAY badge with circular arrow icon is a compact broadcast signifier — matches the Instant Replay tag that exists on the main browsing page.
+- W screen content density per direction is now: Supreme (W + YOURS + details + provenance chain), Broadcast (COLLECTED + certificate + replay + share + end credit), Arena (ticket stub + fan cam + crowd EQ + stats). Each tells a different post-purchase story.
+- Next cycle: Arena (rotation). Arena could explore a "crowd selfie" or "arena scoreboard final" treatment to deepen the post-game celebration feel.

@@ -3013,6 +3013,42 @@ export default function SupremePage() {
       </nav>
 
       {/* ============================================================= */}
+      {/* CATALOGUE COLOPHON — formal auction house footer/imprint      */}
+      {/* Every Christie's/Sotheby's printed catalogue ends with a      */}
+      {/* colophon: copyright, conditions of sale, catalogue credits.   */}
+      {/* This institutional fine print completes the auction fiction —  */}
+      {/* subliminal credibility that makes the purchase feel weighty   */}
+      {/* and legitimate, like buying from a 280-year-old institution.  */}
+      {/* ============================================================= */}
+      <div className="px-8 pb-6 pt-1 flex flex-col items-center gap-2 supreme-context-enter">
+        {/* Decorative rule — catalogue section break */}
+        <div className="flex items-center gap-3 w-full max-w-[200px]">
+          <div className="h-[0.5px] flex-1" style={{ backgroundColor: `${moment.teamColors.primary}08` }} />
+          <span className="text-[5px] tracking-[0.4em] text-white/06" style={{ fontFamily: 'var(--font-oswald), sans-serif' }}>
+            ◆
+          </span>
+          <div className="h-[0.5px] flex-1" style={{ backgroundColor: `${moment.teamColors.primary}08` }} />
+        </div>
+
+        {/* Copyright + conditions — institutional legalese */}
+        <p className="text-[6px] font-mono uppercase tracking-[0.25em] text-white/06 text-center leading-[2]">
+          © {new Date().getFullYear()} TST Auctions, Inc. All rights reserved.
+        </p>
+        <p className="text-[6px] font-mono uppercase tracking-[0.15em] text-white/05 text-center leading-[1.8] max-w-[240px]">
+          Conditions of sale and limited warranty apply. Buyer&apos;s premium waived for digital lots.
+          Catalogue descriptions are statements of opinion only.
+        </p>
+
+        {/* Catalogue credits — printer's colophon */}
+        <p
+          className="text-[6px] tracking-[0.1em] text-white/04 text-center mt-1"
+          style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}
+        >
+          Catalogue designed and produced in New York
+        </p>
+      </div>
+
+      {/* ============================================================= */}
       {/* SALEROOM AMBIENT PULSE — the room's heartbeat as a waveform  */}
       {/* At Christie's/Sotheby's, the room has an audible energy:     */}
       {/* quiet murmur during open bidding, rising tension as lots     */}

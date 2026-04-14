@@ -625,6 +625,20 @@ export default function BroadcastPage() {
                 </span>
               ) : isPurchasing ? (
                 <span className="relative z-10 flex items-center justify-center gap-3">
+                  {purchaseStage === 2 && (
+                    /* Authenticated seal — SVG checkmark draws in on "Acquired." */
+                    <svg className="h-5 w-5 text-white/80" viewBox="0 0 20 20" fill="none">
+                      <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.2" opacity="0.3" />
+                      <path
+                        d="M6 10.5 L9 13.5 L14 7"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="broadcast-checkmark-draw"
+                      />
+                    </svg>
+                  )}
                   <span
                     className="text-white/70 tracking-wide"
                     style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
@@ -637,14 +651,18 @@ export default function BroadcastPage() {
                   </span>
                 </span>
               ) : (
-                <span className="text-white">
+                <span className="text-white inline-flex items-center justify-center gap-2">
+                  {/* Lock — prestige trust signal */}
+                  <svg className="h-3.5 w-3.5 text-white/40" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M11 7V5a3 3 0 0 0-6 0v2H4a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-1Zm-4.5-2a1.5 1.5 0 0 1 3 0v2h-3V5Z" />
+                  </svg>
                   {dropPhase === 'CRITICAL'
                     ? 'Collect Now'
                     : dropPhase === 'CLOSING'
                       ? 'Closing Soon — Collect Now'
                       : 'Own This Piece of History'}
                   <span className={dropPhase === 'CRITICAL' ? 'text-white/60' : 'text-white/40'}>
-                    {' '}&mdash; ${selectedTier.price}
+                    &mdash; ${selectedTier.price}
                   </span>
                 </span>
               )}
@@ -675,7 +693,7 @@ export default function BroadcastPage() {
                   {recentCollectors} collectors joined in the last minute
                 </p>
                 <p className="mt-2 text-[10px] uppercase tracking-[0.15em] text-white/12">
-                  Registered collector &middot; Instant acquisition
+                  Registered collector &middot; Visa ··4242
                 </p>
               </>
             )}
@@ -739,9 +757,21 @@ export default function BroadcastPage() {
                   }}
                 />
                 <span
-                  className="relative z-10 text-white/60"
+                  className="relative z-10 text-white/60 inline-flex items-center gap-2"
                   style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
                 >
+                  {purchaseStage === 2 && (
+                    <svg className="h-4 w-4 text-white/70" viewBox="0 0 20 20" fill="none">
+                      <path
+                        d="M6 10.5 L9 13.5 L14 7"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="broadcast-checkmark-draw"
+                      />
+                    </svg>
+                  )}
                   {purchaseStage === 0
                     ? 'Reserving...'
                     : purchaseStage === 1

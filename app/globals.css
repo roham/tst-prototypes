@@ -333,6 +333,18 @@ body {
   to { stroke-dashoffset: 0; }
 }
 
+/* Supreme signature draw — calligraphic ink stroke on W screen acquisition ledger */
+@keyframes supreme-signature-draw {
+  0% { stroke-dashoffset: 200; opacity: 0; }
+  8% { opacity: 0.35; }
+  100% { stroke-dashoffset: 0; opacity: 0.35; }
+}
+.supreme-signature-stroke {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: supreme-signature-draw 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
 /* Supreme hero — subtle Ken Burns slow zoom for cinematic depth */
 @keyframes supreme-ken-burns {
   0% { transform: scale(1); }

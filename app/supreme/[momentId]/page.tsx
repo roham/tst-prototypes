@@ -857,6 +857,42 @@ function WScreen({
           </div>
         </div>
 
+        {/* Inkwell signature — collector signs the acquisition ledger */}
+          <div
+            className="mt-4 w-full max-w-[200px] mx-auto flex flex-col items-center transition-all duration-700 ease-out"
+            style={{
+              opacity: showSeal ? 1 : 0,
+              transform: showSeal ? 'translateY(0)' : 'translateY(6px)',
+            }}
+          >
+            <span className="text-[7px] font-mono uppercase tracking-[0.35em] text-white/12 mb-1.5">
+              Collector&apos;s Signature
+            </span>
+            {/* Calligraphic ink stroke — draws itself like signing a document */}
+            <svg
+              width="140"
+              height="24"
+              viewBox="0 0 140 24"
+              fill="none"
+              className="overflow-visible"
+            >
+              <path
+                d="M8 18 C20 6, 32 4, 42 12 C52 20, 58 8, 68 10 C78 12, 82 6, 92 8 C102 10, 108 4, 118 14 C122 18, 128 12, 132 14"
+                stroke={moment.teamColors.primary}
+                strokeWidth="0.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={showSeal ? 'supreme-signature-stroke' : ''}
+                style={{ opacity: 0 }}
+              />
+            </svg>
+            {/* Thin rule below signature — ledger line */}
+            <div
+              className="w-full h-[0.5px] mt-0.5"
+              style={{ backgroundColor: `${moment.teamColors.primary}10` }}
+            />
+          </div>
+
         {/* Wax seal — embossed authentication stamp, auction house finality */}
         <div
           className="mt-5 flex justify-center transition-all duration-700 ease-out"

@@ -487,6 +487,22 @@ export default function BroadcastPage() {
 // Tier Card
 // ═══════════════════════════════════════════════════════════════════════════
 
+// Editorial taglines per tier — Sotheby's catalog energy
+const TIER_TAGLINE: Record<string, string> = {
+  Open: 'Collector Edition',
+  Rare: 'Limited Series',
+  Legendary: 'Museum Edition',
+  Ultimate: 'Vault Reserve',
+};
+
+// Rarity diamond count — visual hierarchy
+const TIER_DIAMONDS: Record<string, number> = {
+  Open: 0,
+  Rare: 1,
+  Legendary: 2,
+  Ultimate: 3,
+};
+
 function TierCard({
   tier,
   isSelected,
@@ -500,17 +516,27 @@ function TierCard({
   rgb: string;
   onSelect: () => void;
 }) {
+  const isPremium = tier.tier === 'Legendary' || tier.tier === 'Ultimate';
+  const isLowStock = tier.remaining <= 5;
+  const diamonds = TIER_DIAMONDS[tier.tier] ?? 0;
+
   return (
     <button
       onClick={onSelect}
-      className="group relative flex flex-col items-start rounded-lg border p-4 text-left transition-all duration-200 overflow-hidden md:p-5"
+      className={`group relative flex flex-col items-start rounded-lg border p-4 text-left transition-all duration-300 overflow-hidden md:p-5 ${
+        isPremium && isSelected ? 'broadcast-tier-shimmer' : ''
+      }`}
       style={{
-        borderColor: isSelected ? teamColor : 'rgba(255,255,255,0.06)',
+        borderColor: isSelected
+          ? isLowStock ? '#F59E0B' : teamColor
+          : 'rgba(255,255,255,0.06)',
         backgroundColor: isSelected
           ? 'rgba(255,255,255,0.035)'
           : 'rgba(255,255,255,0.015)',
         boxShadow: isSelected
-          ? `inset 0 1px 0 rgba(255,255,255,0.05), 0 0 16px rgba(${rgb},0.10)`
+          ? isLowStock
+            ? `inset 0 1px 0 rgba(255,255,255,0.05), 0 0 20px rgba(245,158,11,0.12)`
+            : `inset 0 1px 0 rgba(255,255,255,0.05), 0 0 16px rgba(${rgb},0.10)`
           : 'none',
       }}
     >
@@ -518,27 +544,57 @@ function TierCard({
       <div
         className="absolute top-0 left-0 right-0 h-[2px] transition-opacity duration-300"
         style={{
-          backgroundColor: teamColor,
+          backgroundColor: isLowStock && isSelected ? '#F59E0B' : teamColor,
           opacity: isSelected ? 1 : 0,
         }}
       />
-      {/* Tier name */}
-      <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">
-        {tier.tier}
+
+      {/* Tier name + diamonds */}
+      <div className="flex items-center gap-1.5">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">
+          {tier.tier}
+        </span>
+        {diamonds > 0 && (
+          <span className="flex gap-0.5">
+            {Array.from({ length: diamonds }).map((_, i) => (
+              <span
+                key={i}
+                className="inline-block w-[5px] h-[5px] rotate-45"
+                style={{
+                  backgroundColor: isSelected ? teamColor : 'rgba(255,255,255,0.15)',
+                  transition: 'background-color 0.3s',
+                }}
+              />
+            ))}
+          </span>
+        )}
+      </div>
+
+      {/* Editorial tagline */}
+      <span className="mt-1 text-[9px] tracking-[0.12em] text-white/20"
+        style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+      >
+        {TIER_TAGLINE[tier.tier] ?? tier.tier}
       </span>
 
       {/* Price */}
-      <span className="mt-2.5 text-2xl font-bold text-white md:text-3xl">
+      <span className="mt-3 text-2xl font-bold text-white md:text-3xl">
         ${tier.price}
       </span>
 
-      {/* Remaining */}
+      {/* Edition context — "X of Y" format feels more prestige than just "X left" */}
       <span
-        className={`mt-2.5 text-xs tracking-wide ${
-          tier.remaining <= 5 ? 'text-[#F59E0B]' : 'text-white/25'
+        className={`mt-2 text-[11px] tabular-nums tracking-wide transition-colors duration-300 ${
+          isLowStock ? 'text-[#F59E0B] font-semibold' : 'text-white/25'
         }`}
       >
-        {tierUrgencyLabel(tier.remaining)}
+        {isLowStock ? (
+          <span className={isSelected ? 'broadcast-low-stock-pulse' : ''}>
+            {tier.remaining === 1 ? 'Final edition' : `Only ${tier.remaining} remain`}
+          </span>
+        ) : (
+          <span>{tier.remaining.toLocaleString()} of {tier.size.toLocaleString()}</span>
+        )}
       </span>
     </button>
   );
@@ -720,6 +776,14 @@ function CertificateScreen({
               Certificate of Ownership
             </p>
 
+            {/* Tier tagline — editorial prestige */}
+            <p
+              className="text-center mt-2 text-[11px] tracking-[0.1em] text-white/20"
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+            >
+              {TIER_TAGLINE[tier.tier] ?? tier.tier}
+            </p>
+
             {/* Accent rule */}
             <div
               className="mx-auto mt-4 mb-6 h-[1px] w-12"
@@ -728,6 +792,18 @@ function CertificateScreen({
 
             {/* Edition — the star of the certificate */}
             <div className="text-center">
+              {/* Diamonds for premium tiers */}
+              {(TIER_DIAMONDS[tier.tier] ?? 0) > 0 && (
+                <div className="flex items-center justify-center gap-1 mb-3">
+                  {Array.from({ length: TIER_DIAMONDS[tier.tier] ?? 0 }).map((_, i) => (
+                    <span
+                      key={i}
+                      className="inline-block w-[6px] h-[6px] rotate-45"
+                      style={{ backgroundColor: moment.teamColors.primary }}
+                    />
+                  ))}
+                </div>
+              )}
               <span
                 className="text-[42px] font-mono font-bold tabular-nums tracking-tight"
                 style={{ color: moment.teamColors.primary }}
@@ -809,26 +885,3 @@ function ShareButton({ label }: { label: string }) {
   );
 }
 
-function QRPlaceholder() {
-  return (
-    <svg
-      width="36"
-      height="36"
-      viewBox="0 0 40 40"
-      fill="none"
-      className="text-white/15"
-    >
-      <rect x="2" y="2" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="24" y="2" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="2" y="24" width="14" height="14" rx="1" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="6" y="6" width="6" height="6" rx="0.5" fill="currentColor" />
-      <rect x="28" y="6" width="6" height="6" rx="0.5" fill="currentColor" />
-      <rect x="6" y="28" width="6" height="6" rx="0.5" fill="currentColor" />
-      <rect x="24" y="24" width="4" height="4" fill="currentColor" />
-      <rect x="30" y="24" width="4" height="4" fill="currentColor" />
-      <rect x="24" y="30" width="4" height="4" fill="currentColor" />
-      <rect x="34" y="30" width="4" height="4" fill="currentColor" />
-      <rect x="30" y="34" width="4" height="4" fill="currentColor" />
-    </svg>
-  );
-}

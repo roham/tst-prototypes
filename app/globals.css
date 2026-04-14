@@ -236,3 +236,28 @@ body {
 .supreme-burst-ring-delayed {
   animation: supreme-burst-expand 2.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
 }
+
+/* Broadcast tier card — prestige shimmer for premium tiers */
+@keyframes broadcast-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.broadcast-tier-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.04) 45%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 55%, transparent 60%);
+  background-size: 200% 100%;
+  animation: broadcast-shimmer 4s ease-in-out infinite;
+}
+
+/* Broadcast low-stock pulse — amber urgency for scarce tiers */
+@keyframes broadcast-low-stock {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.broadcast-low-stock-pulse {
+  animation: broadcast-low-stock 1.5s ease-in-out infinite;
+}

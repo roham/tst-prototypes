@@ -158,6 +158,41 @@ function ShareButtons({ teamColor }: { teamColor: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// Ambient Particles — luminous dust motes drifting in a museum spotlight
+// ---------------------------------------------------------------------------
+
+function AmbientParticles({ teamColor }: { teamColor: string }) {
+  const particles = useMemo(() => [
+    { left: '15%', bottom: '35%', size: 2, duration: '7s', delay: '0s' },
+    { left: '72%', bottom: '25%', size: 1.5, duration: '9s', delay: '2.5s' },
+    { left: '40%', bottom: '45%', size: 2.5, duration: '8s', delay: '4s' },
+    { left: '85%', bottom: '55%', size: 1.5, duration: '10s', delay: '1s' },
+    { left: '28%', bottom: '20%', size: 2, duration: '8.5s', delay: '5.5s' },
+  ], []);
+
+  return (
+    <div className="absolute inset-0 pointer-events-none z-[6] overflow-hidden">
+      {particles.map((p, i) => (
+        <div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            left: p.left,
+            bottom: p.bottom,
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            backgroundColor: teamColor,
+            boxShadow: `0 0 ${p.size * 3}px ${teamColor}60`,
+            animation: `supreme-particle-drift ${p.duration} ease-in-out ${p.delay} infinite`,
+            opacity: 0,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Confirmed / "W" Screen
 // ---------------------------------------------------------------------------
 
@@ -665,6 +700,11 @@ export default function SupremePage() {
           }}
         />
         </div>{/* End parallax wrapper */}
+
+        {/* Ambient particles — luminous dust motes in museum spotlight */}
+        {!isEnded && !isPurchasing && (
+          <AmbientParticles teamColor={moment.teamColors.primary} />
+        )}
 
         {/* Player name + stat line — bottom-left */}
         <div className="absolute bottom-6 left-5 right-5 z-10 supreme-hero-enter">

@@ -304,6 +304,14 @@ body {
   animation: supreme-breathe-vignette 6s ease-in-out infinite;
 }
 
+/* Supreme ambient particles — luminous dust motes drifting in museum spotlight */
+@keyframes supreme-particle-drift {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(-120px) translateX(20px); opacity: 0; }
+}
+
 /* Supreme player name — holographic foil shimmer (premium trading card energy) */
 @keyframes supreme-name-shimmer {
   0%, 85%, 100% { background-position: 200% 50%; }

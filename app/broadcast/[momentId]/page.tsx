@@ -2005,6 +2005,55 @@ export default function BroadcastPage() {
                 {moment.context}
               </p>
             </div>
+
+            {/* ── PRICE TAG — broadcast "FROM $X" above-the-fold price indicator ── */}
+            {/* Research insight #5: Above the Fold Is Everything. The hero had */}
+            {/* zero price visibility — 67-82% bounce without scrolling. This   */}
+            {/* ESPN-style price badge surfaces cost instantly and scrolls to    */}
+            {/* the transaction section on tap, acting as a conversion shortcut. */}
+            {!countdown.isEnded && !isPurchasing && (
+              <button
+                onClick={() => transactionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                className="mt-4 ml-3 inline-flex items-center gap-2 group cursor-pointer broadcast-data-wipe relative"
+                style={{
+                  animation: 'broadcast-data-wipe-text 0.28s cubic-bezier(0.22, 1, 0.36, 1) 1.7s both',
+                }}
+              >
+                {/* Team-color pill badge — compact broadcast price graphic */}
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-sm px-2.5 py-1 transition-all duration-300 group-hover:scale-[1.03]"
+                  style={{
+                    backgroundColor: `rgba(${rgb},0.12)`,
+                    border: `1px solid ${moment.teamColors.primary}30`,
+                    boxShadow: `0 0 12px rgba(${rgb},0.06)`,
+                  }}
+                >
+                  <span
+                    className="text-[10px] font-bold uppercase tracking-[0.2em]"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: `${moment.teamColors.primary}90`,
+                    }}
+                  >
+                    From
+                  </span>
+                  <span
+                    className="text-[14px] font-bold tabular-nums text-white/80"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    ${moment.price}
+                  </span>
+                </span>
+                {/* Scroll hint — small chevron */}
+                <svg
+                  className="w-3 h-3 text-white/20 group-hover:text-white/40 transition-all group-hover:translate-y-0.5"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                >
+                  <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            )}
           </div>
 
           {/* INSTANT REPLAY — broadcast overlay tag, slides in from right */}
@@ -3386,6 +3435,91 @@ function CertificateScreen({
                   TST
                 </text>
               </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* ── TONIGHT'S NUMBERS — ESPN stat graphic overlay card ── */}
+        {/* Every NBA broadcast shows a stat breakdown graphic during the    */}
+        {/* postgame recap. This presents the player's performance in the    */}
+        {/* familiar broadcast on-screen graphic style: team-color header,   */}
+        {/* stat grid, editorial context line.                               */}
+        <div
+          className="mt-6 w-full max-w-md mx-auto px-5 transition-all duration-700 ease-out"
+          style={{
+            opacity: phase >= 3 ? 1 : 0,
+            transform: phase >= 3 ? 'translateY(0)' : 'translateY(12px)',
+            transitionDelay: '0.25s',
+          }}
+        >
+          <div
+            className="relative overflow-hidden rounded-md"
+            style={{
+              border: `1px solid rgba(${rgb},0.15)`,
+              backgroundColor: 'rgba(20,25,37,0.6)',
+              backdropFilter: 'blur(8px)',
+            }}
+          >
+            {/* Header bar — team-color gradient */}
+            <div
+              className="flex items-center justify-between px-4 py-2"
+              style={{
+                background: `linear-gradient(90deg, rgba(${rgb},0.2), rgba(${rgb},0.05))`,
+                borderBottom: `1px solid rgba(${rgb},0.12)`,
+              }}
+            >
+              <span
+                className="text-[9px] font-bold uppercase tracking-[0.3em]"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif', color: moment.teamColors.primary }}
+              >
+                Tonight&apos;s Numbers
+              </span>
+              <span className="text-[8px] font-mono uppercase tracking-wider text-white/20">
+                {fullTeam(moment.team)}
+              </span>
+            </div>
+            {/* Stat grid — broadcast-style large values with labels */}
+            <div className="grid grid-cols-3 gap-[1px]" style={{ backgroundColor: `rgba(${rgb},0.06)` }}>
+              {moment.statLine.split(' / ').map((stat) => {
+                const parts = stat.trim().split(' ');
+                const value = parts[0];
+                const label = parts.slice(1).join(' ');
+                return (
+                  <div
+                    key={stat}
+                    className="flex flex-col items-center py-3 bg-[#0B0E14]/80"
+                  >
+                    <span
+                      className="text-[22px] font-bold tabular-nums leading-none"
+                      style={{
+                        fontFamily: 'var(--font-oswald), sans-serif',
+                        color: moment.teamColors.primary,
+                        textShadow: `0 0 12px rgba(${rgb},0.2)`,
+                      }}
+                    >
+                      {value}
+                    </span>
+                    <span
+                      className="mt-1 text-[8px] font-bold uppercase tracking-[0.2em] text-white/30"
+                      style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+            {/* Context line — editorial footnote */}
+            <div
+              className="px-4 py-2 text-center"
+              style={{ borderTop: `1px solid rgba(${rgb},0.08)` }}
+            >
+              <p
+                className="text-[10px] tracking-wide text-white/20"
+                style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+              >
+                {moment.context}
+              </p>
             </div>
           </div>
         </div>

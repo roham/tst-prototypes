@@ -1563,3 +1563,11 @@
 - The scale(1.18x) spring overshoot on the reserve container is noticeable but not disruptive — it draws the eye for 1.2s then settles. Good amplitude for institutional micro-celebration.
 - Status dot expanding to 2.5x with triple-layer glow creates a satisfying "light bloom" that reads as celebratory without being flashy — perfectly Supreme.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 194 Learnings
+- Three analyst perspectives (hot take, analytical, historical) create a more convincing authority signal than a single expert opinion. The consensus effect: if three different types of experts all agree, the viewer's confidence in the moment's significance increases multiplicatively.
+- Per-moment analyst casting matters for authenticity: real ESPN/TNT analysts matched to the moments they'd actually commentate on (e.g., Hubie Brown for historical Jokić context, Stephen A. for SGA energy). Generic "Analyst 1/2/3" would feel hollow.
+- Take style badges with color coding (🔥 orange for hot, 📊 teal for analytical, 🏆 amber for historical) give each take a distinct visual identity even before reading the text. The user can scan and choose which perspective to read.
+- Avatar brightness hierarchy (lead analyst at rgba 0.18/CC vs others at 0.1/66) subtly establishes a visual pecking order matching broadcast desk seating where the lead commentator is center-frame and most prominent.
+- The "LIVE FROM STUDIO" production label with red ping dot and "3 analysts" count in the header creates the same "we're cutting to the studio" energy that TNT does between game action and analysis segments.
+- Next cycle: Arena (rotation).

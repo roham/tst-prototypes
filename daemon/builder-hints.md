@@ -1287,3 +1287,10 @@
 - Adding the pre-sale estimate to the W screen sale record completes the auction receipt: hammer price → pre-sale estimate → acquired date → status → buyer's premium → total. The buyer can see they acquired below estimate.
 - Supreme's catalogue section is now feature-complete. Future Supreme improvements should focus on the transaction flow, hero atmosphere, or W screen enrichment rather than adding more catalogue metadata.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 152 Learnings
+- Ultra-low opacity (4%) is the right level for broadcast watermarks — visible once noticed, invisible otherwise. Higher opacity competes with content.
+- Diagonal text rotation (-15°) is the standard broadcast watermark orientation. Vertical or horizontal would feel like a UI element, not a production artifact.
+- "Presented by" sponsor tags work best in Georgia serif italic — it's the broadcast editorial voice, distinct from Oswald production text.
+- The broadcast overlay inventory is now comprehensive. Future broadcast improvements should focus on interaction quality, W screen enrichment, or editorial narrative rather than adding more overlays.
+- Next cycle: Arena (rotation).

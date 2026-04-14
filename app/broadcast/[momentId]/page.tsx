@@ -1306,13 +1306,18 @@ function CertificateScreen({
   rgb: string;
   onReset: () => void;
 }) {
-  const [phase, setPhase] = useState(0); // 0=hidden, 1=hero, 2=details, 3=cert, 4=share
+  const [phase, setPhase] = useState(0); // 0=hidden, 1=hero+flash, 2=details+chyron, 3=cert, 4=share
+  const [showFlash, setShowFlash] = useState(false);
+  const [chyronState, setChyronState] = useState<'hidden' | 'in' | 'out'>('hidden'); // chyron lifecycle
   useEffect(() => {
-    const t0 = setTimeout(() => setPhase(1), 50);
-    const t1 = setTimeout(() => setPhase(2), 600);
+    const t0 = setTimeout(() => { setPhase(1); setShowFlash(true); }, 50);
+    const tFlash = setTimeout(() => setShowFlash(false), 350); // flash ends
+    const t1 = setTimeout(() => { setPhase(2); setChyronState('in'); }, 600);
+    const tChyronOut = setTimeout(() => setChyronState('out'), 3600); // chyron holds 3s then exits
+    const tChyronHide = setTimeout(() => setChyronState('hidden'), 4200);
     const t2 = setTimeout(() => setPhase(3), 1200);
     const t3 = setTimeout(() => setPhase(4), 2000);
-    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    return () => { clearTimeout(t0); clearTimeout(tFlash); clearTimeout(t1); clearTimeout(tChyronOut); clearTimeout(tChyronHide); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
   const dateStr = useMemo(() => {
@@ -1347,6 +1352,60 @@ function CertificateScreen({
           opacity: phase >= 1 ? 1 : 0,
         }}
       />
+
+      {/* ── Photographer flash burst — press cameras at prestige auction ── */}
+      {showFlash && (
+        <div
+          className="absolute inset-0 z-[5] pointer-events-none bg-white"
+          style={{ animation: 'broadcast-flash-burst 300ms ease-out forwards' }}
+        />
+      )}
+
+      {/* ── BREAKING chyron — broadcast announcement of collection ── */}
+      {chyronState !== 'hidden' && (
+        <div
+          className="fixed bottom-[15%] left-0 right-0 z-30 pointer-events-none flex justify-center"
+          style={{
+            animation: chyronState === 'in'
+              ? 'broadcast-chyron-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+              : 'broadcast-chyron-out 0.5s ease-in forwards',
+          }}
+        >
+          <div className="flex items-stretch max-w-md w-[90%] overflow-hidden rounded-sm"
+            style={{ boxShadow: `0 4px 30px rgba(${rgb},0.15), 0 0 0 1px rgba(${rgb},0.2)` }}
+          >
+            {/* Team-color accent bar */}
+            <div className="w-[4px] flex-shrink-0" style={{ backgroundColor: moment.teamColors.primary }} />
+            <div className="flex-1 px-4 py-2.5" style={{ backgroundColor: 'rgba(11,14,20,0.94)', backdropFilter: 'blur(12px)' }}>
+              <div className="flex items-center gap-2 mb-1">
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
+                  style={{
+                    backgroundColor: `${moment.teamColors.primary}20`,
+                    color: moment.teamColors.primary,
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                  }}
+                >
+                  Breaking
+                </span>
+                <div className="h-[1px] flex-1" style={{ backgroundColor: `rgba(${rgb},0.15)` }} />
+              </div>
+              <p
+                className="text-[12px] font-semibold tracking-wide text-white/80"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                {moment.player} &mdash; {moment.statLine}
+              </p>
+              <p
+                className="mt-0.5 text-[10px] tracking-wide text-white/30"
+                style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+              >
+                Collected &middot; {tier.tier} Edition #{editionNumber.toLocaleString()}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Content ── */}
       <div className="relative z-10 flex flex-col items-center min-h-dvh">

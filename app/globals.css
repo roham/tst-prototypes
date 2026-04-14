@@ -536,6 +536,26 @@ body {
   100% { transform: translateX(-50%); }
 }
 
+/* Broadcast W screen — photographer flash burst (prestige auction camera) */
+@keyframes broadcast-flash-burst {
+  0% { opacity: 0; }
+  8% { opacity: 0.85; }
+  25% { opacity: 0.4; }
+  50% { opacity: 0.15; }
+  100% { opacity: 0; }
+}
+
+/* Broadcast W screen — BREAKING chyron slides in from left */
+@keyframes broadcast-chyron-in {
+  0% { transform: translateX(-110%); opacity: 0; }
+  60% { opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes broadcast-chyron-out {
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(110%); opacity: 0; }
+}
+
 /* Arena crowd noise equalizer — mini bars that suggest live audio atmosphere */
 @keyframes arena-eq-bar {
   0%, 100% { height: 20%; }

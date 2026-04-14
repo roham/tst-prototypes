@@ -1381,6 +1381,170 @@ function StatBreakdown({ statLine, teamColor }: { statLine: string; teamColor: s
 }
 
 // ---------------------------------------------------------------------------
+// Shot Chart — ESPN/TNT on-screen half-court diagram with highlighted play
+// Every broadcast shows shot charts during analysis. The most recognizable
+// basketball data visualization. Minimal half-court SVG with a pulsing dot
+// at the approximate play location, styled as a broadcast overlay graphic.
+// ---------------------------------------------------------------------------
+
+// Per-moment shot locations (approximate x,y on 200x120 half-court)
+const SHOT_LOCATIONS: Record<string, { x: number; y: number; label: string }[]> = {
+  bam: [
+    { x: 100, y: 18, label: 'Monster Dunk' },     // at the rim
+    { x: 85, y: 38, label: 'Mid-Range' },
+    { x: 115, y: 35, label: 'Hook Shot' },
+  ],
+  jokic: [
+    { x: 100, y: 30, label: 'Post Up' },           // low post
+    { x: 75, y: 55, label: 'Triple-Double Assist' },
+    { x: 130, y: 48, label: 'Mid-Range' },
+    { x: 100, y: 75, label: 'Three-Pointer' },     // top of key
+  ],
+  sga: [
+    { x: 55, y: 55, label: 'Step-Back Three' },    // wing three
+    { x: 100, y: 25, label: 'Driving Layup' },
+    { x: 145, y: 55, label: 'Pull-Up Three' },
+    { x: 100, y: 78, label: 'Deep Three' },
+    { x: 80, y: 35, label: 'Floater' },
+  ],
+};
+
+function ShotChartGraphic({ moment, rgb }: { moment: Moment; rgb: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); observer.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const shots = SHOT_LOCATIONS[moment.id] ?? SHOT_LOCATIONS.bam;
+  const primaryShot = shots[0]; // The highlight play
+
+  return (
+    <div ref={containerRef} className="mt-8 mb-4">
+      {/* Broadcast graphic header */}
+      <div className="flex items-center gap-2 mb-3">
+        <span
+          className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
+          style={{
+            backgroundColor: `rgba(${rgb},0.12)`,
+            color: moment.teamColors.primary,
+            fontFamily: 'var(--font-oswald), sans-serif',
+          }}
+        >
+          Shot Chart
+        </span>
+        <div className="h-[1px] flex-1 bg-white/[0.06]" />
+        <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/15">
+          Tonight&apos;s Game
+        </span>
+      </div>
+
+      {/* Half-court SVG */}
+      <div
+        className="relative w-full max-w-[320px] mx-auto overflow-hidden rounded-sm"
+        style={{
+          backgroundColor: 'rgba(20,25,37,0.4)',
+          border: `1px solid rgba(${rgb},0.08)`,
+          aspectRatio: '200/120',
+        }}
+      >
+        <svg
+          viewBox="0 0 200 120"
+          className="w-full h-full"
+          fill="none"
+          style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.8s ease-out' }}
+        >
+          {/* Court lines — minimal broadcast overlay style */}
+          {/* Baseline */}
+          <line x1="10" y1="5" x2="190" y2="5" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
+          {/* Sidelines */}
+          <line x1="10" y1="5" x2="10" y2="115" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
+          <line x1="190" y1="5" x2="190" y2="115" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
+          {/* Half-court line */}
+          <line x1="10" y1="115" x2="190" y2="115" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
+          {/* Paint / key */}
+          <rect x="68" y="5" width="64" height="60" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" fill="none" />
+          {/* Free-throw circle */}
+          <circle cx="100" cy="65" r="18" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+          {/* Three-point arc */}
+          <path
+            d="M 28 5 L 28 28 Q 28 95, 100 95 Q 172 95, 172 28 L 172 5"
+            stroke={`rgba(${rgb},0.12)`}
+            strokeWidth="0.8"
+            fill="none"
+          />
+          {/* Basket */}
+          <circle cx="100" cy="10" r="3" stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
+          <line x1="95" y1="5" x2="105" y2="5" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+
+          {/* Shot dots — secondary shots (smaller, dimmer) */}
+          {shots.slice(1).map((shot, i) => (
+            <circle
+              key={i}
+              cx={shot.x}
+              cy={shot.y}
+              r="3"
+              fill={moment.teamColors.primary}
+              opacity={isVisible ? 0.25 : 0}
+              style={{
+                transition: `opacity 0.5s ease-out ${0.3 + i * 0.15}s`,
+              }}
+            />
+          ))}
+
+          {/* Primary shot — the highlight play (larger, pulsing, labeled) */}
+          <circle
+            cx={primaryShot.x}
+            cy={primaryShot.y}
+            r="6"
+            fill={moment.teamColors.primary}
+            opacity={isVisible ? 0.15 : 0}
+            style={{ transition: 'opacity 0.6s ease-out 0.2s' }}
+          />
+          <circle
+            cx={primaryShot.x}
+            cy={primaryShot.y}
+            r="3.5"
+            fill={moment.teamColors.primary}
+            opacity={isVisible ? 0.6 : 0}
+            style={{ transition: 'opacity 0.6s ease-out 0.2s' }}
+          />
+          {/* Primary shot label — play type */}
+          <text
+            x={primaryShot.x + (primaryShot.x > 130 ? -8 : primaryShot.x < 70 ? 8 : 0)}
+            y={primaryShot.y + (primaryShot.y < 30 ? 16 : -10)}
+            textAnchor="middle"
+            fontSize="6"
+            fontFamily="var(--font-oswald), sans-serif"
+            fontWeight="500"
+            letterSpacing="0.5"
+            fill="white"
+            opacity={isVisible ? 0.35 : 0}
+            style={{ transition: 'opacity 0.6s ease-out 0.6s', textTransform: 'uppercase' }}
+          >
+            {primaryShot.label}
+          </text>
+
+          {/* Broadcast "MAKE" legend */}
+          <circle cx="16" cy="110" r="2.5" fill={moment.teamColors.primary} opacity="0.4" />
+          <text x="22" y="112" fontSize="5" fill="white" opacity="0.2" fontFamily="monospace">
+            MAKE
+          </text>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Tale of the Tape — ESPN head-to-head stat comparison (tonight vs season avg)
 // ---------------------------------------------------------------------------
 
@@ -3241,6 +3405,9 @@ export default function BroadcastPage() {
 
           {/* ESPN-style stat breakdown */}
           <StatBreakdown statLine={moment.statLine} teamColor={moment.teamColors.primary} />
+
+          {/* ESPN/TNT broadcast shot chart — half-court diagram with play locations */}
+          <ShotChartGraphic moment={moment} rgb={rgb} />
 
           {/* ── GAME FLOW — ESPN win probability style momentum chart ── */}
           {/* Every ESPN/TNT broadcast shows a win probability or game     */}

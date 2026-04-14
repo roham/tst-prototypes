@@ -1362,3 +1362,10 @@
 - Gradient shift at thresholds (team-color→amber at ≥80%) adds urgency without changing structure.
 - Placing edition graphic between viewer count and CTA creates a 3-element conversion stack: social proof → supply visual → action. All in broadcast language.
 - Next cycle: Arena (rotation).
+
+## Cycle 162 Learnings
+- The W screen had 10+ elements about purchase stats but zero showing the actual basketball moment. Adding the highlight replay card fills a fundamental gap — "what you collected" matters as much as "how fast you got it."
+- Parsing `statLine` string ("30 PTS / 8 REB / 4 AST") by splitting on " / " and then splitting each part into value + label is a clean approach that adapts to any stat format.
+- Scanline overlay (repeating-linear-gradient with 2px transparent / 2px rgba(0,0,0,0.08)) creates the LED jumbotron texture without adding a real image asset. Subtle but adds authenticity.
+- The Arena W screen is now very long (12+ elements). Future Arena improvements should focus on the browsing/purchase flow rather than adding more W screen cards.
+- Next cycle: Supreme (rotation).

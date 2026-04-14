@@ -1012,3 +1012,16 @@ body {
 .arena-replay-tracking {
   animation: arena-replay-tracking 0.8s ease-out 0.1s forwards;
 }
+
+/* Arena Fan Cam — jumbotron frame on W screen */
+@keyframes arena-fancam-badge {
+  0%, 85% { opacity: 1; }
+  90% { opacity: 0.6; }
+  95% { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+@keyframes arena-fancam-border {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}

@@ -1042,32 +1042,77 @@ function CelebrationScreen({
           {moment.player} · {moment.playType}
         </p>
 
-        {/* Edition Jumbotron — with team-color glow */}
+        {/* Jumbotron FAN CAM — edition card framed like arena big screen */}
         <div
-          className="mt-7 flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] px-10 py-6 backdrop-blur-sm transition-all duration-600 ease-out"
+          className="mt-7 relative transition-all duration-600 ease-out"
           style={{
             opacity: showDetails ? 1 : 0,
             transform: showDetails ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.92)',
-            boxShadow: showDetails
-              ? `0 0 60px ${moment.teamColors.primary}20, inset 0 1px 0 rgba(255,255,255,0.05)`
-              : 'none',
           }}
         >
-          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/40">
-            Your Edition
-          </span>
-          <span
-            className="mt-1 text-7xl font-black tabular-nums sm:text-8xl arena-edition-glow"
+          {/* FAN CAM badge — top-left corner like broadcast overlay */}
+          <div
+            className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 rounded-full px-3 py-1"
             style={{
-              color: '#00E5A0',
-              textShadow: `0 0 30px rgba(0,229,160,0.4), 0 0 60px ${moment.teamColors.primary}30`,
+              backgroundColor: 'rgba(239,68,68,0.9)',
+              boxShadow: '0 0 12px rgba(239,68,68,0.4), 0 0 24px rgba(239,68,68,0.15)',
+              animation: showDetails ? 'arena-fancam-badge 2s ease-in-out 0.3s infinite' : undefined,
             }}
           >
-            #{editionNumber.toLocaleString()}
-          </span>
-          <span className="mt-2 text-sm text-white/35">
-            of {total.toLocaleString()} editions
-          </span>
+            <span className="relative flex h-[6px] w-[6px]">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+              <span className="relative inline-flex h-[6px] w-[6px] rounded-full bg-white" />
+            </span>
+            <span
+              className="text-[9px] font-bold uppercase tracking-[0.2em] text-white"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              Fan Cam
+            </span>
+          </div>
+
+          {/* Animated team-color border frame */}
+          <div
+            className="relative rounded-2xl p-[2px] overflow-hidden"
+            style={{
+              background: showDetails
+                ? `conic-gradient(from 0deg, ${moment.teamColors.primary}, ${moment.teamColors.secondary ?? moment.teamColors.primary}, ${moment.teamColors.primary}, ${moment.teamColors.secondary ?? moment.teamColors.primary}, ${moment.teamColors.primary})`
+                : 'transparent',
+              animation: showDetails ? 'arena-fancam-border 3s linear infinite' : undefined,
+            }}
+          >
+            {/* Inner card */}
+            <div
+              className="relative flex flex-col items-center rounded-2xl bg-[#0B0E14] px-10 py-6"
+              style={{
+                boxShadow: showDetails
+                  ? `0 0 60px ${moment.teamColors.primary}20, inset 0 1px 0 rgba(255,255,255,0.05)`
+                  : 'none',
+              }}
+            >
+              {/* Camera viewfinder corners — 4 L-shaped brackets */}
+              <div className="absolute top-2 left-2 w-4 h-4 pointer-events-none border-t-2 border-l-2" style={{ borderColor: `${moment.teamColors.primary}80` }} />
+              <div className="absolute top-2 right-2 w-4 h-4 pointer-events-none border-t-2 border-r-2" style={{ borderColor: `${moment.teamColors.primary}80` }} />
+              <div className="absolute bottom-2 left-2 w-4 h-4 pointer-events-none border-b-2 border-l-2" style={{ borderColor: `${moment.teamColors.primary}80` }} />
+              <div className="absolute bottom-2 right-2 w-4 h-4 pointer-events-none border-b-2 border-r-2" style={{ borderColor: `${moment.teamColors.primary}80` }} />
+
+              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/40">
+                Your Edition
+              </span>
+              <span
+                className="mt-1 text-7xl font-black tabular-nums sm:text-8xl arena-edition-glow"
+                style={{
+                  color: '#00E5A0',
+                  textShadow: `0 0 30px rgba(0,229,160,0.4), 0 0 60px ${moment.teamColors.primary}30`,
+                }}
+              >
+                #{editionNumber.toLocaleString()}
+              </span>
+              <span className="mt-2 text-sm text-white/35">
+                of {total.toLocaleString()} editions
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Matchup + date — screenshot permanence */}

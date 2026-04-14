@@ -857,6 +857,18 @@ export default function BroadcastPage() {
   const [leaderDone, setLeaderDone] = useState(false);
   const handleLeaderComplete = useCallback(() => setLeaderDone(true), []);
 
+  // Special Report alert — one-shot ESPN breaking news banner after leader finishes
+  const [specialReport, setSpecialReport] = useState<'waiting' | 'in' | 'out' | 'done'>('waiting');
+  useEffect(() => {
+    if (!leaderDone) return;
+    // Slide in 0.8s after leader completes
+    const t1 = setTimeout(() => setSpecialReport('in'), 800);
+    // Hold 3s then slide out
+    const t2 = setTimeout(() => setSpecialReport('out'), 3800);
+    const t3 = setTimeout(() => setSpecialReport('done'), 4400);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, [leaderDone]);
+
   // Channel switch static — brief TV static flash + channel number on tier change
   const [channelSwitch, setChannelSwitch] = useState<number | null>(null);
   const prevTierRef = useRef(0);
@@ -1013,6 +1025,46 @@ export default function BroadcastPage() {
               style={{ textShadow: '0 0 12px rgba(255,255,255,0.2)' }}
             >
               {channelSwitch}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* ━━━ SPECIAL REPORT — ESPN breaking news interrupt banner ━━━━━ */}
+      {specialReport !== 'waiting' && specialReport !== 'done' && (
+        <div
+          className="fixed top-[38%] left-0 right-0 z-[58] pointer-events-none flex items-center"
+          style={{
+            transform: specialReport === 'in' ? 'translateX(0)' : 'translateX(-105%)',
+            transition: specialReport === 'in'
+              ? 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
+              : 'transform 0.4s cubic-bezier(0.55, 0, 1, 0.45)',
+          }}
+        >
+          <div
+            className="relative w-full px-5 py-3 flex items-center gap-3"
+            style={{
+              background: `linear-gradient(90deg, rgba(239,68,68,0.9) 0%, rgba(${rgb},0.85) 100%)`,
+              backdropFilter: 'blur(8px)',
+            }}
+          >
+            {/* Red accent bar — left edge */}
+            <div className="absolute left-0 top-0 bottom-0 w-[4px] bg-white/30" />
+            {/* SPECIAL REPORT label */}
+            <span
+              className="text-[10px] font-bold uppercase tracking-[0.35em] text-white/90 shrink-0"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              Special Report
+            </span>
+            {/* Divider */}
+            <div className="h-4 w-[1px] bg-white/30 shrink-0" />
+            {/* Player + play headline */}
+            <span
+              className="text-[13px] font-bold uppercase tracking-wide text-white truncate"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              {moment.player} — {moment.playType}
             </span>
           </div>
         </div>

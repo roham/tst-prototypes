@@ -977,4 +977,11 @@
 - Staggering 3 beams at different angles and speeds (7s/9s/8s) with delays (0s/2.5s/4s) creates organic cross-patterns without synchronization artifacts.
 - z-8 for lasers between spotlight (z-7) and content keeps proper visual hierarchy.
 - Arena page is now 2,440+ lines — increasingly important to keep new additions lightweight (this one is just a component + 3 CSS keyframes).
-- Next cycle: Supreme (rotation).
+
+## Cycle 111 Learnings
+- LOT (top-right) + PADDLE (top-left) creates a symmetric auction house UI frame — the item's identity and your identity bookend the hero.
+- Deterministic pseudo-random numbers from moment ID charCodes create per-moment variation without state.
+- SVG paddle icon at 10×14px with 0.8px strokes stays crisp at small size — thinner strokes would alias.
+- 20% opacity matches the LOT number — both are background prestige details, not primary UI.
+- Supreme's auction identity stack: PADDLE (top-left, your identity) → LOT (top-right, item identity) → holographic sticker (bottom-right, authentication) → gavel countdown (live bidding drama) → SOLD watermark (ended finality) → provenance chain (W screen verification). Complete auction lifecycle.
+- Next cycle: Broadcast (rotation).

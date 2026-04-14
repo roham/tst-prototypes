@@ -1341,3 +1341,10 @@
 - Per-moment reporter-coach quotes add specificity that generic text can't match. The coach quotes are from real NBA coaching styles (Spoelstra's intensity, Malone's humor, Daigneault's trust).
 - 2-line clamp on the report text prevents overflow on narrow mobile viewports while keeping the courtside voice present.
 - Next cycle: Arena (rotation).
+
+## Cycle 159 Learnings
+- Per-moment trivia facts add context that makes the moment feel significant at the exact decision point. 3 facts per moment with random selection provides variety across page loads.
+- One-shot + auto-dismiss pattern (firedRef + setTimeout dismiss) is the standard for Arena jumbotron insertions. Consistent with milestone flash, noise prompt, timeout, defense stomp.
+- Placing the trivia card between the chant ticker and tier selector puts engagement content at the decision funnel entrance. The user sees the trivia right before they see the tiers.
+- The arena page has an enormous number of overlays and jumbotron effects. Future Arena improvements should focus on the W screen (celebration), the tier selector interaction, or conversion-focused elements rather than adding more browsing overlays.
+- Next cycle: Supreme (rotation).

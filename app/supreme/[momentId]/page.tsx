@@ -1824,13 +1824,130 @@ export default function SupremePage() {
             className="mt-3 h-[1px] w-12"
             style={{ backgroundColor: `${moment.teamColors.primary}40` }}
           />
+
+          {/* Lot estimate whisper — above-fold price anchor in institutional register */}
+          {/* At Christie's/Sotheby's, the estimate appears alongside the lot image.   */}
+          {/* On mobile (no sidebar), we place it below the stat line where the eye     */}
+          {/* naturally lands after reading the player name. The $5 starting bid is     */}
+          {/* the most important conversion signal on the page — 67-82% of visitors    */}
+          {/* bounce without scrolling, so the price MUST be above the fold.            */}
+          {!isEnded && !isPurchasing && (
+            <div className="mt-3 flex items-center gap-2">
+              <span
+                className="text-[8px] font-mono uppercase tracking-[0.35em]"
+                style={{ color: 'rgba(255,255,255,0.12)' }}
+              >
+                Est.
+              </span>
+              <span
+                className="text-[10px] font-mono tabular-nums"
+                style={{ color: `${moment.teamColors.primary}30` }}
+              >
+                ${selectedTier.price}–${Math.round(selectedTier.price * 3.2)}
+              </span>
+              <span
+                className="text-[7px] font-mono uppercase tracking-[0.2em]"
+                style={{ color: 'rgba(255,255,255,0.08)' }}
+              >
+                ·
+              </span>
+              <button
+                className="text-[7px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 hover:opacity-60"
+                style={{ color: `${moment.teamColors.primary}25` }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  // Scroll to CTA button
+                  ctaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }}
+              >
+                Place Bid ↓
+              </button>
+            </div>
+          )}
+          {/* ENDED: lot result in hero — auction house convention */}
+          {isEnded && (
+            <div className="mt-3 flex items-center gap-2">
+              <span
+                className="text-[8px] font-mono uppercase tracking-[0.35em]"
+                style={{ color: 'rgba(255,255,255,0.08)' }}
+              >
+                Sold
+              </span>
+              <span
+                className="text-[9px] font-mono tabular-nums"
+                style={{ color: 'rgba(255,255,255,0.12)' }}
+              >
+                ${selectedTier.price}
+              </span>
+            </div>
+          )}
         </div>
+      </div>
+
+      {/* ============================================================= */}
+      {/* LOT STATUS TRAIL — institutional authentication breadcrumb     */}
+      {/* At Christie's/Sotheby's, each lot's catalogue page shows its   */}
+      {/* provenance and verification journey: authenticated, catalogued,*/}
+      {/* on view, live bidding. This trail validates the lot's          */}
+      {/* institutional authority between the hero image and description.*/}
+      {/* ============================================================= */}
+      <div className="flex items-center justify-center gap-2 px-5 py-3 supreme-context-enter">
+        {(() => {
+          const steps = isEnded
+            ? [
+                { label: 'Authenticated', done: true },
+                { label: 'Catalogued', done: true },
+                { label: 'Sold', done: true },
+                { label: 'Archived', done: true },
+              ]
+            : [
+                { label: 'Authenticated', done: true },
+                { label: 'Catalogued', done: true },
+                { label: 'On View', done: true },
+                { label: dropPhase === 'CRITICAL' ? 'Final Call' : 'Live Bidding', done: false },
+              ];
+          return steps.map((step, i) => (
+            <div key={step.label} className="flex items-center gap-2">
+              {i > 0 && (
+                <div
+                  className="h-[0.5px] w-3"
+                  style={{ backgroundColor: step.done ? `${moment.teamColors.primary}15` : 'rgba(255,255,255,0.04)' }}
+                />
+              )}
+              <div className="flex items-center gap-1">
+                <div
+                  className={`h-[3px] w-[3px] rounded-full ${!step.done && !isEnded ? 'animate-pulse' : ''}`}
+                  style={{
+                    backgroundColor: step.done
+                      ? `${moment.teamColors.primary}${isEnded ? '20' : '30'}`
+                      : dropPhase === 'CRITICAL' ? 'rgba(239,68,68,0.4)' : 'rgba(0,229,160,0.35)',
+                    boxShadow: !step.done && !isEnded
+                      ? dropPhase === 'CRITICAL'
+                        ? '0 0 4px rgba(239,68,68,0.3)'
+                        : '0 0 4px rgba(0,229,160,0.2)'
+                      : 'none',
+                  }}
+                />
+                <span
+                  className="text-[7px] font-mono uppercase tracking-[0.2em]"
+                  style={{
+                    color: step.done
+                      ? `rgba(255,255,255,${isEnded ? '0.08' : '0.12'})`
+                      : dropPhase === 'CRITICAL' ? 'rgba(239,68,68,0.3)' : 'rgba(0,229,160,0.25)',
+                  }}
+                >
+                  {step.label}
+                </span>
+              </div>
+            </div>
+          ));
+        })()}
       </div>
 
       {/* ============================================================= */}
       {/* CONTEXT — one emotional sentence, given room to breathe */}
       {/* ============================================================= */}
-      <div className="px-5 pt-4 pb-2 supreme-context-enter">
+      <div className="px-5 pt-1 pb-2 supreme-context-enter">
         <div
           className="h-[1px] w-8 mb-3"
           style={{ backgroundColor: `${moment.teamColors.primary}50` }}

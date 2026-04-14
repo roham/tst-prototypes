@@ -1553,6 +1553,209 @@ function TaleOfTheTape({ moment, rgb }: { moment: Moment; rgb: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// Fan Verdict — ESPN-style live poll graphic
+// Every ESPN/TNT broadcast runs on-screen fan polls: "Is this the dunk of the
+// playoffs?" with a percentage bar that fills live. This transforms editorial
+// opinion into data-backed consensus — social proof in broadcast language.
+// ---------------------------------------------------------------------------
+
+const FAN_POLLS: Record<string, { question: string; yesLabel: string; noLabel: string; yesPercent: number; totalVotes: number }> = {
+  bam:   { question: 'PLAY OF THE PLAYOFFS?', yesLabel: 'YES', noLabel: 'NO', yesPercent: 91, totalVotes: 48200 },
+  jokic: { question: 'BEST PASS THIS SEASON?', yesLabel: 'YES', noLabel: 'NO', yesPercent: 87, totalVotes: 52700 },
+  sga:   { question: 'MOST UNSTOPPABLE PLAYER?', yesLabel: 'YES', noLabel: 'NO', yesPercent: 94, totalVotes: 61300 },
+};
+
+function FanVerdict({ moment, rgb }: { moment: Moment; rgb: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [fillPct, setFillPct] = useState(0);
+  const [voteCount, setVoteCount] = useState(0);
+
+  const poll = FAN_POLLS[moment.id] ?? FAN_POLLS.bam;
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); observer.disconnect(); } },
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Animate the percentage bar and vote count when visible
+  useEffect(() => {
+    if (!isVisible) return;
+    const target = poll.yesPercent;
+    const targetVotes = poll.totalVotes;
+    const duration = 1200;
+    const start = performance.now();
+    let raf = 0;
+    function tick() {
+      const elapsed = performance.now() - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setFillPct(Math.round(eased * target));
+      setVoteCount(Math.round(eased * targetVotes));
+      if (progress < 1) raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [isVisible, poll.yesPercent, poll.totalVotes]);
+
+  return (
+    <div ref={containerRef} className="mt-8 mb-2">
+      {/* Section header — broadcast graphic style */}
+      <div className="flex items-center gap-3 mb-4">
+        {/* Poll icon — bar chart SVG */}
+        <svg className="h-3 w-3 shrink-0" viewBox="0 0 12 12" fill="none" style={{ color: moment.teamColors.primary, opacity: 0.5 }}>
+          <rect x="1" y="6" width="2.5" height="5.5" rx="0.5" fill="currentColor" opacity="0.6" />
+          <rect x="4.75" y="3" width="2.5" height="8.5" rx="0.5" fill="currentColor" opacity="0.8" />
+          <rect x="8.5" y="0.5" width="2.5" height="11" rx="0.5" fill="currentColor" />
+        </svg>
+        <span
+          className="text-[9px] font-bold uppercase tracking-[0.35em] text-white/25"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+        >
+          Fan Verdict
+        </span>
+        <div className="h-[1px] flex-1" style={{ backgroundColor: `rgba(${rgb},0.08)` }} />
+        <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/15">
+          LIVE POLL
+        </span>
+      </div>
+
+      {/* Poll card */}
+      <div
+        className="rounded-sm relative overflow-hidden"
+        style={{
+          backgroundColor: 'rgba(20,25,37,0.55)',
+          border: `1px solid rgba(${rgb},0.1)`,
+          opacity: isVisible ? 1 : 0,
+          transform: isVisible ? 'translateY(0)' : 'translateY(8px)',
+          transition: 'opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
+        {/* Top accent bar */}
+        <div
+          className="h-[2px] w-full"
+          style={{
+            background: `linear-gradient(to right, ${moment.teamColors.primary}, ${moment.teamColors.primary}40)`,
+          }}
+        />
+
+        <div className="px-5 py-4 sm:px-6">
+          {/* Poll question */}
+          <p
+            className="text-[18px] sm:text-[20px] font-bold uppercase tracking-[0.06em] text-white/80 mb-4"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            {poll.question}
+          </p>
+
+          {/* YES bar */}
+          <div className="mb-2">
+            <div className="flex items-center justify-between mb-1.5">
+              <span
+                className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/50"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                {poll.yesLabel}
+              </span>
+              <span
+                className="text-[16px] font-bold tabular-nums"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: moment.teamColors.primary,
+                  textShadow: isVisible && fillPct >= poll.yesPercent - 1
+                    ? `0 0 8px rgba(${rgb},0.3)`
+                    : 'none',
+                  transition: 'text-shadow 0.3s ease',
+                }}
+              >
+                {fillPct}%
+              </span>
+            </div>
+            {/* Bar track */}
+            <div
+              className="relative h-[6px] rounded-full overflow-hidden"
+              style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+            >
+              <div
+                className="absolute inset-y-0 left-0 rounded-full"
+                style={{
+                  width: `${fillPct}%`,
+                  background: `linear-gradient(to right, ${moment.teamColors.primary}CC, ${moment.teamColors.primary})`,
+                  boxShadow: fillPct >= poll.yesPercent - 1
+                    ? `0 0 8px rgba(${rgb},0.4), 0 0 2px rgba(${rgb},0.6)`
+                    : 'none',
+                  transition: 'box-shadow 0.3s ease',
+                }}
+              />
+            </div>
+          </div>
+
+          {/* NO bar */}
+          <div className="mb-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <span
+                className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/30"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                {poll.noLabel}
+              </span>
+              <span
+                className="text-[14px] font-bold tabular-nums text-white/25"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                {isVisible ? 100 - fillPct : 0}%
+              </span>
+            </div>
+            <div
+              className="relative h-[6px] rounded-full overflow-hidden"
+              style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+            >
+              <div
+                className="absolute inset-y-0 left-0 rounded-full"
+                style={{
+                  width: `${isVisible ? 100 - fillPct : 0}%`,
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Vote count + live indicator */}
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-mono tabular-nums text-white/20">
+              {voteCount.toLocaleString()} votes
+            </span>
+            <div className="flex items-center gap-1.5">
+              <div
+                className="h-[5px] w-[5px] rounded-full"
+                style={{
+                  backgroundColor: '#EF4444',
+                  animation: isVisible ? 'pulse 2s ease-in-out infinite' : 'none',
+                  boxShadow: '0 0 4px #EF444460',
+                }}
+              />
+              <span
+                className="text-[8px] font-bold uppercase tracking-[0.25em] text-[#EF4444]/50"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                Live
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Cinematic Section Reveal — line expands from center on scroll-into-view
 // ---------------------------------------------------------------------------
 
@@ -2745,6 +2948,9 @@ export default function BroadcastPage() {
 
           {/* Tale of the Tape — tonight vs season average comparison */}
           <TaleOfTheTape moment={moment} rgb={rgb} />
+
+          {/* Fan Verdict — ESPN live poll (social proof as broadcast data) */}
+          <FanVerdict moment={moment} rgb={rgb} />
 
           {/* Emotional closing beat — editorial thesis */}
           <p

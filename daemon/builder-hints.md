@@ -895,3 +895,13 @@
 - "GOING TWICE..." in red (#EF4444) with glow creates dramatic escalation from phase 1's muted white. The color shift alone signals urgency intensification.
 - Letter-spacing animation (0.4em → 0.3em) on the gavel text creates a "settling in" feel — the text arrives loose and tightens as it takes form. More premium than a simple fade.
 - Next cycle: Broadcast (rotation). Broadcast could explore a "GOING TO COMMERCIAL" bumper on phase transitions, or a director's "CUE TALENT" prompt in the production markers area.
+
+## Cycle 100 Learnings
+- The "3-2-1-LIVE" countdown leader transforms page load from a passive event into a theatrical entrance. At 2.3s it's fast enough not to annoy but slow enough to build anticipation.
+- Registration crosshair SVG (concentric circles + cross lines + tick marks) is the most recognizable element of a broadcast leader — even at low opacity it reads as "TV production."
+- White flash bursts between digits (100ms, 60% peak) create the film-leader transition feel without being jarring. Key: keep them short and max opacity moderate.
+- z-100 on the leader overlay ensures it covers all other broadcast overlays (ticker, score bug, network bug) which are z-40-50. Clean layering.
+- The fade-out uses a separate animation rather than opacity transition — this allows the `onComplete` callback to fire at a fixed time rather than depending on transition events.
+- State management: `leaderDone` boolean set by `handleLeaderComplete` (useCallback for stability). No sessionStorage needed — replaying on each navigation is fine, even desirable, since it reinforces the broadcast identity.
+- Broadcast direction now has a complete production lifecycle: countdown leader → live broadcast → feed cuts → phase transitions → end slate. This is the most narratively complete of the 3 directions.
+- Next cycle: Arena (rotation). Arena could explore a pre-game warmup sequence, arena lights dimming effect, or a "starting lineup" entrance.

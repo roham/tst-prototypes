@@ -623,3 +623,13 @@
 - Two CSS keyframes (`broadcast-chyron-in`, `broadcast-chyron-out`) handle the lifecycle. The `chyronState` variable drives which animation is active. `hidden` removes the element entirely to prevent stale DOM.
 - The flash fires at phase 1 (50ms after mount) and the chyron at phase 2 (600ms). This creates a cinematic sequence: flash → name appears → chyron slides in → certificate rises → share buttons. Five distinct beats in 2 seconds.
 - Next cycle: Arena (rotation). Arena W screen could use a crowd roar crescendo effect (audio equalizer bars that spike) or a jumbotron-style "REPLAY" overlay during the reveal sequence.
+
+## Cycle 71 Learnings
+- The crowd roar EQ bars on the W screen mirror the existing 5-bar mini EQ from the main page but at a much larger scale (24 bars, 128px tall vs 5 bars, 12px tall). The main page EQ says "the crowd is alive"; the W screen EQ says "the crowd is ROARING."
+- Two-phase animation (spike + idle) creates a natural crowd audio shape: eruption at the moment of reveal, then sustained crowd energy. Chaining CSS animations: the first (`arena-roar-bar`, 1.2s, forwards) completes and holds its final height, then the second (`arena-roar-idle`, infinite) takes over from that state.
+- 30ms stagger per bar (0.03s × 24 = 0.72s total spread) creates a wave effect across the bars — the left side spikes first, then the wave ripples right. This mimics how crowd noise spreads through stadium sections.
+- Center bars (indices 9-14) in teal vs team-color outer bars creates a subtle color gradient that draws the eye to center — where the "YOU'RE IN!" text sits. The teal matches the edition number color (#00E5A0) for visual coherence.
+- 20% opacity is the right level — the bars are clearly visible as a background texture but don't compete with the white text or confetti. At 30% they started to distract; at 10% they were invisible behind the ambient glow.
+- Absolute positioning (top: 8%, left: 50%, transform: -translate-x-1/2) centers the EQ behind the headline area. `items-end` aligns bars to the bottom so they grow upward — the natural direction for sound-level bars.
+- All 3 W screens now have unique atmospheric reveal effects: Supreme (radial burst rings), Broadcast (photographer flash + BREAKING chyron), Arena (crowd roar EQ + screen shake + confetti). Each is identity-correct.
+- Next cycle: Supreme (rotation). Supreme could use a subtle "authentication pulse" animation on the serial number in the W screen, or a minimalist breath animation on the hero edges during live state.

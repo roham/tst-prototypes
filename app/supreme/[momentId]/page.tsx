@@ -93,41 +93,28 @@ function useClaimTicker(baseClaimed: number, editionSize: number) {
 }
 
 // ---------------------------------------------------------------------------
-// Confetti particle for W screen
+// Radial burst — clean expanding ring of light (replaces confetti)
 // ---------------------------------------------------------------------------
 
-function ConfettiParticles({ teamColor }: { teamColor: string }) {
-  const particles = useMemo(() => {
-    const colors = ['#00E5A0', teamColor, '#FFFFFF', '#F59E0B'];
-    return Array.from({ length: 24 }, (_, i) => ({
-      id: i,
-      left: `${Math.random() * 100}%`,
-      delay: `${Math.random() * 1.5}s`,
-      duration: `${2 + Math.random() * 2}s`,
-      size: 4 + Math.random() * 6,
-      color: colors[i % colors.length],
-      rotation: Math.random() * 360,
-    }));
-  }, [teamColor]);
-
+function RadialBurst({ teamColor }: { teamColor: string }) {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-      {particles.map((p) => (
-        <div
-          key={p.id}
-          className="absolute rounded-sm"
-          style={{
-            left: p.left,
-            top: '-10px',
-            width: p.size,
-            height: p.size * 0.6,
-            backgroundColor: p.color,
-            opacity: 0.8,
-            animation: `confetti-fall ${p.duration} ${p.delay} ease-in forwards`,
-            transform: `rotate(${p.rotation}deg)`,
-          }}
-        />
-      ))}
+    <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 flex items-center justify-center">
+      {/* Primary ring — team color */}
+      <div
+        className="absolute rounded-full supreme-burst-ring"
+        style={{
+          border: `2px solid ${teamColor}`,
+          boxShadow: `0 0 40px ${teamColor}40, inset 0 0 40px ${teamColor}20`,
+        }}
+      />
+      {/* Secondary ring — teal, slightly delayed */}
+      <div
+        className="absolute rounded-full supreme-burst-ring-delayed"
+        style={{
+          border: '1px solid rgba(0,229,160,0.3)',
+          boxShadow: '0 0 30px rgba(0,229,160,0.15)',
+        }}
+      />
     </div>
   );
 }
@@ -160,76 +147,108 @@ function ShareButtons() {
 function WScreen({
   moment,
   editionNumber,
+  purchaseTime,
   onReset,
 }: {
   moment: Moment;
   editionNumber: number;
+  purchaseTime: number | null;
   onReset: () => void;
 }) {
   const [show, setShow] = useState(false);
   const [flash, setFlash] = useState(true);
   const [showDetails, setShowDetails] = useState(false);
+  const [showShare, setShowShare] = useState(false);
   useEffect(() => {
-    // Staggered reveal: flash → W → details
+    // Staggered reveal: flash → W → details → share hint
     requestAnimationFrame(() => setShow(true));
-    const t1 = setTimeout(() => setFlash(false), 350);
-    const t2 = setTimeout(() => setShowDetails(true), 500);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    const t1 = setTimeout(() => setFlash(false), 400);
+    const t2 = setTimeout(() => setShowDetails(true), 700);
+    const t3 = setTimeout(() => setShowShare(true), 1400);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
+
+  // Format purchase date for screenshot permanence
+  const dateStr = useMemo(() => {
+    const d = purchaseTime ? new Date(purchaseTime) : new Date();
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+  }, [purchaseTime]);
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0B0E14] overflow-hidden">
-      {/* Entry flash */}
+      {/* Entry flash — team color */}
       <div
-        className="absolute inset-0 z-20 pointer-events-none transition-opacity duration-400"
+        className="absolute inset-0 z-20 pointer-events-none transition-opacity duration-500"
         style={{
-          backgroundColor: '#00E5A0',
-          opacity: flash ? 0.15 : 0,
+          backgroundColor: moment.teamColors.primary,
+          opacity: flash ? 0.25 : 0,
         }}
       />
 
-      {/* Confetti burst */}
-      <ConfettiParticles teamColor={moment.teamColors.primary} />
+      {/* Radial burst — clean expanding rings */}
+      <RadialBurst teamColor={moment.teamColors.primary} />
 
-      {/* Teal radial burst — intensified */}
+      {/* Action image — ghosted backdrop, more visible than before */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none z-0 bg-cover bg-center transition-opacity duration-1500"
         style={{
-          background:
-            'radial-gradient(circle at 50% 40%, rgba(0,229,160,0.2) 0%, transparent 60%)',
-        }}
-      />
-      {/* Team color accent glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `radial-gradient(circle at 50% 60%, ${moment.teamColors.primary}15 0%, transparent 50%)`,
+          backgroundImage: `url(${moment.actionImageUrl})`,
+          backgroundPosition: 'center 30%',
+          opacity: show ? 0.1 : 0,
+          filter: 'grayscale(0.4) contrast(1.1)',
         }}
       />
 
-      {/* Content card */}
+      {/* Dark vignette over backdrop */}
       <div
-        className="relative z-10 flex flex-col items-center text-center px-6 transition-all duration-700 ease-out"
+        className="absolute inset-0 pointer-events-none z-[1]"
+        style={{
+          background: 'radial-gradient(ellipse 70% 60% at 50% 50%, transparent 0%, #0B0E14 80%)',
+        }}
+      />
+
+      {/* Team-color radial glow */}
+      <div
+        className="absolute inset-0 pointer-events-none z-[2]"
+        style={{
+          background: `radial-gradient(ellipse 60% 40% at 50% 40%, ${moment.teamColors.primary}20 0%, transparent 70%)`,
+        }}
+      />
+
+      {/* Teal accent glow at center */}
+      <div
+        className="absolute inset-0 pointer-events-none z-[2]"
+        style={{
+          background: 'radial-gradient(circle at 50% 38%, rgba(0,229,160,0.08) 0%, transparent 45%)',
+        }}
+      />
+
+      {/* Content — vertically centered, story-ready layout (9:16) */}
+      <div
+        className="relative z-10 flex flex-col items-center text-center px-8 max-w-sm transition-all duration-700 ease-out"
         style={{
           opacity: show ? 1 : 0,
-          transform: show ? 'scale(1) translateY(0)' : 'scale(0.85) translateY(24px)',
+          transform: show ? 'scale(1) translateY(0)' : 'scale(0.85) translateY(30px)',
         }}
       >
-        {/* Giant W */}
+        {/* Giant W — stark, confident */}
         <div
-          className="text-[140px] leading-none tracking-tighter"
+          className="text-[180px] leading-none tracking-tighter supreme-w-glow"
           style={{
             color: '#00E5A0',
             fontFamily: 'var(--font-oswald), sans-serif',
             fontWeight: 700,
-            textShadow: '0 0 60px rgba(0,229,160,0.4), 0 0 120px rgba(0,229,160,0.15)',
+            textShadow: `0 0 60px rgba(0,229,160,0.5), 0 0 120px ${moment.teamColors.primary}40`,
           }}
         >
           W
         </div>
 
-        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.3em] text-white/50">
-          You own this moment
+        <p
+          className="-mt-2 text-[13px] font-bold uppercase tracking-[0.5em] text-white/50"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+        >
+          YOURS.
         </p>
 
         {/* Staggered details */}
@@ -237,50 +256,69 @@ function WScreen({
           className="transition-all duration-700 ease-out"
           style={{
             opacity: showDetails ? 1 : 0,
-            transform: showDetails ? 'translateY(0)' : 'translateY(12px)',
+            transform: showDetails ? 'translateY(0)' : 'translateY(16px)',
           }}
         >
-          {/* Player + play */}
+          {/* Thin team-color divider */}
+          <div
+            className="mx-auto mt-7 mb-6 h-[1px] w-10"
+            style={{ backgroundColor: `${moment.teamColors.primary}60` }}
+          />
+
+          {/* Player name — big, bold */}
           <h2
-            className="mt-6 text-4xl uppercase tracking-tight text-white"
+            className="text-5xl uppercase tracking-tight text-white"
             style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 700 }}
           >
             {moment.player}
           </h2>
-          <p className="mt-1 text-sm text-white/40">{moment.playType}</p>
+          <p className="mt-1.5 text-sm text-white/30">{moment.playType}</p>
 
-          {/* Edition pill */}
-          <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/[0.07] px-5 py-2 border border-white/[0.06]">
-            <span className="text-sm font-mono font-semibold text-[#00E5A0]">
-              #{editionNumber.toLocaleString()}
-            </span>
-            <span className="text-xs text-white/30">
-              of {moment.editionSize.toLocaleString()}
-            </span>
+          {/* Edition serial — luxury serial number treatment */}
+          <div className="mt-6 flex flex-col items-center">
+            <div className="flex items-baseline gap-2">
+              <span
+                className="text-[32px] font-mono font-bold tabular-nums tracking-tight"
+                style={{ color: moment.teamColors.primary }}
+              >
+                #{editionNumber.toLocaleString()}
+              </span>
+              <span className="text-[11px] font-mono text-white/15 tabular-nums">
+                / {moment.editionSize.toLocaleString()}
+              </span>
+            </div>
+            {/* Thin line under serial */}
+            <div className="mt-2 w-20 h-[1px] bg-white/[0.06]" />
           </div>
 
-          {/* Context timestamp */}
-          <p className="mt-4 text-[11px] text-white/25 uppercase tracking-wider">
-            {moment.team} vs {moment.opponent}
-          </p>
+          {/* Matchup + date stamp — screenshot permanence */}
+          <div className="mt-4 flex items-center justify-center gap-3 text-[10px] uppercase tracking-[0.2em] text-white/20">
+            <span>{moment.team} vs {moment.opponent}</span>
+            <span className="text-white/10">·</span>
+            <span className="font-mono tabular-nums">{dateStr}</span>
+          </div>
+        </div>
 
-          {/* Share row */}
+        {/* Share section — appears last */}
+        <div
+          className="mt-8 transition-all duration-600 ease-out"
+          style={{
+            opacity: showShare ? 1 : 0,
+            transform: showShare ? 'translateY(0)' : 'translateY(8px)',
+          }}
+        >
           <ShareButtons />
 
-          {/* View in collection */}
-          <button
-            className="mt-4 px-6 py-3 rounded-xl text-sm font-semibold tracking-wide
-                       bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 transition-colors"
-            onClick={(e) => e.preventDefault()}
-          >
-            View in Collection
-          </button>
+          {/* Screenshot hint */}
+          <p className="mt-4 text-[10px] text-white/12 uppercase tracking-[0.2em]">
+            Screenshot to share your W
+          </p>
         </div>
 
         {/* Dev reset — tiny, bottom */}
         <button
           onClick={onReset}
-          className="mt-8 text-[10px] text-white/20 hover:text-white/40 transition-colors"
+          className="mt-6 text-[10px] text-white/10 hover:text-white/25 transition-colors"
         >
           reset prototype
         </button>
@@ -300,7 +338,7 @@ export default function SupremePage() {
   const moment = useMemo(() => getMoment(momentId), [momentId]);
 
   const countdown = useCountdown(SALE_DURATION_MS[momentId] ?? 12 * 60 * 1000);
-  const { state: viewPhase, editionNumber, purchase, reset } = usePrototypeState(momentId);
+  const { state: viewPhase, editionNumber, purchaseTime, purchase, reset } = usePrototypeState(momentId);
 
   const watching = useSocialProof(moment ? 30 + moment.editionsClaimed % 40 : 30);
 
@@ -335,6 +373,7 @@ export default function SupremePage() {
       <WScreen
         moment={moment}
         editionNumber={editionNumber ?? moment.editionsClaimed + 1}
+        purchaseTime={purchaseTime}
         onReset={reset}
       />
     );

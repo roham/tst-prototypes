@@ -191,3 +191,25 @@ body {
 .supreme-claim-fade {
   animation: supreme-claim-in 2.8s ease both;
 }
+
+/* Supreme W screen glow pulse */
+@keyframes supreme-w-pulse {
+  0%, 100% { text-shadow: 0 0 60px rgba(0,229,160,0.5), 0 0 120px rgba(0,229,160,0.2); }
+  50% { text-shadow: 0 0 80px rgba(0,229,160,0.7), 0 0 160px rgba(0,229,160,0.3); }
+}
+.supreme-w-glow {
+  animation: supreme-w-pulse 3s ease-in-out infinite;
+}
+
+/* Supreme radial burst — expanding ring on W screen */
+@keyframes supreme-burst-expand {
+  0% { width: 0; height: 0; opacity: 0.6; }
+  60% { opacity: 0.3; }
+  100% { width: 140vw; height: 140vw; opacity: 0; }
+}
+.supreme-burst-ring {
+  animation: supreme-burst-expand 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+.supreme-burst-ring-delayed {
+  animation: supreme-burst-expand 2.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}

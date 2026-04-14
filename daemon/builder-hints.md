@@ -181,3 +181,12 @@
 - Arena at 7.98 — strongest Conversion (8.0) and tied for best Interaction (8.0).
 - Next cycle: Supreme (weakest overall, and hasn't been touched since cycle 19). Focus on Interaction or Visual.
 - Broadcast Interaction (7.0) is the single weakest dimension — cycle 23 should target that aggressively.
+
+## Cycle 22 Learnings
+- Deterministic progress ring (strokeDashoffset filling in stages) is far more Supreme than a spinner — controlled, confident, no noise.
+- "Yours." as the final purchase stage word is peak Supreme minimalism — one word, period. The user knows it worked.
+- Removing the shrink animation was the right call — it made the button feel like it was failing, not succeeding.
+- Glow intensification during purchase (30→50 shadow spread) subtly communicates "something is happening" without animation.
+- Small delta (+0.15) because Supreme's purchase flow was already decent — these are refinements, not structural.
+- Purity jumped to 9.0 — the deterministic ring + "Yours." are deeply on-brand for Supreme's confident minimalism.
+- Next: Broadcast (cycle 23). Interaction (7.0) is the weakest dimension across ALL directions. The purchase flow needs work — it should feel cinematic/editorial, not generic.

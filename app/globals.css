@@ -757,6 +757,21 @@ body {
   50% { box-shadow: 0 0 24px rgba(0,229,160,0.3), 0 0 60px rgba(0,229,160,0.1); }
 }
 
+/* Arena CTA crowd pulse — sonar ring expanding from buy button on each purchase */
+@keyframes arena-cta-pulse-ring {
+  0% { transform: scale(1); opacity: 0.45; }
+  60% { transform: scale(1.5); opacity: 0.12; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Arena CTA buyer flash — name appears then fades after each purchase */
+@keyframes arena-cta-buyer-flash {
+  0% { opacity: 0; transform: translateY(4px); }
+  10% { opacity: 1; transform: translateY(0); }
+  70% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-2px); }
+}
+
 /* Broadcast film grain — cinematic texture overlay */
 @keyframes broadcast-grain {
   0%, 100% { transform: translate(0, 0); }

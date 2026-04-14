@@ -4363,6 +4363,10 @@ export default function ArenaPage({
   const ctaRef = useRef<HTMLButtonElement>(null);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
 
+  /* ── CTA crowd pulse — sonar ring on each feed purchase ──────── */
+  const [ctaPulseKey, setCtaPulseKey] = useState(0);
+  const ctaPulsePrevLen = useRef(0);
+
   /* ── Feed simulation: add fake purchases every 2-5 seconds ── */
   useEffect(() => {
     if (!moment) return;
@@ -4397,6 +4401,14 @@ export default function ArenaPage({
       clearTimeout(next);
     };
   }, [moment]);
+
+  /* ── CTA crowd pulse — trigger sonar ring on each new feed event ── */
+  useEffect(() => {
+    if (feedEvents.length > ctaPulsePrevLen.current && ctaPulsePrevLen.current > 0) {
+      setCtaPulseKey((k) => k + 1);
+    }
+    ctaPulsePrevLen.current = feedEvents.length;
+  }, [feedEvents.length]);
 
   /* ── Velocity jitter + history ──────────────────────────────── */
   const [velocityHistory, setVelocityHistory] = useState<number[]>([14]);
@@ -5448,16 +5460,51 @@ export default function ArenaPage({
       <div className="px-4 pt-1">
         {/* Active buyers badge — live commerce energy */}
         {!countdown.isEnded && proto.state !== 'purchasing' && (
-          <div className="mb-2 flex items-center justify-center gap-1.5">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00E5A0] opacity-60" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#00E5A0]" />
-            </span>
-            <span className="text-[11px] font-semibold tabular-nums text-white/50">
-              {activeBuyers} buying this tier now
-            </span>
+          <div className="mb-2 flex flex-col items-center gap-1">
+            {/* Last buyer flash — shows who just claimed, keyed to pulse */}
+            {feedEvents.length > 0 && ctaPulseKey > 0 && (
+              <div
+                key={`buyer-${ctaPulseKey}`}
+                className="flex items-center gap-1 text-[10px] tabular-nums"
+                style={{
+                  animation: 'arena-cta-buyer-flash 2s ease-out forwards',
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                }}
+              >
+                <span style={{ color: moment.teamColors.primary }}>
+                  {feedEvents[feedEvents.length - 1].name}
+                </span>
+                <span className="text-white/30">just claimed</span>
+                <span className="font-mono text-white/50">
+                  #{feedEvents[feedEvents.length - 1].edition.toLocaleString()}
+                </span>
+              </div>
+            )}
+            <div className="flex items-center gap-1.5">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00E5A0] opacity-60" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#00E5A0]" />
+              </span>
+              <span className="text-[11px] font-semibold tabular-nums text-white/50">
+                {activeBuyers} buying this tier now
+              </span>
+            </div>
           </div>
         )}
+
+        {/* CTA Crowd Pulse Ring — sonar ring on each feed purchase */}
+        <div className="relative">
+          {!countdown.isEnded && proto.state === 'browsing' && (
+            <div
+              key={ctaPulseKey}
+              className="pointer-events-none absolute inset-0 z-0 rounded-xl"
+              style={{
+                border: `2px solid ${isCritical ? '#EF4444' : isClosing ? '#F59E0B' : '#00E5A0'}`,
+                animation: ctaPulseKey > 0 ? 'arena-cta-pulse-ring 0.8s ease-out forwards' : 'none',
+                opacity: 0,
+              }}
+            />
+          )}
 
         <button
           ref={ctaRef}
@@ -5531,6 +5578,7 @@ export default function ArenaPage({
             )}
           </span>
         </button>
+        </div>
 
         {/* Crowd energy meter — velocity-driven power gauge beneath CTA */}
         {!countdown.isEnded && proto.state !== 'purchasing' && (

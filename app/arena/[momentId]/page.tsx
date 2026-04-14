@@ -1080,6 +1080,101 @@ interface HeatDot {
   age: number; // 0 = fresh, increments
 }
 
+/* ─── MVP Leaderboard — jumbotron top-buyer spotlight ─────────── */
+/* Every NBA arena shows a "Fan of the Game" or MVP cam on the     */
+/* jumbotron. Live commerce platforms (Whatnot, TikTok Shop) show  */
+/* "Top Buyer" leaderboards. This combines both: the 3 fastest     */
+/* collectors get their name on the jumbotron leaderboard.         */
+
+function useMvpLeaderboard(events: PurchaseEvent[]) {
+  // Track per-buyer purchase counts from the feed
+  const [leaders, setLeaders] = useState<{ name: string; city: string; count: number; rank: number }[]>([]);
+
+  useEffect(() => {
+    if (events.length === 0) return;
+    const counts = new Map<string, { city: string; count: number }>();
+    for (const ev of events) {
+      const existing = counts.get(ev.name);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        counts.set(ev.name, { city: ev.city, count: 1 });
+      }
+    }
+    const sorted = Array.from(counts.entries())
+      .map(([name, data]) => ({ name, city: data.city, count: data.count, rank: 0 }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3);
+    sorted.forEach((entry, i) => { entry.rank = i + 1; });
+    setLeaders(sorted);
+  }, [events]);
+
+  return leaders;
+}
+
+function MvpLeaderboard({ events, teamColor, isEnded }: { events: PurchaseEvent[]; teamColor: string; isEnded: boolean }) {
+  const leaders = useMvpLeaderboard(events);
+
+  if (isEnded || leaders.length < 2) return null;
+
+  const RANK_COLORS = ['#FFD700', '#C0C0C0', '#CD7F32']; // gold, silver, bronze
+  const RANK_LABELS = ['MVP', '2ND', '3RD'];
+
+  return (
+    <div className="mx-4 my-2">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-1.5 px-1">
+        <span
+          className="text-[8px] font-bold uppercase tracking-[0.25em]"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif', color: `${teamColor}60` }}
+        >
+          🏆 Top Collectors
+        </span>
+        <div className="h-[1px] flex-1" style={{ backgroundColor: `${teamColor}10` }} />
+        <span className="text-[7px] font-mono uppercase tracking-wider text-white/15">
+          Live
+        </span>
+      </div>
+
+      {/* Leaderboard rows */}
+      <div className="flex gap-1.5">
+        {leaders.map((leader, i) => (
+          <div
+            key={leader.name}
+            className="flex-1 flex items-center gap-1.5 rounded-md px-2 py-1.5 transition-all duration-400"
+            style={{
+              backgroundColor: i === 0 ? `rgba(255,215,0,0.06)` : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${i === 0 ? 'rgba(255,215,0,0.12)' : 'rgba(255,255,255,0.04)'}`,
+              boxShadow: i === 0 ? `0 0 8px rgba(255,215,0,0.08)` : 'none',
+            }}
+          >
+            {/* Rank badge */}
+            <span
+              className="text-[8px] font-bold shrink-0"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: RANK_COLORS[i] ?? '#CD7F32',
+                textShadow: i === 0 ? '0 0 6px rgba(255,215,0,0.3)' : 'none',
+              }}
+            >
+              {RANK_LABELS[i]}
+            </span>
+            {/* Name + count */}
+            <div className="flex flex-col min-w-0">
+              <span className="text-[9px] font-semibold text-white/60 truncate">
+                {leader.name}
+              </span>
+              <span className="text-[7px] font-mono tabular-nums text-white/25">
+                {leader.count}× collected
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function BuyerHeatMap({ events, teamColor, isEnded }: { events: PurchaseEvent[]; teamColor: string; isEnded: boolean }) {
   const [dots, setDots] = useState<HeatDot[]>([]);
   const prevLen = useRef(0);
@@ -4569,6 +4664,9 @@ export default function ArenaPage({
       ) : (
         <LiveFeed events={feedEvents} teamColor={moment.teamColors.primary} />
       )}
+
+      {/* ─── MVP Leaderboard — jumbotron top-buyer spotlight ─── */}
+      <MvpLeaderboard events={feedEvents} teamColor={moment.teamColors.primary} isEnded={countdown.isEnded} />
 
       {/* ─── Buyer Heat Map — geographic purchase visualization ─── */}
       <BuyerHeatMap events={feedEvents} teamColor={moment.teamColors.primary} isEnded={countdown.isEnded} />

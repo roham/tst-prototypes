@@ -192,10 +192,19 @@ const CLAIM_NAMES = [
   'HoopsJunkie', 'TripleDbl', 'FastBreak', 'CourtVision', 'Dime_Drop',
 ];
 
+interface BidEntry {
+  id: number;
+  name: string;
+  edition: number;
+  time: string;
+}
+
 function useClaimTicker(baseClaimed: number, editionSize: number) {
   const [claimed, setClaimed] = useState(baseClaimed);
   const [lastClaimer, setLastClaimer] = useState<string | null>(null);
   const [claimFlash, setClaimFlash] = useState(false);
+  const [bidLog, setBidLog] = useState<BidEntry[]>([]);
+  const bidIdRef = useRef(0);
 
   useEffect(() => {
     // Random interval between 2-6s to simulate real claiming
@@ -203,12 +212,22 @@ function useClaimTicker(baseClaimed: number, editionSize: number) {
     const tick = () => {
       const delay = 2000 + Math.random() * 4000;
       timeout = setTimeout(() => {
-        setClaimed((prev) => Math.min(prev + 1, editionSize));
-        const name = CLAIM_NAMES[Math.floor(Math.random() * CLAIM_NAMES.length)];
-        setLastClaimer(name);
-        setClaimFlash(true);
-        setTimeout(() => setClaimFlash(false), 600);
-        setTimeout(() => setLastClaimer(null), 2800);
+        setClaimed((prev) => {
+          const next = Math.min(prev + 1, editionSize);
+          const name = CLAIM_NAMES[Math.floor(Math.random() * CLAIM_NAMES.length)];
+          const now = new Date();
+          const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          bidIdRef.current += 1;
+          setBidLog((log) => [
+            { id: bidIdRef.current, name, edition: next, time: timeStr },
+            ...log,
+          ].slice(0, 5)); // keep last 5 entries
+          setLastClaimer(name);
+          setClaimFlash(true);
+          setTimeout(() => setClaimFlash(false), 600);
+          setTimeout(() => setLastClaimer(null), 2800);
+          return next;
+        });
         tick();
       }, delay);
     };
@@ -216,7 +235,7 @@ function useClaimTicker(baseClaimed: number, editionSize: number) {
     return () => clearTimeout(timeout);
   }, [editionSize]);
 
-  return { claimed, lastClaimer, claimFlash };
+  return { claimed, lastClaimer, claimFlash, bidLog };
 }
 
 // ---------------------------------------------------------------------------
@@ -1074,7 +1093,7 @@ export default function SupremePage() {
   }, [dropPhase]);
 
   // Live claim ticker
-  const { claimed, lastClaimer, claimFlash } = useClaimTicker(
+  const { claimed, lastClaimer, claimFlash, bidLog } = useClaimTicker(
     moment?.editionsClaimed ?? 0,
     moment?.editionSize ?? 5000,
   );
@@ -2262,29 +2281,68 @@ export default function SupremePage() {
       </div>
 
       {/* ============================================================= */}
-      {/* SOCIAL PROOF — claim ticker + watchers */}
+      {/* BIDDING LEDGER — auction house acquisition log                */}
+      {/* At Christie's/Sotheby's live auctions, a scrolling log of    */}
+      {/* bid increments is visible to the room. This is the digital   */}
+      {/* equivalent: formal, timestamped, institutional — Supreme's   */}
+      {/* quiet version of Arena's chaotic live feed.                   */}
       {/* ============================================================= */}
       <div className="px-5 pb-6 supreme-social-enter">
-        {/* Last claimer notification / ended state */}
-        <div className="h-5 flex items-center justify-center overflow-hidden">
-          {isEnded ? (
-            <p className="text-[11px] text-white/15 tabular-nums">
-              {claimed.toLocaleString()} editions collected
+        {isEnded ? (
+          <p className="text-[11px] text-white/15 tabular-nums text-center">
+            {claimed.toLocaleString()} editions collected
+          </p>
+        ) : bidLog.length > 0 ? (
+          <div className="flex flex-col items-center">
+            {/* Ledger header */}
+            <div className="flex items-center gap-2 mb-1.5">
+              <div
+                className="h-[1px] w-3"
+                style={{ backgroundColor: `${moment.teamColors.primary}15` }}
+              />
+              <span
+                className="text-[7px] font-bold uppercase tracking-[0.4em] text-white/10"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                Bidding Ledger
+              </span>
+              <div
+                className="h-[1px] w-3"
+                style={{ backgroundColor: `${moment.teamColors.primary}15` }}
+              />
+            </div>
+            {/* Entries — max 3 visible, newest on top */}
+            <div className="w-full max-w-[260px] space-y-[2px] overflow-hidden" style={{ maxHeight: '52px' }}>
+              {bidLog.slice(0, 3).map((entry, i) => (
+                <div
+                  key={entry.id}
+                  className="flex items-center justify-between text-[9px] font-mono tabular-nums transition-all duration-300"
+                  style={{
+                    opacity: i === 0 ? 0.25 : i === 1 ? 0.15 : 0.08,
+                    animation: i === 0 ? 'supreme-ledger-entry 0.4s ease-out' : undefined,
+                  }}
+                >
+                  <span className="text-white/30">{entry.time}</span>
+                  <span className="text-white/20 truncate mx-2">{entry.name}</span>
+                  <span className="flex items-center gap-1">
+                    <span className="text-[7px] uppercase tracking-wider text-white/10">claimed</span>
+                    <span style={{ color: `${moment.teamColors.primary}40` }}>
+                      #{entry.edition.toLocaleString()}
+                    </span>
+                  </span>
+                </div>
+              ))}
+            </div>
+            {/* Watching count — institutional footnote */}
+            <p className="mt-1.5 text-[9px] text-white/8 tabular-nums">
+              {watching} registered bidders in viewing room
             </p>
-          ) : lastClaimer ? (
-            <p
-              className="text-[11px] text-white/30 tabular-nums supreme-claim-fade"
-              key={lastClaimer + Date.now()}
-            >
-              <span className="text-[#00E5A0]/60 font-semibold">{lastClaimer}</span>
-              {' '}just claimed
-            </p>
-          ) : (
-            <p className="text-[11px] text-white/15 tabular-nums">
-              {watching} watching now
-            </p>
-          )}
-        </div>
+          </div>
+        ) : (
+          <p className="text-[11px] text-white/15 tabular-nums text-center">
+            {watching} watching now
+          </p>
+        )}
       </div>
 
       {/* ============================================================= */}

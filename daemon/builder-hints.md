@@ -96,3 +96,18 @@
 - Supreme has NO rarity tier UI at all yet — it only shows the Open tier price. Needs the most work in rarity.
 - Broadcast already has TierCard component with team-color accents. Needs refinement, not rebuild.
 - Arena already has RarityCards (premium tiers). Could add more energy/urgency to low-remaining tiers.
+
+## Cycle 13 Learnings (retroactive)
+- Supreme's rarity tier selector is minimal by design — horizontal picker with underline, no cards. Fits Supreme philosophy perfectly.
+- Dynamic CTA price ("OWN THIS MOMENT — $99") is essential — the price must update when tier changes.
+- Small delta (+0.15) because rarity selector was the expected missing piece, not a visual leap.
+
+## Cycle 14 Learnings
+- Editorial taglines per tier ("Collector Edition", "Museum Edition", "Vault Reserve") add prestige without clutter — very Broadcast.
+- Diamond icons as visual hierarchy (0/1/2/3 per tier) is a cheap but effective rarity signal.
+- "X of Y" format ("14 of 25") feels more prestige than "14 left" — gives context of total scarcity.
+- Shimmer effect on premium tier cards (Legendary/Ultimate) when selected adds luxury feel — CSS-only, no JS.
+- Low-stock amber pulse on ≤5 remaining creates urgency without being garish.
+- Tier tagline in the W certificate adds editorial depth to the confirmation screen.
+- Removed dead QRPlaceholder component — clean up unused code as you find it.
+- Broadcast Visual jumped from 8.0→8.5 — editorial details compound. Purity also up (8.0→8.5) because prestige auction is core Broadcast identity.

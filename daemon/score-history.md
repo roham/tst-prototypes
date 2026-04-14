@@ -60,3 +60,7 @@
 | Arena | 7.0 | 6.5 | 7.0 | 7.0 | 8.0 | **7.03** |
 
 **W SCREEN phase complete.** All 3 have theatrical confirmation screens. Biggest jump: Arena Interaction 5.5→7.0. Weakest dimension: Supreme Interaction (6.0), Broadcast Conversion (6.0). Cycles 13-15 = RARITY TIERS.
+
+| 13 | supreme | 7.5 | 7.0 | 7.0 | 6.5 | 8.0 | 7.15 | +0.15 | Rarity tier selector: minimal horizontal picker, underline indicator, dynamic CTA price |
+
+| 14 | broadcast | 8.5 | 6.5 | 7.5 | 7.0 | 8.5 | 7.55 | +0.37 | Prestige tier cards: editorial taglines, diamond hierarchy, edition context, shimmer, low-stock pulse |

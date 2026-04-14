@@ -26,3 +26,8 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 ## Cycle 11 | Direction: Broadcast | Score: 7.18 (+0.65) | Built: Cinematic W screen — hero action backdrop, COLLECTED broadcast announcement, 4-phase staggered reveal, certificate card with team-color accent + date stamp, removed QR placeholder | Time: 17:30
 
 ## Cycle 12 | Direction: Arena | Score: 7.03 (+0.73) | Built: W screen — screen shake rumble, action image backdrop, competition stats (Top X% speed), YOUR purchase highlighted in feed, pulsing edition glow, 4-phase staggered reveal | Time: 17:50
+
+## Cycle 13 | Direction: Supreme | Score: 7.15 (+0.15) | Built: Minimal horizontal rarity tier selector with underline indicator, dynamic price in CTA, tier label in W screen | Time: 18:05
+*Note: Code shipped as v0.14 but daemon log was not updated. Logged retroactively in cycle 14.*
+
+## Cycle 14 | Direction: Broadcast | Score: 7.55 (+0.37) | Built: Prestige rarity tier cards — editorial taglines (Collector Edition / Limited Series / Museum Edition / Vault Reserve), diamond hierarchy icons, "X of Y" edition context, shimmer animation on premium tiers, low-stock amber pulse, tier tagline + diamonds in W certificate, removed unused QRPlaceholder | Time: 18:25

@@ -1587,3 +1587,11 @@
 - At 30% opacity and 14px size, the gavel is subliminal — you notice the tapping rhythm before you consciously identify the icon. That's the right balance for Supreme's minimal philosophy.
 - The gavel tap (visual), timer tick heartbeat (scale pulse), and timer text glow (textShadow) all fire on the same second-change event but with different timing, creating a layered per-second urgency beat.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 197 Learnings
+- Phase transitions need visual weight proportional to their importance. The feed cut (350ms static flash) was too subtle — users scrolling the editorial section could miss the phase change entirely. The quarter break bumper (2.5s full-screen overlay) makes the urgency escalation unmissable without being annoying.
+- 3-state lifecycle (in→hold→out) with distinct visual treatments per state creates a natural animation arc: scale 1.15→1.0 (land), hold at 1.0 (read), scale 0.95 + fade (dismiss). The spring overshoot on entry gives it weight.
+- Using the same trigger point as existing feedCut/crashZoom keeps the code clean — one useEffect detects the phase change and fires all three effects. No duplicate detection logic.
+- Amber (#F59E0B) for CLOSING and red (#EF4444) for CRITICAL maintains the established urgency color escalation used elsewhere in the broadcast page (countdown, edition bar, CTA).
+- The bumper text should be informational, not panicky: "Final Minutes" and "Final 2 Minutes" are broadcast language (how a commentator would announce it), not commerce language ("HURRY! TIME RUNNING OUT!"). Broadcast stays editorial.
+- Next cycle: Arena (rotation).

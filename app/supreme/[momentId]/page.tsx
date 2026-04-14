@@ -1537,6 +1537,28 @@ export default function SupremePage() {
           )}
         </div>
 
+        {/* Exhibition mount — dark passe-partout inner border, museum framing convention */}
+        {/* At Sotheby's/Christie's, lot photographs are mounted with generous mat borders */}
+        {/* Weighted bottom per museum convention (prevents optical sinking). Subtle bevel */}
+        {/* shadow creates depth separation between vitrine glass and the image. */}
+        <div
+          className="absolute z-[10] pointer-events-none transition-opacity duration-1000"
+          style={{
+            inset: '10px 10px 14px 10px', // weighted bottom per museum framing convention
+            border: `0.5px solid rgba(255,255,255,0.03)`,
+            boxShadow: `inset 0 0.5px 0 rgba(255,255,255,0.04), inset 0 -0.5px 0 rgba(0,0,0,0.2), inset 0 0 8px rgba(0,0,0,0.15), 0 0 1px ${moment.teamColors.primary}08`,
+            opacity: isEnded ? 0.4 : 0.7,
+          }}
+        >
+          {/* Inner accent rule — team-color hairline at mat edge, like a gilt fillet */}
+          <div
+            className="absolute inset-[3px] pointer-events-none"
+            style={{
+              border: `0.5px solid ${moment.teamColors.primary}08`,
+            }}
+          />
+        </div>
+
         {/* Evening Sale catalogue header — institutional authority */}
         {/* Every Christie's/Sotheby's catalogue page has a formal header: */}
         {/* house name, sale title, date, location. Subliminal institutional gravitas. */}

@@ -1397,3 +1397,10 @@
 - 3-stage text that matches purchaseStage timing (0/500ms/1200ms) ensures the overlay always shows the right stage without its own timers. Piggyback on existing state rather than adding new timers.
 - z-44 for the overlay is correct: above gavel countdown (z-42) and phase transition (z-36) but below W screen (z-50). The overlay naturally disappears when viewPhase transitions to 'confirmed' and the W screen renders.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 167 Learnings
+- Player quotes in first-person hit harder than editorial third-person prose. "I wanted to make a statement" > "Adebayo made a statement." Use the athlete's voice for emotional weight, editorial voice for context and analysis.
+- Placing the interview card right before the transaction section creates a narrative bridge: you read the player's emotions → you see the collect button. The emotional priming is at maximum when the conversion ask appears.
+- The mic SVG icon is a small detail that immediately signals "interview" — broadcast viewers recognize the microphone graphic instantly.
+- No new CSS keyframes needed — the card uses static styling that fits the editorial pace. Not everything needs to animate; the content itself carries the weight.
+- Next cycle: Arena (rotation).

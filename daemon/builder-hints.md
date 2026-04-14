@@ -1138,3 +1138,13 @@
 - Sliding the bumper out to the RIGHT (vs Special Report sliding out LEFT) creates visual variety in the broadcast's motion language.
 - Broadcast now has complete segment structure: countdown leader (cold open) → special report (breaking news) → editorial (feature segment) → coverage bumper (return from break) → transaction (closing segment). This is a full TV broadcast arc.
 - Next cycle: Arena (rotation).
+
+## Cycle 131 Learnings
+- Radial spark lines using transformOrigin:top-center + scaleY creates a natural "unfurling" starburst — each line grows outward from center rather than appearing at full length.
+- Staggering sparks within a burst (15ms each) prevents the "everything at once" look that makes explosions feel flat. Real pyrotechnics have a slight spread as each charge ignites sequentially.
+- Five bursts at asymmetric positions (not on a grid) feel organic. The final burst at center-top with the most sparks creates a natural climax.
+- White-hot core flash (8px solid white + team-color glow) sells the ignition moment. Without the core, the sparks look like they appear from nowhere.
+- Alternating primary/secondary team colors every 3rd spark adds depth without complexity — you don't need random colors, just two alternating tones.
+- z-49 below confetti (z-50) means explosions fire through falling confetti pieces — this mimics the real layering where pyro goes off first, then confetti cannons release.
+- Arena W screen now has 3 celebration layers: pyrotechnic starbursts (explosions), confetti (particles), and crowd roar EQ bars (audio visualization). Each operates on a different physics model.
+- Next cycle: Supreme (rotation).

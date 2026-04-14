@@ -2714,6 +2714,223 @@ function ArenaShotClock({
   );
 }
 
+/* ─── Replay Center Review — NBA-style challenge overlay during purchase ── */
+/* When you click buy, the jumbotron shows "PLAY UNDER REVIEW" like an NBA     */
+/* instant replay challenge. Then "CALL CONFIRMED" flashes before the W screen */
+/* appears. Turns the 1.5s purchase processing into an arena moment.           */
+
+function ReplayReviewOverlay({ active, stage, teamColor }: {
+  active: boolean; stage: number; teamColor: string;
+}) {
+  const [phase, setPhase] = useState<'hidden' | 'review' | 'confirmed' | 'done'>('hidden');
+
+  useEffect(() => {
+    if (!active) { setPhase('hidden'); return; }
+    // Show "UNDER REVIEW" immediately on purchase
+    setPhase('review');
+    // At stage 2 (secured), show "CALL CONFIRMED"
+    const t1 = setTimeout(() => setPhase('confirmed'), 1000);
+    const t2 = setTimeout(() => setPhase('done'), 1800);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [active]);
+
+  if (phase === 'hidden' || phase === 'done') return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center pointer-events-none"
+      style={{
+        backgroundColor: phase === 'review' ? 'rgba(11,14,20,0.55)' : 'rgba(11,14,20,0.35)',
+        transition: 'background-color 0.4s ease',
+      }}
+    >
+      {/* Replay center frame — like the NBA replay center control room */}
+      <div
+        className="relative flex flex-col items-center gap-3 px-10 py-8"
+        style={{
+          animation: phase === 'review'
+            ? 'arena-timeout-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            : 'none',
+        }}
+      >
+        {/* Scanning line — sweeps horizontally like video analysis */}
+        {phase === 'review' && (
+          <div
+            className="absolute inset-0 pointer-events-none overflow-hidden"
+            style={{ opacity: 0.08 }}
+          >
+            <div
+              className="absolute top-0 left-0 w-full h-[2px]"
+              style={{
+                background: `linear-gradient(90deg, transparent, ${teamColor}, transparent)`,
+                animation: 'arena-crowd-wave 2s linear infinite',
+              }}
+            />
+          </div>
+        )}
+
+        {/* Replay icon — play/pause symbol */}
+        <div className="flex items-center gap-2 mb-1">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.5 }}>
+            <path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0z" stroke={teamColor} strokeWidth="1.5" />
+            <path d="M10 8l6 4-6 4V8z" fill={teamColor} fillOpacity="0.6" />
+          </svg>
+          <span
+            className="text-[9px] font-bold uppercase tracking-[0.35em]"
+            style={{
+              color: phase === 'confirmed' ? '#00E5A0' : teamColor,
+              fontFamily: 'var(--font-oswald), sans-serif',
+              transition: 'color 0.3s ease',
+            }}
+          >
+            {phase === 'confirmed' ? 'Replay Center' : 'Replay Center'}
+          </span>
+        </div>
+
+        {/* Main text — dramatic jumbotron treatment */}
+        <h2
+          className="text-[clamp(1.6rem,6vw,2.8rem)] font-bold uppercase tracking-[0.12em] leading-none text-center"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: phase === 'confirmed' ? '#00E5A0' : 'rgba(255,255,255,0.9)',
+            textShadow: phase === 'confirmed'
+              ? '0 0 30px rgba(0,229,160,0.4), 0 0 60px rgba(0,229,160,0.15)'
+              : `0 0 30px ${teamColor}4D, 0 0 60px ${teamColor}1A`,
+            transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+            transform: phase === 'confirmed' ? 'scale(1.08)' : 'scale(1)',
+          }}
+        >
+          {phase === 'confirmed' ? 'CALL CONFIRMED' : 'PLAY UNDER REVIEW'}
+        </h2>
+
+        {/* Team-color accent lines — expand from center */}
+        <div className="flex items-center gap-4 mt-1">
+          <div
+            className="h-[1px]"
+            style={{
+              width: '48px',
+              backgroundColor: phase === 'confirmed' ? '#00E5A0' : teamColor,
+              opacity: 0.4,
+              transition: 'background-color 0.3s ease',
+            }}
+          />
+          <div
+            className="h-[6px] w-[6px] rounded-full"
+            style={{
+              backgroundColor: phase === 'confirmed' ? '#00E5A0' : teamColor,
+              boxShadow: phase === 'confirmed'
+                ? '0 0 8px rgba(0,229,160,0.5)'
+                : `0 0 8px ${teamColor}66`,
+              transition: 'all 0.3s ease',
+            }}
+          />
+          <div
+            className="h-[1px]"
+            style={{
+              width: '48px',
+              backgroundColor: phase === 'confirmed' ? '#00E5A0' : teamColor,
+              opacity: 0.4,
+              transition: 'background-color 0.3s ease',
+            }}
+          />
+        </div>
+
+        {/* Subtitle — reviewing / confirmed */}
+        <span
+          className="text-[10px] uppercase tracking-[0.2em] mt-1"
+          style={{
+            color: phase === 'confirmed' ? 'rgba(0,229,160,0.6)' : 'rgba(255,255,255,0.3)',
+            fontFamily: 'var(--font-oswald), sans-serif',
+            transition: 'color 0.3s ease',
+          }}
+        >
+          {phase === 'confirmed' ? 'Edition Secured' : 'Verifying Transaction'}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Defense Stomp — jumbotron "DE-FENSE" graphic on low stock ──── */
+/* Every NBA arena shows the "DE-FENSE" stomp graphic on the jumbotron      */
+/* during close games. Here it triggers when ≥80% of editions are claimed   */
+/* — "defend your spot, buy before they're gone." One-shot per session.     */
+
+function useDefenseStomp(claimedPct: number, isEnded: boolean) {
+  const [visible, setVisible] = useState(false);
+  const firedRef = useRef(false);
+
+  useEffect(() => {
+    if (firedRef.current || isEnded) return;
+    if (claimedPct >= 0.80) {
+      firedRef.current = true;
+      setVisible(true);
+      const t = setTimeout(() => setVisible(false), 2800);
+      return () => clearTimeout(t);
+    }
+  }, [claimedPct, isEnded]);
+
+  return visible;
+}
+
+function DefenseStompOverlay({ visible, teamColor }: { visible: boolean; teamColor: string }) {
+  if (!visible) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[37] flex items-center justify-center pointer-events-none"
+      style={{ animation: 'arena-timeout-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
+    >
+      {/* Stomp shockwave ring */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: '200px',
+          height: '200px',
+          border: `2px solid ${teamColor}30`,
+          animation: 'arena-horn-ring 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        }}
+      />
+      <div className="flex flex-col items-center gap-2">
+        {/* Stomp feet icons */}
+        <div className="flex items-center gap-3 mb-1">
+          <span className="text-2xl" style={{ opacity: 0.7, animation: 'arena-timeout-in 0.3s ease 0.1s both' }}>👟</span>
+          <span className="text-2xl" style={{ opacity: 0.7, animation: 'arena-timeout-in 0.3s ease 0.25s both' }}>👟</span>
+        </div>
+        {/* DE-FENSE text — stomping letterpress style */}
+        <h2
+          className="text-[clamp(2rem,8vw,3.5rem)] font-bold uppercase tracking-[0.25em] leading-none"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: teamColor,
+            textShadow: `0 0 30px ${teamColor}60, 0 0 60px ${teamColor}25, 0 4px 20px rgba(0,0,0,0.5)`,
+            animation: 'arena-timeout-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both',
+          }}
+        >
+          DE-FENSE
+        </h2>
+        {/* Subtext — contextual message */}
+        <span
+          className="text-[10px] uppercase tracking-[0.3em]"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: `${teamColor}80`,
+            animation: 'arena-timeout-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both',
+          }}
+        >
+          Editions running low — claim yours
+        </span>
+        {/* Team-color accent lines */}
+        <div className="flex items-center gap-3 mt-1" style={{ animation: 'arena-timeout-in 0.4s ease 0.5s both' }}>
+          <div className="h-[1px] w-10" style={{ backgroundColor: `${teamColor}30` }} />
+          <div className="h-[5px] w-[5px] rounded-full" style={{ backgroundColor: teamColor, opacity: 0.4 }} />
+          <div className="h-[1px] w-10" style={{ backgroundColor: `${teamColor}30` }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Collection Milestone Flash — jumbotron attendance celebration ─ */
 // NBA arenas celebrate attendance milestones on the jumbotron — "TONIGHT'S
 // 20,000TH FAN!" This fires when liveClaimed crosses round-number thresholds,
@@ -3039,6 +3256,12 @@ export default function ArenaPage({
   /* ── Horn shockwave — concentric rings when entering CRITICAL phase ── */
   const hornActive = useHornShockwave(countdown.totalSeconds, countdown.isEnded);
 
+  /* ── Defense stomp — "DE-FENSE" jumbotron graphic at 80% claimed ── */
+  const defenseStompVisible = useDefenseStomp(
+    moment ? liveClaimed / moment.editionSize : 0,
+    countdown.isEnded,
+  );
+
   /* ── Sticky CTA — show when main button scrolls out of view ── */
   useEffect(() => {
     const el = ctaRef.current;
@@ -3246,6 +3469,16 @@ export default function ArenaPage({
       {!countdown.isEnded && proto.state !== 'confirmed' && (
         <MilestoneFlash flash={milestoneFlash} teamColor={moment.teamColors.primary} />
       )}
+
+      {/* ─── Replay Center Review — "PLAY UNDER REVIEW" during purchase ─── */}
+      <ReplayReviewOverlay
+        active={proto.state === 'purchasing'}
+        stage={purchaseStage}
+        teamColor={moment.teamColors.primary}
+      />
+
+      {/* ─── Defense Stomp — "DE-FENSE" jumbotron graphic on low stock ─── */}
+      <DefenseStompOverlay visible={defenseStompVisible} teamColor={moment.teamColors.primary} />
 
       {/* ─── Fixed Header Bar ─── */}
       <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between border-b border-white/[0.06] bg-[#0B0E14]/90 px-4 py-3 backdrop-blur-md">

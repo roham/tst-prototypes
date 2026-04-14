@@ -556,6 +556,22 @@ body {
   100% { transform: translateX(110%); opacity: 0; }
 }
 
+/* Arena W screen — crowd roar EQ bars (dramatic spike on reveal) */
+@keyframes arena-roar-bar {
+  0% { height: 8%; }
+  12% { height: 100%; }
+  25% { height: 60%; }
+  40% { height: 85%; }
+  55% { height: 40%; }
+  70% { height: 55%; }
+  85% { height: 25%; }
+  100% { height: 35%; }
+}
+@keyframes arena-roar-idle {
+  0%, 100% { height: 25%; }
+  50% { height: 55%; }
+}
+
 /* Arena crowd noise equalizer — mini bars that suggest live audio atmosphere */
 @keyframes arena-eq-bar {
   0%, 100% { height: 20%; }

@@ -852,6 +852,25 @@ function CelebrationScreen({
       />
 
       <div className="relative z-50 flex flex-col items-center px-6">
+        {/* Crowd roar EQ bars — spike behind the headline on reveal */}
+        <div className="absolute top-[8%] left-1/2 -translate-x-1/2 flex items-end gap-[3px] h-32 pointer-events-none opacity-20"
+          style={{ width: 'min(80%, 320px)' }}
+        >
+          {Array.from({ length: 24 }).map((_, i) => (
+            <div
+              key={i}
+              className="flex-1 rounded-t-sm"
+              style={{
+                backgroundColor: i >= 9 && i <= 14
+                  ? '#00E5A0'
+                  : moment.teamColors.primary,
+                height: '8%',
+                animation: `arena-roar-bar 1.2s ease-out ${i * 0.03}s forwards, arena-roar-idle ${1.4 + (i % 5) * 0.15}s ease-in-out ${1.2 + i * 0.03}s infinite`,
+              }}
+            />
+          ))}
+        </div>
+
         {/* YOU'RE IN — bigger, arena-jumbotron energy */}
         <div style={{ animation: 'bounceIn 0.6s ease-out' }}>
           <h1

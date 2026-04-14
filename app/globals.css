@@ -1187,3 +1187,33 @@ body {
   0% { opacity: 0.25; }
   100% { opacity: 0; }
 }
+
+/* ── Arena Gate Scan — ticket scan entrance overlay ── */
+@keyframes arena-gate-scan {
+  0% { top: -4px; }
+  100% { top: calc(100% + 4px); }
+}
+
+@keyframes arena-gate-flash {
+  0% { opacity: 0; }
+  30% { opacity: 0.12; }
+  100% { opacity: 0; }
+}
+
+@keyframes arena-gate-text {
+  0% { opacity: 0; transform: scale(1.15); letter-spacing: 0.35em; }
+  40% { opacity: 1; transform: scale(1); letter-spacing: 0.25em; }
+  75% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.98); }
+}
+
+@keyframes arena-gate-bars {
+  0% { opacity: 0.5; }
+  50% { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+
+@keyframes arena-gate-exit {
+  0% { opacity: 1; }
+  100% { opacity: 0; pointer-events: none; }
+}

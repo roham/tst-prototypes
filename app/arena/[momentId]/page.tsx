@@ -1896,6 +1896,101 @@ function ArenaLaserShow({ teamColor, isActive }: { teamColor: string; isActive: 
   );
 }
 
+/* ─── Arena Gate Scan — ticket scan entrance overlay ────────────── */
+
+function ArenaGateScan({ teamColor, seatLabel }: { teamColor: string; seatLabel: string }) {
+  const [active, setActive] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setActive(false), 2100);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (!active) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0B0E14]"
+      style={{ animation: 'arena-gate-exit 0.4s ease-in 1.7s forwards' }}
+    >
+      {/* Barcode pattern — thin vertical lines simulating ticket barcode */}
+      <div
+        className="absolute inset-x-[15%] top-[38%] bottom-[38%] flex items-center justify-center gap-[3px] opacity-0"
+        style={{ animation: 'arena-gate-bars 1.2s ease-out 0.1s forwards' }}
+      >
+        {Array.from({ length: 32 }).map((_, i) => (
+          <div
+            key={i}
+            className="h-full rounded-[0.5px]"
+            style={{
+              width: i % 3 === 0 ? '3px' : i % 5 === 0 ? '1px' : '2px',
+              backgroundColor: `rgba(255,255,255,${0.04 + (i % 4) * 0.015})`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Scan line — sweeps top to bottom */}
+      <div
+        className="absolute left-0 right-0 h-[3px] pointer-events-none"
+        style={{
+          background: `linear-gradient(90deg, transparent 5%, ${teamColor}80 25%, ${teamColor} 50%, ${teamColor}80 75%, transparent 95%)`,
+          boxShadow: `0 0 16px ${teamColor}60, 0 0 40px ${teamColor}30`,
+          animation: 'arena-gate-scan 0.8s ease-in-out forwards',
+        }}
+      />
+
+      {/* Flash on scan complete */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundColor: teamColor,
+          animation: 'arena-gate-flash 0.5s ease-out 0.75s forwards',
+        }}
+      />
+
+      {/* ACCESS GRANTED text */}
+      <div
+        className="relative z-10 flex flex-col items-center gap-3 opacity-0"
+        style={{ animation: 'arena-gate-text 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards' }}
+      >
+        {/* Checkmark circle */}
+        <div
+          className="flex h-12 w-12 items-center justify-center rounded-full border-2"
+          style={{ borderColor: teamColor }}
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path
+              d="M5 10.5L8.5 14L15 7"
+              stroke={teamColor}
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+        <span
+          className="text-xl font-bold uppercase"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            fontWeight: 700,
+            color: teamColor,
+            textShadow: `0 0 20px ${teamColor}50, 0 0 40px ${teamColor}25`,
+            letterSpacing: '0.25em',
+          }}
+        >
+          Access Granted
+        </span>
+        <span
+          className="text-[9px] font-mono uppercase tracking-[0.3em] text-white/25"
+        >
+          {seatLabel}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
@@ -2079,6 +2174,12 @@ export default function ArenaPage({
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0B0E14]">
+      {/* ─── Arena Gate Scan — ticket scan entrance overlay ─── */}
+      <ArenaGateScan
+        teamColor={moment.teamColors.primary}
+        seatLabel={`SEC ${(moment.id.charCodeAt(0) % 20) + 101} · ROW ${String.fromCharCode(65 + (moment.id.charCodeAt(1) % 8))} · SEAT ${(moment.id.charCodeAt(2) % 24) + 1}`}
+      />
+
       {/* ─── Crowd Reactions — floating emoji burst on purchases ─── */}
       {!countdown.isEnded && <CrowdReactions events={feedEvents} />}
 

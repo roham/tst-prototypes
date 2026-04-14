@@ -597,3 +597,12 @@
 - "ISO CAM 1" in mono font reads as technical metadata — it implies this is a raw production feed, not a finished broadcast. That rawness adds authenticity.
 - Broadcast hero now has production overlays at every edge: top-left (score bug), top-right (network bug), mid-right (replay tag), bottom-left (lower-third), bottom-right (production markers), bottom (progress bar). The hero is a fully dressed broadcast frame.
 - Next cycle: Arena (rotation). Arena could use a "section leader" indicator (like section 101, row A seating), or a jumbotron "timeout" screen effect during CLOSING phase.
+
+## Cycle 68 Learnings
+- State transitions are high-impact moments for adding drama. The active→ended transition was previously a quiet fade — adding a buzzer sequence makes it an event.
+- Multi-stop keyframe animations (8 stops for the flash) feel more realistic than simple fade-in/fade-out. Real LED strips have irregular intensity, so the stutter pattern reads as authentic.
+- Screen shake should be very brief (0.5s) and dampen quickly (3px→1px). Longer shakes feel like bugs, not effects.
+- z-index layering matters for overlays that need to punch through everything: buzzer at z-45/46/47 sits above all live effects (z-6 to z-35) but below the celebration screen (z-40+). Plan z-index ranges before adding layers.
+- The `useRef` pattern for detecting state transitions (wasEnded → isEnded) is clean for one-shot effects. Fire once, auto-dismiss via timeout.
+- Arena now has a complete lifecycle narrative: alive (live effects) → buzzer (dramatic punctuation) → stillness (ended state). Each direction should have meaningful state transitions, not just toggled visibility.
+- Next cycle: Supreme (rotation). Supreme could explore a closing-phase effect like dimming to near-black with the CTA as the only bright element, or a "last call" text flash.

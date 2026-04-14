@@ -924,3 +924,11 @@
 - The provenance chain lives between the matchup/date stamp and the share section — positioned as authentication documentation below the edition number, above the social actions. Natural hierarchy.
 - Supreme's W screen now has: giant "W" → "YOURS." → divider → player name → edition counter + auth seal → matchup + date → provenance chain → share buttons. The information cascade tells a story: you won → here's what → here's the number → here's the proof → share it.
 - Next cycle: Broadcast (rotation). Broadcast could explore a "post-game interview" style quote treatment or a sports analyst commentary section on the W screen.
+
+## Cycle 104 Learnings
+- Fan Cam frame on the W screen is distinctly arena — live, social, performative. The red badge + viewfinder corners + team-color gradient border turn the edition card into a jumbotron moment.
+- Conic-gradient is cleaner than linear-gradient for animated borders — single declaration covers the full rotation, no keyframe angle gymnastics needed. Opacity pulse (0.7→1.0, 3s) gives a subtle shimmer without the complexity of rotating the gradient itself.
+- Simplified camera viewfinder corners: 4 explicit divs with Tailwind border utilities (border-t-2 border-l-2, etc.) is far cleaner than mapping an array with complex style objects. Explicit > clever for 4 elements.
+- The "FAN CAM" badge uses the same red pill + ping dot pattern as the LIVE badge in the main header — visual consistency within the Arena direction.
+- W screen feature density per direction: Supreme (auth seal + provenance chain — formal), Broadcast (wax seal + end credit + photographer flash + BREAKING chyron — cinematic), Arena (ticket stub + fan cam frame + crowd roar EQ + confetti — live entertainment). Each direction's W screen personality is clearly divergent.
+- Next cycle: Supreme (rotation). Supreme at 9.0+ — deep polish territory. Could explore a "collector's catalog" presentation or premium card tilt/3D effect on hover.

@@ -110,6 +110,15 @@ body {
   animation: lower-third-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 
+/* Broadcast urgency banner entrance */
+@keyframes broadcast-urgency-in {
+  0% { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; }
+  100% { opacity: 1; max-height: 60px; }
+}
+.broadcast-urgency-banner {
+  animation: broadcast-urgency-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 /* Supreme CTA ambient glow pulse */
 @keyframes glow-breathe {
   0%, 100% { opacity: 0.15; transform: translateY(-50%) scaleX(1); }

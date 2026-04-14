@@ -36,6 +36,44 @@ function tierUrgencyLabel(remaining: number): string {
   return `${remaining.toLocaleString()} left`;
 }
 
+type DropPhase = 'OPEN' | 'CLOSING' | 'CRITICAL' | 'ENDED';
+
+function derivePhase(secondsLeft: number): DropPhase {
+  if (secondsLeft <= 0) return 'ENDED';
+  if (secondsLeft <= 120) return 'CRITICAL';
+  if (secondsLeft <= 600) return 'CLOSING';
+  return 'OPEN';
+}
+
+function editorialUrgencyCopy(phase: DropPhase, seconds: number): string | null {
+  if (phase === 'CRITICAL') return 'CLOSING NOW';
+  if (phase === 'CLOSING') return 'FINAL MINUTES';
+  return null;
+}
+
+function supplyNarrative(claimed: number, total: number): string {
+  const pct = (claimed / total) * 100;
+  const remaining = total - claimed;
+  if (pct >= 95) return `Only ${remaining.toLocaleString()} editions remain — nearly sold out`;
+  if (pct >= 80) return `${claimed.toLocaleString()} collectors and counting — this edition is closing fast`;
+  if (pct >= 60) return `${claimed.toLocaleString()} of ${total.toLocaleString()} claimed — momentum is building`;
+  return `${claimed.toLocaleString()} collectors own a piece of this moment`;
+}
+
+// Simulated "recent collectors" count
+function useRecentCollectors() {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    // Start with a plausible number
+    setCount(Math.floor(12 + Math.random() * 8));
+    const id = setInterval(() => {
+      setCount((prev) => Math.max(3, prev + Math.floor(Math.random() * 5) - 1));
+    }, 5000);
+    return () => clearInterval(id);
+  }, []);
+  return count;
+}
+
 // Full team name for the broadcast overlay
 const TEAM_FULL: Record<string, string> = {
   MIA: 'Miami Heat',
@@ -110,6 +148,9 @@ export default function BroadcastPage() {
   const selectedTier = moment.rarityTiers[selectedTierIdx];
   const rgb = hexToRgb(moment.teamColors.primary);
   const isUrgent = countdown.isClosing;
+  const dropPhase = derivePhase(countdown.totalSeconds);
+  const urgencyCopy = editorialUrgencyCopy(dropPhase, countdown.totalSeconds);
+  const recentCollectors = useRecentCollectors();
 
   // ── Confirmed: Certificate of Ownership ────────────────────────────────
   if (proto.state === 'confirmed') {
@@ -247,6 +288,38 @@ export default function BroadcastPage() {
           )}
         </section>
 
+        {/* ━━━ EDITORIAL URGENCY BANNER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+        {urgencyCopy && (
+          <div
+            className="broadcast-urgency-banner relative overflow-hidden border-b"
+            style={{
+              borderColor: dropPhase === 'CRITICAL' ? '#EF444430' : '#F59E0B20',
+              backgroundColor: dropPhase === 'CRITICAL' ? '#EF444408' : '#F59E0B06',
+            }}
+          >
+            <div className="mx-auto max-w-2xl px-5 py-3 flex items-center gap-3 md:px-10">
+              <div
+                className="h-1.5 w-1.5 rounded-full animate-pulse flex-shrink-0"
+                style={{
+                  backgroundColor: dropPhase === 'CRITICAL' ? '#EF4444' : '#F59E0B',
+                }}
+              />
+              <p
+                className="text-[11px] font-bold uppercase tracking-[0.25em]"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: dropPhase === 'CRITICAL' ? '#EF4444' : '#F59E0B',
+                }}
+              >
+                {urgencyCopy}
+              </p>
+              <span className="text-[11px] text-white/25 tracking-wide">
+                &mdash; {formatCountdown(countdown.totalSeconds)} left to collect
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* ━━━ EDITORIAL NARRATIVE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section className="mx-auto max-w-2xl px-5 py-10 md:px-10 md:py-14">
           {/* Section header — broadcast style */}
@@ -382,11 +455,26 @@ export default function BroadcastPage() {
               )}
             </button>
 
-            {/* Social proof */}
-            <p className="mt-5 text-[13px] text-white/25">
-              {moment.editionsClaimed.toLocaleString()} collectors own a piece
-              of this moment
+            {/* Supply narrative — editorial urgency */}
+            <p
+              className="mt-5 text-[13px] tracking-wide transition-colors duration-500"
+              style={{
+                color: (moment.editionsClaimed / moment.editionSize) >= 0.8
+                  ? '#F59E0B90'
+                  : 'rgba(255,255,255,0.25)',
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontStyle: 'italic',
+              }}
+            >
+              {supplyNarrative(moment.editionsClaimed, moment.editionSize)}
             </p>
+
+            {/* Competition signal */}
+            {!countdown.isEnded && (
+              <p className="mt-2 text-[11px] text-white/20 tabular-nums">
+                {recentCollectors} collectors joined in the last minute
+              </p>
+            )}
           </div>
         </section>
       </div>

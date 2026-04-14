@@ -681,6 +681,27 @@ export default function SupremePage() {
     prevSecondsRef.current = countdown.totalSeconds;
   }, [countdown.totalSeconds, dropPhase]);
 
+  // Auction gavel countdown — "GOING ONCE..." at ≤10s, "GOING TWICE..." at ≤5s
+  const [gavelPhase, setGavelPhase] = useState<0 | 1 | 2>(0); // 0=none, 1=going once, 2=going twice
+  const gavelKeyRef = useRef(0);
+  useEffect(() => {
+    if (dropPhase !== 'CRITICAL' || viewPhase === 'purchasing') {
+      setGavelPhase(0);
+      return;
+    }
+    if (countdown.totalSeconds <= 5 && countdown.totalSeconds > 0) {
+      if (gavelPhase !== 2) {
+        gavelKeyRef.current += 1;
+        setGavelPhase(2);
+      }
+    } else if (countdown.totalSeconds <= 10 && countdown.totalSeconds > 5) {
+      if (gavelPhase !== 1) {
+        gavelKeyRef.current += 1;
+        setGavelPhase(1);
+      }
+    }
+  }, [countdown.totalSeconds, dropPhase, viewPhase, gavelPhase]);
+
   // Tier switch breathe — brief content shift acknowledges tier change
   const [tierBreathe, setTierBreathe] = useState(false);
   const prevTierIdx = useRef(selectedTierIdx);
@@ -846,6 +867,30 @@ export default function SupremePage() {
             boxShadow: 'inset 0 0 80px rgba(239,68,68,0.15), inset 0 0 200px rgba(239,68,68,0.06)',
           }}
         />
+      )}
+
+      {/* ============================================================= */}
+      {/* AUCTION GAVEL — "GOING ONCE..." / "GOING TWICE..." final 10s */}
+      {/* ============================================================= */}
+      {gavelPhase > 0 && viewPhase !== 'purchasing' && (
+        <div
+          key={gavelKeyRef.current}
+          className="fixed inset-0 z-[42] pointer-events-none flex items-center justify-center supreme-gavel-text"
+        >
+          <span
+            className="text-[28px] sm:text-[34px] uppercase tracking-[0.3em] select-none"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              fontWeight: 700,
+              color: gavelPhase === 2 ? '#EF4444' : 'rgba(255,255,255,0.35)',
+              textShadow: gavelPhase === 2
+                ? `0 0 30px rgba(239,68,68,0.4), 0 0 60px rgba(239,68,68,0.15)`
+                : `0 0 30px ${moment.teamColors.primary}20`,
+            }}
+          >
+            {gavelPhase === 1 ? 'GOING ONCE...' : 'GOING TWICE...'}
+          </span>
+        </div>
       )}
 
       {/* ============================================================= */}

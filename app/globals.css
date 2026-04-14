@@ -402,6 +402,21 @@ body {
   animation: supreme-sold-fade 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 
+/* Supreme auction gavel — "GOING ONCE..." / "GOING TWICE..." in final 10 seconds */
+@keyframes supreme-gavel-in {
+  0% { opacity: 0; transform: scale(1.06); letter-spacing: 0.4em; }
+  30% { opacity: 0.7; }
+  100% { opacity: 1; transform: scale(1); letter-spacing: 0.3em; }
+}
+@keyframes supreme-gavel-hold {
+  0%, 80% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+.supreme-gavel-text {
+  animation: supreme-gavel-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             supreme-gavel-hold 4s ease-out 0.8s forwards;
+}
+
 /* Supreme CTA sonar invite — single expanding ring on page load */
 @keyframes supreme-sonar-invite {
   0% { transform: scale(1); opacity: 0.4; }

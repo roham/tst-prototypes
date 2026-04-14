@@ -1533,3 +1533,10 @@
 - Each direction should approach haptics differently if they add them: Supreme = restrained institutional pulses, Arena = aggressive buzz patterns matching crowd energy, Broadcast = probably no haptics (broadcast is observed, not participated in).
 - Sotheby's "Quick Bid" swipe-to-confirm feature (from their app) is an interesting conversion pattern worth exploring in a future cycle — it requires more commitment than a tap, reducing accidental purchases while maintaining urgency.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 188-189 Learnings
+- Orphaned changes from previous session should be checked for build validity and committed before starting new work
+- The catalogue colophon adds zero visual weight but psychological institutional completeness — like signing a document's final page
+- Shot chart SVG is a high-recognition broadcast element — every basketball viewer knows this visualization
+- At beyond-9.0 territory, diminishing returns on visual effects — focus on institutional completeness, narrative closure, and small conversion touches
+- Supreme's auction house metaphor is now nearly complete from header to footer — future cycles should focus on interaction refinement or unexpected moments

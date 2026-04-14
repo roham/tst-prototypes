@@ -1173,4 +1173,12 @@
 - useRef<ReturnType<typeof setInterval> | null>(null) — React 19+ requires explicit initial value for useRef, can't leave it empty.
 - IntersectionObserver with 0.3 threshold for activating the shot clock means it starts ticking before the user fully scrolls to it — creates a "you entered the zone" feeling.
 - The shot clock is distinctly Arena: Supreme would never have a ticking timer (the void is timeless), Broadcast would use a game clock format. Only Arena has the shot clock mounted above the backboard.
-- Next cycle: Supreme (rotation).
+
+## Cycle 136 Learnings
+- SVG stroke-dashoffset animation is the perfect technique for "drawing" effects — set dasharray to path length, animate dashoffset from length to 0.
+- Telestrator yellow (#FFD700) is the universally recognized analyst annotation color.
+- Slightly rotating the ellipse (-5°) breaks digital precision for hand-drawn feel.
+- 5-phase state machine with self-removal prevents stale overlays.
+- Filter drop-shadow on SVG strokes creates glowing marker pen look.
+- Telestrator completes the replay analysis sequence: INSTANT REPLAY tag → telestrator circle → fade. Full broadcast production.
+- Next cycle: Arena (rotation).

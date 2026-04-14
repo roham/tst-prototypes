@@ -271,6 +271,67 @@ function ArenaLedFlash({ events, teamColor }: { events: PurchaseEvent[]; teamCol
   );
 }
 
+/* ─── Arena Ribbon Board Pulse — 360° traveling color wave ──────── */
+/* Every NBA arena with continuous LED ribbon boards fires a traveling  */
+/* color burst when the home team scores. The light races the full     */
+/* perimeter from the scoring end. We animate SVG stroke-dashoffset    */
+/* to create a team-color light chasing around the page border.        */
+
+function ArenaRibbonPulse({ events, teamColor }: { events: PurchaseEvent[]; teamColor: string }) {
+  const [active, setActive] = useState(false);
+  const prevLen = useRef(0);
+  const rectRef = useRef<SVGRectElement>(null);
+
+  useEffect(() => {
+    if (events.length > prevLen.current && prevLen.current > 0) {
+      // Only fire ~60% of purchases (alternate with other effects)
+      if (Math.random() > 0.4) {
+        prevLen.current = events.length;
+        return;
+      }
+      setActive(true);
+      // Restart animation by toggling
+      if (rectRef.current) {
+        rectRef.current.style.animation = 'none';
+        rectRef.current.getBBox(); // force reflow for SVG
+        rectRef.current.style.animation = '';
+      }
+      const t = setTimeout(() => setActive(false), 700);
+      prevLen.current = events.length;
+      return () => clearTimeout(t);
+    }
+    prevLen.current = events.length;
+  }, [events.length]);
+
+  if (!active) return null;
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[21]">
+      <svg
+        className="absolute inset-0 w-full h-full"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        fill="none"
+      >
+        <rect
+          ref={rectRef}
+          x="0.5"
+          y="0.5"
+          width="99"
+          height="99"
+          stroke={teamColor}
+          strokeWidth="1.5"
+          strokeDasharray="40 358"
+          style={{
+            filter: `drop-shadow(0 0 6px ${teamColor}) drop-shadow(0 0 12px ${teamColor}60)`,
+            animation: 'arena-ribbon-chase 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards',
+          }}
+        />
+      </svg>
+    </div>
+  );
+}
+
 /* ─── Arena Flame Jets — pyrotechnic columns on purchases ─────── */
 /* Simulates the flame effects that fire from scorer's tables during   */
 /* big plays and player intros. Brief vertical fire burst from edges.  */
@@ -1067,6 +1128,32 @@ function RarityCards({
 
 /* ─── Celebration (Confirmed) Screen ───────────────────────────── */
 
+/* ─── Arena PA Announcement — typewriter text reveal ─────────── */
+/* Every NBA arena has a PA announcer: "NOW ON THE COURT, NUMBER   */
+/* 22..." This hook types out text character-by-character like the */
+/* arena PA system announcing your collection to the crowd.        */
+
+function usePATypewriter(text: string, startDelay: number, charSpeed = 35) {
+  const [displayed, setDisplayed] = useState('');
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const delayTimer = setTimeout(() => setStarted(true), startDelay);
+    return () => clearTimeout(delayTimer);
+  }, [startDelay]);
+
+  useEffect(() => {
+    if (!started) return;
+    if (displayed.length >= text.length) return;
+    const timer = setTimeout(() => {
+      setDisplayed(text.slice(0, displayed.length + 1));
+    }, charSpeed);
+    return () => clearTimeout(timer);
+  }, [started, displayed, text, charSpeed]);
+
+  return { displayed, done: displayed.length >= text.length };
+}
+
 function CelebrationScreen({
   editionNumber,
   total,
@@ -1087,6 +1174,10 @@ function CelebrationScreen({
   const [shake, setShake] = useState(true);
   const [showDetails, setShowDetails] = useState(false);
   const [showShare, setShowShare] = useState(false);
+
+  // PA announcement typing — starts after headline bounce-in settles
+  const paText = `NOW COLLECTING... ${moment.player.toUpperCase()} · ${moment.playType.toUpperCase()}`;
+  const pa = usePATypewriter(paText, 800, 40);
 
   useEffect(() => {
     const t0 = setTimeout(() => setShake(false), 500);
@@ -1172,12 +1263,22 @@ function CelebrationScreen({
           </h1>
         </div>
 
-        {/* Player name + play type */}
+        {/* PA Announcement — typewriter reveal like arena public address */}
         <p
-          className="mt-1 text-xl uppercase tracking-[0.12em] text-white/40"
-          style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
+          className="mt-2 text-sm uppercase tracking-[0.18em] text-white/35"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500, minHeight: '1.4em' }}
         >
-          {moment.player} · {moment.playType}
+          <span>{pa.displayed}</span>
+          {!pa.done && (
+            <span
+              className="inline-block w-[2px] h-[0.9em] ml-[2px] align-middle"
+              style={{
+                backgroundColor: moment.teamColors.primary,
+                animation: 'arena-pa-cursor 0.6s step-end infinite',
+                boxShadow: `0 0 4px ${moment.teamColors.primary}60`,
+              }}
+            />
+          )}
         </p>
 
         {/* Jumbotron FAN CAM — edition card framed like arena big screen */}
@@ -1825,6 +1926,9 @@ export default function ArenaPage({
 
       {/* ─── Arena LED flash — team-color edge pulse on each purchase ─── */}
       {!countdown.isEnded && <ArenaLedFlash events={feedEvents} teamColor={moment.teamColors.primary} />}
+
+      {/* ─── Ribbon board pulse — 360° traveling color wave on purchases ─── */}
+      {!countdown.isEnded && <ArenaRibbonPulse events={feedEvents} teamColor={moment.teamColors.primary} />}
 
       {/* ─── Camera flash — brief white burst simulating crowd cameras ─── */}
       {!countdown.isEnded && <ArenaCameraFlash events={feedEvents} />}

@@ -1109,6 +1109,18 @@ body {
   animation: arena-led-scan 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Arena ribbon board traveling color pulse — 360° chase around page border */
+@keyframes arena-ribbon-chase {
+  0% { stroke-dashoffset: 398; opacity: 0.9; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+/* Arena PA announcement cursor blink */
+@keyframes arena-pa-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 @keyframes arena-buzzer-shake {
   0%, 100% { transform: translateX(0); }
   10% { transform: translateX(-3px); }

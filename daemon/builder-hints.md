@@ -822,3 +822,12 @@
 - The PiP has a functional conversion angle: keeping the player's face visible near the CTA while the user scrolls through editorial content maintains emotional connection at the moment of decision.
 - Broadcast overlay inventory is massive: ticker, score bug, network bug, replay tag, lower-third, production markers, PiP, sticky CTA. Still doesn't feel cluttered because each operates at different opacity/positioning levels.
 - Next cycle: Arena (rotation). Arena could explore a "fan cam" selfie circle on the W screen, or a confetti cannon burst animation.
+
+## Cycle 92 Learnings
+- Per-second clock tick pulse using `prevSeconds` ref comparison is clean and reliable — detects actual second changes, not re-renders. The same pattern used across the codebase for detecting state transitions.
+- 80ms spring-in (cubic-bezier 0.16, 1, 0.3, 1) + 150ms ease-out creates a crisp "tick" feel — fast attack, gradual release. Matches the visual rhythm of a shot clock.
+- 1.12x scale is the sweet spot for the tick — visible enough to create tension, subtle enough to not feel like a bug. Larger (1.2x) makes the layout feel jittery.
+- Syncing the shot clock ring opacity (0.25→0.45) with the text tick creates a unified "system pulse" — the entire countdown cell breathes together.
+- The dual-layer text-shadow (12px tight + 24px bloom) creates a glow that reads as "urgency" even in peripheral vision. The glow intensification is more impactful than the scale alone.
+- CRITICAL phase is Arena's most dramatic state: red vignette + urgency-fast pulse + shot clock depletion + panic banner + clock ticks. Each adds one layer of tension.
+- Next cycle: Supreme (rotation). Supreme could explore a "vault door" animation on tier selection, or a signature/autograph effect on the W screen.

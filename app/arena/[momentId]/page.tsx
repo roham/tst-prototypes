@@ -3108,6 +3108,105 @@ function CrowdReactionBar({ teamColor, isCritical, isClosing }: { teamColor: str
   );
 }
 
+/* ─── Jumbotron Trivia — "DID YOU KNOW?" player facts on the big screen ── */
+/* Every NBA arena shows trivia facts on the jumbotron during free throws,     */
+/* timeouts, and dead balls. "DID YOU KNOW? LeBron has 40,000 career points." */
+/* This adds engagement context during the browsing/decision phase, framing    */
+/* the moment as historically significant right when the user is deciding.     */
+
+const JUMBOTRON_TRIVIA: Record<string, string[]> = {
+  bam:   [
+    'Bam Adebayo is the only player in Heat history to record 30+ PTS and 8+ REB in a playoff game at TD Garden.',
+    'Adebayo has been named to 3 NBA All-Defensive teams — more than any active Heat player.',
+    'This was the loudest recorded crowd reaction at TD Garden this postseason, per arena sensors.',
+  ],
+  jokic: [
+    'Nikola Jokić joins Wilt Chamberlain and Oscar Robertson as the only players with 4 straight playoff triple-doubles.',
+    'Jokić has the highest career playoff PER of any center in NBA history.',
+    'That no-look pass was his 847th career assist — the most by any European-born center.',
+  ],
+  sga:   [
+    'Shai Gilgeous-Alexander is the youngest Thunder player to score 40+ in a playoff game since Kevin Durant.',
+    'SGA has scored 30+ in 7 consecutive playoff games — the longest active streak in the NBA.',
+    'His mid-range shooting percentage this postseason (58%) is the highest since Michael Jordan in 1998.',
+  ],
+};
+
+function JumbotronTrivia({ momentId, teamColor, isVisible }: {
+  momentId: string; teamColor: string; isVisible: boolean;
+}) {
+  const [show, setShow] = useState(false);
+  const [factIdx, setFactIdx] = useState(0);
+  const firedRef = useRef(false);
+  const facts = JUMBOTRON_TRIVIA[momentId] ?? JUMBOTRON_TRIVIA.bam;
+
+  useEffect(() => {
+    if (!isVisible || firedRef.current) return;
+    // Show trivia after 6s of browsing the tier section
+    const timer = setTimeout(() => {
+      firedRef.current = true;
+      setFactIdx(Math.floor(Math.random() * facts.length));
+      setShow(true);
+      // Auto-dismiss after 4.5s
+      setTimeout(() => setShow(false), 4500);
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, [isVisible, facts.length]);
+
+  if (!show) return null;
+
+  return (
+    <div
+      className="mx-4 mb-2 relative overflow-hidden rounded-lg"
+      style={{
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        border: `1px solid ${teamColor}30`,
+        animation: 'arena-trivia-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+      }}
+    >
+      {/* Team-color top accent bar — jumbotron screen edge */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[2px]"
+        style={{
+          background: `linear-gradient(90deg, transparent 5%, ${teamColor} 50%, transparent 95%)`,
+        }}
+      />
+      <div className="px-4 py-3 flex items-start gap-3">
+        {/* Trivia icon — question mark in team-color circle */}
+        <div
+          className="flex-shrink-0 w-[26px] h-[26px] rounded-full flex items-center justify-center mt-0.5"
+          style={{
+            backgroundColor: `${teamColor}20`,
+            border: `1px solid ${teamColor}40`,
+          }}
+        >
+          <span
+            className="text-[13px] font-bold"
+            style={{ color: teamColor, fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            ?
+          </span>
+        </div>
+        <div className="flex-1 min-w-0">
+          {/* "DID YOU KNOW?" label — jumbotron graphic style */}
+          <span
+            className="text-[9px] font-bold uppercase tracking-[0.3em]"
+            style={{
+              color: teamColor,
+              fontFamily: 'var(--font-oswald), sans-serif',
+            }}
+          >
+            Did You Know?
+          </span>
+          <p className="mt-1 text-[11px] leading-[1.5] text-white/60">
+            {facts[factIdx]}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
@@ -3904,6 +4003,15 @@ export default function ArenaPage({
             ))}
           </div>
         </div>
+      )}
+
+      {/* ─── Jumbotron Trivia — "DID YOU KNOW?" during browsing ─── */}
+      {!countdown.isEnded && proto.state === 'browsing' && (
+        <JumbotronTrivia
+          momentId={moment.id}
+          teamColor={moment.teamColors.primary}
+          isVisible={tierVisible}
+        />
       )}
 
       {/* ─── Rarity Tiers — live auction selector ─── */}

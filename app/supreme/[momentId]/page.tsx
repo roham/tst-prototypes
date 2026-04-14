@@ -130,12 +130,25 @@ function WScreen({
   onReset: () => void;
 }) {
   const [show, setShow] = useState(false);
+  const [flash, setFlash] = useState(true);
   useEffect(() => {
     requestAnimationFrame(() => setShow(true));
+    // Brief white flash on entry
+    const t = setTimeout(() => setFlash(false), 400);
+    return () => clearTimeout(t);
   }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0B0E14] overflow-hidden">
+      {/* Entry flash */}
+      <div
+        className="absolute inset-0 z-20 pointer-events-none transition-opacity duration-400"
+        style={{
+          backgroundColor: '#00E5A0',
+          opacity: flash ? 0.15 : 0,
+        }}
+      />
+
       {/* Confetti burst */}
       <ConfettiParticles teamColor={moment.teamColors.primary} />
 
@@ -303,8 +316,19 @@ export default function SupremePage() {
   const glowColor =
     dropPhase === 'CRITICAL' ? '#EF4444' : '#00E5A0';
 
+  // Background shifts toward team color in urgency phases
+  const bgColor =
+    dropPhase === 'CRITICAL'
+      ? `color-mix(in srgb, #0B0E14 92%, ${moment.teamColors.primary})`
+      : dropPhase === 'CLOSING'
+        ? `color-mix(in srgb, #0B0E14 96%, ${moment.teamColors.primary})`
+        : '#0B0E14';
+
   return (
-    <div className="min-h-dvh flex flex-col bg-[#0B0E14] relative overflow-hidden select-none">
+    <div
+      className="min-h-dvh flex flex-col relative overflow-hidden select-none transition-colors duration-1000"
+      style={{ backgroundColor: bgColor }}
+    >
       {/* ============================================================= */}
       {/* HERO — fills top 52% */}
       {/* ============================================================= */}
@@ -338,7 +362,7 @@ export default function SupremePage() {
           }}
         />
 
-        {/* Player name + play type — bottom-left */}
+        {/* Player name + stat line — bottom-left */}
         <div className="absolute bottom-6 left-5 right-5 z-10">
           {/* Play type — above name, small */}
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/35 mb-2">
@@ -354,8 +378,15 @@ export default function SupremePage() {
           >
             {moment.player}
           </h1>
+          {/* Stat line — key emotional context */}
+          <p
+            className="mt-2 text-base text-white/60 tracking-wide"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
+          >
+            {moment.statLine}
+          </p>
           {/* Game context */}
-          <p className="mt-2.5 text-xs text-white/30 tracking-wide">
+          <p className="mt-1 text-xs text-white/25 tracking-wide">
             {moment.context}
           </p>
         </div>
@@ -443,27 +474,13 @@ export default function SupremePage() {
           }}
         >
           {isPurchasing ? (
-            <span className="inline-flex items-center gap-2">
-              <svg
-                className="animate-spin h-5 w-5"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                />
-              </svg>
-              Processing...
+            <span className="inline-flex items-center gap-2.5">
+              {/* Pulsing dot instead of spinner — minimal */}
+              <span className="relative flex h-3 w-3">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#0B0E14]/40" />
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-[#0B0E14]/60" />
+              </span>
+              Securing...
             </span>
           ) : (
             buttonText

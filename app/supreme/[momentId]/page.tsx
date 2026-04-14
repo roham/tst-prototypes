@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { getMoment, SALE_DURATION_MS } from '@/lib/mock-data';
 import type { Moment } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
@@ -38,6 +38,49 @@ function formatTimer(totalSeconds: number): string {
   const m = Math.floor(totalSeconds / 60);
   const s = totalSeconds % 60;
   return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+// ---------------------------------------------------------------------------
+// Magnetic button — CTA subtly gravitates toward cursor, premium pull feel
+// ---------------------------------------------------------------------------
+
+function useMagneticButton(maxPull: number = 6) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [lightPos, setLightPos] = useState({ x: 50, y: 50 });
+  const rafRef = useRef(0);
+
+  const onMouseMove = useCallback((e: React.MouseEvent) => {
+    const el = ref.current;
+    if (!el) return;
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      // Pull is proportional to distance from center, capped at maxPull
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const maxDist = Math.max(rect.width, rect.height);
+      const strength = Math.min(dist / maxDist, 1);
+      const pullX = (dx / maxDist) * maxPull * strength;
+      const pullY = (dy / maxDist) * maxPull * strength;
+      setOffset({ x: pullX, y: pullY });
+      // Light position as percentage across button surface
+      const lx = ((e.clientX - rect.left) / rect.width) * 100;
+      const ly = ((e.clientY - rect.top) / rect.height) * 100;
+      setLightPos({ x: Math.max(0, Math.min(100, lx)), y: Math.max(0, Math.min(100, ly)) });
+    });
+  }, [maxPull]);
+
+  const onMouseLeave = useCallback(() => {
+    cancelAnimationFrame(rafRef.current);
+    setOffset({ x: 0, y: 0 });
+    setLightPos({ x: 50, y: 50 });
+  }, []);
+
+  return { ref, offset, lightPos, onMouseMove, onMouseLeave };
 }
 
 // ---------------------------------------------------------------------------
@@ -567,6 +610,7 @@ export default function SupremePage() {
   const watching = useSocialProof(moment ? 30 + moment.editionsClaimed % 40 : 30);
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=confirming, 2=yours
+  const magnetic = useMagneticButton(6);
   const ctaRef = useRef<HTMLButtonElement>(null);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [scrollY, setScrollY] = useState(0);
@@ -1218,12 +1262,18 @@ export default function SupremePage() {
           />
         )}
         <button
-          ref={ctaRef}
+          ref={(el) => {
+            // Merge refs: ctaRef for IntersectionObserver, magnetic.ref for cursor tracking
+            (ctaRef as React.MutableRefObject<HTMLButtonElement | null>).current = el;
+            (magnetic.ref as React.MutableRefObject<HTMLButtonElement | null>).current = el;
+          }}
+          onMouseMove={!isEnded && !isPurchasing ? magnetic.onMouseMove : undefined}
+          onMouseLeave={!isEnded && !isPurchasing ? magnetic.onMouseLeave : undefined}
           onClick={purchase}
           disabled={isPurchasing || isEnded}
           className={`
             relative w-full h-[56px] rounded-2xl text-[15px] font-bold uppercase tracking-wider
-            supreme-btn disabled:cursor-not-allowed
+            supreme-btn disabled:cursor-not-allowed overflow-hidden
             ${buttonAnimation}
           `}
           style={{
@@ -1234,9 +1284,23 @@ export default function SupremePage() {
               : !isEnded
                 ? `0 4px 24px ${glowColor}30, 0 0 0 1px ${glowColor}10`
                 : undefined,
-            transition: 'box-shadow 0.5s ease, background-color 0.3s ease',
+            transform: !isEnded && !isPurchasing
+              ? `translate(${magnetic.offset.x}px, ${magnetic.offset.y}px)`
+              : undefined,
+            transition: 'box-shadow 0.5s ease, background-color 0.3s ease, transform 0.25s cubic-bezier(0.33, 1, 0.68, 1)',
+            willChange: 'transform',
           }}
         >
+          {/* Cursor-reactive glass highlight — light spot follows mouse across button surface */}
+          {!isEnded && !isPurchasing && (magnetic.offset.x !== 0 || magnetic.offset.y !== 0) && (
+            <div
+              className="absolute inset-0 pointer-events-none rounded-2xl"
+              style={{
+                background: `radial-gradient(circle 60px at ${magnetic.lightPos.x}% ${magnetic.lightPos.y}%, rgba(255,255,255,0.12) 0%, transparent 70%)`,
+                transition: 'opacity 0.2s ease',
+              }}
+            />
+          )}
           {isPurchasing ? (
             <span className="inline-flex items-center gap-2.5">
               {purchaseStage < 2 ? (

@@ -461,3 +461,11 @@
 - 1.2s cycle matches the existing `urgency-pulse-fast` timing (0.5s for button pulse), but is slower — text should pulse dramatically, not frantically. The 50% peak (0.7 opacity, 24px spread) creates genuine "breaking news" energy.
 - Broadcast hero now has 3 layered atmosphere effects: Ken Burns drift (25s), film grain (0.8s noise), and CRT scanlines (static). Each adds a different dimension of "broadcast production."
 - Next cycle: Arena (rotation). Arena could use a jumbotron pixel grid effect, or a subtle camera flash on purchases.
+
+## Cycle 53 Learnings
+- Camera flash at 40% probability is the key insight — every purchase having a flash would feel mechanical. Random 40% creates the natural "crowd cameras going off" feel where some moments get captured and others don't.
+- 80ms flash duration with instant-on (0ms transition) and slow-off (120ms fade) mimics real camera physics — the flash is instantaneous, the retinal afterimage fades.
+- 4% white opacity is the sweet spot — visible as a subtle screen-wide brightening but not jarring. Higher opacity (8%+) competes with the LED flash effect.
+- z-22 sits between ArenaLedFlash (z-20, team-color edges) and CrowdReactions (z-25, emoji burst). The three purchase reaction layers are: warm team-color glow → cold white flash → colorful emoji burst. Different visual frequencies.
+- Arena now has 5 simultaneous purchase reaction systems: LED flash (edge glow), camera flash (screen burst), CrowdReactions (emoji), feed item glow (feed), and streak counter (gamification). The layered approach creates overwhelming arena energy.
+- Next cycle: Supreme (rotation). Supreme could use a subtle heartbeat pulse on the CTA glow (matching the breathing vignette rhythm), or a premium "collector since" timestamp in the W screen.

@@ -304,6 +304,19 @@ body {
   animation: supreme-breathe-vignette 6s ease-in-out infinite;
 }
 
+/* Supreme player name — holographic foil shimmer (premium trading card energy) */
+@keyframes supreme-name-shimmer {
+  0%, 85%, 100% { background-position: 200% 50%; }
+  50% { background-position: -50% 50%; }
+}
+.supreme-name-shimmer {
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: supreme-name-shimmer 10s ease-in-out infinite;
+}
+
 /* Broadcast hero — slow cinematic Ken Burns drift for emotional tension */
 @keyframes broadcast-ken-burns {
   0% { transform: scale(1) translate(0, 0); }

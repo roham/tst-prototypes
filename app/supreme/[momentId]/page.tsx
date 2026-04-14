@@ -679,11 +679,16 @@ export default function SupremePage() {
             </p>
           </div>
           <h1
-            className="text-[52px] sm:text-[64px] uppercase leading-[0.88] text-white"
+            className={`text-[52px] sm:text-[64px] uppercase leading-[0.88] ${
+              !isEnded && !isPurchasing ? 'supreme-name-shimmer' : 'text-white'
+            }`}
             style={{
               fontFamily: 'var(--font-oswald), sans-serif',
               fontWeight: 700,
               textShadow: `0 2px 30px rgba(0,0,0,0.7), 0 0 40px ${moment.teamColors.primary}18, 0 1px 0 rgba(255,255,255,0.04)`,
+              ...(!isEnded && !isPurchasing ? {
+                backgroundImage: `linear-gradient(120deg, #F0F2F5 0%, #F0F2F5 38%, ${moment.teamColors.primary} 44%, #FFFFFF 50%, #F0F2F5 56%, #F0F2F5 100%)`,
+              } : {}),
             }}
           >
             {moment.player}

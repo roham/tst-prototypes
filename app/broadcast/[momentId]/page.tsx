@@ -159,6 +159,7 @@ export default function BroadcastPage() {
         moment={moment}
         tier={selectedTier}
         editionNumber={proto.editionNumber ?? moment.editionsClaimed + 1}
+        purchaseTime={proto.purchaseTime}
         rgb={rgb}
         onReset={proto.reset}
       />
@@ -579,118 +580,215 @@ function CertificateScreen({
   moment,
   tier,
   editionNumber,
+  purchaseTime,
   rgb,
   onReset,
 }: {
   moment: Moment;
   tier: RarityTier;
   editionNumber: number;
+  purchaseTime: number | null;
   rgb: string;
   onReset: () => void;
 }) {
-  const [show, setShow] = useState(false);
+  const [phase, setPhase] = useState(0); // 0=hidden, 1=hero, 2=details, 3=cert, 4=share
   useEffect(() => {
-    requestAnimationFrame(() => setShow(true));
+    const t0 = setTimeout(() => setPhase(1), 50);
+    const t1 = setTimeout(() => setPhase(2), 600);
+    const t2 = setTimeout(() => setPhase(3), 1200);
+    const t3 = setTimeout(() => setPhase(4), 2000);
+    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
+  const dateStr = useMemo(() => {
+    const d = purchaseTime ? new Date(purchaseTime) : new Date();
+    return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  }, [purchaseTime]);
+
   return (
-    <div className="relative flex min-h-dvh items-center justify-center bg-[#0B0E14] px-5 py-16 text-white">
-      {/* Ambient team color glow */}
+    <div className="relative min-h-dvh bg-[#0B0E14] text-white overflow-hidden">
+      {/* ── Cinematic hero backdrop ── */}
       <div
-        className="pointer-events-none fixed inset-0"
+        className="absolute inset-0 z-0 bg-cover bg-center transition-all duration-[2s] ease-out"
         style={{
-          background: `radial-gradient(ellipse 50% 35% at 50% 50%, rgba(${rgb},0.05) 0%, transparent 70%)`,
+          backgroundImage: `url(${moment.actionImageUrl})`,
+          backgroundPosition: 'center 25%',
+          opacity: phase >= 1 ? 0.12 : 0,
+          transform: phase >= 1 ? 'scale(1.02)' : 'scale(1.08)',
+          filter: 'grayscale(0.3)',
         }}
       />
 
-      {/* Certificate card */}
+      {/* Dark gradient overlay */}
+      <div className="absolute inset-0 z-[1]" style={{
+        background: 'linear-gradient(to bottom, rgba(11,14,20,0.5) 0%, #0B0E14 55%)',
+      }} />
+
+      {/* Team-color cinematic wash */}
       <div
-        className="relative z-10 w-full max-w-lg rounded-lg border p-8 sm:p-12 transition-all duration-700 ease-out"
+        className="absolute inset-0 z-[2] pointer-events-none transition-opacity duration-[1.5s]"
         style={{
-          borderColor: `rgba(${rgb},0.25)`,
-          backgroundColor: 'rgba(20,25,37,0.85)',
-          boxShadow: `0 0 60px rgba(${rgb},0.06), inset 0 1px 0 rgba(255,255,255,0.04)`,
-          opacity: show ? 1 : 0,
-          transform: show ? 'translateY(0)' : 'translateY(16px)',
+          background: `radial-gradient(ellipse 80% 50% at 50% 25%, rgba(${rgb},0.12) 0%, transparent 70%)`,
+          opacity: phase >= 1 ? 1 : 0,
         }}
-      >
-        {/* Header — staggered entrance */}
-        <p
-          className="text-center text-[10px] font-semibold uppercase tracking-[0.35em] text-white/35 transition-all duration-500 delay-100"
-          style={{
-            opacity: show ? 1 : 0,
-            transform: show ? 'translateY(0)' : 'translateY(8px)',
-          }}
-        >
-          Certificate of Ownership
-        </p>
+      />
 
-        {/* Accent rule — grows from center */}
+      {/* ── Content ── */}
+      <div className="relative z-10 flex flex-col items-center min-h-dvh">
+
+        {/* ── TOP: Broadcast "COLLECTED" announcement ── */}
         <div
-          className="mx-auto mt-4 h-[1px] transition-all duration-700 delay-200"
+          className="w-full pt-16 pb-8 px-5 text-center transition-all duration-700 ease-out"
           style={{
-            backgroundColor: moment.teamColors.primary,
-            width: show ? 56 : 0,
-          }}
-        />
-
-        {/* Player name — Oswald broadcast style */}
-        <h2
-          className="mt-8 text-center text-4xl uppercase tracking-tight sm:text-5xl transition-all duration-500 delay-300"
-          style={{
-            fontFamily: 'var(--font-oswald), sans-serif',
-            fontWeight: 700,
-            opacity: show ? 1 : 0,
-            transform: show ? 'translateY(0)' : 'translateY(12px)',
+            opacity: phase >= 1 ? 1 : 0,
+            transform: phase >= 1 ? 'translateY(0)' : 'translateY(-20px)',
           }}
         >
-          {moment.player}
-        </h2>
-
-        {/* Play details */}
-        <p className="mt-2 text-center text-sm tracking-wide text-white/45">
-          {moment.playType}
-        </p>
-        <p className="mt-1 text-center text-sm tracking-wide text-white/30">
-          {fullTeam(moment.team)} vs {fullTeam(moment.opponent)}
-        </p>
-
-        {/* Edition block */}
-        <div className="mt-8 rounded-md border border-white/[0.06] bg-white/[0.02] px-6 py-4 text-center">
-          <p className="text-2xl font-bold tabular-nums">
-            #{editionNumber.toLocaleString()}{' '}
-            <span className="text-base font-normal text-white/35">
-              of {tier.size.toLocaleString()}
+          {/* COLLECTED banner — broadcast lower-third energy */}
+          <div className="inline-flex items-center gap-3 mb-6">
+            <div className="h-[2px] w-8" style={{ backgroundColor: moment.teamColors.primary }} />
+            <span
+              className="text-[11px] font-bold uppercase tracking-[0.35em]"
+              style={{ color: moment.teamColors.primary, fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              Collected
             </span>
+            <div className="h-[2px] w-8" style={{ backgroundColor: moment.teamColors.primary }} />
+          </div>
+
+          {/* Player name — massive broadcast headline */}
+          <h1
+            className="text-[clamp(3rem,11vw,6rem)] uppercase leading-[0.88] tracking-tight"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              fontWeight: 700,
+              textShadow: `0 2px 40px rgba(${rgb},0.3)`,
+            }}
+          >
+            {moment.player}
+          </h1>
+
+          {/* Stat line — flies in */}
+          <p
+            className="mt-3 text-lg tracking-wide text-white/60 transition-all duration-600 ease-out"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              fontWeight: 500,
+              opacity: phase >= 2 ? 1 : 0,
+              transform: phase >= 2 ? 'translateY(0)' : 'translateY(8px)',
+            }}
+          >
+            {moment.statLine}
           </p>
-          <p className="mt-1.5 text-[10px] uppercase tracking-[0.22em] text-white/25">
-            {tier.tier} Edition
+
+          {/* Context */}
+          <p
+            className="mt-1.5 text-sm text-white/30 tracking-wide transition-all duration-500"
+            style={{
+              opacity: phase >= 2 ? 1 : 0,
+            }}
+          >
+            {fullTeam(moment.team)} vs {fullTeam(moment.opponent)}
           </p>
         </div>
 
-        {/* Flow authentication */}
-        <p className="mt-6 text-center text-[11px] tracking-wide text-white/20">
-          Authenticated on Flow blockchain
-        </p>
-
-        {/* QR code placeholder */}
-        <div className="mx-auto mt-5 flex h-[72px] w-[72px] items-center justify-center rounded border border-white/[0.08] bg-white/[0.02]">
-          <QRPlaceholder />
-        </div>
-
-        {/* Share buttons */}
-        <div className="mt-7 flex items-center justify-center gap-3">
-          <ShareButton label="Share on X" />
-          <ShareButton label="Copy Link" />
-        </div>
-
-        {/* Reset / back */}
-        <button
-          onClick={onReset}
-          className="mt-8 block w-full text-center text-[10px] tracking-wide text-white/20 transition-colors hover:text-white/40"
+        {/* ── CERTIFICATE CARD — slides up from below ── */}
+        <div
+          className="w-full max-w-md mx-auto px-5 transition-all duration-800 ease-out"
+          style={{
+            opacity: phase >= 3 ? 1 : 0,
+            transform: phase >= 3 ? 'translateY(0)' : 'translateY(30px)',
+          }}
         >
-          View another moment
-        </button>
+          <div
+            className="rounded-lg border p-7 sm:p-9 relative overflow-hidden"
+            style={{
+              borderColor: `rgba(${rgb},0.2)`,
+              backgroundColor: 'rgba(20,25,37,0.8)',
+              backdropFilter: 'blur(12px)',
+              boxShadow: `0 0 80px rgba(${rgb},0.06), inset 0 1px 0 rgba(255,255,255,0.04)`,
+            }}
+          >
+            {/* Team-color top accent */}
+            <div
+              className="absolute top-0 left-0 right-0 h-[2px]"
+              style={{ backgroundColor: moment.teamColors.primary }}
+            />
+
+            {/* Certificate header */}
+            <p className="text-center text-[9px] font-semibold uppercase tracking-[0.4em] text-white/30">
+              Certificate of Ownership
+            </p>
+
+            {/* Accent rule */}
+            <div
+              className="mx-auto mt-4 mb-6 h-[1px] w-12"
+              style={{ backgroundColor: `${moment.teamColors.primary}50` }}
+            />
+
+            {/* Edition — the star of the certificate */}
+            <div className="text-center">
+              <span
+                className="text-[42px] font-mono font-bold tabular-nums tracking-tight"
+                style={{ color: moment.teamColors.primary }}
+              >
+                #{editionNumber.toLocaleString()}
+              </span>
+              <div className="mt-1 text-[11px] text-white/25 tracking-wide">
+                of {tier.size.toLocaleString()} · {tier.tier} Edition
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="mx-auto mt-5 mb-5 h-[1px] w-full bg-white/[0.06]" />
+
+            {/* Play details — two-column broadcast style */}
+            <div className="flex justify-between text-[11px] text-white/35 tracking-wide">
+              <div>
+                <span className="block text-[9px] uppercase tracking-[0.2em] text-white/20 mb-0.5">Play</span>
+                {moment.playType}
+              </div>
+              <div className="text-right">
+                <span className="block text-[9px] uppercase tracking-[0.2em] text-white/20 mb-0.5">Date</span>
+                {dateStr}
+              </div>
+            </div>
+
+            {/* Flow auth line */}
+            <div className="mt-5 flex items-center justify-center gap-2">
+              <div className="h-1 w-1 rounded-full bg-[#00E5A0]/40" />
+              <span className="text-[10px] tracking-wide text-white/20">
+                Verified on Flow blockchain
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* ── SHARE — appears last ── */}
+        <div
+          className="mt-8 mb-12 flex flex-col items-center transition-all duration-600 ease-out"
+          style={{
+            opacity: phase >= 4 ? 1 : 0,
+            transform: phase >= 4 ? 'translateY(0)' : 'translateY(8px)',
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <ShareButton label="Share on X" />
+            <ShareButton label="Instagram" />
+            <ShareButton label="Copy Link" />
+          </div>
+
+          <p className="mt-4 text-[10px] text-white/15 uppercase tracking-[0.2em]">
+            Share your collection
+          </p>
+
+          <button
+            onClick={onReset}
+            className="mt-6 text-[10px] text-white/15 hover:text-white/30 transition-colors"
+          >
+            View another moment
+          </button>
+        </div>
       </div>
     </div>
   );

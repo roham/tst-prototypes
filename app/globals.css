@@ -759,6 +759,30 @@ body {
   animation: broadcast-tc-fadein 0.5s ease-out 1.8s both;
 }
 
+/* Broadcast 35mm film frame — cinema sprocket holes along hero edges */
+.broadcast-film-frame::before,
+.broadcast-film-frame::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 18px;
+  z-index: 18;
+  pointer-events: none;
+  /* Sprocket holes: repeating rounded rectangles via radial-gradient */
+  background:
+    radial-gradient(ellipse 6px 8px at center, var(--film-hole-color, rgba(255,255,255,0.06)) 55%, transparent 56%)
+      0 12px / 18px 28px repeat-y;
+}
+.broadcast-film-frame::before {
+  left: 0;
+  border-right: 1px solid var(--film-border-color, rgba(255,255,255,0.04));
+}
+.broadcast-film-frame::after {
+  right: 0;
+  border-left: 1px solid var(--film-border-color, rgba(255,255,255,0.04));
+}
+
 /* Broadcast end slate — off-air card fades in when drop concludes */
 @keyframes broadcast-end-slate-in {
   from { opacity: 0; transform: scale(0.96); }

@@ -665,8 +665,10 @@ export default function BroadcastPage() {
         {/* ━━━ HERO — 50vh ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section
           ref={heroRef}
-          className="relative h-[50dvh] min-h-[420px] overflow-hidden broadcast-grain broadcast-scanlines"
+          className="relative h-[50dvh] min-h-[420px] overflow-hidden broadcast-grain broadcast-scanlines broadcast-film-frame"
           style={{
+            ['--film-hole-color' as string]: `rgba(${rgb},0.07)`,
+            ['--film-border-color' as string]: `rgba(${rgb},0.06)`,
             transform: crashZoom ? 'scale(1.03)' : 'scale(1)',
             transition: crashZoom
               ? 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)'

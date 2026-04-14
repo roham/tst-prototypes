@@ -1212,6 +1212,23 @@ export default function SupremePage() {
           </span>
         </div>
 
+        {/* Bidder paddle number — top-left, your registered auction identity */}
+        {!isEnded && (
+          <div
+            className="absolute top-4 left-4 z-[12] pointer-events-none supreme-lot-enter flex items-center gap-1.5"
+            style={{ opacity: 0.2 }}
+          >
+            {/* Paddle icon — minimal rectangle with handle */}
+            <svg width="10" height="14" viewBox="0 0 10 14" fill="none" className="text-white/40">
+              <rect x="1" y="0.5" width="8" height="8" rx="1.5" stroke="currentColor" strokeWidth="0.8" />
+              <line x1="5" y1="8.5" x2="5" y2="13" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" />
+            </svg>
+            <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-white/40">
+              PADDLE {((moment.id.charCodeAt(1) * 23 + moment.id.charCodeAt(0) * 7) % 900 + 100)}
+            </span>
+          </div>
+        )}
+
         {/* Holographic authentication sticker — PSA/Beckett grading hologram */}
         {!isEnded && !isPurchasing && (
           <HolographicSticker teamColor={moment.teamColors.primary} />

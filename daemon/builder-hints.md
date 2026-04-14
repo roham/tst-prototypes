@@ -290,3 +290,12 @@
 - Arena Interaction at 9.0 is the first non-Purity dimension to hit 9 across any direction. The live-commerce sticky with purchase feedback is what pushed it over.
 - All 3 directions now show purchase progress in their sticky bars. The pattern is complete.
 - Next cycle: Supreme (rotation). Supreme at 8.58 — all dims at 8.5 except Purity 9.0. Need to find what pushes Supreme to 9.0 in any dimension.
+
+## Cycle 34 Learnings
+- Action image depth layer at 5% opacity adds cinematic richness without competing with the player headshot. Supreme uses lower opacity (5%) vs Arena (8%) and Broadcast (10%) — the whisper is the Supreme way.
+- historicalNote first sentence as italic text-white/20 is a powerful emotional hook that respects Supreme's minimal philosophy — it's there for those who linger, invisible at a glance.
+- Share buttons with icon glyphs (𝕏, ◎, ⎘) + subtle border + team-color hover feel premium without adding weight. The border-white/[0.08] baseline is barely visible but creates structure.
+- onMouseEnter/Leave for team-color hover is appropriate here — CSS :hover can't dynamically reference teamColor.
+- Visual jumped 8.5→9.0 and Emotion jumped 8.5→9.0. These are the first non-Purity 9.0 scores for Supreme. Action image + historicalNote were the combo.
+- Supreme is now the leader at 8.80, surpassing Arena (8.65). The subtle layers compound — Supreme's page feels genuinely premium, not just minimal.
+- Next cycle: Broadcast (rotation). Broadcast at 8.58 — Visual (8.5) and Emotion (8.5) are the targets. Broadcast could use similar techniques adapted to its editorial identity.

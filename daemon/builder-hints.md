@@ -274,3 +274,11 @@
 - Supreme jumped from 8.38 to 8.58 — now tied with Arena. Sticky CTA + purchase feedback was a dual-dimension lift.
 - All 3 directions now have sticky CTAs, each styled to their identity.
 - Next cycle: Broadcast (rotation). Broadcast at 8.38 — weakest. Conversion (8.0) and Interaction (8.0) are the drags.
+
+## Cycle 32 Learnings
+- Sticky bar must persist during purchase state — hiding it loses feedback for scrolled users. Broadcast now shows editorial progress wipe ("Reserving..." → "Authenticating..." → "Acquired.") in the sticky bar during purchase.
+- Decorative elements should be functional: the scroll chevron was animate-bounce but did nothing. Adding `scrollIntoView({ behavior: 'smooth' })` to the transaction section is a free interaction lift.
+- Edition scarcity in the sticky bar (remaining count for ≤20 editions) adds conversion pressure at the exact point of purchase decision — cheap but effective.
+- Broadcast's sticky bar during purchase uses shortened copy ("Reserving..." vs "Reserving your edition...") for the narrower sticky layout — adapt copy to container size.
+- All 3 directions now at 8.58. Dead heat. Arena's weakest dim is... all at 8.5. Supreme and Broadcast also 8.5 across non-Purity. Entering true polish territory.
+- Next cycle: Arena (rotation). All tied at 8.58 — any direction is valid, but rotation says Arena.

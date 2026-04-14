@@ -1629,6 +1629,144 @@ function CelebrationScreen({
         {/* Crowd Decibel Meter — arena jumbotron noise level visualization */}
         <DecibelMeter teamColor={moment.teamColors.primary} show={showDetails} />
 
+        {/* Jumbotron Highlight Replay — the actual moment on the big screen */}
+        {/* Every arena replays the highlight on the jumbotron during the     */}
+        {/* post-game celebration. This shows what you collected, not just     */}
+        {/* your stats — the basketball moment itself.                        */}
+        <div
+          className="mt-5 w-full max-w-[300px] transition-all duration-600 ease-out"
+          style={{
+            opacity: showDetails ? 1 : 0,
+            transform: showDetails ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.94)',
+            transitionDelay: '0.12s',
+          }}
+        >
+          <div
+            className="relative overflow-hidden rounded-xl"
+            style={{
+              border: `1px solid ${moment.teamColors.primary}30`,
+              boxShadow: `0 0 40px ${moment.teamColors.primary}10, inset 0 1px 0 rgba(255,255,255,0.04)`,
+            }}
+          >
+            {/* 16:9 action image — jumbotron replay viewport */}
+            <div
+              className="relative w-full overflow-hidden"
+              style={{ paddingTop: '56.25%' /* 16:9 */ }}
+            >
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{
+                  backgroundImage: `url(${moment.actionImageUrl})`,
+                  backgroundPosition: 'center 30%',
+                  filter: 'contrast(1.1) saturate(1.15)',
+                }}
+              />
+              {/* Scanline overlay for jumbotron LED feel */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px)',
+                }}
+              />
+              {/* Bottom vignette */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: `linear-gradient(to top, ${moment.teamColors.primary}30 0%, transparent 40%, transparent 80%, rgba(11,14,20,0.3) 100%)`,
+                }}
+              />
+              {/* INSTANT REPLAY badge — top-left */}
+              <div
+                className="absolute top-2.5 left-2.5 flex items-center gap-1.5 rounded px-2 py-1"
+                style={{
+                  backgroundColor: 'rgba(239,68,68,0.85)',
+                  boxShadow: '0 0 10px rgba(239,68,68,0.3)',
+                }}
+              >
+                {/* Play triangle icon */}
+                <svg className="h-2.5 w-2.5" viewBox="0 0 10 10" fill="white">
+                  <polygon points="1,0 10,5 1,10" />
+                </svg>
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.2em] text-white"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  Instant Replay
+                </span>
+              </div>
+              {/* Replay count badge — top-right */}
+              <div
+                className="absolute top-2.5 right-2.5 rounded px-1.5 py-0.5"
+                style={{
+                  backgroundColor: 'rgba(11,14,20,0.7)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                }}
+              >
+                <span
+                  className="text-[8px] font-mono font-bold tabular-nums text-white/60"
+                >
+                  ×{Math.min(12, 3 + Math.floor(editionNumber % 10))}
+                </span>
+              </div>
+              {/* Player name + play type — bottom overlay */}
+              <div className="absolute bottom-0 left-0 right-0 px-3 pb-2.5 pt-6">
+                <span
+                  className="block text-lg uppercase leading-none tracking-tight text-white"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    fontWeight: 700,
+                    textShadow: '0 1px 6px rgba(0,0,0,0.7)',
+                  }}
+                >
+                  {moment.player}
+                </span>
+                <span
+                  className="mt-0.5 block text-[10px] uppercase tracking-[0.15em]"
+                  style={{
+                    color: 'rgba(255,255,255,0.7)',
+                    textShadow: '0 1px 3px rgba(0,0,0,0.6)',
+                  }}
+                >
+                  {moment.playType} · {moment.team} vs {moment.opponent}
+                </span>
+              </div>
+            </div>
+            {/* Stat line bar — key play stats in jumbotron ticker style */}
+            <div
+              className="flex items-center justify-between px-3 py-2"
+              style={{
+                backgroundColor: 'rgba(11,14,20,0.95)',
+                borderTop: `1px solid ${moment.teamColors.primary}15`,
+              }}
+            >
+              {moment.statLine.split(' / ').map((stat) => {
+                const parts = stat.trim().split(' ');
+                const value = parts[0];
+                const label = parts.slice(1).join(' ');
+                return (
+                  <div key={stat} className="flex items-center gap-1.5">
+                    <span
+                      className="text-[13px] font-bold tabular-nums"
+                      style={{
+                        fontFamily: 'var(--font-oswald), sans-serif',
+                        color: moment.teamColors.primary,
+                      }}
+                    >
+                      {value}
+                    </span>
+                    <span
+                      className="text-[8px] uppercase tracking-wider text-white/30"
+                      style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
         {/* Jumbotron FAN CAM — edition card framed like arena big screen */}
         <div
           className="mt-7 relative transition-all duration-600 ease-out"

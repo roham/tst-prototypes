@@ -1098,3 +1098,12 @@
 - CSS animation `forwards` fill mode on the exit fade ensures clean removal without JS needing to track opacity state.
 - Arena's page load sequence is now: gate scan (0-2.1s) → instant replay (already running underneath) → content settles. The replay runs behind the gate overlay so there's no dead time between intro and content.
 - Next cycle: Supreme (rotation).
+
+## Cycle 126 Learnings
+- Connecting existing UI elements to the purchase action creates narrative coherence. The paddle (top-left) was always static — making it react to purchase transforms it from decoration to storytelling.
+- Key-based re-trigger (`paddleKeyRef.current += 1`) is essential for animations that need to fire cleanly on repeated purchases during prototype testing.
+- The gavel strike expanding ring (scale 0.3→2.5x) with thinning border (2px→0.5px) creates a realistic shockwave feel. The border thinning is key — constant-width rings look artificial.
+- Tier-accent coloring on the gavel strike means the strike color matches what you're buying — Open=teal, Rare=team, Legendary=gold, Ultimate=pure gold. Subtle but cohesive.
+- Supreme now has a complete auction house lifecycle narrative with every traditional element mapped: LOT→PADDLE→ESTIMATE→RESERVE→GAVEL→PADDLE RAISE→HAMMER→SOLD. When identifying future improvements, look for real-world auction details that don't yet have digital equivalents.
+- Purchase flow has 3 visual feedback beats: paddle raise (instant, your action), progress ring (processing, system action), gavel strike (confirmation, dramatic conclusion). Good purchase UX should always have visual beats at key transitions.
+- Next cycle: Broadcast (rotation).

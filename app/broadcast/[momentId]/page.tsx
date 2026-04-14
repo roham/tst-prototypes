@@ -2041,9 +2041,34 @@ function CertificateScreen({
             Share your collection
           </p>
 
+          {/* Broadcast end credit — program sign-off */}
+          <div className="mt-8 flex flex-col items-center gap-2">
+            {/* Viewership stat — ratings overlay */}
+            <div className="flex items-center gap-1.5">
+              <svg className="h-3 w-3 text-white/15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <span className="text-[9px] tabular-nums text-white/15 tracking-wide">
+                {(847 + Math.floor(moment.editionsClaimed * 1.3)).toLocaleString()} viewers tuned in
+              </span>
+            </div>
+            {/* Program sign-off — broadcast lifecycle bookend */}
+            <div
+              className="h-[1px] w-16 mx-auto"
+              style={{ backgroundColor: `rgba(${rgb},0.12)` }}
+            />
+            <p
+              className="text-[7px] uppercase tracking-[0.3em] text-white/10"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              TST Broadcast · Program Complete · {dateStr}
+            </p>
+          </div>
+
           <button
             onClick={onReset}
-            className="mt-6 text-[10px] text-white/15 hover:text-white/30 transition-colors"
+            className="mt-4 text-[10px] text-white/15 hover:text-white/30 transition-colors"
           >
             View another moment
           </button>

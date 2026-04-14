@@ -1081,3 +1081,11 @@
 - Placing above the info strip keeps it visually separate from edition counts — reserve status is about market validation, not supply data.
 - Supreme's auction house identity is now comprehensive: LOT, PADDLE, estimate, reserve, gavel, SOLD. Each element is distinctly auction-house and no other direction would use them.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 124 Learnings
+- State machine pattern (waiting→in→out→done) is cleaner than boolean flags for timed multi-phase animations.
+- Red-to-team-color gradient creates visual urgency while staying on-brand — pure red would feel too generic.
+- 0.8s delay after leader gives the eye a beat to process before the next visual event — no overlap, no rush.
+- Cubic-bezier(0.16, 1, 0.3, 1) for entrance gives that broadcast "snappy slide" feel vs linear or ease.
+- The special report bridges leader→content perfectly — gives narrative reason for the broadcast's existence.
+- Next cycle: Arena (rotation).

@@ -1795,6 +1795,244 @@ function BidderDots({ count, color }: { count: number; color: string }) {
   );
 }
 
+/* ─── Live Odds Board — sportsbook-style line movement per tier ── */
+/* In every NBA arena, the sportsbook is the companion activity.    */
+/* Treating rarity tiers as betting lines with shifting odds        */
+/* gamifies the tier selection and creates urgency through moving   */
+/* numbers. "The line is moving" = someone knows something = act.   */
+/* Distinctly Arena: Supreme would never gamify (auction houses     */
+/* don't show odds), Broadcast would present it as data. Arena      */
+/* makes it a bet.                                                  */
+
+interface OddsLine {
+  line: number;       // current odds line (e.g., -150, +240)
+  prevLine: number;   // previous line for movement arrow
+  trend: 'up' | 'down' | 'stable';
+  heat: number;       // 0-1, how "hot" this line is
+  label: string;      // e.g., "HEAVY ACTION"
+}
+
+const ODDS_BASE: Record<string, number> = {
+  Open: -150,
+  Rare: 180,
+  Legendary: 350,
+  Ultimate: 800,
+} as const;
+
+const ODDS_HEAT_LABELS = [
+  { threshold: 0.8, label: 'HEAVY ACTION', color: '#EF4444' },
+  { threshold: 0.6, label: 'HEATING UP', color: '#FF6B35' },
+  { threshold: 0.35, label: 'ACTIVE', color: '#F59E0B' },
+  { threshold: 0, label: 'STEADY', color: '#6B7A99' },
+];
+
+function useLiveOdds(
+  tiers: RarityTier[],
+  remaining: number[],
+  velocity: number,
+  isEnded: boolean,
+): OddsLine[] {
+  const [lines, setLines] = useState<OddsLine[]>(() =>
+    tiers.map((t) => {
+      const base = ODDS_BASE[t.tier] ?? 200;
+      return { line: base, prevLine: base, trend: 'stable' as const, heat: 0.2, label: 'STEADY' };
+    }),
+  );
+
+  useEffect(() => {
+    if (isEnded || tiers.length === 0) return;
+
+    const id = setInterval(() => {
+      setLines((prev) =>
+        prev.map((cur, i) => {
+          const tier = tiers[i];
+          if (!tier) return cur;
+
+          const totalForTier = tier.size;
+          const pctRemaining = remaining[i] != null ? remaining[i] / Math.max(1, totalForTier) : 0.5;
+
+          // Lines drift based on scarcity + velocity
+          const scarcityPush = (1 - pctRemaining) * 8; // lower remaining → bigger push
+          const velPush = (velocity / 25) * 4;
+          const drift = Math.floor((scarcityPush + velPush) * (Math.random() - 0.35));
+
+          let nextLine = cur.line;
+          if (cur.line < 0) {
+            // Favorite: more negative = stronger favorite
+            nextLine = Math.min(-100, Math.max(-500, cur.line - drift));
+          } else {
+            // Underdog: lower positive = more likely
+            nextLine = Math.max(100, Math.min(2000, cur.line - drift));
+          }
+
+          // Determine movement
+          const moved = nextLine - cur.line;
+          const trend: 'up' | 'down' | 'stable' =
+            Math.abs(moved) < 3 ? 'stable' : moved < 0 ? (cur.line < 0 ? 'up' : 'down') : (cur.line < 0 ? 'down' : 'up');
+
+          // Calculate heat (0-1) from remaining + velocity
+          const heat = Math.min(1, (1 - pctRemaining) * 0.6 + (velocity / 30) * 0.4);
+          const heatLabel = ODDS_HEAT_LABELS.find((h) => heat >= h.threshold) ?? ODDS_HEAT_LABELS[3];
+
+          return {
+            line: nextLine,
+            prevLine: cur.line,
+            trend,
+            heat,
+            label: heatLabel.label,
+          };
+        }),
+      );
+    }, 3500 + Math.random() * 2000);
+
+    return () => clearInterval(id);
+  }, [tiers, remaining, velocity, isEnded]);
+
+  return lines;
+}
+
+function formatOddsLine(line: number): string {
+  return line < 0 ? `${line}` : `+${line}`;
+}
+
+function LiveOddsBoard({
+  tiers,
+  odds,
+  teamColor,
+  isEnded,
+}: {
+  tiers: RarityTier[];
+  odds: OddsLine[];
+  teamColor: string;
+  isEnded: boolean;
+}) {
+  if (isEnded || tiers.length === 0) return null;
+
+  const [updatedAgo, setUpdatedAgo] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setUpdatedAgo((v) => (v >= 8 ? 0 : v + 1)), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Reset counter when odds change
+  const lineSum = odds.reduce((a, o) => a + o.line, 0);
+  useEffect(() => { setUpdatedAgo(0); }, [lineSum]);
+
+  return (
+    <div className="mx-4 mt-3 mb-1 rounded-lg border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+      {/* Header — sportsbook ticker style */}
+      <div
+        className="flex items-center justify-between px-3 py-2"
+        style={{ borderBottom: `1px solid ${teamColor}15` }}
+      >
+        <div className="flex items-center gap-2">
+          {/* Odds icon — dice/chart */}
+          <svg className="h-3 w-3" viewBox="0 0 16 16" fill={teamColor} opacity={0.6}>
+            <path d="M2 2h4v4H2V2Zm0 6h4v4H2V8Zm6-6h4v4H8V2Zm4.5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0ZM3 3.5a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0Zm1 7a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0Zm5-7a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0Z" />
+          </svg>
+          <span
+            className="text-[9px] font-bold uppercase tracking-[0.2em]"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif', color: teamColor }}
+          >
+            Live Odds
+          </span>
+          {/* Pulsing live dot */}
+          <span
+            className="h-[5px] w-[5px] rounded-full animate-pulse"
+            style={{ backgroundColor: '#EF4444', boxShadow: '0 0 4px #EF444460' }}
+          />
+        </div>
+        <span className="text-[8px] font-mono uppercase tracking-wider text-white/20">
+          Updated {updatedAgo}s ago
+        </span>
+      </div>
+
+      {/* Odds rows */}
+      <div className="divide-y divide-white/[0.04]">
+        {tiers.map((tier, i) => {
+          const o = odds[i];
+          if (!o) return null;
+          const heatStyle = ODDS_HEAT_LABELS.find((h) => o.heat >= h.threshold) ?? ODDS_HEAT_LABELS[3];
+          const trendArrow = o.trend === 'up' ? '▲' : o.trend === 'down' ? '▼' : '──';
+          const trendColor = o.trend === 'up' ? '#00E5A0' : o.trend === 'down' ? '#EF4444' : '#3D4B66';
+
+          return (
+            <div
+              key={tier.tier}
+              className="flex items-center justify-between px-3 py-2 transition-all duration-500"
+              style={{
+                backgroundColor: o.heat > 0.6 ? `${heatStyle.color}08` : 'transparent',
+              }}
+            >
+              {/* Tier name + heat badge */}
+              <div className="flex items-center gap-2 min-w-[80px]">
+                <span
+                  className="text-[10px] font-bold uppercase tracking-[0.1em]"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: TIER_COLOR[tier.tier] ?? '#F0F2F5',
+                  }}
+                >
+                  {tier.tier}
+                </span>
+                <span
+                  className="text-[7px] font-bold uppercase tracking-[0.15em] px-1.5 py-0.5 rounded-sm"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: heatStyle.color,
+                    backgroundColor: `${heatStyle.color}15`,
+                    border: `1px solid ${heatStyle.color}25`,
+                  }}
+                >
+                  {o.label}
+                </span>
+              </div>
+
+              {/* Odds line + movement */}
+              <div className="flex items-center gap-2">
+                {/* Previous line (dimmed) */}
+                {o.trend !== 'stable' && (
+                  <span className="text-[8px] font-mono tabular-nums text-white/15 line-through">
+                    {formatOddsLine(o.prevLine)}
+                  </span>
+                )}
+                {/* Current line */}
+                <span
+                  className="text-[13px] font-bold tabular-nums transition-all duration-500"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: o.heat > 0.6 ? heatStyle.color : '#F0F2F5',
+                    textShadow: o.heat > 0.7 ? `0 0 8px ${heatStyle.color}40` : 'none',
+                  }}
+                >
+                  {formatOddsLine(o.line)}
+                </span>
+                {/* Trend arrow */}
+                <span
+                  className="text-[9px] font-bold transition-colors duration-300"
+                  style={{ color: trendColor }}
+                >
+                  {trendArrow}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Footer — sportsbook disclaimer */}
+      <div
+        className="flex items-center justify-center px-3 py-1.5"
+        style={{ borderTop: `1px solid ${teamColor}10` }}
+      >
+        <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/12">
+          Lines shift with demand · Not financial advice
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function RarityCards({
   tiers,
   selectedIdx,
@@ -3929,6 +4167,56 @@ function CrowdReactionBar({ teamColor, isCritical, isClosing }: { teamColor: str
   );
 }
 
+/* ─── Crowd Wave — stadium wave triggered by velocity spikes ─────────── */
+/* In every NBA arena, the crowd wave is the ultimate expression of         */
+/* collective energy — thousands of fans standing in sequence, creating a   */
+/* ripple that circles the entire stadium. This triggers when purchase      */
+/* velocity is high (≥15/min), rendering a row of vertical bars that       */
+/* animate left-to-right with staggered timing, simulating the wave.       */
+/* Distinctly Arena: Supreme would never show crowd behavior (auctions      */
+/* are quiet), Broadcast would show a graphic overlay (not participation). */
+/* Arena puts you IN the crowd, doing the wave.                            */
+
+function useCrowdWave(velocity: number, isEnded: boolean) {
+  const [active, setActive] = useState(false);
+  const cooldownRef = useRef(false);
+  useEffect(() => {
+    if (isEnded || velocity < 15 || cooldownRef.current) return;
+    // Trigger wave
+    setActive(true);
+    cooldownRef.current = true;
+    // Wave lasts 2.5s, cooldown 8s before next wave can trigger
+    const tEnd = setTimeout(() => setActive(false), 2500);
+    const tCool = setTimeout(() => { cooldownRef.current = false; }, 8000);
+    return () => { clearTimeout(tEnd); clearTimeout(tCool); };
+  }, [velocity, isEnded]);
+  return active;
+}
+
+function CrowdWave({ active, teamColor }: { active: boolean; teamColor: string }) {
+  if (!active) return null;
+  const barCount = 20;
+  return (
+    <div
+      className="fixed bottom-0 left-0 right-0 z-[38] pointer-events-none flex items-end justify-center gap-[2px] px-2"
+      style={{ height: '40px' }}
+    >
+      {Array.from({ length: barCount }).map((_, i) => (
+        <div
+          key={i}
+          className="flex-1 rounded-t-sm"
+          style={{
+            backgroundColor: teamColor,
+            height: '4px',
+            opacity: 0,
+            animation: `arena-crowd-wave 2.2s ease-in-out ${i * 0.09}s forwards`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 /* ─── Jumbotron Trivia — "DID YOU KNOW?" player facts on the big screen ── */
 /* Every NBA arena shows trivia facts on the jumbotron during free throws,     */
 /* timeouts, and dead balls. "DID YOU KNOW? LeBron has 40,000 career points." */
@@ -4187,6 +4475,17 @@ export default function ArenaPage({
 
   /* ── Crowd countdown — final 10s jumbotron numbers ── */
   const crowdCountdownNum = useCrowdCountdown(countdown.totalSeconds, countdown.isEnded);
+
+  /* ── Crowd wave — stadium wave sweeps across on velocity spike ── */
+  const crowdWaveActive = useCrowdWave(liveVelocity, countdown.isEnded);
+
+  /* ── Live odds — sportsbook-style line movement per tier ── */
+  const liveOdds = useLiveOdds(
+    moment?.rarityTiers ?? [],
+    liveTierRemaining,
+    liveVelocity,
+    countdown.isEnded,
+  );
 
   /* ── Defense stomp — "DE-FENSE" jumbotron graphic at 80% claimed ── */
   const defenseStompVisible = useDefenseStomp(
@@ -4552,6 +4851,9 @@ export default function ArenaPage({
 
       {/* ─── Defense Stomp — "DE-FENSE" jumbotron graphic on low stock ─── */}
       <DefenseStompOverlay visible={defenseStompVisible} teamColor={moment.teamColors.primary} />
+
+      {/* ─── Crowd Wave — stadium wave ripple on velocity spike ─── */}
+      <CrowdWave active={crowdWaveActive} teamColor={moment.teamColors.primary} />
 
       {/* ─── Fixed Header Bar ─── */}
       <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between border-b border-white/[0.06] bg-[#0B0E14]/90 px-4 py-3 backdrop-blur-md">
@@ -5035,6 +5337,14 @@ export default function ArenaPage({
           isVisible={tierVisible}
         />
       )}
+
+      {/* ─── Live Odds Board — sportsbook line movement per tier ─── */}
+      <LiveOddsBoard
+        tiers={moment.rarityTiers}
+        odds={liveOdds}
+        teamColor={moment.teamColors.primary}
+        isEnded={countdown.isEnded}
+      />
 
       {/* ─── Rarity Tiers — live auction selector ─── */}
       <div ref={tierSectionRef} className={`${countdown.isEnded ? 'mt-3' : 'mt-1'} relative z-[1]`}>

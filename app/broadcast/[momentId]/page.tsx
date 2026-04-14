@@ -1036,6 +1036,32 @@ export default function BroadcastPage() {
               <span className="text-[7px] font-mono tabular-nums tracking-[0.08em] text-white/15 broadcast-timecode">
                 {smpteTimecode}
               </span>
+              {/* VU audio level meter — bouncing green/yellow/red bars */}
+              <div className="flex items-end gap-[1.5px] h-[14px] mt-0.5">
+                {[
+                  { peak: '75%', dur: '0.6s', delay: '0s' },
+                  { peak: '90%', dur: '0.5s', delay: '0.1s' },
+                  { peak: '60%', dur: '0.7s', delay: '0.05s' },
+                  { peak: '85%', dur: '0.55s', delay: '0.15s' },
+                  { peak: '50%', dur: '0.65s', delay: '0.08s' },
+                ].map((bar, i) => (
+                  <div
+                    key={i}
+                    className="w-[2px] rounded-[0.5px]"
+                    style={{
+                      ['--vu-peak' as string]: bar.peak,
+                      animation: `broadcast-vu-bounce ${bar.dur} ease-in-out ${bar.delay} infinite`,
+                      background: i <= 2
+                        ? 'linear-gradient(to top, #22c55e 0%, #22c55e 60%, #eab308 80%, #ef4444 100%)'
+                        : 'linear-gradient(to top, #22c55e 0%, #22c55e 50%, #eab308 75%, #ef4444 100%)',
+                      opacity: 0.7,
+                    }}
+                  />
+                ))}
+                <span className="text-[5px] font-mono uppercase tracking-wider text-white/15 ml-1 self-center">
+                  VU
+                </span>
+              </div>
             </div>
           )}
 

@@ -5,6 +5,45 @@ import { getMoment, SALE_DURATION_MS, type Moment, type RarityTier } from '@/lib
 import { useCountdown } from '@/lib/use-countdown';
 import { usePrototypeState } from '@/lib/use-prototype-state';
 
+/* ─── Crowd Haptics — aggressive arena vibration patterns ────── */
+/* Arena haptics are loud, buzzy, and crowd-energy-driven.        */
+/* Distinct from Supreme's restrained institutional pulses.       */
+/* These feel like bass hits, stomps, and crowd roars on mobile.  */
+
+function arenaVibe(pattern: number | number[]): void {
+  try { navigator?.vibrate?.(pattern); } catch { /* no-op */ }
+}
+
+const CROWD_HAPTIC = {
+  /** CTA slam — aggressive bass hit on buy button press */
+  ctaSlam: () => arenaVibe([20, 10, 30]),
+  /** Tier switch — quick snap like flipping a stadium card */
+  tierSwitch: () => arenaVibe(15),
+  /** Purchase stage — escalating rumble per stage */
+  purchaseStage: (stage: number) =>
+    arenaVibe(stage === 0 ? [15, 20, 15] : stage === 1 ? [20, 15, 25, 15, 20] : [30, 20, 40, 20, 50]),
+  /** Celebration — crowd roar: long escalating buzz burst */
+  celebration: () => arenaVibe([25, 15, 35, 15, 50, 20, 70, 20, 90]),
+  /** Phase shift CLOSING — rumble warning */
+  closing: () => arenaVibe([20, 30, 20, 30, 20]),
+  /** Phase shift CRITICAL — aggressive alarm buzz */
+  critical: () => arenaVibe([30, 15, 30, 15, 30, 15, 50]),
+  /** Horn blast — single heavy hit for CRITICAL entry */
+  hornBlast: () => arenaVibe([50, 30, 80]),
+  /** Buzzer — game-over buzzer pattern */
+  buzzer: () => arenaVibe([60, 40, 100]),
+  /** Countdown tick — each second in final 10 */
+  countdownTick: (n: number) => arenaVibe(n <= 3 ? [25, 10, 25] : 15),
+  /** Streak combo — rapid fire matching combo energy */
+  streakHit: (count: number) => arenaVibe(count >= 5 ? [20, 10, 20, 10, 40] : count >= 3 ? [15, 10, 25] : 12),
+  /** Defense stomp — DE-FENSE crowd stomp pattern */
+  defenseStomp: () => arenaVibe([30, 60, 30, 60, 30]),
+  /** Fan cam — spotlight buzz */
+  fanCam: () => arenaVibe([15, 40, 15, 40, 30]),
+  /** Feed purchase — short buzz when someone else buys */
+  feedPulse: () => arenaVibe(8),
+} as const;
+
 /* ─── Constants ────────────────────────────────────────────────── */
 
 const BUYER_NAMES = [
@@ -628,7 +667,7 @@ function usePurchaseStreak(events: PurchaseEvent[]) {
 
     if (gap < 4000 && gap > 0) {
       // Rapid succession — streak!
-      setStreak((s) => s + 1);
+      setStreak((s) => { CROWD_HAPTIC.streakHit(s + 1); return s + 1; });
       setVisible(true);
       clearTimeout(hideTimer.current);
       hideTimer.current = setTimeout(() => {
@@ -1863,6 +1902,7 @@ function CelebrationScreen({
   const pa = usePATypewriter(paText, 800, 40);
 
   useEffect(() => {
+    CROWD_HAPTIC.celebration();
     const t0 = setTimeout(() => setShake(false), 500);
     const t1 = setTimeout(() => setFlash(false), 400);
     const t2 = setTimeout(() => setShowDetails(true), 700);
@@ -2694,6 +2734,7 @@ function useArenaBuzzer(isEnded: boolean) {
     // Detect transition from not-ended → ended
     if (isEnded && !wasEnded.current) {
       setActive(true);
+      CROWD_HAPTIC.buzzer();
       const t = setTimeout(() => setActive(false), 2200);
       wasEnded.current = true;
       return () => clearTimeout(t);
@@ -2778,6 +2819,8 @@ function useArenaTimeout(totalSeconds: number) {
     ) {
       setLabel(cur === 'CLOSING' ? 'OFFICIAL TIMEOUT' : '20 SECOND TIMEOUT');
       setActive(true);
+      if (cur === 'CLOSING') CROWD_HAPTIC.closing();
+      if (cur === 'CRITICAL') CROWD_HAPTIC.critical();
       const t = setTimeout(() => setActive(false), 2000);
       return () => clearTimeout(t);
     }
@@ -2843,6 +2886,7 @@ function useHornShockwave(totalSeconds: number, isEnded: boolean) {
     if (!isEnded && totalSeconds <= 120 && totalSeconds > 0 && !firedRef.current) {
       firedRef.current = true;
       setActive(true);
+      CROWD_HAPTIC.hornBlast();
       const t = setTimeout(() => setActive(false), 1800);
       return () => clearTimeout(t);
     }
@@ -2933,6 +2977,7 @@ function useCrowdCountdown(totalSeconds: number, isEnded: boolean) {
       // Only update on actual second change
       if (totalSeconds !== prevSeconds.current) {
         setDisplayNum(totalSeconds);
+        CROWD_HAPTIC.countdownTick(totalSeconds);
       } else if (!activeRef.current || displayNum === null) {
         setDisplayNum(totalSeconds);
       }
@@ -3481,6 +3526,7 @@ function useDefenseStomp(claimedPct: number, isEnded: boolean) {
     if (claimedPct >= 0.80) {
       firedRef.current = true;
       setVisible(true);
+      CROWD_HAPTIC.defenseStomp();
       const t = setTimeout(() => setVisible(false), 2800);
       return () => clearTimeout(t);
     }
@@ -3884,6 +3930,7 @@ export default function ArenaPage({
       };
       setFeedEvents((prev) => [...prev.slice(-9), newEvent]);
       setLiveClaimed((prev) => Math.min(prev + 1, moment.editionSize));
+      CROWD_HAPTIC.feedPulse();
       setShaking(true);
       setTimeout(() => setShaking(false), 300);
     };
@@ -3933,8 +3980,9 @@ export default function ArenaPage({
       setPurchaseStage(0);
       return;
     }
-    const t1 = setTimeout(() => setPurchaseStage(1), 500);
-    const t2 = setTimeout(() => setPurchaseStage(2), 1100);
+    CROWD_HAPTIC.purchaseStage(0);
+    const t1 = setTimeout(() => { setPurchaseStage(1); CROWD_HAPTIC.purchaseStage(1); }, 500);
+    const t2 = setTimeout(() => { setPurchaseStage(2); CROWD_HAPTIC.purchaseStage(2); }, 1100);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [proto.state]);
 
@@ -4039,6 +4087,7 @@ export default function ArenaPage({
     const timer = setTimeout(() => {
       fanCamFiredRef.current = true;
       setFanCamActive(true);
+      CROWD_HAPTIC.fanCam();
       setTimeout(() => setFanCamActive(false), 3000);
     }, 8000);
     return () => clearTimeout(timer);
@@ -4827,7 +4876,7 @@ export default function ArenaPage({
         <RarityCards
           tiers={moment.rarityTiers}
           selectedIdx={selectedTierIdx}
-          onSelect={setSelectedTierIdx}
+          onSelect={(idx: number) => { setSelectedTierIdx(idx); CROWD_HAPTIC.tierSwitch(); }}
           bidderCounts={tierBidders}
           isEnded={countdown.isEnded}
           liveRemaining={liveTierRemaining}
@@ -4934,7 +4983,7 @@ export default function ArenaPage({
 
         <button
           ref={ctaRef}
-          onClick={countdown.isEnded ? undefined : proto.purchase}
+          onClick={countdown.isEnded ? undefined : () => { CROWD_HAPTIC.ctaSlam(); proto.purchase(); }}
           disabled={proto.state === 'purchasing' || countdown.isEnded}
           className={`relative w-full overflow-hidden rounded-xl py-4 text-base font-bold transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed ${
             countdown.isEnded
@@ -5116,7 +5165,7 @@ export default function ArenaPage({
 
             {/* Buy button — shows progress during purchase */}
             <button
-              onClick={proto.state !== 'purchasing' ? proto.purchase : undefined}
+              onClick={proto.state !== 'purchasing' ? () => { CROWD_HAPTIC.ctaSlam(); proto.purchase(); } : undefined}
               disabled={proto.state === 'purchasing'}
               className={`relative ml-auto flex-shrink-0 overflow-hidden rounded-lg px-6 py-3 font-bold text-sm uppercase tracking-wider transition-all active:scale-[0.97] ${
                 proto.state === 'purchasing'

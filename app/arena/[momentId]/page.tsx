@@ -621,7 +621,7 @@ function StatsBar({
         </div>
       </div>
 
-      {/* Countdown */}
+      {/* Countdown — with shot clock ring */}
       <div className="relative rounded-xl bg-white/[0.04] p-3 overflow-hidden border border-white/[0.04]">
         {/* Scoreboard top accent */}
         <div
@@ -631,7 +631,32 @@ function StatsBar({
             opacity: isEnded ? 1 : 0.6,
           }}
         />
-        <div className="text-center">
+        {/* Shot clock ring — circular countdown like NBA shot clock */}
+        {!isEnded && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <svg width="58" height="58" viewBox="0 0 58 58" className="opacity-25">
+              <circle
+                cx="29" cy="29" r="25"
+                fill="none"
+                stroke="rgba(255,255,255,0.08)"
+                strokeWidth="2"
+              />
+              <circle
+                cx="29" cy="29" r="25"
+                fill="none"
+                stroke={isCritical ? '#EF4444' : isClosing ? '#F59E0B' : (teamColor ?? '#00E5A0')}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeDasharray={`${2 * Math.PI * 25}`}
+                strokeDashoffset={`${2 * Math.PI * 25 * (1 - Math.min(1, totalSeconds / ((12 * 60))))}`}
+                transform="rotate(-90 29 29)"
+                style={{ transition: 'stroke-dashoffset 1s linear, stroke 0.5s' }}
+                className={isCritical ? 'arena-shot-clock-critical' : ''}
+              />
+            </svg>
+          </div>
+        )}
+        <div className="relative text-center">
           <span
             className={`font-bold font-mono tabular-nums transition-all duration-500 ${
               isEnded

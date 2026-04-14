@@ -757,3 +757,10 @@
 - Reusing the existing `supreme-info-in` keyframe with a different delay is cleaner than creating a new keyframe for the same motion.
 - ENDED state improvements are low-delta but high-polish — they complete the lifecycle rather than improving the conversion path.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 85 Learnings
+- Each direction now has its own ENDED-state visual treatment: Supreme has "SOLD" watermark (auction), Broadcast has "THIS BROADCAST HAS CONCLUDED" end slate (TV off-air), Arena already has buzzer effect from cycle 68.
+- The end slate uses backdrop-blur + translucent background to sit naturally on the dimmed hero without fighting the desaturation.
+- 0.5s delay on the end slate animation lets the hero desaturation settle first, then the card fades in — two-beat sequence.
+- Broadcast end slate is restrained — small centered card vs. Supreme's full-hero diagonal. Each direction's ENDED treatment matches its personality.
+- Next cycle: Arena (rotation).

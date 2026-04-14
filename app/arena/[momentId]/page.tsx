@@ -2676,6 +2676,76 @@ function MilestoneFlash({
   );
 }
 
+/* ─── Crowd Reaction Bar — Whatnot/TikTok-style emoji reactions ──── */
+/* Live commerce platforms (Whatnot, TikTok Shop, Twitch) show a     */
+/* stream of emoji reactions from viewers — 🔥💰😱🏀 floating up     */
+/* from the bottom of the video. This is the purchase-page equivalent */
+/* creating "other people are excited" social proof near the CTA.     */
+
+const REACTION_EMOJIS_OPEN = ['🔥', '💰', '🏀', '👀', '💪', '🙌', '⭐'];
+const REACTION_EMOJIS_CLOSING = ['🔥', '😱', '⚡', '💰', '🏃', '⏰', '🚨'];
+const REACTION_EMOJIS_CRITICAL = ['🚨', '😱', '🔥', '⚡', '💸', '😤', '🏆'];
+
+function CrowdReactionBar({ teamColor, isCritical, isClosing }: { teamColor: string; isCritical: boolean; isClosing: boolean }) {
+  const [reactions, setReactions] = useState<{ id: number; emoji: string; x: number; delay: number }[]>([]);
+  const idRef = useRef(0);
+
+  useEffect(() => {
+    const pool = isCritical ? REACTION_EMOJIS_CRITICAL : isClosing ? REACTION_EMOJIS_CLOSING : REACTION_EMOJIS_OPEN;
+    // Faster reactions during urgency phases
+    const minInterval = isCritical ? 300 : isClosing ? 600 : 900;
+    const maxInterval = isCritical ? 800 : isClosing ? 1400 : 2200;
+
+    let timer: ReturnType<typeof setTimeout>;
+    const spawn = () => {
+      const emoji = pool[Math.floor(Math.random() * pool.length)];
+      const x = 8 + Math.random() * 84; // 8-92% horizontal position
+      const delay = Math.random() * 0.3;
+      const id = ++idRef.current;
+      setReactions(prev => {
+        // Keep max 12 visible at a time
+        const next = prev.length > 11 ? prev.slice(-11) : prev;
+        return [...next, { id, emoji, x, delay }];
+      });
+      // Remove after animation completes
+      setTimeout(() => {
+        setReactions(prev => prev.filter(r => r.id !== id));
+      }, 2200);
+      timer = setTimeout(spawn, minInterval + Math.random() * (maxInterval - minInterval));
+    };
+    timer = setTimeout(spawn, 200);
+    return () => clearTimeout(timer);
+  }, [isCritical, isClosing]);
+
+  return (
+    <div className="relative z-[1] mx-4 mt-1 mb-0 overflow-hidden" style={{ height: '32px' }}>
+      {/* Faint label */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <span
+          className="text-[7px] font-bold uppercase tracking-[0.4em] text-white/[0.06]"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+        >
+          Live Reactions
+        </span>
+      </div>
+      {/* Floating emoji reactions */}
+      {reactions.map(r => (
+        <span
+          key={r.id}
+          className="absolute bottom-0 text-sm pointer-events-none"
+          style={{
+            left: `${r.x}%`,
+            animation: `arena-reaction-float 2s ease-out ${r.delay}s both`,
+            filter: `drop-shadow(0 0 4px ${teamColor}40)`,
+          }}
+        >
+          {r.emoji}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
@@ -2854,6 +2924,19 @@ export default function ArenaPage({
     countdown.isEnded,
   );
 
+  /* ── Timeout Called — jumbotron timeout overlay after browsing too long ── */
+  const [timeoutCalled, setTimeoutCalled] = useState(false);
+  const timeoutFiredRef = useRef(false);
+  useEffect(() => {
+    if (!tierVisible || countdown.isEnded || proto.state !== 'browsing' || timeoutFiredRef.current) return;
+    const timer = setTimeout(() => {
+      timeoutFiredRef.current = true;
+      setTimeoutCalled(true);
+      setTimeout(() => setTimeoutCalled(false), 2400);
+    }, 15000); // 15s of viewing tiers without buying
+    return () => clearTimeout(timer);
+  }, [tierVisible, countdown.isEnded, proto.state]);
+
   /* ── Not found ──────────────────────────────────────────────── */
   if (!moment) {
     return (
@@ -2943,6 +3026,67 @@ export default function ArenaPage({
 
       {/* ─── Arena Timeout — jumbotron overlay on phase transitions ─── */}
       <TimeoutOverlay active={timeoutActive} label={timeoutLabel} teamColor={moment.teamColors.primary} />
+
+      {/* ─── Browsing Timeout — "TIMEOUT" flash after 15s viewing tiers without buying ─── */}
+      {timeoutCalled && (
+        <div className="pointer-events-none fixed inset-0 z-[39] flex items-center justify-center">
+          {/* Full-screen team-color flash */}
+          <div
+            className="absolute inset-0 arena-timeout-flash"
+            style={{ backgroundColor: moment.teamColors.primary }}
+          />
+          {/* Dark backdrop */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse at center, ${moment.teamColors.primary}15 0%, rgba(11,14,20,0.85) 70%)`,
+            }}
+          />
+          {/* Jumbotron graphic */}
+          <div className="relative flex flex-col items-center gap-3 arena-timeout-overlay">
+            {/* Whistle icon */}
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-full"
+              style={{ backgroundColor: `${moment.teamColors.primary}25`, border: `1px solid ${moment.teamColors.primary}40` }}
+            >
+              <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none">
+                <circle cx="7" cy="12" r="4.5" stroke={moment.teamColors.primary} strokeWidth="1.5" />
+                <path d="M11 8.5L17 4" stroke={moment.teamColors.primary} strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="7" cy="12" r="1.5" fill={moment.teamColors.primary} opacity="0.6" />
+              </svg>
+            </div>
+            {/* TIMEOUT text */}
+            <span
+              className="text-4xl uppercase tracking-[0.35em] sm:text-5xl"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                fontWeight: 700,
+                color: '#F0F2F5',
+                textShadow: `0 0 30px ${moment.teamColors.primary}80, 0 0 60px ${moment.teamColors.primary}40, 0 2px 4px rgba(0,0,0,0.5)`,
+              }}
+            >
+              TIMEOUT
+            </span>
+            {/* Subtext */}
+            <span
+              className="text-[10px] uppercase tracking-[0.3em]"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                fontWeight: 400,
+                color: `${moment.teamColors.primary}CC`,
+              }}
+            >
+              Make your selection
+            </span>
+            {/* Team-color accent lines */}
+            <div className="flex items-center gap-3">
+              <div className="h-[1px] w-10" style={{ backgroundColor: `${moment.teamColors.primary}60` }} />
+              <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: moment.teamColors.primary, boxShadow: `0 0 8px ${moment.teamColors.primary}80` }} />
+              <div className="h-[1px] w-10" style={{ backgroundColor: `${moment.teamColors.primary}60` }} />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ─── Jumbotron Noise Prompt — "MAKE SOME NOISE" on velocity spike ─── */}
       <JumbotronNoisePrompt visible={noisePromptVisible} teamColor={moment.teamColors.primary} />
@@ -3405,6 +3549,11 @@ export default function ArenaPage({
         teamColor={moment.teamColors.primary}
         isVisible={tierVisible && !countdown.isEnded && proto.state === 'browsing'}
       />
+
+      {/* ─── Crowd Reaction Bar — live emoji reactions floating up from viewers ─── */}
+      {!countdown.isEnded && proto.state === 'browsing' && (
+        <CrowdReactionBar teamColor={moment.teamColors.primary} isCritical={isCritical} isClosing={isClosing} />
+      )}
 
       {/* ─── CTA Section ─── */}
       <div className="px-4 pt-1">

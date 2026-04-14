@@ -633,3 +633,12 @@
 - Absolute positioning (top: 8%, left: 50%, transform: -translate-x-1/2) centers the EQ behind the headline area. `items-end` aligns bars to the bottom so they grow upward — the natural direction for sound-level bars.
 - All 3 W screens now have unique atmospheric reveal effects: Supreme (radial burst rings), Broadcast (photographer flash + BREAKING chyron), Arena (crowd roar EQ + screen shake + confetti). Each is identity-correct.
 - Next cycle: Supreme (rotation). Supreme could use a subtle "authentication pulse" animation on the serial number in the W screen, or a minimalist breath animation on the hero edges during live state.
+
+## Cycle 72 Learnings
+- The authentication seal (SVG circle r=48 with stroke-dasharray draw animation) fires at 1.6s — 100ms after the edition counter locks (700ms showDetails delay + 800ms counter duration). This creates a satisfying sequence: number zips to target → locks with scale bump → ring draws around it → glow pulse. Four beats.
+- The 4 cardinal tick marks (0°, 90°, 180°, 270°) at 20% opacity are a notarization detail — they add visual structure to the ring without being obvious. Like the minute markers on a luxury watch face.
+- `supreme-seal-draw` uses cubic-bezier(0.22, 1, 0.36, 1) — fast start with gentle deceleration. The ring should appear quickly then settle, like a scanner confirming identity.
+- `supreme-seal-glow` (1s, 0.7s delay = fires right as the draw completes) pulses the drop-shadow from 0 → 8px → 2px. The final 2px glow persists — the seal is always subtly lit.
+- The 108×108 container with a 96px-diameter ring generously frames the 32px edition number text. The "/ 5,000" text extends past the ring edges, which is intentional — the ring frames the primary number, not the metadata.
+- All 3 W screens now have unique authentication/prestige elements: Supreme (draw-in ring seal), Broadcast (wax seal SVG emboss on certificate), Arena (competition stats — Top X% speed). Each validates the purchase in the direction's language.
+- Next cycle: Broadcast (rotation). Broadcast W screen could use a subtle "broadcast received" static/snow effect on reveal, or the certificate card could have an animated gradient border (prestige shimmer).

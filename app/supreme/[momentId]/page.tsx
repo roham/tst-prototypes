@@ -1438,9 +1438,9 @@ export default function SupremePage() {
           )}
         </div>
 
-        {/* Auction catalog lot number — top-right, subtle prestige detail */}
+        {/* Auction catalog lot number + PSA condition grade — top-right */}
         <div
-          className="absolute top-4 right-4 z-[12] pointer-events-none supreme-lot-enter"
+          className="absolute top-4 right-4 z-[12] pointer-events-none supreme-lot-enter flex flex-col items-end gap-1.5"
           style={{ opacity: isEnded ? 0.12 : 0.2 }}
         >
           <span
@@ -1448,6 +1448,30 @@ export default function SupremePage() {
           >
             LOT {((moment.id.charCodeAt(0) * 37 + moment.id.charCodeAt(1) * 13) % 9000 + 1000)}
           </span>
+          {/* PSA-style condition grade — every authenticated collectible has a grade */}
+          <div
+            className="flex items-center gap-1.5 rounded-sm px-1.5 py-0.5"
+            style={{
+              border: '0.5px solid rgba(255,255,255,0.06)',
+              backgroundColor: 'rgba(255,255,255,0.02)',
+            }}
+          >
+            <span
+              className="text-[6px] font-mono uppercase tracking-[0.3em] text-white/25"
+            >
+              GEM MINT
+            </span>
+            <span
+              className="text-[11px] font-bold tabular-nums"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: `${moment.teamColors.primary}50`,
+                textShadow: `0 0 6px ${moment.teamColors.primary}15`,
+              }}
+            >
+              10
+            </span>
+          </div>
         </div>
 
         {/* Bidder paddle number — top-left, your registered auction identity */}

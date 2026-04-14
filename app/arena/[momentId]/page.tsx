@@ -590,6 +590,8 @@ export default function ArenaPage({
   const [liveClaimed, setLiveClaimed] = useState(moment?.editionsClaimed ?? 0);
   const [recentBuyers, setRecentBuyers] = useState(23);
   const [shaking, setShaking] = useState(false);
+  const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=processing, 2=secured
+  const [activeBuyers, setActiveBuyers] = useState(Math.floor(Math.random() * 20) + 12);
 
   /* ── Feed simulation: add fake purchases every 2-5 seconds ── */
   useEffect(() => {
@@ -645,6 +647,26 @@ export default function ArenaPage({
     const id = setInterval(() => {
       setViewers((v) => Math.max(50, v + Math.floor(Math.random() * 11) - 4));
     }, 3000);
+    return () => clearInterval(id);
+  }, [moment]);
+
+  /* ── Purchase stage progression (3 stages in 1.5s) ─────────── */
+  useEffect(() => {
+    if (proto.state !== 'purchasing') {
+      setPurchaseStage(0);
+      return;
+    }
+    const t1 = setTimeout(() => setPurchaseStage(1), 500);
+    const t2 = setTimeout(() => setPurchaseStage(2), 1100);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [proto.state]);
+
+  /* ── Active buyers jitter ─────────────────────────────────── */
+  useEffect(() => {
+    if (!moment) return;
+    const id = setInterval(() => {
+      setActiveBuyers((v) => Math.max(5, v + Math.floor(Math.random() * 5) - 2));
+    }, 3500);
     return () => clearInterval(id);
   }, [moment]);
 
@@ -849,14 +871,27 @@ export default function ArenaPage({
 
       {/* ─── CTA Section ─── */}
       <div className="px-4 pt-1">
+        {/* Active buyers badge — live commerce energy */}
+        {!countdown.isEnded && proto.state !== 'purchasing' && (
+          <div className="mb-2 flex items-center justify-center gap-1.5">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00E5A0] opacity-60" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#00E5A0]" />
+            </span>
+            <span className="text-[11px] font-semibold tabular-nums text-white/50">
+              {activeBuyers} buying this tier now
+            </span>
+          </div>
+        )}
+
         <button
           onClick={countdown.isEnded ? undefined : proto.purchase}
           disabled={proto.state === 'purchasing' || countdown.isEnded}
-          className={`relative w-full rounded-xl py-4 text-base font-bold transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed ${
+          className={`relative w-full overflow-hidden rounded-xl py-4 text-base font-bold transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed ${
             countdown.isEnded
               ? 'bg-white/[0.06] text-white/30 cursor-not-allowed'
               : proto.state === 'purchasing'
-                ? 'bg-[#00E5A0]/60 text-black/60 cursor-wait'
+                ? 'bg-[#00E5A0]/80 text-black cursor-wait'
                 : isCritical
                   ? 'bg-red-500 text-white shadow-[0_0_30px_rgba(239,68,68,0.4)]'
                   : isClosing
@@ -865,29 +900,57 @@ export default function ArenaPage({
           } ${isCritical && !countdown.isEnded && proto.state !== 'purchasing' ? 'animate-urgency-fast' : ''}`}
           style={shaking && proto.state === 'browsing' && !countdown.isEnded ? { animation: 'buttonShake 0.3s ease-in-out' } : undefined}
         >
-          {countdown.isEnded ? (
-            'DROP CLOSED'
-          ) : proto.state === 'purchasing' ? (
-            <span className="flex items-center justify-center gap-2">
-              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
-              SECURING YOUR MOMENT...
-            </span>
-          ) : isCritical ? (
-            `LAST CHANCE — $${moment.rarityTiers[selectedTierIdx].price}`
-          ) : isClosing ? (
-            `GOING FAST — $${moment.rarityTiers[selectedTierIdx].price}`
-          ) : (
-            `OWN THIS MOMENT — $${moment.rarityTiers[selectedTierIdx].price}`
+          {/* Multi-stage progress bar inside button during purchase */}
+          {proto.state === 'purchasing' && (
+            <div
+              className="absolute inset-y-0 left-0 bg-[#00E5A0] transition-all duration-500 ease-out"
+              style={{
+                width: purchaseStage === 0 ? '33%' : purchaseStage === 1 ? '75%' : '100%',
+                opacity: 0.3,
+              }}
+            />
           )}
+
+          <span className="relative z-10">
+            {countdown.isEnded ? (
+              'DROP CLOSED'
+            ) : proto.state === 'purchasing' ? (
+              <span className="flex items-center justify-center gap-2">
+                <span
+                  className="text-sm font-bold uppercase tracking-wider"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  {purchaseStage === 0
+                    ? 'RESERVING EDITION...'
+                    : purchaseStage === 1
+                      ? 'PROCESSING PAYMENT...'
+                      : 'SECURED!'}
+                </span>
+              </span>
+            ) : isCritical ? (
+              `LAST CHANCE — $${moment.rarityTiers[selectedTierIdx].price}`
+            ) : isClosing ? (
+              `GOING FAST — $${moment.rarityTiers[selectedTierIdx].price}`
+            ) : (
+              `OWN THIS MOMENT — $${moment.rarityTiers[selectedTierIdx].price}`
+            )}
+          </span>
         </button>
 
-        {/* Social proof — changes on ended */}
-        <p className="mt-2 text-center text-xs text-white/40">
-          {countdown.isEnded
-            ? `${liveClaimed.toLocaleString()} editions collected during this drop`
-            : <>&#128293; {recentBuyers} people bought in the last minute</>
-          }
-        </p>
+        {/* Stored payment indicator + social proof */}
+        <div className="mt-2 flex flex-col items-center gap-0.5">
+          {!countdown.isEnded && proto.state !== 'purchasing' && (
+            <p className="text-[10px] text-white/[0.15] tracking-wide">
+              Instant checkout · 1-tap purchase
+            </p>
+          )}
+          <p className="text-center text-xs text-white/40">
+            {countdown.isEnded
+              ? `${liveClaimed.toLocaleString()} editions collected during this drop`
+              : <>&#128293; {recentBuyers} people bought in the last minute</>
+            }
+          </p>
+        </div>
       </div>
 
       {/* Bottom safe area */}

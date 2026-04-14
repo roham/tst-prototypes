@@ -2790,6 +2790,67 @@ export default function ArenaPage({
         teamColor={moment.teamColors.primary}
       />
 
+      {/* ─── Possession Arrow — scorer's table LED indicator ─── */}
+      {!countdown.isEnded && (
+        <div className="flex items-center justify-center gap-2 py-1.5">
+          <div className="h-[1px] w-6" style={{ backgroundColor: `${moment.teamColors.primary}20` }} />
+          <div className="flex items-center gap-1.5">
+            {/* LED arrow — glowing downward triangle */}
+            <svg
+              width="12"
+              height="8"
+              viewBox="0 0 12 8"
+              fill="none"
+              className={isCritical ? 'animate-urgency-fast' : ''}
+            >
+              <path
+                d="M1 1L6 7L11 1"
+                stroke={isCritical ? '#EF4444' : isClosing ? '#F59E0B' : moment.teamColors.primary}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  filter: `drop-shadow(0 0 4px ${isCritical ? 'rgba(239,68,68,0.6)' : isClosing ? 'rgba(245,158,11,0.5)' : `${moment.teamColors.primary}60`})`,
+                }}
+              />
+            </svg>
+            <span
+              className="text-[7px] font-bold uppercase tracking-[0.3em]"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: isCritical ? '#EF4444' : isClosing ? '#F59E0B' : `${moment.teamColors.primary}60`,
+                textShadow: isCritical
+                  ? '0 0 6px rgba(239,68,68,0.4)'
+                  : isClosing
+                    ? '0 0 6px rgba(245,158,11,0.3)'
+                    : 'none',
+              }}
+            >
+              Your Possession
+            </span>
+            <svg
+              width="12"
+              height="8"
+              viewBox="0 0 12 8"
+              fill="none"
+              className={isCritical ? 'animate-urgency-fast' : ''}
+            >
+              <path
+                d="M1 1L6 7L11 1"
+                stroke={isCritical ? '#EF4444' : isClosing ? '#F59E0B' : moment.teamColors.primary}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  filter: `drop-shadow(0 0 4px ${isCritical ? 'rgba(239,68,68,0.6)' : isClosing ? 'rgba(245,158,11,0.5)' : `${moment.teamColors.primary}60`})`,
+                }}
+              />
+            </svg>
+          </div>
+          <div className="h-[1px] w-6" style={{ backgroundColor: `${moment.teamColors.primary}20` }} />
+        </div>
+      )}
+
       {/* ─── Panic Banner / Final Drop Stats ─── */}
       {countdown.isEnded ? (
         <div className="mx-4 mt-2 mb-3 flex items-center justify-center gap-4 rounded-lg py-2.5 px-4 border border-white/[0.06] bg-white/[0.03]">

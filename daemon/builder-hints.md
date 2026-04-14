@@ -487,3 +487,13 @@
 - Opacity keyframing (0 → 1 at 10%, hold → 0 at 90%) prevents the streak from appearing/disappearing abruptly. The gradual fade mimics a camera slowly panning past a light source.
 - Broadcast hero now has 4 simultaneous atmosphere effects: Ken Burns drift, film grain, CRT scanlines, and anamorphic flare. All are classic broadcast/cinema production techniques, each operating independently.
 - Next cycle: Arena (rotation). Arena could use a jumbotron pixel grid effect, or a "wave" animation through the purchase feed items.
+
+## Cycle 56 Learnings
+- Buyer heat map with simplified US outline + city dots is the quintessential live-commerce visualization. Geographic demand data creates spatial FOMO — "people in Miami, Chicago, and LA are all buying right now."
+- Hardcoded CITY_COORDS (17 cities × [x,y] in a 300×170 viewBox) is far lighter than any map library. The simplified US_PATH outline is 1 SVG path — recognizable as the US without being geographically accurate.
+- Jitter (±5px x, ±4px y) prevents dot stacking when the same city appears multiple times. This is critical — without it, Miami becomes one bright dot instead of a cluster.
+- SVG `<animate>` for the expanding glow ring (r: 4→12, opacity: 0.4→0, 0.6s) is more performant than CSS animation on SVG elements. The ring expands and fades simultaneously for a "ping" effect.
+- 4-stage aging (fresh 0.9 → medium 0.5 → dim 0.25 → ghost 0.1, each ~3s) creates a visible trail of where purchases WERE, not just where they ARE. The temporal decay tells a story.
+- 20-dot cap prevents SVG performance issues while maintaining visual density. At ~1 purchase per 2-5s, you'll have 5-8 visible dots at any time — enough for a pattern, not enough for clutter.
+- Arena now has 6 simultaneous purchase reaction systems: LED flash (edge glow), camera flash (white burst), emoji reactions (floating), feed pills (scrolling names), streak counter (combo), and heat map (geographic). This is the maximum sensory load a single page can sustain.
+- Next cycle: Supreme (rotation). Supreme could use a subtle monochrome video preview on hover/long-press, or a premium "collector's mark" watermark on the hero.

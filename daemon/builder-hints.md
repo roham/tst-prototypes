@@ -1015,3 +1015,12 @@
 - The team-color left accent border (2px solid) on the data wipe bar adds broadcast chrome — the thin edge highlight is a hallmark of ESPN/FOX lower-third graphics.
 - Broadcast now has a complete lower-third reveal sequence: name clip-path wipe (0.5s) → stat data wipe (1.0s) → context data wipe (1.35s). Each uses a different animation technique but they feel like one coordinated production.
 - Next cycle: Arena (rotation).
+
+## Cycle 116 Learnings
+- usePATypewriter hook is clean and reusable: startDelay + charSpeed params, returns { displayed, done }. Could be used in other directions if needed (but shouldn't — keep directions divergent).
+- 40ms per character feels right for PA announcements — fast enough to not bore, slow enough to read along. 35ms felt too rapid for the uppercase tracking-wide style.
+- The blinking cursor with team-color glow adds subtle brand-color reinforcement to the W screen during typing.
+- Ribbon board pulse at ~60% probability alternates naturally with existing LED flash and flame jets — the 3 purchase effects together create varied arena atmosphere without overwhelming.
+- SVG stroke-dashoffset is the cleanest way to animate a light chasing a rectangular perimeter — no need for clip-path or gradient tricks.
+- Arena W screen now has: headline bounce → PA typewriter → edition card fan cam → ticket stub → share buttons. The typing animation fills the gap between headline and card reveal with dynamic content.
+- Next cycle: Supreme (rotation).

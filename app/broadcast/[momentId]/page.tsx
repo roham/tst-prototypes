@@ -133,9 +133,21 @@ export default function BroadcastPage() {
   const moment = useMemo(() => getMoment(momentId), [momentId]);
 
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
+  const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=authenticating, 2=acquired
 
   const countdown = useCountdown(SALE_DURATION_MS[params.momentId as string] ?? 12 * 60 * 1000);
   const proto = usePrototypeState(momentId);
+
+  // Purchase stage progression (3 stages in 1.5s)
+  useEffect(() => {
+    if (proto.state !== 'purchasing') {
+      setPurchaseStage(0);
+      return;
+    }
+    const t1 = setTimeout(() => setPurchaseStage(1), 500);
+    const t2 = setTimeout(() => setPurchaseStage(2), 1150);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [proto.state]);
 
   if (!moment) {
     return (
@@ -501,14 +513,34 @@ export default function BroadcastPage() {
                 }
               }}
             >
+              {/* Broadcast lower-third progress wipe during purchase */}
+              {isPurchasing && (
+                <div
+                  className="absolute inset-y-0 left-0 transition-all duration-500 ease-out"
+                  style={{
+                    width: purchaseStage === 0 ? '33%' : purchaseStage === 1 ? '75%' : '100%',
+                    backgroundColor: `rgba(${rgb},0.12)`,
+                    borderRight: purchaseStage < 2 ? `1px solid rgba(${rgb},0.3)` : 'none',
+                  }}
+                />
+              )}
+
               {countdown.isEnded ? (
                 <span className="text-white/30 uppercase tracking-[0.15em]">
                   Drop Concluded
                 </span>
               ) : isPurchasing ? (
-                <span className="flex items-center justify-center gap-3">
-                  <LoadingDots />
-                  <span className="text-white/60">Acquiring...</span>
+                <span className="relative z-10 flex items-center justify-center gap-3">
+                  <span
+                    className="text-white/70 tracking-wide"
+                    style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+                  >
+                    {purchaseStage === 0
+                      ? 'Reserving your edition...'
+                      : purchaseStage === 1
+                        ? 'Authenticating ownership...'
+                        : 'Acquired.'}
+                  </span>
                 </span>
               ) : (
                 <span className="text-white">

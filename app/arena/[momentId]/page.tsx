@@ -271,6 +271,63 @@ function ArenaLedFlash({ events, teamColor }: { events: PurchaseEvent[]; teamCol
   );
 }
 
+/* ─── Arena Flame Jets — pyrotechnic columns on purchases ─────── */
+/* Simulates the flame effects that fire from scorer's tables during   */
+/* big plays and player intros. Brief vertical fire burst from edges.  */
+
+function ArenaFlameJets({ events, teamColor }: { events: PurchaseEvent[]; teamColor: string }) {
+  const [active, setActive] = useState(false);
+  const prevLen = useRef(0);
+
+  useEffect(() => {
+    if (events.length > prevLen.current && prevLen.current > 0) {
+      // Only fire ~50% of purchases for natural, non-overwhelming feel
+      if (Math.random() > 0.5) {
+        setActive(true);
+        const t = setTimeout(() => setActive(false), 500);
+        prevLen.current = events.length;
+        return () => clearTimeout(t);
+      }
+    }
+    prevLen.current = events.length;
+  }, [events.length]);
+
+  if (!active) return null;
+
+  // 3 jets on each side (left + right), staggered timing
+  const jets = [
+    // Left side jets
+    { side: 'left', offset: '2%', delay: 0, height: '28%' },
+    { side: 'left', offset: '4.5%', delay: 40, height: '22%' },
+    { side: 'left', offset: '7%', delay: 80, height: '18%' },
+    // Right side jets
+    { side: 'right', offset: '2%', delay: 20, height: '26%' },
+    { side: 'right', offset: '4.5%', delay: 60, height: '24%' },
+    { side: 'right', offset: '7%', delay: 100, height: '16%' },
+  ];
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[18] overflow-hidden">
+      {jets.map((jet, i) => (
+        <div
+          key={i}
+          className="absolute bottom-0"
+          style={{
+            [jet.side]: jet.offset,
+            width: '8px',
+            height: jet.height,
+            background: `linear-gradient(to top, ${teamColor}00 0%, #FF6B35 15%, #F59E0B 40%, #FEC524 65%, rgba(255,255,255,0.7) 85%, transparent 100%)`,
+            borderRadius: '4px 4px 0 0',
+            filter: `blur(2px)`,
+            animation: `arena-flame-jet 500ms cubic-bezier(0.16, 1, 0.3, 1) ${jet.delay}ms forwards`,
+            boxShadow: `0 0 12px #FF6B3580, 0 0 24px ${teamColor}30`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 /* ─── Purchase Streak Counter — combo multiplier on rapid buys ── */
 
 function usePurchaseStreak(events: PurchaseEvent[]) {
@@ -1026,26 +1083,94 @@ function CelebrationScreen({
           <span className="font-mono tabular-nums">{dateStr}</span>
         </div>
 
-        {/* Competition stats — three columns */}
+        {/* Digital Ticket Stub — arena keepsake for screenshots */}
         <div
-          className="mt-5 grid grid-cols-3 gap-4 text-center transition-all duration-500 ease-out"
+          className="mt-5 w-full max-w-[280px] transition-all duration-600 ease-out"
           style={{
             opacity: showDetails ? 1 : 0,
-            transform: showDetails ? 'translateY(0)' : 'translateY(8px)',
-            transitionDelay: '0.2s',
+            transform: showDetails ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.95)',
+            transitionDelay: '0.25s',
           }}
         >
-          <div>
-            <span className="block text-lg font-bold tabular-nums text-white/80">{acquireTime}s</span>
-            <span className="text-[10px] uppercase tracking-wider text-white/30">Acquired</span>
-          </div>
-          <div>
-            <span className="block text-lg font-bold tabular-nums text-[#00E5A0]">Top {percentile}%</span>
-            <span className="text-[10px] uppercase tracking-wider text-white/30">Speed</span>
-          </div>
-          <div>
-            <span className="block text-lg font-bold tabular-nums text-white/80">#{editionNumber.toLocaleString()}</span>
-            <span className="text-[10px] uppercase tracking-wider text-white/30">Collector</span>
+          <div
+            className="relative overflow-hidden rounded-lg border border-white/[0.08]"
+            style={{
+              background: `linear-gradient(135deg, ${moment.teamColors.primary}12 0%, rgba(255,255,255,0.03) 50%, ${moment.teamColors.secondary}08 100%)`,
+            }}
+          >
+            {/* Perforated edge — left side torn ticket effect */}
+            <div className="absolute left-0 top-0 bottom-0 w-[6px] flex flex-col justify-center gap-[6px] overflow-hidden">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <div key={i} className="h-[4px] w-[8px] rounded-full bg-[#0B0E14] -ml-[2px]" />
+              ))}
+            </div>
+            {/* Team-color top accent */}
+            <div
+              className="h-[2px]"
+              style={{ background: `linear-gradient(90deg, ${moment.teamColors.primary}, ${moment.teamColors.secondary ?? moment.teamColors.primary})` }}
+            />
+            <div className="px-4 pl-5 py-3">
+              {/* Ticket header */}
+              <div className="flex items-center justify-between">
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.25em] text-white/20"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  Event Ticket
+                </span>
+                <span
+                  className="text-[7px] font-mono uppercase tracking-wider text-white/15"
+                >
+                  TST-{moment.id.slice(0, 4).toUpperCase()}-{editionNumber.toString().padStart(4, '0')}
+                </span>
+              </div>
+              {/* Ticket body — 3 columns */}
+              <div className="mt-2 grid grid-cols-3 gap-2 text-center">
+                <div>
+                  <span className="block text-[8px] uppercase tracking-wider text-white/20">Sec</span>
+                  <span
+                    className="block text-lg font-bold text-white/70 tabular-nums"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {(moment.id.charCodeAt(0) % 20) + 101}
+                  </span>
+                </div>
+                <div>
+                  <span className="block text-[8px] uppercase tracking-wider text-white/20">Row</span>
+                  <span
+                    className="block text-lg font-bold text-white/70"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {String.fromCharCode(65 + (moment.id.charCodeAt(1) % 8))}
+                  </span>
+                </div>
+                <div>
+                  <span className="block text-[8px] uppercase tracking-wider text-white/20">Seat</span>
+                  <span
+                    className="block text-lg font-bold tabular-nums"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: moment.teamColors.primary,
+                    }}
+                  >
+                    {(moment.id.charCodeAt(2) % 24) + 1}
+                  </span>
+                </div>
+              </div>
+              {/* Divider */}
+              <div className="mt-2 mb-2 border-t border-dashed border-white/[0.06]" />
+              {/* Bottom row — stats */}
+              <div className="flex items-center justify-between">
+                <span className="text-[9px] tabular-nums text-white/25">{acquireTime}s acquire</span>
+                <span
+                  className="text-[9px] font-bold tabular-nums"
+                  style={{ color: '#00E5A0' }}
+                >
+                  Top {percentile}%
+                </span>
+                <span className="text-[9px] tabular-nums text-white/25">#{editionNumber.toLocaleString()}</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1482,6 +1607,9 @@ export default function ArenaPage({
 
       {/* ─── Camera flash — brief white burst simulating crowd cameras ─── */}
       {!countdown.isEnded && <ArenaCameraFlash events={feedEvents} />}
+
+      {/* ─── Flame jets — pyrotechnic fire columns from edges on purchases ─── */}
+      {!countdown.isEnded && <ArenaFlameJets events={feedEvents} teamColor={moment.teamColors.primary} />}
 
       {/* ─── Purchase streak badge — combo multiplier on rapid buys ─── */}
       {!countdown.isEnded && <StreakBadge streak={streak} visible={streakVisible} teamColor={moment.teamColors.primary} />}

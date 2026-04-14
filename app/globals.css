@@ -901,6 +901,15 @@ body {
   animation: arena-crowd-wave 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Arena flame jets — pyrotechnic fire burst from screen edges on purchases */
+@keyframes arena-flame-jet {
+  0% { transform: scaleY(0); opacity: 0; transform-origin: bottom; }
+  15% { opacity: 1; }
+  40% { transform: scaleY(1); opacity: 0.9; transform-origin: bottom; }
+  70% { transform: scaleY(0.7); opacity: 0.5; transform-origin: bottom; }
+  100% { transform: scaleY(0); opacity: 0; transform-origin: bottom; }
+}
+
 /* Arena crowd chant ticker — jumbotron "LET'S GO [TEAM]" scrolling text */
 @keyframes arena-chant-scroll {
   0% { transform: translateX(0); }

@@ -843,3 +843,22 @@
 - `will-change: transform` on the button helps GPU compositing for the translate() animation — prevents layout thrashing during continuous mousemove updates.
 - The glass highlight only renders when `offset !== (0,0)` — no DOM noise when cursor isn't on the button.
 - Next cycle: Broadcast (rotation). Broadcast could explore a "director's commentary" text annotation that appears on extended hover over stats, or a TV-static channel-switch effect on tier changes.
+
+## Cycle 94 Learnings
+- TV channel-switch static on tier change is a natural extension of Broadcast's existing feed-cut pattern — same visual language (repeating-linear-gradient static), different trigger (user action vs phase transition).
+- CH number indicator (top-right) is a nice detail that sports fans who grew up with analog TV will recognize. Different from the ISO CAM label (production metadata).
+- 400ms is shorter than the feed-cut sweep (350ms) but has more stutter stops (6 vs smooth sweep). Different pattern = different feeling despite same visual elements.
+- Broadcast now has tier-switch feedback: static flash + CH label. Supreme has tier-switch feedback: ambient shift + breathe. Arena needs its own.
+- Next cycle: Arena (rotation). Arena could explore a crowd energy visualization, or a jumbotron-style tier spotlight.
+
+## Cycle 95 Learnings
+- Crowd energy meter beneath CTA is a novel live-commerce element — it makes purchase velocity tangible as a "power gauge" right at the decision point.
+- Three-tier color system (teal RISING → amber HIGH → red MAX) maps cleanly to the existing urgency color language (teal=normal, amber=closing, red=critical).
+- 3px height is subtle enough to not compete with the CTA button above it, but thick enough to register as a gauge, not a decoration.
+- velocity/22 ratio for fill percentage is calibrated so the meter is usually 50-80% full (velocity jitters 10-18), occasionally hitting MAX. Always-full or always-low would both be useless.
+- The 0.8s opacity pulse at MAX level (≥18/min) creates urgency without being annoying — it says "the crowd is at peak energy" which pressures the buy decision.
+- Box-shadow glow at each level adds perceived thickness — the 3px bar feels bigger when it's glowing.
+- Labels ("Crowd Energy" + "RISING/HIGH/MAX") use Oswald for consistency with the Arena's jumbotron typography language.
+- Hidden during purchasing and ended states — no visual noise when the meter isn't useful.
+- Arena now has a crowd energy visualization both geographic (heat map) and temporal (energy meter). Together they answer "where are buyers?" and "how fast are they buying?"
+- Next cycle: Supreme (rotation). Supreme could explore a hover state on the tier labels, or a subtle card-tilt perspective on the hero image during scroll.

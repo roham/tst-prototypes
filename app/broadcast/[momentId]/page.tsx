@@ -254,85 +254,233 @@ const TEAM_ARENA: Record<string, { arena: string; city: string }> = {
 };
 
 // Plausible game scores for score bug (derived from moment context)
-const GAME_SCORES: Record<string, { home: number; away: number; quarter: string }> = {
-  bam: { home: 108, away: 101, quarter: 'FINAL' },
-  jokic: { home: 122, away: 109, quarter: 'FINAL' },
-  sga: { home: 118, away: 112, quarter: 'FINAL' },
+// Quarter-by-quarter breakdown adds broadcast depth
+const GAME_SCORES: Record<string, {
+  home: number; away: number;
+  quarters: { home: number[]; away: number[] };
+}> = {
+  bam:   { home: 108, away: 101, quarters: { home: [28, 24, 30, 26], away: [26, 27, 22, 26] } },
+  jokic: { home: 122, away: 109, quarters: { home: [32, 28, 34, 28], away: [24, 31, 26, 28] } },
+  sga:   { home: 118, away: 112, quarters: { home: [30, 26, 32, 30], away: [28, 30, 24, 30] } },
 };
 
-// ── Broadcast Score Bug — persistent game score overlay (ESPN/TNT style) ──
+// Opponent team colors for score bug accent bars
+const OPPONENT_COLORS: Record<string, string> = {
+  BOS: '#007A33',
+  LAL: '#552583',
+  PHX: '#E56020',
+};
 
-function ScoreBug({ moment, isEnded, teamColor, rgb }: {
-  moment: Moment; isEnded: boolean; teamColor: string; rgb: string;
+// Live game clock — ticks down through Q4 while the drop is active
+function useGameClock(isEnded: boolean) {
+  // Start at ~2:00 remaining in Q4 and tick down
+  const [seconds, setSeconds] = useState(120);
+  const rafRef = useRef(0);
+  const startRef = useRef(0);
+  const initialRef = useRef(120);
+
+  useEffect(() => {
+    if (isEnded) { setSeconds(0); return; }
+    startRef.current = performance.now();
+    initialRef.current = 120;
+    function tick() {
+      const elapsed = (performance.now() - startRef.current) / 1000;
+      // Game clock runs ~3x slower than real time for dramatic effect
+      const remaining = Math.max(0, initialRef.current - elapsed / 3);
+      setSeconds(remaining);
+      if (remaining > 0) rafRef.current = requestAnimationFrame(tick);
+    }
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [isEnded]);
+
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return {
+    display: seconds <= 0 ? 'FINAL' : `${mins}:${secs.toString().padStart(2, '0')}`,
+    isFinal: seconds <= 0,
+    isLastMinute: seconds > 0 && seconds <= 60,
+  };
+}
+
+// ── Broadcast Score Bug — persistent game score overlay (ESPN/TNT style) ──
+// Authentic ESPN score bug: team-color accent bars, live game clock,
+// possession arrow, quarter-by-quarter mini scores.
+
+function ScoreBug({ moment, isEnded, teamColor, rgb, dropPhase }: {
+  moment: Moment; isEnded: boolean; teamColor: string; rgb: string; dropPhase: DropPhase;
 }) {
-  const scores = GAME_SCORES[moment.id] ?? { home: 110, away: 104, quarter: 'FINAL' };
+  const scores = GAME_SCORES[moment.id] ?? {
+    home: 110, away: 104,
+    quarters: { home: [28, 26, 30, 26], away: [24, 28, 26, 26] },
+  };
+  const gameClock = useGameClock(isEnded);
+  const oppColor = OPPONENT_COLORS[moment.opponent] ?? '#6B7A99';
+  // Possession arrow alternates every ~8s for realism
+  const [possession, setPossession] = useState<'home' | 'away'>('home');
+  useEffect(() => {
+    if (isEnded || gameClock.isFinal) return;
+    const id = setInterval(() => {
+      setPossession((p) => p === 'home' ? 'away' : 'home');
+    }, 6000 + Math.random() * 4000);
+    return () => clearInterval(id);
+  }, [isEnded, gameClock.isFinal]);
 
   return (
     <div
       className="fixed top-14 left-4 z-40 pointer-events-none broadcast-score-bug md:top-16 md:left-6"
-      style={{ opacity: isEnded ? 0.25 : 0.75, transition: 'opacity 0.7s ease' }}
+      style={{ opacity: isEnded ? 0.25 : 0.85, transition: 'opacity 0.7s ease' }}
     >
       <div
         className="rounded-sm overflow-hidden"
         style={{
-          backgroundColor: 'rgba(11,14,20,0.92)',
-          backdropFilter: 'blur(8px)',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
-          minWidth: '120px',
+          backgroundColor: 'rgba(11,14,20,0.94)',
+          backdropFilter: 'blur(10px)',
+          boxShadow: '0 2px 16px rgba(0,0,0,0.5)',
+          minWidth: '138px',
         }}
       >
-        {/* Team rows */}
-        <div className="flex items-center justify-between gap-3 px-2.5 py-[5px] border-b border-white/[0.04]">
-          <div className="flex items-center gap-1.5">
-            <div
-              className="h-[6px] w-[6px] rounded-sm flex-shrink-0"
-              style={{ backgroundColor: teamColor }}
-            />
+        {/* Home team row — with team-color left accent */}
+        <div className="flex items-stretch border-b border-white/[0.04]">
+          <div className="w-[3px] flex-shrink-0" style={{ backgroundColor: teamColor }} />
+          <div className="flex-1 flex items-center justify-between gap-3 px-2.5 py-[5px]">
+            <div className="flex items-center gap-1.5">
+              {/* Possession arrow */}
+              {!gameClock.isFinal && possession === 'home' && (
+                <svg width="5" height="8" viewBox="0 0 5 8" className="flex-shrink-0" style={{ opacity: 0.7 }}>
+                  <polygon points="0,0 5,4 0,8" fill={teamColor} />
+                </svg>
+              )}
+              {!gameClock.isFinal && possession !== 'home' && <div className="w-[5px] flex-shrink-0" />}
+              <span
+                className="text-[10px] font-bold uppercase tracking-wider"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: 'rgba(255,255,255,0.8)',
+                }}
+              >
+                {moment.team}
+              </span>
+            </div>
             <span
-              className="text-[10px] font-bold uppercase tracking-wider text-white/70"
+              className="text-[12px] font-bold tabular-nums text-white"
               style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
             >
-              {moment.team}
+              {scores.home}
             </span>
           </div>
-          <span
-            className="text-[11px] font-bold tabular-nums text-white/90"
-            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
-          >
-            {scores.home}
-          </span>
         </div>
-        <div className="flex items-center justify-between gap-3 px-2.5 py-[5px]">
-          <div className="flex items-center gap-1.5">
-            <div className="h-[6px] w-[6px] rounded-sm flex-shrink-0 bg-white/20" />
+        {/* Away team row — with opponent-color left accent */}
+        <div className="flex items-stretch border-b border-white/[0.04]">
+          <div className="w-[3px] flex-shrink-0" style={{ backgroundColor: oppColor, opacity: 0.6 }} />
+          <div className="flex-1 flex items-center justify-between gap-3 px-2.5 py-[5px]">
+            <div className="flex items-center gap-1.5">
+              {!gameClock.isFinal && possession === 'away' && (
+                <svg width="5" height="8" viewBox="0 0 5 8" className="flex-shrink-0" style={{ opacity: 0.5 }}>
+                  <polygon points="0,0 5,4 0,8" fill={oppColor} />
+                </svg>
+              )}
+              {!gameClock.isFinal && possession !== 'away' && <div className="w-[5px] flex-shrink-0" />}
+              <span
+                className="text-[10px] font-bold uppercase tracking-wider text-white/45"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                {moment.opponent}
+              </span>
+            </div>
             <span
-              className="text-[10px] font-bold uppercase tracking-wider text-white/40"
+              className="text-[11px] font-bold tabular-nums text-white/55"
               style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
             >
-              {moment.opponent}
+              {scores.away}
             </span>
           </div>
-          <span
-            className="text-[11px] font-bold tabular-nums text-white/50"
-            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
-          >
-            {scores.away}
-          </span>
         </div>
-        {/* Quarter / status bar */}
+        {/* Game clock + quarter status bar */}
         <div
-          className="px-2.5 py-[3px] text-center border-t"
+          className="flex items-center justify-between px-2.5 py-[3px] border-b"
           style={{
-            borderColor: `rgba(${rgb},0.15)`,
+            borderColor: `rgba(${rgb},0.12)`,
             backgroundColor: `rgba(${rgb},0.06)`,
           }}
         >
           <span
-            className="text-[8px] font-bold uppercase tracking-[0.25em]"
-            style={{ color: teamColor, fontFamily: 'var(--font-oswald), sans-serif' }}
+            className="text-[8px] font-bold uppercase tracking-[0.2em]"
+            style={{
+              color: gameClock.isFinal ? teamColor : 'rgba(255,255,255,0.5)',
+              fontFamily: 'var(--font-oswald), sans-serif',
+            }}
           >
-            {scores.quarter}
+            {gameClock.isFinal ? 'Final' : '4th'}
           </span>
+          <span
+            className="font-mono text-[9px] font-bold tabular-nums tracking-wider"
+            style={{
+              color: gameClock.isLastMinute
+                ? '#EF4444'
+                : gameClock.isFinal
+                  ? teamColor
+                  : 'rgba(255,255,255,0.6)',
+              animation: gameClock.isLastMinute ? 'pulse 1s ease-in-out infinite' : 'none',
+            }}
+          >
+            {gameClock.display}
+          </span>
+        </div>
+        {/* Quarter-by-quarter mini scores */}
+        <div className="flex items-center px-1.5 py-[2px] gap-0">
+          <span className="text-[6px] text-white/15 w-[18px] font-mono" />
+          {['Q1', 'Q2', 'Q3', 'Q4'].map((q) => (
+            <span
+              key={q}
+              className="text-[6px] font-mono text-white/20 text-center tabular-nums"
+              style={{ width: '24px' }}
+            >
+              {q}
+            </span>
+          ))}
+        </div>
+        {/* Home quarter scores */}
+        <div className="flex items-center px-1.5 pb-[1px] gap-0">
+          <span
+            className="text-[6px] font-bold text-white/30 w-[18px]"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            {moment.team}
+          </span>
+          {scores.quarters.home.map((q, i) => (
+            <span
+              key={i}
+              className="text-[7px] font-mono tabular-nums text-center"
+              style={{
+                width: '24px',
+                color: q > scores.quarters.away[i] ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.2)',
+              }}
+            >
+              {q}
+            </span>
+          ))}
+        </div>
+        {/* Away quarter scores */}
+        <div className="flex items-center px-1.5 pb-1 gap-0">
+          <span
+            className="text-[6px] font-bold text-white/20 w-[18px]"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            {moment.opponent}
+          </span>
+          {scores.quarters.away.map((q, i) => (
+            <span
+              key={i}
+              className="text-[7px] font-mono tabular-nums text-center"
+              style={{
+                width: '24px',
+                color: q > scores.quarters.home[i] ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.2)',
+              }}
+            >
+              {q}
+            </span>
+          ))}
         </div>
       </div>
     </div>
@@ -1420,7 +1568,7 @@ export default function BroadcastPage() {
       </div>
 
       {/* ━━━ SCORE BUG — persistent game score overlay ━━━━━━━━━━━━━━ */}
-      <ScoreBug moment={moment} isEnded={countdown.isEnded} teamColor={moment.teamColors.primary} rgb={rgb} />
+      <ScoreBug moment={moment} isEnded={countdown.isEnded} teamColor={moment.teamColors.primary} rgb={rgb} dropPhase={dropPhase} />
 
       <div className="relative z-10">
         {/* ━━━ ESPN BOTTOMLINE — scrolling score ticker ━━━━━━━━━━━━━━━ */}

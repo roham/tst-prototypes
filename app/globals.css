@@ -547,6 +547,32 @@ body {
   animation: supreme-gavel-strike-flash 0.4s ease-out forwards;
 }
 
+/* Supreme lot clerk — formal acquisition ceremony during purchase processing */
+@keyframes supreme-clerk-line-extend {
+  0% { transform: scaleX(0); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: scaleX(1); opacity: 1; }
+}
+@keyframes supreme-clerk-text-in {
+  0% { opacity: 0; transform: translateY(6px); letter-spacing: 0.6em; }
+  100% { opacity: 1; transform: translateY(0); letter-spacing: 0.35em; }
+}
+@keyframes supreme-clerk-confirmed {
+  0% { opacity: 0; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.supreme-clerk-line {
+  animation: supreme-clerk-line-extend 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: center;
+}
+.supreme-clerk-text {
+  animation: supreme-clerk-text-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+.supreme-clerk-confirmed {
+  animation: supreme-clerk-confirmed 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* Supreme CTA sonar invite — single expanding ring on page load */
 @keyframes supreme-sonar-invite {
   0% { transform: scale(1); opacity: 0.4; }

@@ -1335,6 +1335,90 @@ export default function SupremePage() {
       )}
 
       {/* ============================================================= */}
+      {/* LOT CLERK — formal acquisition ceremony during purchase        */}
+      {/* At Christie's/Sotheby's, the lot clerk formally records each   */}
+      {/* sale: "Sold to paddle 247 for $5." This overlay transforms     */}
+      {/* the purchase processing into an institutional ceremony.        */}
+      {/* ============================================================= */}
+      {isPurchasing && (
+        <div
+          className="fixed inset-0 z-[44] pointer-events-none flex flex-col items-center justify-center gap-4"
+          style={{
+            background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(11,14,20,0.85) 0%, rgba(11,14,20,0.92) 100%)',
+          }}
+        >
+          {/* Extending team-color line — gavel mark / ledger rule */}
+          <div
+            className="w-24 h-[0.5px] supreme-clerk-line"
+            style={{
+              backgroundColor: `${moment.teamColors.primary}50`,
+              boxShadow: `0 0 12px ${moment.teamColors.primary}20`,
+            }}
+          />
+
+          {/* Stage-reactive text — lot clerk's formal record */}
+          {purchaseStage === 0 && (
+            <div className="flex flex-col items-center gap-1.5 supreme-clerk-text">
+              <span
+                className="text-[9px] font-mono uppercase tracking-[0.35em] text-white/20"
+              >
+                Lot {((moment.id.charCodeAt(0) * 37 + moment.id.charCodeAt(1) * 13) % 9000 + 1000)}
+              </span>
+              <span
+                className="text-[13px] uppercase tracking-[0.35em] text-white/40"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
+              >
+                Acquiring...
+              </span>
+            </div>
+          )}
+
+          {purchaseStage === 1 && (
+            <div className="flex flex-col items-center gap-1.5 supreme-clerk-text">
+              <span
+                className="text-[9px] font-mono uppercase tracking-[0.35em] text-white/25"
+              >
+                Paddle {((moment.id.charCodeAt(1) * 23 + moment.id.charCodeAt(0) * 7) % 900 + 100)}
+              </span>
+              <span
+                className="text-[13px] uppercase tracking-[0.35em] text-white/50"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
+              >
+                Ownership Recorded
+              </span>
+            </div>
+          )}
+
+          {purchaseStage === 2 && (
+            <div className="flex flex-col items-center gap-2 supreme-clerk-confirmed">
+              <span
+                className="text-[16px] uppercase tracking-[0.3em] font-bold"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: moment.teamColors.primary,
+                  textShadow: `0 0 20px ${moment.teamColors.primary}40`,
+                }}
+              >
+                Sold
+              </span>
+              <span className="text-[9px] font-mono uppercase tracking-[0.25em] text-white/20">
+                Hammer Price · ${selectedTier.price}
+              </span>
+            </div>
+          )}
+
+          {/* Bottom team-color line — closing bracket */}
+          <div
+            className="w-24 h-[0.5px] supreme-clerk-line"
+            style={{
+              backgroundColor: `${moment.teamColors.primary}30`,
+              animationDelay: '0.2s',
+            }}
+          />
+        </div>
+      )}
+
+      {/* ============================================================= */}
       {/* CRITICAL VIGNETTE — red-tinted edge glow */}
       {/* ============================================================= */}
       {dropPhase === 'CRITICAL' && (

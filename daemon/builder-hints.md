@@ -1384,3 +1384,9 @@
 - "FROM $5" copy is more effective than just "$5" — the "FROM" prefix frames it as an entry point, implying value tiers above. Combined with Supreme's auctioneer bid call ("Do I hear $25?"), both directions now upsell via different psychological mechanisms: Broadcast invites exploration (FROM), Supreme invites escalation (Do I hear).
 - The price tag hidden during purchasing/ended prevents information overload during state transitions.
 - Next cycle: Arena (rotation).
+
+## Cycle 165 Learnings
+- The "above-fold price" initiative is now complete across all 3 directions (Supreme: cycles 120/163, Broadcast: cycle 164, Arena: cycle 165). Each direction surfaces price in its own voice.
+- Phase-reactive copy on Arena's price badge ("CLAIM NOW" → "GOING FAST" → "LAST CHANCE") means the hero communicates urgency progression. The badge changes meaning as time runs out.
+- Using `tierSectionRef` instead of `ctaRef` for Arena's scroll target is intentional — Arena wants users to browse tiers before buying.
+- Next cycle: Supreme (rotation).

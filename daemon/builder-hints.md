@@ -999,4 +999,11 @@
 - The noise prompt was already implemented as uncommitted code — always check `git diff` before starting a new cycle. Building on existing work is faster than starting fresh.
 - The keyframe was missing from globals.css but the component referenced it — always check both component AND CSS when shipping pre-existing code.
 - Arena's jumbotron overlay system is now the richest interaction layer: replay → timeout → scoring run → noise prompt → buzzer. Each has a distinct trigger, visual treatment, and z-layer. Consider focusing future Arena cycles on the transaction flow or W screen rather than more overlays.
-- Next cycle: Supreme (rotation).
+
+## Cycle 114 Learnings
+- CSS `mask-composite: exclude` with matching `WebkitMaskComposite: xor` creates border-only rendering from a full-area gradient — no clip-path needed. Must include both prefixed and standard properties for cross-browser.
+- Conic-gradient with 85% transparent + 15% visible arc creates a short "wiper" light that traces the perimeter convincingly. The arc length (15%) matches the rotation speed (1.8s) so the light appears to travel at a natural speed.
+- Delay timing (1.8s) syncs with the hero color reveal ending — the vitrine lights up AFTER the artwork is revealed, like a museum curator turning on the display case after placing the piece.
+- One-shot animations (animation-fill-mode: forwards) with parent opacity fade to 0 are cleaner than self-removing via state — no JS needed, pure CSS lifecycle.
+- Supreme's entrance orchestration now has 5 timed stages: color reveal (0-2s) → vitrine power-on (1.8-3.6s) → lot/paddle fade-in → particles start → edge trace loops. Each reveals a different layer of the display case metaphor.
+- Next cycle: Broadcast (rotation).

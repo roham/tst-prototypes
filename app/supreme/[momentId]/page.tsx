@@ -1181,6 +1181,32 @@ export default function SupremePage() {
     }
   }, [countdown.totalSeconds, dropPhase, viewPhase, gavelPhase]);
 
+  // Anti-snipe lot extension — at Sotheby's/Christie's online, when a bid
+  // arrives in the final seconds the lot timer resets. The banner "Lot Extended"
+  // appears, telling everyone that competition forced extra time. This is the
+  // single most powerful conversion signal in live auctions: "others are bidding
+  // RIGHT NOW." We show the notice during CRITICAL phase when a claim fires.
+  const [lotExtended, setLotExtended] = useState(false);
+  const lotExtendedKeyRef = useRef(0);
+  const prevLastClaimerRef = useRef<string | null>(null);
+  useEffect(() => {
+    // Only fire when a NEW claim arrives during CRITICAL phase
+    if (
+      lastClaimer &&
+      lastClaimer !== prevLastClaimerRef.current &&
+      dropPhase === 'CRITICAL' &&
+      viewPhase !== 'purchasing' &&
+      countdown.totalSeconds > 0
+    ) {
+      lotExtendedKeyRef.current += 1;
+      setLotExtended(true);
+      const t = setTimeout(() => setLotExtended(false), 3500);
+      prevLastClaimerRef.current = lastClaimer;
+      return () => clearTimeout(t);
+    }
+    prevLastClaimerRef.current = lastClaimer;
+  }, [lastClaimer, dropPhase, viewPhase, countdown.totalSeconds]);
+
   // Tier switch breathe — brief content shift acknowledges tier change
   const [tierBreathe, setTierBreathe] = useState(false);
   const prevTierIdx = useRef(selectedTierIdx);
@@ -2136,6 +2162,59 @@ export default function SupremePage() {
               Edition #{bidLog[0].edition.toLocaleString()}
             </span>
           </p>
+        </div>
+      )}
+
+      {/* ============================================================= */}
+      {/* LOT EXTENDED — anti-snipe banner from Sotheby's/Christie's    */}
+      {/* online auctions. When a bid arrives in the final seconds, the */}
+      {/* lot timer extends. The "Lot Extended" notice tells every      */}
+      {/* bidder: competition is real, someone just bid, act now or     */}
+      {/* lose. This is the most powerful conversion signal in live     */}
+      {/* auctions — the extension proves others are actively bidding.  */}
+      {/* ============================================================= */}
+      {lotExtended && dropPhase === 'CRITICAL' && !isPurchasing && (
+        <div
+          key={lotExtendedKeyRef.current}
+          className="flex items-center justify-center gap-2 px-5 py-2"
+          style={{ animation: 'supreme-lot-extended 3.5s ease-out forwards' }}
+        >
+          {/* Extension indicator line — team-color hairline extends from center */}
+          <div
+            className="h-[0.5px] w-6"
+            style={{
+              backgroundColor: `${moment.teamColors.primary}20`,
+              animation: 'supreme-clerk-line-extend 0.4s ease-out forwards',
+            }}
+          />
+          <div className="flex flex-col items-center gap-0.5">
+            <span
+              className="text-[7px] font-bold uppercase tracking-[0.4em]"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: 'rgba(239,68,68,0.35)',
+              }}
+            >
+              Lot Extended
+            </span>
+            <p
+              className="text-[9px] tracking-[0.08em] text-center"
+              style={{
+                fontFamily: 'Georgia, serif',
+                fontStyle: 'italic',
+                color: 'rgba(255,255,255,0.12)',
+              }}
+            >
+              New bid received — timer reset
+            </p>
+          </div>
+          <div
+            className="h-[0.5px] w-6"
+            style={{
+              backgroundColor: `${moment.teamColors.primary}20`,
+              animation: 'supreme-clerk-line-extend 0.4s ease-out forwards',
+            }}
+          />
         </div>
       )}
 

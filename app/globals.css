@@ -67,6 +67,29 @@ body {
 .glow-teal { box-shadow: 0 0 20px rgba(0, 229, 160, 0.3); }
 .glow-orange { box-shadow: 0 0 20px rgba(255, 107, 53, 0.3); }
 
+/* Arena screen shake — rumble on W screen entry */
+@keyframes arena-rumble {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-3px, 2px); }
+  20% { transform: translate(3px, -2px); }
+  30% { transform: translate(-2px, -1px); }
+  40% { transform: translate(2px, 1px); }
+  50% { transform: translate(-1px, 1px); }
+  60% { transform: translate(1px, -1px); }
+  70% { transform: translate(-1px, 0); }
+  80% { transform: translate(0, 0); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Arena edition number glow pulse */
+@keyframes arena-edition-pulse {
+  0%, 100% { text-shadow: 0 0 30px rgba(0,229,160,0.4), 0 0 60px rgba(0,229,160,0.15); }
+  50% { text-shadow: 0 0 50px rgba(0,229,160,0.6), 0 0 100px rgba(0,229,160,0.25); }
+}
+.arena-edition-glow {
+  animation: arena-edition-pulse 2.5s ease-in-out infinite;
+}
+
 /* Arena animations */
 @keyframes fadeSlideIn {
   from { opacity: 0; transform: translateX(20px); }

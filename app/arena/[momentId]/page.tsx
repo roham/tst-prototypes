@@ -328,23 +328,33 @@ function CelebrationScreen({
   onReset: () => void;
 }) {
   const acquireTime = (1.5 + Math.random() * 3).toFixed(1);
+  const percentile = Math.max(1, Math.round((1 - editionNumber / total) * 100));
   const [flash, setFlash] = useState(true);
+  const [shake, setShake] = useState(true);
   const [showDetails, setShowDetails] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setFlash(false), 350);
-    const t2 = setTimeout(() => setShowDetails(true), 600);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    const t0 = setTimeout(() => setShake(false), 500);
+    const t1 = setTimeout(() => setFlash(false), 400);
+    const t2 = setTimeout(() => setShowDetails(true), 700);
+    const t3 = setTimeout(() => setShowShare(true), 1400);
+    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-[#0B0E14]">
-      {/* Entry flash — team color */}
+    <div
+      className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-[#0B0E14]"
+      style={{
+        animation: shake ? 'arena-rumble 0.5s ease-out' : undefined,
+      }}
+    >
+      {/* Entry flash — team color, brighter for arena energy */}
       <div
-        className="absolute inset-0 z-[60] pointer-events-none transition-opacity duration-400"
+        className="absolute inset-0 z-[60] pointer-events-none transition-opacity duration-500"
         style={{
           backgroundColor: moment.teamColors.primary,
-          opacity: flash ? 0.2 : 0,
+          opacity: flash ? 0.35 : 0,
         }}
       />
 
@@ -355,92 +365,151 @@ function CelebrationScreen({
         ]}
       />
 
-      {/* Team-color ambient glow */}
+      {/* Team-color ambient glow — intensified */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          background: `radial-gradient(ellipse 60% 40% at 50% 50%, ${moment.teamColors.primary}20 0%, transparent 60%)`,
+          background: `radial-gradient(ellipse 70% 50% at 50% 45%, ${moment.teamColors.primary}25 0%, transparent 65%)`,
+        }}
+      />
+
+      {/* Player image backdrop — faint arena jumbotron feel */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${moment.actionImageUrl})`,
+          backgroundPosition: 'center 30%',
+          opacity: 0.06,
+          filter: 'grayscale(0.5) contrast(1.2)',
         }}
       />
 
       <div className="relative z-50 flex flex-col items-center px-6">
-        {/* YOU'RE IN */}
+        {/* YOU'RE IN — bigger, arena-jumbotron energy */}
         <div style={{ animation: 'bounceIn 0.6s ease-out' }}>
           <h1
-            className="text-6xl uppercase tracking-tight text-white sm:text-8xl"
+            className="text-7xl uppercase tracking-tight text-white sm:text-8xl"
             style={{
               fontFamily: 'var(--font-oswald), sans-serif',
               fontWeight: 700,
-              textShadow: `0 0 40px rgba(0,229,160,0.3), 0 0 80px ${moment.teamColors.primary}30`,
+              textShadow: `0 0 50px rgba(0,229,160,0.4), 0 0 100px ${moment.teamColors.primary}40`,
             }}
           >
             YOU&apos;RE IN!
           </h1>
         </div>
 
-        {/* Player name — jumbotron echo */}
+        {/* Player name + play type */}
         <p
-          className="mt-1 text-lg uppercase tracking-[0.15em] text-white/30"
+          className="mt-1 text-xl uppercase tracking-[0.12em] text-white/40"
           style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
         >
-          {moment.player}
+          {moment.player} · {moment.playType}
         </p>
 
-        {/* Edition Jumbotron — staggered reveal */}
+        {/* Edition Jumbotron — with team-color glow */}
         <div
-          className="mt-6 flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] px-10 py-6 backdrop-blur-sm transition-all duration-600 ease-out"
+          className="mt-7 flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] px-10 py-6 backdrop-blur-sm transition-all duration-600 ease-out"
           style={{
             opacity: showDetails ? 1 : 0,
-            transform: showDetails ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.95)',
+            transform: showDetails ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.92)',
+            boxShadow: showDetails
+              ? `0 0 60px ${moment.teamColors.primary}20, inset 0 1px 0 rgba(255,255,255,0.05)`
+              : 'none',
           }}
         >
-          <span className="text-sm font-semibold uppercase tracking-widest text-white/50">
-            Edition
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/40">
+            Your Edition
           </span>
-          <span className="mt-1 text-6xl font-black tabular-nums text-[#00E5A0] sm:text-8xl">
+          <span
+            className="mt-1 text-7xl font-black tabular-nums sm:text-8xl arena-edition-glow"
+            style={{
+              color: '#00E5A0',
+              textShadow: `0 0 30px rgba(0,229,160,0.4), 0 0 60px ${moment.teamColors.primary}30`,
+            }}
+          >
             #{editionNumber.toLocaleString()}
           </span>
-          <span className="mt-2 text-sm text-white/40">
-            of {total.toLocaleString()} collectors
+          <span className="mt-2 text-sm text-white/35">
+            of {total.toLocaleString()} editions
           </span>
         </div>
 
-        {/* Stats — staggered */}
+        {/* Competition stats — three columns */}
         <div
-          className="mt-6 flex items-center gap-4 text-sm text-white/50 transition-all duration-500 ease-out"
+          className="mt-5 grid grid-cols-3 gap-4 text-center transition-all duration-500 ease-out"
           style={{
             opacity: showDetails ? 1 : 0,
             transform: showDetails ? 'translateY(0)' : 'translateY(8px)',
-            transitionDelay: '0.15s',
+            transitionDelay: '0.2s',
           }}
         >
-          <span>
-            Buyer{' '}
-            <span className="font-semibold text-white/80">#{editionNumber.toLocaleString()}</span>
-          </span>
-          <span className="text-white/20">|</span>
-          <span>
-            Acquired in <span className="font-semibold text-white/80">{acquireTime}s</span>
-          </span>
+          <div>
+            <span className="block text-lg font-bold tabular-nums text-white/80">{acquireTime}s</span>
+            <span className="text-[10px] uppercase tracking-wider text-white/30">Acquired</span>
+          </div>
+          <div>
+            <span className="block text-lg font-bold tabular-nums text-[#00E5A0]">Top {percentile}%</span>
+            <span className="text-[10px] uppercase tracking-wider text-white/30">Speed</span>
+          </div>
+          <div>
+            <span className="block text-lg font-bold tabular-nums text-white/80">#{editionNumber.toLocaleString()}</span>
+            <span className="text-[10px] uppercase tracking-wider text-white/30">Collector</span>
+          </div>
         </div>
 
-        {/* Share CTA */}
-        <button className="mt-8 rounded-full bg-[#00E5A0] px-8 py-3 text-sm font-bold text-black transition-all hover:brightness-110 active:scale-95">
-          Flex your W
-        </button>
-
-        {/* Reset */}
-        <button
-          onClick={onReset}
-          className="mt-3 text-xs text-white/30 underline-offset-2 hover:text-white/50 hover:underline"
+        {/* Share section */}
+        <div
+          className="mt-7 flex flex-col items-center transition-all duration-500 ease-out"
+          style={{
+            opacity: showShare ? 1 : 0,
+            transform: showShare ? 'translateY(0)' : 'translateY(8px)',
+          }}
         >
-          Reset demo
-        </button>
+          {/* Primary share CTA */}
+          <button className="rounded-full bg-[#00E5A0] px-8 py-3 text-sm font-bold uppercase tracking-wider text-black transition-all hover:brightness-110 active:scale-95">
+            Flex Your W
+          </button>
+
+          {/* Secondary share */}
+          <div className="mt-3 flex items-center gap-3">
+            <button className="rounded-full bg-white/[0.06] px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-white/50 transition-colors hover:bg-white/10">
+              Share on X
+            </button>
+            <button className="rounded-full bg-white/[0.06] px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-white/50 transition-colors hover:bg-white/10">
+              Copy Link
+            </button>
+          </div>
+
+          {/* Reset */}
+          <button
+            onClick={onReset}
+            className="mt-4 text-[10px] text-white/20 hover:text-white/40 transition-colors"
+          >
+            Reset demo
+          </button>
+        </div>
       </div>
 
-      {/* Feed continues at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 z-50 opacity-60">
-        <LiveFeed events={feedEvents} teamColor={moment.teamColors.primary} />
+      {/* Feed continues at bottom — YOUR purchase highlighted */}
+      <div className="absolute bottom-0 left-0 right-0 z-50">
+        {/* Your purchase banner */}
+        <div
+          className="mx-4 mb-2 flex items-center justify-center gap-2 rounded-lg py-2 px-3"
+          style={{
+            backgroundColor: `${moment.teamColors.primary}15`,
+            border: `1px solid ${moment.teamColors.primary}30`,
+          }}
+        >
+          <span className="text-[11px] font-bold text-[#00E5A0]">YOU</span>
+          <span className="text-[11px] text-white/50">just claimed</span>
+          <span className="text-[11px] font-mono font-bold text-[#00E5A0]">
+            #{editionNumber.toLocaleString()}
+          </span>
+        </div>
+        <div className="opacity-50">
+          <LiveFeed events={feedEvents} teamColor={moment.teamColors.primary} />
+        </div>
       </div>
     </div>
   );

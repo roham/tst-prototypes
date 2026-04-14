@@ -1674,6 +1674,87 @@ function TimeoutOverlay({ active, label, teamColor }: { active: boolean; label: 
   );
 }
 
+/* ─── Arena Horn Shockwave — concentric rings on CRITICAL entry ───── */
+/* The horn blast at the end of an NBA quarter — 3 expanding rings      */
+/* emanate from center screen when countdown enters CRITICAL phase.     */
+/* Distinct from the buzzer (fires at END) — this warns time is short.  */
+
+function useHornShockwave(totalSeconds: number, isEnded: boolean) {
+  const [active, setActive] = useState(false);
+  const firedRef = useRef(false);
+
+  useEffect(() => {
+    // Fire once when entering CRITICAL (<=120s) from above
+    if (!isEnded && totalSeconds <= 120 && totalSeconds > 0 && !firedRef.current) {
+      firedRef.current = true;
+      setActive(true);
+      const t = setTimeout(() => setActive(false), 1800);
+      return () => clearTimeout(t);
+    }
+  }, [totalSeconds, isEnded]);
+
+  return active;
+}
+
+function HornShockwave({ active, teamColor }: { active: boolean; teamColor: string }) {
+  if (!active) return null;
+
+  const rings = [
+    { delay: '0s', duration: '1.2s' },
+    { delay: '0.15s', duration: '1.3s' },
+    { delay: '0.3s', duration: '1.4s' },
+  ];
+
+  return (
+    <>
+      {/* Brief screen flash — horn blast concussion */}
+      <div
+        className="pointer-events-none fixed inset-0 z-[39]"
+        style={{
+          backgroundColor: teamColor,
+          animation: 'arena-horn-flash 0.6s ease-out forwards',
+        }}
+      />
+      {/* Concentric expanding rings */}
+      <div className="pointer-events-none fixed inset-0 z-[39] flex items-center justify-center">
+        {rings.map((ring, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: '120px',
+              height: '120px',
+              border: `2px solid ${teamColor}`,
+              boxShadow: `0 0 16px ${teamColor}50, inset 0 0 16px ${teamColor}20`,
+              animation: `arena-horn-ring ${ring.duration} cubic-bezier(0.16, 1, 0.3, 1) ${ring.delay} forwards`,
+              opacity: 0,
+            }}
+          />
+        ))}
+        {/* Center horn icon — brief flash */}
+        <div
+          className="absolute flex items-center justify-center"
+          style={{
+            animation: 'arena-horn-flash 0.8s ease-out 0.1s forwards',
+            opacity: 0.8,
+          }}
+        >
+          <span
+            className="text-2xl uppercase tracking-[0.3em] font-bold"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: teamColor,
+              textShadow: `0 0 20px ${teamColor}, 0 0 40px ${teamColor}60`,
+            }}
+          >
+            ⚠ 2:00
+          </span>
+        </div>
+      </div>
+    </>
+  );
+}
+
 /* ─── Arena Court Lines — basketball half-court SVG background ───── */
 
 function CourtLines({ teamColor, isEnded }: { teamColor: string; isEnded: boolean }) {
@@ -1882,6 +1963,9 @@ export default function ArenaPage({
   /* ── Arena timeout — jumbotron overlay on phase transitions ── */
   const { active: timeoutActive, label: timeoutLabel } = useArenaTimeout(countdown.totalSeconds);
 
+  /* ── Horn shockwave — concentric rings when entering CRITICAL phase ── */
+  const hornActive = useHornShockwave(countdown.totalSeconds, countdown.isEnded);
+
   /* ── Sticky CTA — show when main button scrolls out of view ── */
   useEffect(() => {
     const el = ctaRef.current;
@@ -1980,6 +2064,9 @@ export default function ArenaPage({
 
       {/* ─── Jumbotron Noise Prompt — "MAKE SOME NOISE" on velocity spike ─── */}
       <JumbotronNoisePrompt visible={noisePromptVisible} teamColor={moment.teamColors.primary} />
+
+      {/* ─── Horn Shockwave — concentric rings on CRITICAL phase entry ─── */}
+      <HornShockwave active={hornActive} teamColor={moment.teamColors.primary} />
 
       {/* ─── Fixed Header Bar ─── */}
       <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between border-b border-white/[0.06] bg-[#0B0E14]/90 px-4 py-3 backdrop-blur-md">

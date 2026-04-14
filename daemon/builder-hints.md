@@ -1032,3 +1032,11 @@
 - Supreme's W screen is now information-dense but feels sparse because everything is at 10-25% opacity with generous spacing. The density is there for screenshots — zoom in and every detail rewards.
 - At this level of polish, each new element must justify its existence. The sale record works because it adds new information (price, date) not shown elsewhere on the W screen.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 118 Learnings
+- Live viewer count adds social proof urgency without feeling aggressive — the broadcast framing ("watching this drop") makes it feel informational rather than manipulative.
+- Deriving viewer count from `editionsClaimed + totalSeconds` creates natural variation: more claimed = higher viewers, less time = fewer viewers (mimics real viewership curve).
+- Placing the viewer count ABOVE the CTA (not below) means it's the last thing seen before the purchase decision — optimal for conversion influence.
+- Broadcast now has all 3 elements of the triple urgency stack near CTA: time (countdown), supply (editorial narrative), competition (viewer count + recent collectors). Each is presented in broadcast language rather than generic commerce.
+- The `mt-8 mb-3` spacing on the viewer count naturally replaces the CTA's `mt-8` — conditional class application prevents double margin.
+- Next cycle: Arena (rotation).

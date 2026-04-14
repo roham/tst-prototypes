@@ -58,7 +58,7 @@ function Confetti({ colors }: { colors: string[] }) {
 
 /* ─── Live Purchase Feed (horizontal scrolling pills) ──────────── */
 
-function LiveFeed({ events }: { events: PurchaseEvent[] }) {
+function LiveFeed({ events, teamColor }: { events: PurchaseEvent[]; teamColor?: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -84,6 +84,12 @@ function LiveFeed({ events }: { events: PurchaseEvent[] }) {
             className="flex shrink-0 items-center gap-1.5 rounded-full bg-white/[0.06] px-3 py-1.5 text-xs backdrop-blur-sm"
             style={{ animation: 'fadeSlideIn 0.4s ease-out' }}
           >
+            {teamColor && (
+              <span
+                className="inline-block h-1.5 w-1.5 rounded-full flex-shrink-0"
+                style={{ backgroundColor: teamColor }}
+              />
+            )}
             <span className="text-white/70">{ev.name}</span>
             <span className="font-mono font-semibold text-[#00E5A0]">
               #{ev.edition.toLocaleString()}
@@ -230,9 +236,26 @@ function CelebrationScreen({
   onReset: () => void;
 }) {
   const acquireTime = (1.5 + Math.random() * 3).toFixed(1);
+  const [flash, setFlash] = useState(true);
+  const [showDetails, setShowDetails] = useState(false);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setFlash(false), 350);
+    const t2 = setTimeout(() => setShowDetails(true), 600);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
 
   return (
     <div className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-[#0B0E14]">
+      {/* Entry flash — team color */}
+      <div
+        className="absolute inset-0 z-[60] pointer-events-none transition-opacity duration-400"
+        style={{
+          backgroundColor: moment.teamColors.primary,
+          opacity: flash ? 0.2 : 0,
+        }}
+      />
+
       <Confetti
         colors={[
           '#00E5A0', '#3B82F6', '#F59E0B', '#A855F7', '#EF4444',
@@ -256,15 +279,29 @@ function CelebrationScreen({
             style={{
               fontFamily: 'var(--font-oswald), sans-serif',
               fontWeight: 700,
-              textShadow: '0 0 40px rgba(0,229,160,0.3)',
+              textShadow: `0 0 40px rgba(0,229,160,0.3), 0 0 80px ${moment.teamColors.primary}30`,
             }}
           >
             YOU&apos;RE IN!
           </h1>
         </div>
 
-        {/* Edition Jumbotron */}
-        <div className="mt-6 flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] px-10 py-6 backdrop-blur-sm">
+        {/* Player name — jumbotron echo */}
+        <p
+          className="mt-1 text-lg uppercase tracking-[0.15em] text-white/30"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
+        >
+          {moment.player}
+        </p>
+
+        {/* Edition Jumbotron — staggered reveal */}
+        <div
+          className="mt-6 flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] px-10 py-6 backdrop-blur-sm transition-all duration-600 ease-out"
+          style={{
+            opacity: showDetails ? 1 : 0,
+            transform: showDetails ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.95)',
+          }}
+        >
           <span className="text-sm font-semibold uppercase tracking-widest text-white/50">
             Edition
           </span>
@@ -276,8 +313,15 @@ function CelebrationScreen({
           </span>
         </div>
 
-        {/* Stats */}
-        <div className="mt-6 flex items-center gap-4 text-sm text-white/50">
+        {/* Stats — staggered */}
+        <div
+          className="mt-6 flex items-center gap-4 text-sm text-white/50 transition-all duration-500 ease-out"
+          style={{
+            opacity: showDetails ? 1 : 0,
+            transform: showDetails ? 'translateY(0)' : 'translateY(8px)',
+            transitionDelay: '0.15s',
+          }}
+        >
           <span>
             Buyer{' '}
             <span className="font-semibold text-white/80">#{editionNumber.toLocaleString()}</span>
@@ -304,7 +348,7 @@ function CelebrationScreen({
 
       {/* Feed continues at bottom */}
       <div className="absolute bottom-0 left-0 right-0 z-50 opacity-60">
-        <LiveFeed events={feedEvents} />
+        <LiveFeed events={feedEvents} teamColor={moment.teamColors.primary} />
       </div>
     </div>
   );
@@ -502,11 +546,15 @@ export default function ArenaPage({
           >
             {moment.statLine}
           </p>
+          {/* Context line for emotional weight */}
+          <p className="mt-1 text-xs text-white/30 tracking-wide">
+            {moment.context}
+          </p>
         </div>
       </section>
 
       {/* ─── Live Activity Feed ─── */}
-      <LiveFeed events={feedEvents} />
+      <LiveFeed events={feedEvents} teamColor={moment.teamColors.primary} />
 
       {/* ─── Stats Bar ─── */}
       <StatsBar

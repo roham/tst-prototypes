@@ -1255,3 +1255,11 @@
 - Starting claimed values matter for milestone timing: SGA (1744) hits first small milestone quickly, Bam (3847) hits 3850 almost immediately. Always consider starting conditions when designing threshold-based features.
 - z-54 for milestones sits above fast break (z-53) — milestone celebrations should overlay velocity banners since they're rarer and more significant.
 - Next cycle: Supreme (rotation).
+
+## Cycle 148 Learnings
+- "Fair Warning" fills a 10-second gap (20s→10s) in the gavel sequence that previously had no auctioneer presence — the CRITICAL phase now has continuous auction narration from 20s to 0s.
+- Making the fair warning deliberately softer than the gavel calls (lower opacity, lighter weight, smaller type, team-color vs white/red) creates a natural escalation arc that mirrors real auctioneer cadence.
+- Vertical writing-mode text (writing-mode: vertical-lr + rotate 180°) is a powerful tool for gallery/museum spatial design — it adds institutional context without taking horizontal space.
+- The 4-state gavel system (0/1/2/3) is clean but approaching the limit — further auction timeline additions should use a different mechanism (e.g., CSS-only timed overlays) rather than expanding the state machine.
+- At this level of Supreme polish, the most impactful additions are ones that complete spatial metaphors (gallery viewing) rather than adding new UI elements.
+- Next cycle: Broadcast (rotation).

@@ -934,6 +934,28 @@ export default function BroadcastPage() {
     return () => observer.disconnect();
   }, []);
 
+  // "Continuing Live Coverage" bumper — fires once when transaction section enters view
+  const [coverageBumper, setCoverageBumper] = useState<'hidden' | 'in' | 'out' | 'done'>('hidden');
+  useEffect(() => {
+    const el = transactionRef.current;
+    if (!el) return;
+    let fired = false;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !fired && !countdown.isEnded) {
+          fired = true;
+          setCoverageBumper('in');
+          const t1 = setTimeout(() => setCoverageBumper('out'), 2200);
+          const t2 = setTimeout(() => setCoverageBumper('done'), 2800);
+          return () => { clearTimeout(t1); clearTimeout(t2); };
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [countdown.isEnded]);
+
   // Feed cut — brief static band on phase transition (camera feed switch)
   // Crash zoom — broadcast director punch-in on phase shift
   const [feedCut, setFeedCut] = useState(false);
@@ -1132,6 +1154,42 @@ export default function BroadcastPage() {
               style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
             >
               {moment.player} — {moment.playType}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* ━━━ CONTINUING COVERAGE BUMPER — segment transition when scrolling to Collect ━━━ */}
+      {coverageBumper !== 'hidden' && coverageBumper !== 'done' && (
+        <div
+          className="fixed top-[44%] left-0 right-0 z-[52] pointer-events-none flex items-center"
+          style={{
+            transform: coverageBumper === 'in' ? 'translateX(0)' : 'translateX(105%)',
+            transition: coverageBumper === 'in'
+              ? 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
+              : 'transform 0.4s cubic-bezier(0.55, 0, 1, 0.45)',
+          }}
+        >
+          <div
+            className="relative w-full px-5 py-2.5 flex items-center gap-3"
+            style={{
+              background: `linear-gradient(90deg, rgba(${rgb},0.7) 0%, rgba(${rgb},0.5) 60%, transparent 100%)`,
+              backdropFilter: 'blur(6px)',
+            }}
+          >
+            <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-white/40" />
+            <span
+              className="text-[9px] font-bold uppercase tracking-[0.35em] text-white/80 shrink-0"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              Continuing Live Coverage
+            </span>
+            <div className="h-3 w-[1px] bg-white/20 shrink-0" />
+            <span
+              className="text-[10px] uppercase tracking-wide text-white/50 truncate"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              {moment.player} &middot; {moment.playType}
             </span>
           </div>
         </div>
@@ -1514,6 +1572,22 @@ export default function BroadcastPage() {
               </div>
             </div>
           )}
+
+          {/* Cinematic letterbox bars — widescreen aspect ratio */}
+          <div
+            className="absolute top-0 left-0 right-0 z-[25] pointer-events-none transition-all duration-1000"
+            style={{
+              height: dropPhase === 'CRITICAL' ? '7%' : '4.5%',
+              background: 'linear-gradient(to bottom, #0B0E14 60%, transparent)',
+            }}
+          />
+          <div
+            className="absolute bottom-0 left-0 right-0 z-[25] pointer-events-none transition-all duration-1000"
+            style={{
+              height: dropPhase === 'CRITICAL' ? '7%' : '4.5%',
+              background: 'linear-gradient(to top, #0B0E14 60%, transparent)',
+            }}
+          />
 
           {/* Scroll indicator — animated chevron that scrolls to transaction */}
           {!countdown.isEnded && (

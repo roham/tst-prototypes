@@ -634,9 +634,13 @@ export default function SupremePage() {
         className="relative w-full flex-none overflow-hidden"
         style={{ height: '52dvh' }}
       >
-        {/* Parallax wrapper — hero moves at 0.4x scroll speed */}
+        {/* Parallax wrapper — hero moves at 0.4x scroll speed, heartbeat pulse creates alive tension */}
         <div
-          className="absolute inset-0 will-change-transform"
+          className={`absolute inset-0 will-change-transform ${
+            !isEnded && !isPurchasing
+              ? dropPhase === 'CRITICAL' ? 'supreme-heartbeat-fast' : 'supreme-heartbeat'
+              : ''
+          }`}
           style={{ transform: `translateY(${scrollY * 0.4}px)` }}
         >
         {/* Action image — cinematic depth layer behind player */}
@@ -1019,6 +1023,16 @@ export default function SupremePage() {
             </span>
           )}
         </button>
+
+        {/* Claim pulse ring — expanding ring on each claimed edition */}
+        {!isEnded && !isPurchasing && claimFlash && (
+          <div
+            className="absolute inset-x-5 top-1/2 -translate-y-1/2 h-[56px] rounded-2xl pointer-events-none z-20 supreme-claim-pulse-ring"
+            style={{
+              border: `1px solid ${glowColor}`,
+            }}
+          />
+        )}
 
         {/* Stored payment + edition preview — conversion confidence */}
         {!isEnded && !isPurchasing && (

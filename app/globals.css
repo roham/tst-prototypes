@@ -336,6 +336,20 @@ body {
   animation: supreme-edge-trace 6s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
 }
 
+/* Supreme hero heartbeat — subtle rhythmic scale pulse creating subconscious "alive" tension */
+@keyframes supreme-heartbeat {
+  0%, 100% { transform: scale(1); }
+  35% { transform: scale(1.004); }
+  50% { transform: scale(1.001); }
+  65% { transform: scale(1.003); }
+}
+.supreme-heartbeat {
+  animation: supreme-heartbeat 1.8s ease-in-out infinite;
+}
+.supreme-heartbeat-fast {
+  animation: supreme-heartbeat 1.1s ease-in-out infinite;
+}
+
 /* Supreme noise texture — premium dark paper grain over the void background */
 .supreme-noise-texture::before {
   content: '';

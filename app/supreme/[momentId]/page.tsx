@@ -8,6 +8,32 @@ import { useCountdown } from '@/lib/use-countdown';
 import { usePrototypeState } from '@/lib/use-prototype-state';
 
 // ---------------------------------------------------------------------------
+// Haptic feedback — real Vibration API for tactile auction experience on mobile
+// Patterns mirror physical auction cues: gavel taps, paddle raises, phase shifts
+// ---------------------------------------------------------------------------
+
+function haptic(pattern: number | number[]) {
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try { navigator.vibrate(pattern); } catch { /* silent — no vibration support */ }
+  }
+}
+
+const HAPTIC = {
+  /** CTA tap — short gavel tap */
+  tap: () => haptic(10),
+  /** Tier selection — paddle flip, barely perceptible */
+  tierSelect: () => haptic(6),
+  /** Purchase stage advance — each step ticks harder */
+  purchaseStep: (stage: number) => haptic(stage === 0 ? 12 : stage === 1 ? 18 : [15, 40, 25]),
+  /** Purchase confirmed "Yours." — gavel strike double-tap */
+  gavelStrike: () => haptic([15, 50, 25]),
+  /** Phase transition — saleroom tension shift */
+  phaseShift: (to: 'CLOSING' | 'CRITICAL') => haptic(to === 'CRITICAL' ? [20, 30, 20] : 15),
+  /** Lot extended — competition pulse */
+  lotExtended: () => haptic([8, 30, 8]),
+} as const;
+
+// ---------------------------------------------------------------------------
 // Phase derivation from countdown
 // ---------------------------------------------------------------------------
 
@@ -1126,11 +1152,13 @@ export default function SupremePage() {
     prevPhaseRef.current = dropPhase;
     if (prev === 'OPEN' && dropPhase === 'CLOSING') {
       setTransitionFlash('amber');
+      HAPTIC.phaseShift('CLOSING');
       const t = setTimeout(() => setTransitionFlash(null), 600);
       return () => clearTimeout(t);
     }
     if (prev === 'CLOSING' && dropPhase === 'CRITICAL') {
       setTransitionFlash('red');
+      HAPTIC.phaseShift('CRITICAL');
       const t = setTimeout(() => setTransitionFlash(null), 600);
       return () => clearTimeout(t);
     }
@@ -1145,14 +1173,15 @@ export default function SupremePage() {
     moment?.editionSize ?? 5000,
   );
 
-  // Purchase stage progression (3 stages in 1.5s)
+  // Purchase stage progression (3 stages in 1.5s) with haptic feedback
   useEffect(() => {
     if (viewPhase !== 'purchasing') {
       setPurchaseStage(0);
       return;
     }
-    const t1 = setTimeout(() => setPurchaseStage(1), 500);
-    const t2 = setTimeout(() => setPurchaseStage(2), 1200);
+    HAPTIC.purchaseStep(0);
+    const t1 = setTimeout(() => { setPurchaseStage(1); HAPTIC.purchaseStep(1); }, 500);
+    const t2 = setTimeout(() => { setPurchaseStage(2); HAPTIC.gavelStrike(); }, 1200);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [viewPhase]);
 
@@ -1245,6 +1274,7 @@ export default function SupremePage() {
     ) {
       lotExtendedKeyRef.current += 1;
       setLotExtended(true);
+      HAPTIC.lotExtended();
       const t = setTimeout(() => setLotExtended(false), 3500);
       prevLastClaimerRef.current = lastClaimer;
       return () => clearTimeout(t);
@@ -2410,7 +2440,7 @@ export default function SupremePage() {
             return (
               <button
                 key={tier.tier}
-                onClick={() => setSelectedTierIdx(idx)}
+                onClick={() => { setSelectedTierIdx(idx); HAPTIC.tierSelect(); }}
                 className="relative px-3 py-2 text-center transition-all duration-200 active:scale-95"
               >
                 <span
@@ -2472,6 +2502,66 @@ export default function SupremePage() {
           })}
         </div>
       </div>
+
+      {/* ============================================================= */}
+      {/* PREMIER LOT DESIGNATION — institutional prestige for premium   */}
+      {/* tiers. At Sotheby's/Christie's, premier lots are marked with  */}
+      {/* ◆ and receive enhanced catalogue treatment: dedicated imagery, */}
+      {/* specialist essays, featured placement. This designation makes  */}
+      {/* premium tiers feel institutionally elevated — converting the   */}
+      {/* tier selector from a price menu into a prestige ladder.        */}
+      {/* ============================================================= */}
+      {!isEnded && !isPurchasing && selectedTier.tier !== 'Open' && (
+        <div
+          key={`premier-${selectedTier.tier}`}
+          className="flex flex-col items-center gap-1 px-5 mt-2 supreme-premier-lot-enter"
+        >
+          {/* Designation hairlines + diamond marker */}
+          <div className="flex items-center gap-2">
+            <div
+              className="h-[0.5px] w-8 transition-all duration-500"
+              style={{ backgroundColor: `${tierAccentColor}25` }}
+            />
+            <span
+              className="text-[7px] transition-colors duration-500"
+              style={{ color: `${tierAccentColor}40` }}
+            >
+              ◆
+            </span>
+            <div
+              className="h-[0.5px] w-8 transition-all duration-500"
+              style={{ backgroundColor: `${tierAccentColor}25` }}
+            />
+          </div>
+          {/* Designation text — escalates with tier */}
+          <span
+            className="text-[7px] font-bold uppercase tracking-[0.45em] transition-colors duration-500"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: `${tierAccentColor}35`,
+            }}
+          >
+            {selectedTier.tier === 'Ultimate' ? 'Signature Lot' :
+             selectedTier.tier === 'Legendary' ? 'Premier Lot' :
+             'Estate Lot'}
+          </span>
+          {/* Specialist recommendation — institutional upsell voice */}
+          <p
+            className="text-[8px] text-center tracking-[0.06em] max-w-[220px] transition-colors duration-500"
+            style={{
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+              color: 'rgba(255,255,255,0.1)',
+            }}
+          >
+            {selectedTier.tier === 'Ultimate'
+              ? 'The specialist strongly recommends this lot to distinguished collectors.'
+              : selectedTier.tier === 'Legendary'
+                ? 'Recommended by our specialist for serious collectors.'
+                : 'Selected for the curated evening programme.'}
+          </p>
+        </div>
+      )}
 
       {/* ============================================================= */}
       {/* AUCTION ESTIMATE — projected secondary value, collector prestige */}
@@ -2673,7 +2763,7 @@ export default function SupremePage() {
           }}
           onMouseMove={!isEnded && !isPurchasing ? magnetic.onMouseMove : undefined}
           onMouseLeave={!isEnded && !isPurchasing ? magnetic.onMouseLeave : undefined}
-          onClick={purchase}
+          onClick={() => { HAPTIC.tap(); purchase(); }}
           disabled={isPurchasing || isEnded}
           className={`
             relative w-full h-[56px] rounded-2xl text-[15px] font-bold uppercase tracking-wider
@@ -2975,7 +3065,7 @@ export default function SupremePage() {
           }}
         >
           <button
-            onClick={isPurchasing ? undefined : purchase}
+            onClick={isPurchasing ? undefined : () => { HAPTIC.tap(); purchase(); }}
             disabled={isPurchasing}
             className={`w-full h-[52px] rounded-2xl text-[14px] font-bold uppercase tracking-wider supreme-btn disabled:cursor-wait ${isPurchasing ? '' : buttonAnimation}`}
             style={{

@@ -1390,3 +1390,10 @@
 - Phase-reactive copy on Arena's price badge ("CLAIM NOW" → "GOING FAST" → "LAST CHANCE") means the hero communicates urgency progression. The badge changes meaning as time runs out.
 - Using `tierSectionRef` instead of `ctaRef` for Arena's scroll target is intentional — Arena wants users to browse tiers before buying.
 - Next cycle: Supreme (rotation).
+
+## Cycle 166 Learnings
+- The purchase processing window (1.5s between click and W screen) was wasted space — just button text changes. Adding a full-screen overlay ceremony makes those seconds feel intentional and prestigious, not like waiting.
+- Reusing existing data (lot number formula, paddle number formula) across the overlay creates continuity — the same lot/paddle numbers appear in hero, clerk overlay, and W screen, making it feel like one continuous institutional process.
+- 3-stage text that matches purchaseStage timing (0/500ms/1200ms) ensures the overlay always shows the right stage without its own timers. Piggyback on existing state rather than adding new timers.
+- z-44 for the overlay is correct: above gavel countdown (z-42) and phase transition (z-36) but below W screen (z-50). The overlay naturally disappears when viewPhase transitions to 'confirmed' and the W screen renders.
+- Next cycle: Broadcast (rotation).

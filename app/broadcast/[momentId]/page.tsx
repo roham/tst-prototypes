@@ -1756,6 +1756,155 @@ function FanVerdict({ moment, rgb }: { moment: Moment; rgb: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// Game Flow Chart — ESPN win probability / momentum sparkline
+// Shows simulated game momentum with the key moment at the peak.
+// ---------------------------------------------------------------------------
+
+function GameFlowChart({ moment, rgb }: { moment: Moment; rgb: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Generate a plausible momentum curve peaking at ~75% through the game
+  const points = useMemo(() => {
+    const w = 300, h = 60, mid = h / 2;
+    const pts: string[] = [];
+    for (let i = 0; i <= 20; i++) {
+      const x = (i / 20) * w;
+      const t = i / 20;
+      // Bell-shaped curve peaking around t=0.75 (4th quarter climax)
+      const peak = Math.exp(-Math.pow((t - 0.75) / 0.18, 2));
+      // Add some noise for realism
+      const noise = Math.sin(i * 2.7) * 4 + Math.cos(i * 1.3) * 3;
+      const y = mid - (peak * (h * 0.42)) - noise;
+      pts.push(`${x.toFixed(1)},${Math.max(4, Math.min(h - 4, y)).toFixed(1)}`);
+    }
+    return pts;
+  }, []);
+
+  const polyline = points.join(' ');
+  // Peak point (index 15 = t=0.75)
+  const peakPt = points[15].split(',').map(Number);
+
+  return (
+    <div ref={ref} className="mt-8 mb-4">
+      {/* Section label */}
+      <div className="flex items-center gap-2 mb-3">
+        <span
+          className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
+          style={{
+            backgroundColor: `rgba(${rgb},0.12)`,
+            color: moment.teamColors.primary,
+            fontFamily: 'var(--font-oswald), sans-serif',
+          }}
+        >
+          Game Flow
+        </span>
+        <div className="h-[1px] flex-1 bg-white/[0.06]" />
+        <span className="text-[7px] font-mono uppercase tracking-wider text-white/15">
+          Momentum Index
+        </span>
+      </div>
+
+      {/* Chart */}
+      <div
+        className="relative overflow-hidden rounded-md"
+        style={{
+          backgroundColor: 'rgba(20,25,37,0.5)',
+          border: `1px solid rgba(${rgb},0.1)`,
+        }}
+      >
+        <svg
+          viewBox="0 0 300 60"
+          className="w-full h-auto"
+          preserveAspectRatio="none"
+          style={{ display: 'block' }}
+        >
+          {/* Midline — neutral momentum */}
+          <line x1="0" y1="30" x2="300" y2="30" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" strokeDasharray="4 4" />
+          {/* Quarter markers */}
+          {[75, 150, 225].map((x) => (
+            <line key={x} x1={x} y1="0" x2={x} y2="60" stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" />
+          ))}
+          {/* Momentum line */}
+          <polyline
+            points={polyline}
+            fill="none"
+            stroke={moment.teamColors.primary}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{
+              opacity: visible ? 0.7 : 0,
+              strokeDasharray: 500,
+              strokeDashoffset: visible ? 0 : 500,
+              transition: 'stroke-dashoffset 1.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease',
+            }}
+          />
+          {/* Area fill under the line */}
+          <polygon
+            points={`0,30 ${polyline} 300,30`}
+            style={{
+              fill: `rgba(${rgb},${visible ? 0.06 : 0})`,
+              transition: 'fill 1.5s ease',
+            }}
+          />
+          {/* Peak marker — "THE MOMENT" */}
+          <circle
+            cx={peakPt[0]}
+            cy={peakPt[1]}
+            r="3"
+            fill={moment.teamColors.primary}
+            style={{
+              opacity: visible ? 1 : 0,
+              transition: 'opacity 0.5s ease 1.5s',
+              filter: `drop-shadow(0 0 4px ${moment.teamColors.primary})`,
+            }}
+          />
+        </svg>
+        {/* Quarter labels */}
+        <div className="absolute bottom-1 left-0 right-0 flex justify-between px-3">
+          {['Q1', 'Q2', 'Q3', 'Q4'].map((q) => (
+            <span key={q} className="text-[6px] font-mono uppercase tracking-wider text-white/15">{q}</span>
+          ))}
+        </div>
+        {/* Peak annotation */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            left: `${(peakPt[0] / 300) * 100}%`,
+            top: `${(peakPt[1] / 60) * 100 - 28}%`,
+            transform: 'translateX(-50%)',
+            opacity: visible ? 1 : 0,
+            transition: 'opacity 0.5s ease 1.8s',
+          }}
+        >
+          <span
+            className="text-[6px] font-bold uppercase tracking-[0.2em] px-1 py-px rounded-sm whitespace-nowrap"
+            style={{
+              backgroundColor: `rgba(${rgb},0.2)`,
+              color: moment.teamColors.primary,
+              fontFamily: 'var(--font-oswald), sans-serif',
+            }}
+          >
+            The Moment
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Cinematic Section Reveal — line expands from center on scroll-into-view
 // ---------------------------------------------------------------------------
 
@@ -1979,6 +2128,45 @@ export default function BroadcastPage() {
     observer.observe(el);
     return () => observer.disconnect();
   }, [countdown.isEnded]);
+
+  // Producer cue — ESPN "Scroll to Continue" nudge fires 10s after page load
+  // if the user hasn't scrolled to the transaction section. Addresses the
+  // 67-82% bounce rate by re-engaging viewers stuck in the editorial section.
+  // The producer in the control room cues the next segment.
+  const [producerCue, setProducerCue] = useState<'waiting' | 'in' | 'out' | 'done'>('waiting');
+  const hasReachedTransactionRef = useRef(false);
+  useEffect(() => {
+    // Track if user scrolls to transaction section
+    const el = transactionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          hasReachedTransactionRef.current = true;
+          setProducerCue((prev) => (prev === 'waiting' ? 'done' : prev));
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  useEffect(() => {
+    if (!leaderDone || countdown.isEnded) return;
+    // Fire 10s after leader completes — gives user time to absorb the hero
+    const t1 = setTimeout(() => {
+      if (!hasReachedTransactionRef.current) {
+        setProducerCue('in');
+      }
+    }, 10000);
+    const t2 = setTimeout(() => {
+      setProducerCue((prev) => (prev === 'in' ? 'out' : prev));
+    }, 14000); // Hold 4s
+    const t3 = setTimeout(() => {
+      setProducerCue((prev) => (prev === 'out' ? 'done' : prev));
+    }, 14700);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, [leaderDone, countdown.isEnded]);
 
   // Feed cut — brief static band on phase transition (camera feed switch)
   // Crash zoom — broadcast director punch-in on phase shift
@@ -2226,6 +2414,77 @@ export default function BroadcastPage() {
               {moment.player} &middot; {moment.playType}
             </span>
           </div>
+        </div>
+      )}
+
+      {/* ━━━ PRODUCER CUE — "Scroll to Continue" nudge for idle viewers ━━━ */}
+      {/* ESPN mobile app shows a persistent "Scroll to Continue" CTA.     */}
+      {/* This fires 10s after page load if the user hasn't scrolled to    */}
+      {/* the transaction section — the producer in the control room cues  */}
+      {/* the viewer to the next segment. Addresses 67-82% bounce rate.    */}
+      {producerCue !== 'waiting' && producerCue !== 'done' && !isPurchasing && (
+        <div
+          className="fixed z-[51] pointer-events-auto"
+          style={{
+            bottom: showStickyBar ? '76px' : '24px',
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            transition: 'bottom 0.3s ease',
+          }}
+        >
+          <button
+            onClick={() => {
+              transactionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              setProducerCue('done');
+            }}
+            className="group cursor-pointer"
+            style={{
+              animation: producerCue === 'in'
+                ? 'broadcast-producer-cue-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+                : 'broadcast-producer-cue-out 0.5s ease-in forwards',
+            }}
+          >
+            <div
+              className="flex items-center gap-3 rounded-md px-5 py-2.5 backdrop-blur-xl transition-all duration-200 group-hover:scale-[1.02]"
+              style={{
+                backgroundColor: 'rgba(11,14,20,0.88)',
+                border: `1px solid rgba(${rgb},0.25)`,
+                boxShadow: `0 4px 24px rgba(0,0,0,0.4), 0 0 20px rgba(${rgb},0.08)`,
+              }}
+            >
+              {/* Team-color accent dot — production cue indicator */}
+              <div
+                className="h-[6px] w-[6px] rounded-full animate-pulse shrink-0"
+                style={{ backgroundColor: moment.teamColors.primary }}
+              />
+              {/* Cue text — producer voice */}
+              <span
+                className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/60"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                Collection Available
+              </span>
+              {/* Divider */}
+              <div className="h-3 w-[1px] bg-white/10 shrink-0" />
+              {/* Price anchor */}
+              <span
+                className="text-[11px] font-bold tabular-nums text-white/80"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                From ${moment.price}
+              </span>
+              {/* Scroll chevron */}
+              <svg
+                className="w-3 h-3 text-white/30 group-hover:text-white/50 transition-all animate-bounce"
+                viewBox="0 0 12 12"
+                fill="none"
+              >
+                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+          </button>
         </div>
       )}
 
@@ -2869,6 +3128,13 @@ export default function BroadcastPage() {
 
           {/* ESPN-style stat breakdown */}
           <StatBreakdown statLine={moment.statLine} teamColor={moment.teamColors.primary} />
+
+          {/* ── GAME FLOW — ESPN win probability style momentum chart ── */}
+          {/* Every ESPN/TNT broadcast shows a win probability or game     */}
+          {/* flow chart during analysis segments. This SVG sparkline      */}
+          {/* shows simulated game momentum with the key moment marked     */}
+          {/* at the peak — visually placing the play at the game's climax */}
+          <GameFlowChart moment={moment} rgb={rgb} />
 
           {/* ── ANALYST REACTION — ESPN "SportsCenter" studio take ── */}
           {/* Every broadcast cuts to the analyst desk for expert commentary. */}

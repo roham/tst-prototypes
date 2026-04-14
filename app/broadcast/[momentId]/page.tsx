@@ -51,6 +51,41 @@ function fullTeam(abbr: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// ESPN-style stat breakdown — animated cards
+// ---------------------------------------------------------------------------
+
+function StatBreakdown({ statLine, teamColor }: { statLine: string; teamColor: string }) {
+  // Parse "30 PTS / 8 REB / 4 AST" into segments
+  const stats = statLine.split('/').map((s) => {
+    const trimmed = s.trim();
+    const match = trimmed.match(/^(\d+)\s+(.+)$/);
+    return match ? { value: match[1], label: match[2] } : { value: trimmed, label: '' };
+  });
+
+  return (
+    <div className="mt-8 flex items-stretch gap-3">
+      {stats.map((stat, i) => (
+        <div
+          key={stat.label}
+          className="flex-1 rounded-lg bg-white/[0.04] border border-white/[0.06] px-3 py-3 text-center"
+          style={{ animation: `stat-fly-in 0.5s ease-out ${0.15 * i}s both` }}
+        >
+          <div
+            className="text-2xl font-bold tabular-nums"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif', color: teamColor }}
+          >
+            {stat.value}
+          </div>
+          <div className="text-[10px] uppercase tracking-[0.15em] text-white/40 mt-0.5">
+            {stat.label}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main Page
 // ---------------------------------------------------------------------------
 
@@ -201,16 +236,49 @@ export default function BroadcastPage() {
 
         {/* ━━━ EDITORIAL NARRATIVE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section className="mx-auto max-w-2xl px-5 py-10 md:px-10 md:py-14">
+          {/* Section header — broadcast style */}
+          <div className="flex items-center gap-3 mb-6">
+            <div
+              className="h-[2px] w-8"
+              style={{ backgroundColor: moment.teamColors.primary }}
+            />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/30">
+              The Moment
+            </span>
+          </div>
+
           <p
             className="text-lg leading-[1.8] text-[#8892A7] md:text-xl md:leading-[1.85]"
             style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
           >
             {moment.historicalNote}
           </p>
+
+          {/* ESPN-style stat breakdown */}
+          <StatBreakdown statLine={moment.statLine} teamColor={moment.teamColors.primary} />
         </section>
 
+        {/* Team-color thin divider */}
+        <div className="mx-auto max-w-2xl px-5 md:px-10">
+          <div
+            className="h-[1px] opacity-20"
+            style={{ backgroundColor: moment.teamColors.primary }}
+          />
+        </div>
+
         {/* ━━━ TRANSACTION SECTION ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="mx-auto max-w-3xl px-5 pb-16 md:px-10 md:pb-24">
+        <section className="mx-auto max-w-3xl px-5 pt-10 pb-16 md:px-10 md:pb-24">
+          {/* Section header */}
+          <div className="flex items-center gap-3 mb-6">
+            <div
+              className="h-[2px] w-8"
+              style={{ backgroundColor: moment.teamColors.primary }}
+            />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/30">
+              Collect
+            </span>
+          </div>
+
           {/* Rarity tier selector — horizontal row */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4">
             {moment.rarityTiers.map((tier, idx) => (

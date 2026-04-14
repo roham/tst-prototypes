@@ -131,11 +131,13 @@ function WScreen({
 }) {
   const [show, setShow] = useState(false);
   const [flash, setFlash] = useState(true);
+  const [showDetails, setShowDetails] = useState(false);
   useEffect(() => {
+    // Staggered reveal: flash → W → details
     requestAnimationFrame(() => setShow(true));
-    // Brief white flash on entry
-    const t = setTimeout(() => setFlash(false), 400);
-    return () => clearTimeout(t);
+    const t1 = setTimeout(() => setFlash(false), 350);
+    const t2 = setTimeout(() => setShowDetails(true), 500);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
   return (
@@ -193,41 +195,50 @@ function WScreen({
           You own this moment
         </p>
 
-        {/* Player + play */}
-        <h2
-          className="mt-6 text-4xl uppercase tracking-tight text-white"
-          style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 700 }}
+        {/* Staggered details */}
+        <div
+          className="transition-all duration-700 ease-out"
+          style={{
+            opacity: showDetails ? 1 : 0,
+            transform: showDetails ? 'translateY(0)' : 'translateY(12px)',
+          }}
         >
-          {moment.player}
-        </h2>
-        <p className="mt-1 text-sm text-white/40">{moment.playType}</p>
+          {/* Player + play */}
+          <h2
+            className="mt-6 text-4xl uppercase tracking-tight text-white"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 700 }}
+          >
+            {moment.player}
+          </h2>
+          <p className="mt-1 text-sm text-white/40">{moment.playType}</p>
 
-        {/* Edition pill */}
-        <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/[0.07] px-5 py-2 border border-white/[0.06]">
-          <span className="text-sm font-mono font-semibold text-[#00E5A0]">
-            #{editionNumber.toLocaleString()}
-          </span>
-          <span className="text-xs text-white/30">
-            of {moment.editionSize.toLocaleString()}
-          </span>
+          {/* Edition pill */}
+          <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/[0.07] px-5 py-2 border border-white/[0.06]">
+            <span className="text-sm font-mono font-semibold text-[#00E5A0]">
+              #{editionNumber.toLocaleString()}
+            </span>
+            <span className="text-xs text-white/30">
+              of {moment.editionSize.toLocaleString()}
+            </span>
+          </div>
+
+          {/* Context timestamp */}
+          <p className="mt-4 text-[11px] text-white/25 uppercase tracking-wider">
+            {moment.team} vs {moment.opponent}
+          </p>
+
+          {/* Share row */}
+          <ShareButtons />
+
+          {/* View in collection */}
+          <button
+            className="mt-4 px-6 py-3 rounded-xl text-sm font-semibold tracking-wide
+                       bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 transition-colors"
+            onClick={(e) => e.preventDefault()}
+          >
+            View in Collection
+          </button>
         </div>
-
-        {/* Context timestamp */}
-        <p className="mt-4 text-[11px] text-white/25 uppercase tracking-wider">
-          {moment.team} vs {moment.opponent}
-        </p>
-
-        {/* Share row */}
-        <ShareButtons />
-
-        {/* View in collection */}
-        <button
-          className="mt-4 px-6 py-3 rounded-xl text-sm font-semibold tracking-wide
-                     bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 transition-colors"
-          onClick={(e) => e.preventDefault()}
-        >
-          View in Collection
-        </button>
 
         {/* Dev reset — tiny, bottom */}
         <button
@@ -363,7 +374,7 @@ export default function SupremePage() {
         />
 
         {/* Player name + stat line — bottom-left */}
-        <div className="absolute bottom-6 left-5 right-5 z-10">
+        <div className="absolute bottom-6 left-5 right-5 z-10 supreme-hero-enter">
           {/* Play type — above name, small */}
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/35 mb-2">
             {moment.playType}
@@ -395,7 +406,7 @@ export default function SupremePage() {
       {/* ============================================================= */}
       {/* INFO STRIP — timer + edition counter */}
       {/* ============================================================= */}
-      <div className="flex items-center justify-between px-5 py-3.5">
+      <div className="flex items-center justify-between px-5 py-3.5 supreme-info-enter">
         {/* Timer */}
         <div className="flex items-baseline gap-2">
           <div
@@ -448,11 +459,11 @@ export default function SupremePage() {
       {/* ============================================================= */}
       {/* THE BUTTON — with ambient glow */}
       {/* ============================================================= */}
-      <div className="px-5 mb-3 relative">
+      <div className="px-5 mb-3 relative supreme-info-enter">
         {/* Ambient glow behind button */}
         {!isEnded && (
           <div
-            className="absolute inset-x-5 top-1/2 -translate-y-1/2 h-16 rounded-2xl blur-xl transition-all duration-500 pointer-events-none"
+            className="absolute inset-x-5 top-1/2 -translate-y-1/2 h-16 rounded-2xl blur-xl pointer-events-none animate-glow-breathe"
             style={{
               backgroundColor: glowColor,
               opacity: glowOpacity,
@@ -464,13 +475,16 @@ export default function SupremePage() {
           disabled={isPurchasing || isEnded}
           className={`
             relative w-full h-[56px] rounded-2xl text-[15px] font-bold uppercase tracking-wider
-            transition-all duration-200 active:scale-[0.97] active:brightness-110
-            disabled:cursor-not-allowed
+            supreme-btn disabled:cursor-not-allowed
+            ${isPurchasing ? 'supreme-purchasing' : ''}
             ${buttonAnimation}
           `}
           style={{
             backgroundColor: buttonBg,
             color: buttonTextColor,
+            boxShadow: !isEnded && !isPurchasing
+              ? `0 4px 24px ${glowColor}30, 0 0 0 1px ${glowColor}10`
+              : undefined,
           }}
         >
           {isPurchasing ? (
@@ -491,7 +505,7 @@ export default function SupremePage() {
       {/* ============================================================= */}
       {/* SOCIAL PROOF — tiny, below button */}
       {/* ============================================================= */}
-      <p className="text-center text-[11px] text-white/20 pb-6 tabular-nums">
+      <p className="text-center text-[11px] text-white/20 pb-6 tabular-nums supreme-social-enter">
         {watching} watching &middot; {claimedPerMin} claimed/min
       </p>
     </div>

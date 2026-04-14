@@ -89,6 +89,18 @@ body {
   50% { opacity: 0.12; }
 }
 
+/* Broadcast loading dots */
+@keyframes broadcast-dot {
+  0%, 80%, 100% { opacity: 0.15; transform: scale(0.75); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+/* Broadcast stat card fly-in */
+@keyframes stat-fly-in {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
 /* Broadcast lower-third slide-in */
 @keyframes lower-third-in {
   0% { opacity: 0; transform: translateX(-20px); }
@@ -104,3 +116,49 @@ body {
   50% { opacity: 0.3; transform: translateY(-50%) scaleX(1.03); }
 }
 .animate-glow-breathe { animation: glow-breathe 3s ease-in-out infinite; }
+
+/* Supreme hero entrance */
+@keyframes supreme-hero-up {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.supreme-hero-enter {
+  animation: supreme-hero-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+/* Supreme button spring press */
+@keyframes supreme-press {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1.02); }
+}
+.supreme-btn {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+.supreme-btn:active {
+  transform: scale(0.96) !important;
+  transition-duration: 0.1s;
+}
+
+/* Supreme purchase shrink — button contracts before W */
+@keyframes supreme-purchase-shrink {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.92); opacity: 0.6; }
+}
+.supreme-purchasing {
+  animation: supreme-purchase-shrink 1.5s ease-in forwards;
+}
+
+/* Supreme info strip entrance */
+@keyframes supreme-info-in {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.supreme-info-enter {
+  animation: supreme-info-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+/* Supreme social proof fade-in */
+.supreme-social-enter {
+  animation: supreme-info-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+}

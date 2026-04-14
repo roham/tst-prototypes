@@ -572,7 +572,7 @@ export default function SupremePage() {
 
   return (
     <div
-      className="min-h-dvh flex flex-col relative overflow-hidden select-none transition-colors duration-1000"
+      className="min-h-dvh flex flex-col relative overflow-hidden select-none transition-colors duration-1000 supreme-noise-texture"
       style={{ backgroundColor: bgColor }}
     >
       {/* ============================================================= */}

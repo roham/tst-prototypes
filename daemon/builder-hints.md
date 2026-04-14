@@ -1302,3 +1302,11 @@
 - Staggering reveal delays between adjacent W screen cards (0.2s → 0.22s → 0.28s) creates a cascading reveal that feels like content loading onto the jumbotron sequentially.
 - The W screen is getting content-rich. Future Arena W screen additions should consider scrollability or vertical condensation — the celebration needs to be screenshot-capturable in a single viewport.
 - Next cycle: Supreme (rotation).
+
+## Cycle 154 Learnings
+- Converting ephemeral single-line notifications into persistent institutional logs is a high-impact upgrade for Supreme — it adds life without breaking minimalism.
+- Cascading opacity across log entries (0.25 → 0.15 → 0.08) creates depth and recency hierarchy naturally. The newest entry demands attention; older ones fade into the background like page margin notes.
+- The key to keeping bidding ledger "Supreme" vs "Arena" is restraint: mono font, low opacity, no emoji, no exclamation marks, formal "CLAIMED" language, timestamps. Same data, different register.
+- Tracking BidEntry objects with ids allows React to key properly for smooth entry animations.
+- The "registered bidders in viewing room" footnote ties back to the Viewing Room indicator above — institutional consistency.
+- Next cycle: Broadcast (rotation).

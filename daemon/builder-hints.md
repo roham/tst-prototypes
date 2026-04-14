@@ -651,3 +651,14 @@
 - The animation coordinates: -15% to 85% (not 0% to 100%) prevents the glow from being centered on the card edge — it peeks in from outside, creating a more natural light source.
 - The shimmer complements the existing wax seal (static prestige mark) + certificate header (typography prestige). Three layers of authentication: typography → seal → light.
 - Next cycle: Arena (rotation). Arena W screen could use a subtle jumbotron pixel grid texture behind the "YOU'RE IN!" text, or a "confetti cannon" burst that radiates from center.
+
+## Cycle 74 Learnings
+- Live bidder indicators on tier cards add the missing live-auction social proof that Arena needed — you can see others "competing" for the same tier.
+- Inverse proportional seeding (Open ~15-20, Ultimate ~2-5) creates realistic demand distribution — most people go for affordable, few for ultra-premium.
+- Overlapping 6px dots with staggered pulse animations read as "active users" at a glance, even at small sizes.
+- Jittering counts every 2-4s (random interval) prevents the UI from feeling mechanical — real bid activity is bursty.
+- The `useTierBidders` hook is independent of feed events — bidder counts jitter on their own schedule, separate from purchase simulation.
+- "+N" overflow indicator when count > 5 prevents visual clutter while still communicating scale.
+- 45% opacity on "X selecting" text keeps it informational without competing with price/supply.
+- This feature touches conversion AND purity: it's both a social proof urgency mechanism (conversion) and a distinctly Arena/live-auction element (purity).
+- Next cycle: Supreme (rotation). Supreme could benefit from a subtle gradient shift on the background during phase transitions — the void itself changes mood.

@@ -812,3 +812,13 @@
 - Both effects use tier accent color, so they shift with the tier ambient system from cycle 87. Unified visual language.
 - Using a `prevTierIdx` ref to detect actual tier changes (not just re-renders) prevents false triggers. The pattern: compare ref to state, update ref, fire effect.
 - Next cycle: Broadcast (rotation). Broadcast could explore a "director's cut" hover state on stat cards, or a ticker tape animation on the editorial headline.
+
+## Cycle 91 Learnings
+- PiP thumbnail is one of the most broadcast-authentic additions yet — every sports fan recognizes the picture-in-picture technique from watching games.
+- IntersectionObserver at 0.15 threshold (not 0) means the PiP appears when the hero is 85% scrolled out — preventing a jarring flash on tiny scroll amounts.
+- Smart repositioning (bottom: 72px when sticky bar visible, 20px otherwise) prevents the two fixed elements from overlapping. The transition is smooth via the `transition-all duration-500`.
+- 110×72px is the sweet spot for mobile PiP — large enough to see the player, small enough to not obstruct transaction content. 16:10-ish ratio matches broadcast PiP conventions.
+- pointer-events-none prevents the PiP from intercepting scroll or tap events — it's purely atmospheric/informational.
+- The PiP has a functional conversion angle: keeping the player's face visible near the CTA while the user scrolls through editorial content maintains emotional connection at the moment of decision.
+- Broadcast overlay inventory is massive: ticker, score bug, network bug, replay tag, lower-third, production markers, PiP, sticky CTA. Still doesn't feel cluttered because each operates at different opacity/positioning levels.
+- Next cycle: Arena (rotation). Arena could explore a "fan cam" selfie circle on the W screen, or a confetti cannon burst animation.

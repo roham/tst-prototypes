@@ -497,3 +497,13 @@
 - 20-dot cap prevents SVG performance issues while maintaining visual density. At ~1 purchase per 2-5s, you'll have 5-8 visible dots at any time — enough for a pattern, not enough for clutter.
 - Arena now has 6 simultaneous purchase reaction systems: LED flash (edge glow), camera flash (white burst), emoji reactions (floating), feed pills (scrolling names), streak counter (combo), and heat map (geographic). This is the maximum sensory load a single page can sustain.
 - Next cycle: Supreme (rotation). Supreme could use a subtle monochrome video preview on hover/long-press, or a premium "collector's mark" watermark on the hero.
+
+## Cycle 57 Learnings
+- Ambient particles (1.5-2.5px dots with glow) create museum/gallery atmosphere without being obvious. The effect is subliminal — you feel the page is "alive" without consciously noticing the particles.
+- 5 particles with staggered 0-5.5s delays on 7-10s durations ensures there's always at least one visible particle but never a moment where all 5 are synchronized. Natural, not mechanical.
+- Team-color tinting means Heat pages have warm red motes, Nuggets have gold dust, Thunder have blue sparks. Each feels native to the moment.
+- z-6 is correct — above the parallax hero content (z-0 area) but below text (z-10) and the light sweep (z-5 overflow). Particles appear to float BETWEEN the background and the text, enhancing the depth effect.
+- `useMemo` on the particle config prevents re-renders from recreating the array. The particles are static layout with CSS animation — zero runtime JS cost.
+- Hidden during ENDED (the museum has closed — lights off, particles settle) and purchasing (blur effect + focus on CTA — no distractions). These state-based visibility rules are becoming a standard pattern across all Supreme ambient effects.
+- Supreme now has 6 simultaneous ambient effects on the hero. This is likely the practical maximum — adding more would risk perceptible performance impact on low-end mobile devices. Future Supreme improvements should target non-hero areas.
+- Next cycle: Broadcast (rotation). Broadcast could use a subtle editorial "chapter marker" between sections, or a network crawl/breaking-news lower-third for the urgency phase.

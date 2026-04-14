@@ -881,3 +881,17 @@
 - The 1px inner edge lines (`border-right`/`border-left` on pseudo-elements) subtly separate the sprocket strip from the hero image area, like the boundary between film emulsion and sprocket rail.
 - Broadcast hero now has layered atmospheric effects: Ken Burns drift, film grain, CRT scanlines, lens flare, crash zoom, and now film frame. Each references a different aspect of broadcast/cinema production (camera movement, analog media, monitor technology, optics, direction, physical film).
 - Next cycle: Arena (rotation). Arena could explore a "coach's challenge" replay mechanic on hover, or a crowd wave speed-up in CRITICAL phase.
+
+## Cycle 98 Learnings
+- Crowd chant ticker with 15% opacity + text-shadow glow creates jumbotron LED prompt energy without being distracting.
+- 6× repeated chant text with 👏 emojis as separators creates natural scroll rhythm. 12s cycle is slow enough to read but fast enough to feel "live."
+- Hiding the chant on ENDED makes sense — the crowd goes home. Arena elements that are "alive" should die with the drop.
+
+## Cycle 99 Learnings
+- The auction gavel countdown ("GOING ONCE..." / "GOING TWICE...") completes a narrative trilogy in Supreme: LOT XXXX (you arrive at the auction) → gavel calls (the auctioneer pressures you) → SOLD (the lot is closed). Each exists in a different location (top-right, center, diagonal) and different state (live, critical, ended).
+- Key-indexed re-trigger (`gavelKeyRef.current += 1`) is necessary because React won't re-trigger CSS animations when only the text changes. The key forces unmount/remount of the div, restarting the animation.
+- Using `viewPhase` instead of `isPurchasing` in the effect dependency avoids a "used before declaration" TypeScript error — `isPurchasing` is a derived const declared later in the component. Same logic, different variable scope.
+- z-42 for the gavel sits neatly between critical vignette (z-40) and W screen (z-50). The layering stack matters — gavel text must be visible through the red vignette but not interfere with purchase confirmation.
+- "GOING TWICE..." in red (#EF4444) with glow creates dramatic escalation from phase 1's muted white. The color shift alone signals urgency intensification.
+- Letter-spacing animation (0.4em → 0.3em) on the gavel text creates a "settling in" feel — the text arrives loose and tightens as it takes form. More premium than a simple fade.
+- Next cycle: Broadcast (rotation). Broadcast could explore a "GOING TO COMMERCIAL" bumper on phase transitions, or a director's "CUE TALENT" prompt in the production markers area.

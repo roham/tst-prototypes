@@ -725,3 +725,12 @@
 - Hidden when ended via conditional render — the scoreboard powers off with the arena.
 - Arena hero now has: action image backdrop, player gradient, spotlight sweep, player name LED glow + scan. The jumbotron metaphor is layered but not competing.
 - Next cycle: Supreme (rotation).
+
+## Cycle 81 Learnings
+- Hero color reveal (grayscale→color) is the most "Supreme" page-load effect — it's one transition, no moving parts, pure restraint. Apple keynote energy.
+- 200ms delay before triggering the reveal ensures the user sees the desaturated state first — without it, the page might render already in color.
+- `cubic-bezier(0.16, 1, 0.3, 1)` spring easing on the filter transition makes the color bloom feel organic, not mechanical.
+- Team-color ambient glow fading in separately (0→1 opacity, 2.5s) creates a two-beat reveal: first color returns, then the glow blooms. Layered drama.
+- The reveal respects ended/purchasing states — those have their own filter overrides that take priority.
+- This is Supreme's only page-load dramatic effect (everything else is ambient/ongoing). One entrance moment, then restraint.
+- Next cycle: Broadcast (rotation).

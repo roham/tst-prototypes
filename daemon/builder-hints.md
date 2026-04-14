@@ -1437,3 +1437,10 @@
 - z-2 on the scrubber sits above the bottom vignette gradient but below the player info text overlay (no z-index, natural stacking). This means the progress bar is visible but doesn't compete with the player name.
 - The `arena-replay-timestamp` keyframe handles opacity lifecycle (fade-in at 8%, sustained, dim at 92%) independently of the progress bar — each element animates autonomously but appears coordinated.
 - Next cycle: Supreme (rotation). Supreme could refine the lot clerk ceremony purchase overlay, or add a subtle "catalogue page turn" transition between browse and purchase states.
+
+## Cycle 172 Learnings
+- Above-fold price anchoring is a high-conversion improvement even at 9.0+ polish levels. The $5 price point visible without scrolling addresses the core bounce rate problem (67-82%).
+- "Place Bid ↓" as a tappable scroll link bridges the hero-to-CTA gap. It's both a price indicator and a navigation element — dual purpose in minimal space.
+- Reactive tier pricing in the hero estimate (updating when the user selects a tier below fold) creates a subtle connection between above-fold and below-fold content. The hero stays alive as the user interacts below.
+- ENDED state showing "Sold · $X" in the hero is the auction-house equivalent of the lot result — every sold lot at Christie's/Sotheby's shows its hammer price in the catalogue.
+- Next cycle: Broadcast (rotation).

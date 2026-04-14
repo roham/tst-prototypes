@@ -350,7 +350,7 @@ export default function BroadcastPage() {
         {!countdown.isEnded && <BroadcastTicker />}
 
         {/* ━━━ HERO — 50vh ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="relative h-[50dvh] min-h-[420px] overflow-hidden broadcast-grain">
+        <section className="relative h-[50dvh] min-h-[420px] overflow-hidden broadcast-grain broadcast-scanlines">
           {/* Action image — cinematic depth layer with Ken Burns drift */}
           <div
             className="absolute inset-0 bg-cover bg-center transition-all duration-1000 broadcast-ken-burns"
@@ -554,7 +554,9 @@ export default function BroadcastPage() {
                 }}
               />
               <p
-                className="text-[11px] font-bold uppercase tracking-[0.25em]"
+                className={`text-[11px] font-bold uppercase tracking-[0.25em] ${
+                  dropPhase === 'CRITICAL' ? 'broadcast-breaking-text' : ''
+                }`}
                 style={{
                   fontFamily: 'var(--font-oswald), sans-serif',
                   color: dropPhase === 'CRITICAL' ? '#EF4444' : '#F59E0B',

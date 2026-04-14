@@ -379,6 +379,32 @@ body {
   mix-blend-mode: overlay;
 }
 
+/* Broadcast CRT scanlines — faint horizontal lines for monitor feel */
+.broadcast-scanlines::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 16;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.06) 3px,
+    rgba(0,0,0,0.06) 4px
+  );
+  mix-blend-mode: multiply;
+}
+
+/* Broadcast BREAKING text glow — red pulse for CRITICAL phase chyron */
+@keyframes broadcast-breaking-glow {
+  0%, 100% { text-shadow: 0 0 4px rgba(239,68,68,0.4), 0 0 12px rgba(239,68,68,0.15); }
+  50% { text-shadow: 0 0 8px rgba(239,68,68,0.7), 0 0 24px rgba(239,68,68,0.3); }
+}
+.broadcast-breaking-text {
+  animation: broadcast-breaking-glow 1.2s ease-in-out infinite;
+}
+
 /* Broadcast ESPN BottomLine — scrolling score ticker */
 @keyframes broadcast-ticker {
   0% { transform: translateX(0); }

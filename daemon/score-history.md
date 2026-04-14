@@ -245,3 +245,7 @@
 | 48 | supreme | 9.0+ | 9.0 | 9.0 | 9.0 | 9.0 | 9.00+ | — | Beyond-9.0: diagonal light sweep on hero |
 
 **Cycle 48: Supreme light sweep.** Slow diagonal highlight passes across the hero every 8 seconds — like a premium trading card catching light when tilted. Team-color tinted gradient (teamColor 8% + white 6% at center). CSS-only animation, no JS. The sweep only appears during live/active states (hidden during ENDED and purchasing/blur). Subtle enough to be subliminal, premium enough to elevate. Next: Broadcast (rotation).
+
+| 49 | broadcast | 9.0 | 9.0 | 9.0+ | 9.0 | 9.0+ | 9.00+ | — | Beyond-9.0: ESPN BottomLine ticker + network bug watermark |
+
+**Cycle 49: Broadcast ticker + network bug.** Two authentic broadcast elements that complete the TV metaphor. (1) ESPN BottomLine score ticker scrolls across the top — 7 game scores in a 30s infinite loop, muted styling (10-11px, low opacity), hidden when drop ends. (2) Network bug watermark in top-right corner: "TST LIVE" with team-color pulsing dot, like ESPN/TNT shows during live programming. Turns red in CRITICAL phase, fades out on ended. The `BroadcastTicker` component was already defined since early cycles but never rendered — now it completes the broadcast atmosphere. Next: Arena (rotation).

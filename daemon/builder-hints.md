@@ -428,3 +428,12 @@
 - z-[5] puts the sweep above the background layers but below the text overlay — it subtly illuminates the player image without washing out text.
 - Supreme now has 3 simultaneous ambient hero effects: parallax scroll (0.4x), Ken Burns zoom (20s cycle), and light sweep (8s cycle). Together they create a living, breathing hero that feels premium without being busy.
 - Next cycle: Broadcast (rotation). Broadcast could use a subtle film reel flicker effect, or animated typography on the editorial headline.
+
+## Cycle 49 Learnings
+- The BroadcastTicker component was defined since early cycles (line ~103) but never rendered. It was a dead component — activating it completed the broadcast atmosphere with zero new component code needed. Always check for unused components before building new ones.
+- Network bug watermark (TST LIVE) uses fixed positioning at top-4 right-4 (md:top-6 md:right-6) with opacity 0.35 — subtle enough to be environmental, not distracting. The pulsing dot (CSS `pulse` animation) mimics ESPN's LIVE indicator.
+- The network bug adapts to drop phase: normal = team-color, CRITICAL = red, ENDED = fades out. This is consistent with how real broadcast networks shift their on-screen graphics during urgent moments.
+- Ticker hidden during ENDED state preserves the "broadcast is over" feeling. Real networks pull their tickers after a game ends.
+- `broadcast-ticker` keyframe was missing from globals.css — the component referenced `animate-[broadcast-ticker_30s_linear_infinite]` via Tailwind arbitrary animation. Added the keyframe: `translateX(0) → translateX(-50%)` with doubled content for seamless loop.
+- Broadcast now has the most complete TV broadcast metaphor: ESPN BottomLine ticker + network bug + lower-third graphics + urgency chyron + Ken Burns hero + film grain + stat counters. No other direction should borrow these — they're deeply broadcast-specific.
+- Next cycle: Arena (rotation). Arena could use a crowd noise ambient indicator, or a "seats filling up" visualization.

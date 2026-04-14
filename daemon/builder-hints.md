@@ -1334,3 +1334,10 @@
 - SVG polylines at 15% opacity are effectively invisible until you notice them, then they're compelling. The subliminal register is key for Supreme.
 - Seeding noise from moment.id.charCodeAt() creates per-moment visual variation without randomness that would cause hydration mismatches.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 158 Learnings
+- The hero replay production sequence is now a complete 4-phase broadcast: replay tag → telestrator → commentator call → sideline report. Adding more hero overlays risks overcrowding — future broadcast improvements should focus on the editorial section, W screen, or transaction area.
+- Reusing broadcast-call-fade-out for the sideline exit keeps consistency without new keyframes. The dedicated broadcast-sideline-in keyframe is softer (no overshoot/scale) which correctly differentiates the courtside reporter's calm delivery from the commentator's dramatic slam.
+- Per-moment reporter-coach quotes add specificity that generic text can't match. The coach quotes are from real NBA coaching styles (Spoelstra's intensity, Malone's humor, Daigneault's trust).
+- 2-line clamp on the report text prevents overflow on narrow mobile viewports while keeping the courtside voice present.
+- Next cycle: Arena (rotation).

@@ -394,3 +394,11 @@
 - The LED flash sits at z-[20], below CrowdReactions (z-[25]) and critical vignette (z-[35]) — layers don't compete.
 - Arena now has 3 simultaneous purchase reaction systems: LED flash (ambient), CrowdReactions (emoji burst), and feed item glow. Each operates at a different visual layer — together they create overwhelming live-event energy.
 - Next cycle: Supreme (rotation). Supreme needs its own beyond-9.0 experiment — perhaps a premium number counter animation on the edition display, or a subtle hover parallax on the hero image.
+
+## Cycle 45 Learnings
+- easeOutExpo (1 - 2^(-10t)) is better than easeOutQuad for slot-machine reveals — the fast-start + hard-decelerate creates genuine "landing" energy. The number zips through hundreds in the first 200ms then slows to crawl into the final digits.
+- 800ms duration for the Supreme edition counter (vs 1200ms Broadcast, 1400ms Arena) is the fastest — Supreme is decisive, no lingering. The number appears, counts, locks. Done.
+- "Locked" state uses scale(1.05) + textShadow glow — a micro-scale bump signals "this is your number now." The 200ms transition makes it feel solid, not bouncy.
+- The counter syncs with `showDetails` (700ms after page enter), so it fires during the detail reveal phase — the number coming alive during an otherwise static section is a nice surprise.
+- All 3 directions now have animated counters in different contexts: Supreme (W screen edition reveal, easeOutExpo 800ms), Broadcast (stat cards on scroll, easeOutQuad 1200ms), Arena (stat line on load, easeOutQuad 1400ms + stat counter on load). Each trigger and timing matches the direction's energy.
+- Next cycle: Broadcast (rotation). Ideas: certificate card could have a subtle wax-seal or emboss effect, or the "Acquired." checkmark could have a more dramatic animation.

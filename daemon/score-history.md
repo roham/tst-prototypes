@@ -229,3 +229,7 @@
 | 44 | arena | 9.0 | 9.0 | 9.0+ | 9.0+ | 9.0 | 9.00+ | — | Beyond-9.0: arena LED flash pulse on purchases |
 
 **Cycle 44: Arena LED flash.** Team-color edge glow pulses inward (350ms) on each purchase event — simulates arena LED strips firing when the home team scores. Subtle boxShadow inset creates the effect without adding DOM noise. Next: Supreme (rotation).
+
+| 45 | supreme | 9.0 | 9.0 | 9.0+ | 9.0+ | 9.0 | 9.00+ | — | Beyond-9.0: edition number slot-machine reveal on W screen |
+
+**Cycle 45: Supreme edition reveal.** Edition number counts from 0 to target with easeOutExpo (800ms fast→slow deceleration) on the W screen. On lock, a brief scale(1.05) + team-color textShadow glow confirms the number. Creates lottery-ticket anticipation for the "YOURS." moment. Next: Broadcast (rotation).

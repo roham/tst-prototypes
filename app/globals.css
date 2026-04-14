@@ -447,6 +447,24 @@ body {
   50% { height: 90%; }
 }
 
+/* Arena jumbotron pixel grid — dot matrix overlay on hero (arena LED screen feel) */
+.arena-pixel-grid::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: repeating-radial-gradient(
+    circle at center,
+    rgba(255,255,255,0.03) 0px,
+    rgba(255,255,255,0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  background-size: 6px 6px;
+  mix-blend-mode: screen;
+}
+
 @keyframes arena-reaction-float {
   0% { transform: translateY(0) scale(0.5); opacity: 0; }
   15% { transform: translateY(-20px) scale(1.1); opacity: 1; }

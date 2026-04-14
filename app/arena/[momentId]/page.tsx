@@ -400,6 +400,119 @@ function ArenaCameraFlash({ events }: { events: PurchaseEvent[] }) {
   );
 }
 
+/* ─── Buyer Heat Map — mini US map with purchase dots ─────────── */
+
+const CITY_COORDS: Record<string, [number, number]> = {
+  'Miami': [251, 152], 'New York': [272, 58], 'LA': [28, 98],
+  'Chicago': [200, 52], 'Houston': [162, 138], 'Denver': [118, 74],
+  'Atlanta': [233, 112], 'Boston': [280, 46], 'Phoenix': [68, 112],
+  'Dallas': [158, 122], 'Portland': [28, 28], 'Toronto': [242, 28],
+  'Oakland': [20, 78], 'Detroit': [224, 48], 'Memphis': [198, 108],
+  'Charlotte': [248, 96], 'San Antonio': [148, 140],
+};
+
+// Simplified continental US outline
+const US_PATH = 'M24,18 L36,14 L52,12 L68,14 L82,10 L98,12 L118,14 L138,10 L160,12 L178,16 L196,14 L214,18 L230,20 L248,22 L260,28 L272,32 L280,38 L284,50 L278,62 L274,72 L270,82 L264,88 L258,96 L254,108 L256,120 L260,132 L252,146 L246,156 L238,158 L228,150 L218,142 L208,138 L196,134 L184,138 L172,144 L158,146 L144,142 L132,138 L120,130 L108,126 L96,120 L84,118 L72,116 L60,112 L48,108 L36,100 L28,92 L22,82 L18,70 L16,58 L18,46 L20,34 L24,18 Z';
+
+interface HeatDot {
+  id: string;
+  x: number;
+  y: number;
+  age: number; // 0 = fresh, increments
+}
+
+function BuyerHeatMap({ events, teamColor, isEnded }: { events: PurchaseEvent[]; teamColor: string; isEnded: boolean }) {
+  const [dots, setDots] = useState<HeatDot[]>([]);
+  const prevLen = useRef(0);
+
+  useEffect(() => {
+    if (events.length > prevLen.current && prevLen.current > 0) {
+      const ev = events[events.length - 1];
+      const coords = CITY_COORDS[ev.city];
+      if (coords) {
+        // Add jitter so dots don't stack perfectly
+        const jx = coords[0] + (Math.random() - 0.5) * 10;
+        const jy = coords[1] + (Math.random() - 0.5) * 8;
+        setDots((prev) => [
+          ...prev.slice(-20),
+          { id: ev.id, x: jx, y: jy, age: 0 },
+        ]);
+      }
+    }
+    prevLen.current = events.length;
+  }, [events.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Age out dots every 3 seconds
+  useEffect(() => {
+    const id = setInterval(() => {
+      setDots((prev) => prev.map((d) => ({ ...d, age: d.age + 1 })).filter((d) => d.age < 4));
+    }, 3000);
+    return () => clearInterval(id);
+  }, []);
+
+  if (isEnded) return null;
+
+  return (
+    <div className="mx-4 my-2 rounded-xl bg-white/[0.03] border border-white/[0.04] overflow-hidden">
+      <div className="flex items-center justify-between px-3 pt-2">
+        <span
+          className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/25"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+        >
+          Live Buyers
+        </span>
+        <span className="text-[9px] tabular-nums text-white/20">
+          {dots.length} recent
+        </span>
+      </div>
+      <svg viewBox="0 0 300 170" className="w-full h-auto px-2 pb-2" style={{ maxHeight: '80px' }}>
+        {/* US outline — very faint */}
+        <path
+          d={US_PATH}
+          fill="none"
+          stroke="rgba(255,255,255,0.06)"
+          strokeWidth="1"
+        />
+        {/* Purchase dots */}
+        {dots.map((dot) => {
+          const opacity = dot.age === 0 ? 0.9 : dot.age === 1 ? 0.5 : dot.age === 2 ? 0.25 : 0.1;
+          const r = dot.age === 0 ? 4 : 2.5;
+          return (
+            <g key={dot.id}>
+              {/* Glow ring on fresh dots */}
+              {dot.age === 0 && (
+                <circle
+                  cx={dot.x}
+                  cy={dot.y}
+                  r={8}
+                  fill="none"
+                  stroke={teamColor}
+                  strokeWidth={0.8}
+                  opacity={0.3}
+                >
+                  <animate attributeName="r" from="4" to="12" dur="0.6s" fill="freeze" />
+                  <animate attributeName="opacity" from="0.4" to="0" dur="0.6s" fill="freeze" />
+                </circle>
+              )}
+              <circle
+                cx={dot.x}
+                cy={dot.y}
+                r={r}
+                fill={teamColor}
+                opacity={opacity}
+              >
+                {dot.age === 0 && (
+                  <animate attributeName="r" from="1" to={String(r)} dur="0.2s" fill="freeze" />
+                )}
+              </circle>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
 /* ─── Panic Banner ─────────────────────────────────────────────── */
 
 function PanicBanner({ claimed, total, isCritical, isClosing }: {
@@ -1221,6 +1334,9 @@ export default function ArenaPage({
       {!countdown.isEnded && (
         <LiveFeed events={feedEvents} teamColor={moment.teamColors.primary} />
       )}
+
+      {/* ─── Buyer Heat Map — geographic purchase visualization ─── */}
+      <BuyerHeatMap events={feedEvents} teamColor={moment.teamColors.primary} isEnded={countdown.isEnded} />
 
       {/* ─── Stats Bar ─── */}
       <StatsBar

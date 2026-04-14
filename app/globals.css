@@ -233,6 +233,33 @@ body {
   animation: supreme-w-pulse 3s ease-in-out infinite;
 }
 
+/* Supreme W screen — authentication ring pulse from edition number */
+@keyframes supreme-auth-ring {
+  0% { transform: scale(0.5); opacity: 0.6; border-width: 2px; }
+  50% { opacity: 0.3; border-width: 1px; }
+  100% { transform: scale(2.8); opacity: 0; border-width: 0.5px; }
+}
+
+/* Supreme authentication seal — ring draws in around edition number on W screen */
+@keyframes supreme-seal-draw {
+  0% { stroke-dashoffset: 301.6; opacity: 0; }
+  10% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+@keyframes supreme-seal-glow {
+  0% { filter: drop-shadow(0 0 0px currentColor); }
+  40% { filter: drop-shadow(0 0 8px currentColor); }
+  100% { filter: drop-shadow(0 0 2px currentColor); }
+}
+.supreme-seal-circle {
+  stroke-dasharray: 301.6;
+  stroke-dashoffset: 301.6;
+  animation: supreme-seal-draw 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.supreme-seal-container {
+  animation: supreme-seal-glow 1s ease-out 0.7s forwards;
+}
+
 /* Supreme radial burst — expanding ring on W screen */
 @keyframes supreme-burst-expand {
   0% { width: 0; height: 0; opacity: 0.6; }

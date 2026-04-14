@@ -193,6 +193,40 @@ function AmbientParticles({ teamColor }: { teamColor: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// Authentication Seal — draws around edition number after counter locks
+// ---------------------------------------------------------------------------
+
+function AuthenticationSeal({ teamColor, show }: { teamColor: string; show: boolean }) {
+  if (!show) return null;
+  // Circle: r=48, circumference = 2 * PI * 48 ≈ 301.6 (matches CSS)
+  return (
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none supreme-seal-container" style={{ color: teamColor }}>
+      <svg width="108" height="108" viewBox="0 0 108 108" fill="none" className="absolute">
+        <circle
+          cx="54" cy="54" r="48"
+          stroke={teamColor}
+          strokeWidth="1"
+          opacity="0.3"
+          className="supreme-seal-circle"
+          style={{ transformOrigin: 'center', transform: 'rotate(-90deg)' }}
+        />
+        {/* Tick marks at cardinal points — notarization detail */}
+        {[0, 90, 180, 270].map((deg) => (
+          <line
+            key={deg}
+            x1="54" y1="2" x2="54" y2="6"
+            stroke={teamColor}
+            strokeWidth="0.75"
+            opacity="0.2"
+            style={{ transformOrigin: 'center', transform: `rotate(${deg}deg)` }}
+          />
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Confirmed / "W" Screen
 // ---------------------------------------------------------------------------
 
@@ -253,14 +287,16 @@ function WScreen({
   const [show, setShow] = useState(false);
   const [flash, setFlash] = useState(true);
   const [showDetails, setShowDetails] = useState(false);
+  const [showSeal, setShowSeal] = useState(false);
   const [showShare, setShowShare] = useState(false);
   useEffect(() => {
-    // Staggered reveal: flash → W → details → share hint
+    // Staggered reveal: flash → W → details → seal → share hint
     requestAnimationFrame(() => setShow(true));
     const t1 = setTimeout(() => setFlash(false), 400);
     const t2 = setTimeout(() => setShowDetails(true), 700);
-    const t3 = setTimeout(() => setShowShare(true), 1400);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    const t3 = setTimeout(() => setShowSeal(true), 1600); // after edition counter locks (700+800+100)
+    const t4 = setTimeout(() => setShowShare(true), 1400);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
   }, []);
 
   // Format purchase date for screenshot permanence
@@ -369,8 +405,8 @@ function WScreen({
           </h2>
           <p className="mt-1.5 text-sm text-white/30">{moment.playType}</p>
 
-          {/* Edition serial — luxury serial number treatment with counter reveal */}
-          <div className="mt-6 flex flex-col items-center">
+          {/* Edition serial — luxury serial number treatment with counter reveal + auth seal */}
+          <div className="mt-6 flex flex-col items-center relative">
             {tierName !== 'Open' && (
               <span
                 className="text-[9px] font-bold uppercase tracking-[0.3em] mb-2"
@@ -379,18 +415,20 @@ function WScreen({
                 {tierName} Edition
               </span>
             )}
-            <div className="flex items-baseline gap-2">
-              <EditionRevealCounter
-                target={editionNumber}
-                teamColor={moment.teamColors.primary}
-                started={showDetails}
-              />
-              <span className="text-[11px] font-mono text-white/15 tabular-nums">
-                / {moment.editionSize.toLocaleString()}
-              </span>
+            {/* Edition number with authentication seal ring */}
+            <div className="relative flex items-center justify-center" style={{ width: 108, height: 108 }}>
+              <AuthenticationSeal teamColor={moment.teamColors.primary} show={showSeal} />
+              <div className="flex items-baseline gap-2">
+                <EditionRevealCounter
+                  target={editionNumber}
+                  teamColor={moment.teamColors.primary}
+                  started={showDetails}
+                />
+                <span className="text-[11px] font-mono text-white/15 tabular-nums">
+                  / {moment.editionSize.toLocaleString()}
+                </span>
+              </div>
             </div>
-            {/* Thin line under serial */}
-            <div className="mt-2 w-20 h-[1px] bg-white/[0.06]" />
           </div>
 
           {/* Matchup + date stamp — screenshot permanence */}

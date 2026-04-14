@@ -2770,6 +2770,48 @@ export default function SupremePage() {
       </nav>
 
       {/* ============================================================= */}
+      {/* SALEROOM AMBIENT PULSE — the room's heartbeat as a waveform  */}
+      {/* At Christie's/Sotheby's, the room has an audible energy:     */}
+      {/* quiet murmur during open bidding, rising tension as lots     */}
+      {/* close, palpable electricity in the final seconds. This thin  */}
+      {/* SVG waveform at the viewport bottom is the visual equivalent */}
+      {/* — the saleroom's pulse rendered as a barely-visible line.    */}
+      {/* Phase-reactive: calm sinusoid in OPEN, sharper frequency in  */}
+      {/* CLOSING, agitated tremor in CRITICAL, flatline when ENDED.  */}
+      {/* ============================================================= */}
+      {!isPurchasing && (
+        <div
+          className="fixed bottom-0 left-0 right-0 z-[5] pointer-events-none"
+          style={{ height: 20, opacity: isEnded ? 0.03 : dropPhase === 'CRITICAL' ? 0.12 : dropPhase === 'CLOSING' ? 0.07 : 0.04 }}
+        >
+          <svg
+            width="100%"
+            height="20"
+            viewBox="0 0 400 20"
+            preserveAspectRatio="none"
+            className={isEnded ? '' : 'supreme-saleroom-pulse'}
+            style={{
+              animationDuration: dropPhase === 'CRITICAL' ? '1.5s' : dropPhase === 'CLOSING' ? '4s' : '8s',
+            }}
+          >
+            <path
+              d={isEnded
+                ? 'M0 10 L400 10'
+                : dropPhase === 'CRITICAL'
+                  ? 'M0 10 Q25 2,50 10 Q75 18,100 10 Q125 2,150 10 Q175 18,200 10 Q225 2,250 10 Q275 18,300 10 Q325 2,350 10 Q375 18,400 10'
+                  : dropPhase === 'CLOSING'
+                    ? 'M0 10 Q50 4,100 10 Q150 16,200 10 Q250 4,300 10 Q350 16,400 10'
+                    : 'M0 10 Q100 6,200 10 Q300 14,400 10'}
+              fill="none"
+              stroke={isEnded ? 'rgba(255,255,255,0.3)' : dropPhase === 'CRITICAL' ? '#EF4444' : dropPhase === 'CLOSING' ? '#F59E0B' : moment.teamColors.primary}
+              strokeWidth={dropPhase === 'CRITICAL' ? '1.2' : '0.8'}
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+      )}
+
+      {/* ============================================================= */}
       {/* STICKY CTA — appears only when main button scrolls offscreen */}
       {/* ============================================================= */}
       {showStickyCTA && !isEnded && (

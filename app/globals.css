@@ -1267,6 +1267,26 @@ body {
   50% { opacity: 0; }
 }
 
+/* Arena PA Announcer Introduction — line slide-in from below */
+@keyframes arena-pa-line-in {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Arena PA Announcer — player name slam (scale overshoot) */
+@keyframes arena-pa-name-slam {
+  0% { opacity: 0; transform: scale(1.4); }
+  40% { opacity: 1; transform: scale(0.96); }
+  60% { transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Arena PA Announcer — accent line expand from center */
+@keyframes arena-pa-line-expand {
+  0% { width: 0; opacity: 0; }
+  100% { width: 40px; opacity: 1; }
+}
+
 @keyframes arena-buzzer-shake {
   0%, 100% { transform: translateX(0); }
   10% { transform: translateX(-3px); }

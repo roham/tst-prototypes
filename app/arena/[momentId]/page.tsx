@@ -82,6 +82,165 @@ interface PurchaseEvent {
 /* flutter down with gravity and drift. Each cannon fires a burst    */
 /* with staggered timing for natural feel.                           */
 
+// ---------------------------------------------------------------------------
+// PA Announcer Introduction — dramatic arena voice intro on page load
+// "LADIES AND GENTLEMEN... YOUR MOMENT OF THE NIGHT... BAM ADEBAYO!"
+// ---------------------------------------------------------------------------
+
+const PA_INTROS: Record<string, { lines: string[]; playerCall: string }> = {
+  bam: {
+    lines: ['Ladies and gentlemen...', 'Your moment of the night...'],
+    playerCall: 'BAM ADEBAYO!',
+  },
+  jokic: {
+    lines: ['Ladies and gentlemen...', 'Your moment of the night...'],
+    playerCall: 'NIKOLA JOKI\u0106!',
+  },
+  sga: {
+    lines: ['Ladies and gentlemen...', 'Your moment of the night...'],
+    playerCall: 'SHAI GILGEOUS-ALEXANDER!',
+  },
+};
+
+function PAAnnouncerIntro({ momentId, teamColor, playerName }: {
+  momentId: string;
+  teamColor: string;
+  playerName: string;
+}) {
+  const [phase, setPhase] = useState(0); // 0=hidden, 1=line1, 2=line2, 3=playerCall, 4=fadeOut, 5=done
+  const intro = PA_INTROS[momentId] ?? PA_INTROS.bam;
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase(1), 1200);   // "Ladies and gentlemen..."
+    const t2 = setTimeout(() => setPhase(2), 2800);   // "Your moment of the night..."
+    const t3 = setTimeout(() => setPhase(3), 4400);   // "BAM ADEBAYO!"
+    const t4 = setTimeout(() => setPhase(4), 6200);   // begin fade
+    const t5 = setTimeout(() => setPhase(5), 7000);   // unmount
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); };
+  }, []);
+
+  if (phase === 0 || phase === 5) return null;
+
+  return (
+    <div
+      className="pointer-events-none fixed inset-0 z-[42] flex flex-col items-center justify-center"
+      style={{
+        opacity: phase === 4 ? 0 : 1,
+        transition: 'opacity 0.8s ease-out',
+      }}
+    >
+      {/* Dark arena backdrop — like house lights dimming for intro */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(ellipse 70% 60% at 50% 40%, ${teamColor}10 0%, rgba(11,14,20,0.85) 100%)`,
+          opacity: phase === 4 ? 0 : 0.9,
+          transition: 'opacity 0.8s ease-out',
+        }}
+      />
+
+      {/* Spotlight cone — single spot on the intro text */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-[70%]"
+        style={{
+          background: `radial-gradient(ellipse 100% 100% at 50% 0%, ${teamColor}18 0%, transparent 70%)`,
+          opacity: phase >= 3 ? 1 : 0.4,
+          transition: 'opacity 0.6s ease-out',
+        }}
+      />
+
+      <div className="relative flex flex-col items-center gap-4 px-6">
+        {/* Line 1: "Ladies and gentlemen..." */}
+        {phase >= 1 && (
+          <p
+            className="text-[13px] uppercase tracking-[0.4em] text-white/40"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              fontWeight: 400,
+              animation: 'arena-pa-line-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              opacity: phase >= 3 ? 0.2 : undefined,
+              transition: 'opacity 0.5s ease-out',
+            }}
+          >
+            {intro.lines[0]}
+          </p>
+        )}
+
+        {/* Line 2: "Your moment of the night..." */}
+        {phase >= 2 && (
+          <p
+            className="text-[15px] uppercase tracking-[0.3em] text-white/50"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              fontWeight: 500,
+              animation: 'arena-pa-line-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              opacity: phase >= 3 ? 0.3 : undefined,
+              transition: 'opacity 0.5s ease-out',
+            }}
+          >
+            {intro.lines[1]}
+          </p>
+        )}
+
+        {/* Player name — massive, team-color, the climax */}
+        {phase >= 3 && (
+          <div className="flex flex-col items-center gap-2">
+            {/* Accent line — expands before name */}
+            <div className="flex items-center gap-3">
+              <div
+                className="h-[2px] w-10"
+                style={{
+                  backgroundColor: `${teamColor}60`,
+                  animation: 'arena-pa-line-expand 0.4s ease-out forwards',
+                }}
+              />
+              <div
+                className="h-2 w-2 rounded-full"
+                style={{
+                  backgroundColor: teamColor,
+                  boxShadow: `0 0 12px ${teamColor}80, 0 0 30px ${teamColor}40`,
+                  animation: 'pulse 1s ease-in-out infinite',
+                }}
+              />
+              <div
+                className="h-[2px] w-10"
+                style={{
+                  backgroundColor: `${teamColor}60`,
+                  animation: 'arena-pa-line-expand 0.4s ease-out forwards',
+                }}
+              />
+            </div>
+            {/* The name — slams in with scale */}
+            <h2
+              className="text-[clamp(2.5rem,10vw,4.5rem)] uppercase leading-[0.9] tracking-tight text-center"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                fontWeight: 700,
+                color: '#F0F2F5',
+                textShadow: `0 0 40px ${teamColor}60, 0 0 80px ${teamColor}30, 0 2px 4px rgba(0,0,0,0.5)`,
+                animation: 'arena-pa-name-slam 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              }}
+            >
+              {intro.playerCall}
+            </h2>
+            {/* Team badge */}
+            <span
+              className="text-[10px] uppercase tracking-[0.35em] mt-1"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: `${teamColor}80`,
+                animation: 'arena-pa-line-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both',
+              }}
+            >
+              {momentId === 'bam' ? 'Miami Heat' : momentId === 'jokic' ? 'Denver Nuggets' : 'Oklahoma City Thunder'}
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function ConfettiCannon({ colors, teamColor }: { colors: string[]; teamColor: string }) {
   // 4 cannon positions: bottom-left, bottom-right, center-left, center-right
   const cannons = [
@@ -4125,6 +4284,15 @@ export default function ArenaPage({
         teamColor={moment.teamColors.primary}
         seatLabel={`SEC ${(moment.id.charCodeAt(0) % 20) + 101} · ROW ${String.fromCharCode(65 + (moment.id.charCodeAt(1) % 8))} · SEAT ${(moment.id.charCodeAt(2) % 24) + 1}`}
       />
+
+      {/* ─── PA Announcer Introduction — dramatic player intro on page load ─── */}
+      {proto.state === 'browsing' && !countdown.isEnded && (
+        <PAAnnouncerIntro
+          momentId={moment.id}
+          teamColor={moment.teamColors.primary}
+          playerName={moment.player}
+        />
+      )}
 
       {/* ─── Crowd Reactions — floating emoji burst on purchases ─── */}
       {!countdown.isEnded && <CrowdReactions events={feedEvents} />}

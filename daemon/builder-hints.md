@@ -1481,3 +1481,13 @@
 - Low z-index (z-5) and opacity (3-12%) ensure the pulse never competes with content. It's a background atmospheric detail, not a foreground feature.
 - translateX drift animation creates a "breathing" feel more effectively than opacity pulsing — the waveform appears to flow like a real audio signal.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 180 Learnings
+- Connecting social proof (live feed purchases) to scarcity signals (remaining counts) creates a feedback loop that's more powerful than either alone. When a user sees "Sarah K. just claimed" AND the remaining count ticks down simultaneously, the urgency compounds.
+- Scale pulse at 1.18× (not 1.3× or larger) is the right magnitude for a stock counter — noticeable but not jarring. Whatnot uses ~1.1-1.2× on their counter pulses. Larger feels like an error; smaller gets missed.
+- CSS `transform: scale()` with inline style transitions (fast in 80ms, slow out 250ms) works cleanly without needing a keyframe. The asymmetric timing (fast snap up, slow settle) creates a satisfying "tick" feel.
+- Text-shadow glow on the flash (red when ≤5, amber otherwise) provides color-coded urgency feedback even in peripheral vision. The user doesn't need to read the number — the flash color tells them "this is getting scarce."
+- Distributing decrements ~40% Open / ~60% premium tiers means Open (with 10K+ supply) barely moves visually, while premium tiers (with 25-50 remaining) create visible scarcity pressure. This matches real buying patterns where premium tiers sell faster proportionally.
+- `useLiveTierRemaining` uses the existing `feedEvents` as its trigger, so no new timer/interval needed — the decrement cadence naturally matches the purchase simulation rate.
+- The hook had to be placed after `feedEvents` state declaration due to block-scoped variable ordering. TypeScript catches these before runtime.
+- Next cycle: Supreme (rotation).

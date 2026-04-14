@@ -646,3 +646,11 @@
 | 178 | supreme | 9.0+ | 9.0+ | 9.0+ | 9.0 | 9.0+ | 9.00+ | — | Beyond-9.0: saleroom ambient pulse (phase-reactive waveform heartbeat at viewport bottom) |
 
 **Cycle 178: Supreme saleroom ambient pulse.** Barely-visible SVG waveform fixed at viewport bottom representing the auction room's energy. Phase-reactive wave complexity: OPEN=1 wave (gentle sinusoid, team-color, 8s), CLOSING=2 waves (amber, 4s), CRITICAL=4 waves (red, 1.5s, thicker stroke), ENDED=flatline (white). translateX drift keyframe for subtle horizontal motion. The saleroom's acoustic energy rendered as a visual pulse — you feel it more than see it. z-5, hidden during purchasing.
+
+| 179 | broadcast | 9.0+ | 9.0+ | 9.0+ | 9.0+ | 9.0+ | 9.00+ | — | Beyond-9.0: producer cue scroll nudge + game flow momentum chart |
+
+**Cycle 179: Broadcast producer cue scroll nudge + game flow momentum chart.** See git v0.179 for full details. Logged retroactively.
+
+| 180 | arena | 9.0+ | 9.0+ | 9.0+ | 9.0+ | 9.0+ | 9.00+ | — | Beyond-9.0: live-decrementing tier remaining with Whatnot-style purchase flash |
+
+**Cycle 180: Arena live-decrementing tier remaining.** `useLiveTierRemaining` hook tracks per-tier stock that decrements when feed events fire. On each decrement, the affected tier's remaining text does a scale pulse (1.18× over 80ms, settles over 250ms) with contextual text-shadow glow (red when ≤5 remaining, amber otherwise). The tier cards now show dynamic live counts instead of static mock data. Stock distribution: ~40% of simulated sales go to Open tier (largest inventory), ~60% distributed randomly among premium tiers. Low-stock thresholds (≤5 = red `LEFT!`, ≤10 = amber) now react to live counts. This connects social proof (floating toasts, live feed) directly to the scarcity signal (remaining count) at the exact decision point. The most fundamental live commerce pattern: Whatnot/TikTok Shop both show stock visibly ticking down. Distinctly Arena: Supreme whispers supply changes institutionally, Broadcast editorializes them — Arena makes stock movement raw, visible, and anxiety-inducing.

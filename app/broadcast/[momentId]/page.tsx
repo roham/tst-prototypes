@@ -232,6 +232,19 @@ export default function BroadcastPage() {
               {moment.context}
             </p>
           </div>
+
+          {/* Hero countdown progress bar — thin line at very bottom */}
+          {!countdown.isEnded && (
+            <div className="absolute bottom-0 left-0 right-0 z-30 h-[2px] bg-white/[0.06]">
+              <div
+                className="h-full transition-all duration-1000 ease-linear"
+                style={{
+                  width: `${Math.min(100, (countdown.totalSeconds / ((SALE_DURATION_MS[momentId] ?? 720000) / 1000)) * 100)}%`,
+                  background: `linear-gradient(90deg, ${moment.teamColors.primary}, ${moment.teamColors.secondary || moment.teamColors.primary})`,
+                }}
+              />
+            </div>
+          )}
         </section>
 
         {/* ━━━ EDITORIAL NARRATIVE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
@@ -251,7 +264,14 @@ export default function BroadcastPage() {
             className="text-lg leading-[1.8] text-[#8892A7] md:text-xl md:leading-[1.85]"
             style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
           >
-            {moment.historicalNote}
+            {/* Drop cap — magazine editorial style */}
+            <span
+              className="float-left mr-2 text-[3.5rem] leading-[0.8] font-bold text-white/80 mt-1"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              {moment.historicalNote.charAt(0)}
+            </span>
+            {moment.historicalNote.slice(1)}
           </p>
 
           {/* ESPN-style stat breakdown */}
@@ -320,7 +340,7 @@ export default function BroadcastPage() {
             <button
               onClick={proto.purchase}
               disabled={isPurchasing || countdown.isEnded}
-              className="group relative w-full max-w-md overflow-hidden rounded-lg border px-8 py-4 text-center text-base font-semibold tracking-wide transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 sm:text-lg"
+              className="group relative w-full max-w-md overflow-hidden rounded-lg border px-8 py-4 text-center text-base font-semibold tracking-wide transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 sm:text-lg"
               style={{
                 borderColor: isPurchasing
                   ? 'rgba(255,255,255,0.12)'
@@ -334,12 +354,16 @@ export default function BroadcastPage() {
                 if (!isPurchasing && !countdown.isEnded) {
                   (e.currentTarget as HTMLElement).style.boxShadow =
                     `0 0 32px rgba(${rgb},0.28), 0 0 80px rgba(${rgb},0.10)`;
+                  (e.currentTarget as HTMLElement).style.backgroundColor =
+                    `rgba(${rgb},0.08)`;
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isPurchasing && !countdown.isEnded) {
                   (e.currentTarget as HTMLElement).style.boxShadow =
                     `0 0 20px rgba(${rgb},0.12), 0 0 60px rgba(${rgb},0.06)`;
+                  (e.currentTarget as HTMLElement).style.backgroundColor =
+                    'rgba(11,14,20,0.92)';
                 }
               }}
             >
@@ -390,7 +414,7 @@ function TierCard({
   return (
     <button
       onClick={onSelect}
-      className="group relative flex flex-col items-start rounded-lg border p-4 text-left transition-all duration-200 md:p-5"
+      className="group relative flex flex-col items-start rounded-lg border p-4 text-left transition-all duration-200 overflow-hidden md:p-5"
       style={{
         borderColor: isSelected ? teamColor : 'rgba(255,255,255,0.06)',
         backgroundColor: isSelected
@@ -401,6 +425,14 @@ function TierCard({
           : 'none',
       }}
     >
+      {/* Team-color top accent when selected */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[2px] transition-opacity duration-300"
+        style={{
+          backgroundColor: teamColor,
+          opacity: isSelected ? 1 : 0,
+        }}
+      />
       {/* Tier name */}
       <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">
         {tier.tier}

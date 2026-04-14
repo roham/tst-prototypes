@@ -707,14 +707,70 @@ const TIER_COLOR: Record<string, string> = {
   Ultimate: '#F59E0B',
 };
 
+/* ─── Live Bidder Indicators — other users "selecting" each tier ── */
+
+function useTierBidders(tierCount: number) {
+  // Seed per-tier bidder counts: Open has most, Ultimate fewest
+  const baseCounts = useRef(
+    Array.from({ length: tierCount }, (_, i) => Math.max(2, Math.floor(18 / (i + 1)) + Math.floor(Math.random() * 5)))
+  );
+  const [counts, setCounts] = useState<number[]>(baseCounts.current);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCounts((prev) =>
+        prev.map((c, i) => {
+          const drift = Math.floor(Math.random() * 3) - 1; // -1, 0, or +1
+          const min = i === 0 ? 5 : Math.max(1, 3 - i);
+          return Math.max(min, c + drift);
+        })
+      );
+    }, 2200 + Math.random() * 1800);
+    return () => clearInterval(id);
+  }, []);
+
+  return counts;
+}
+
+function BidderDots({ count, color }: { count: number; color: string }) {
+  const shown = Math.min(count, 5);
+  return (
+    <div className="flex items-center -space-x-1">
+      {Array.from({ length: shown }, (_, i) => (
+        <div
+          key={i}
+          className="h-[6px] w-[6px] rounded-full border border-[#0B0E14]"
+          style={{
+            backgroundColor: color,
+            opacity: 0.4 + (i / shown) * 0.4,
+            animation: `arena-bidder-pulse 1.5s ease-in-out ${i * 0.2}s infinite`,
+          }}
+        />
+      ))}
+      {count > 5 && (
+        <span
+          className="ml-0.5 text-[8px] font-bold tabular-nums"
+          style={{ color, opacity: 0.5 }}
+        >
+          +{count - 5}
+        </span>
+      )}
+    </div>
+  );
+}
+
 function RarityCards({
   tiers,
   selectedIdx,
   onSelect,
+  bidderCounts,
+  isEnded,
 }: {
   tiers: RarityTier[];
   selectedIdx: number;
   onSelect: (idx: number) => void;
+  bidderCounts: number[];
+  isEnded: boolean;
 }) {
   return (
     <div className="flex gap-2 overflow-x-auto px-4 pb-4" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
@@ -723,6 +779,7 @@ function RarityCards({
         const isSelected = idx === selectedIdx;
         const isLow = tier.tier !== 'Open' && tier.remaining <= 5;
         const isUrgent = tier.tier !== 'Open' && tier.remaining <= 10;
+        const bidders = bidderCounts[idx] ?? 0;
 
         return (
           <button
@@ -771,6 +828,19 @@ function RarityCards({
                isLow ? `${tier.remaining} LEFT!` :
                `${tier.remaining} of ${tier.size}`}
             </span>
+
+            {/* Live bidder indicator — auction energy */}
+            {!isEnded && bidders > 0 && (
+              <div className="mt-1.5 flex items-center gap-1">
+                <BidderDots count={bidders} color={color} />
+                <span
+                  className="text-[8px] font-semibold uppercase tracking-wider tabular-nums"
+                  style={{ color, opacity: 0.45 }}
+                >
+                  {bidders} selecting
+                </span>
+              </div>
+            )}
           </button>
         );
       })}
@@ -1114,6 +1184,7 @@ export default function ArenaPage({
   const countdown = useCountdown(SALE_DURATION_MS[momentId] ?? 12 * 60 * 1000);
   const proto = usePrototypeState(momentId);
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
+  const tierBidders = useTierBidders(moment?.rarityTiers.length ?? 4);
 
   /* ── Live feed state ────────────────────────────────────────── */
   const [feedEvents, setFeedEvents] = useState<PurchaseEvent[]>([]);
@@ -1521,6 +1592,8 @@ export default function ArenaPage({
           tiers={moment.rarityTiers}
           selectedIdx={selectedTierIdx}
           onSelect={setSelectedTierIdx}
+          bidderCounts={tierBidders}
+          isEnded={countdown.isEnded}
         />
       </div>
 

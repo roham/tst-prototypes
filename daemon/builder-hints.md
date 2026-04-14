@@ -642,3 +642,12 @@
 - The 108×108 container with a 96px-diameter ring generously frames the 32px edition number text. The "/ 5,000" text extends past the ring edges, which is intentional — the ring frames the primary number, not the metadata.
 - All 3 W screens now have unique authentication/prestige elements: Supreme (draw-in ring seal), Broadcast (wax seal SVG emboss on certificate), Arena (competition stats — Top X% speed). Each validates the purchase in the direction's language.
 - Next cycle: Broadcast (rotation). Broadcast W screen could use a subtle "broadcast received" static/snow effect on reveal, or the certificate card could have an animated gradient border (prestige shimmer).
+
+## Cycle 73 Learnings
+- Traveling glow inside `overflow-hidden` is the cleanest card shimmer technique — no complex mask/clip-path needed. The glow naturally illuminates card edges as it passes, creating an organic edge-lighting effect.
+- 30% of card width for the glow spot size is the sweet spot — large enough to register as the glow passes the edge, small enough that it doesn't illuminate the entire card at once.
+- `blur(16px)` + 10% opacity is subtle enough for prestige — it's a whisper of light, not a beacon. Higher opacity (20%+) made the glow feel like a bug, not a feature.
+- 6s cycle with `ease-in-out` creates graceful acceleration at corners — the glow slows as it rounds each corner, like a light on a motorized track.
+- The animation coordinates: -15% to 85% (not 0% to 100%) prevents the glow from being centered on the card edge — it peeks in from outside, creating a more natural light source.
+- The shimmer complements the existing wax seal (static prestige mark) + certificate header (typography prestige). Three layers of authentication: typography → seal → light.
+- Next cycle: Arena (rotation). Arena W screen could use a subtle jumbotron pixel grid texture behind the "YOU'RE IN!" text, or a "confetti cannon" burst that radiates from center.

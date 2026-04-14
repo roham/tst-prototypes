@@ -147,3 +147,5 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 ## Cycle 71 | Direction: Arena | Score: 9.00 (beyond-9.0 polish) | Built: W screen crowd roar EQ bars — 24 equalizer bars spike dramatically behind "YOU'RE IN!" on reveal (1.2s staggered), then settle to idle pulse. Center bars teal (#00E5A0), outer bars team-color. 20% opacity so they're atmospheric, not distracting. | Time: 10:05
 
 ## Cycle 72 | Direction: Supreme | Score: 9.00 (beyond-9.0 polish) | Built: W screen authentication seal — thin SVG ring (r=48, 1px stroke) draws itself around the edition number after the slot-machine counter locks (1.6s delay). 4 cardinal tick marks for notarization detail. Team-color glow pulse on complete. Like Apple Face ID success ring or a notary stamp. | Time: 10:25
+
+## Cycle 73 | Direction: Broadcast | Score: 9.00 (beyond-9.0 polish) | Built: W screen certificate prestige border shimmer — radial team-color glow (30% of card, blur 16px, 10% opacity) travels clockwise around card edges on 6s cycle. Clipped by overflow-hidden for edge-lighting effect. Sotheby's/Christie's premium certificate energy. | Time: 10:40

@@ -614,6 +614,11 @@ body {
   50% { height: 90%; }
 }
 
+@keyframes arena-bidder-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.15); }
+}
+
 /* Arena jumbotron pixel grid — dot matrix overlay on hero (arena LED screen feel) */
 .arena-pixel-grid::after {
   content: '';

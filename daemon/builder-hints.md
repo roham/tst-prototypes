@@ -75,3 +75,11 @@
 - Serial number as inline `#N / 5,000` with thin underline feels more luxury than bordered card.
 - The tag v0.10 was already used — daemon must check existing tags or increment from last known.
 - W screen phase is high-impact: Emotion +1.5, Interaction +1.0. Confirms cycle-log prediction.
+
+## Cycle 11 Learnings
+- 4-phase staggered reveal (hero→details→cert→share) is much more cinematic than single fade-in. Interaction jumped from 4.5 → 6.5.
+- Hero action image at 12% opacity with team-color radial wash creates cinematic atmosphere.
+- "COLLECTED" in Oswald with team-color accents feels like ESPN breaking news — perfect for Broadcast.
+- Certificate card benefits from backdrop-blur + team-color top accent — museum-grade feel.
+- Removed QR placeholder — it was filler, not value. The date stamp + blockchain verification line is cleaner.
+- Broadcast W screen was the weakest (4.5 interaction) — now 6.5. W screen phase delivering as expected.

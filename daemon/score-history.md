@@ -176,3 +176,14 @@
 
 | 34 | supreme | 9.0 | 8.5 | 9.0 | 8.5 | 9.0 | 8.80 | +0.22 | Visual+emotion: action image depth layer, historicalNote accent, premium share buttons |
 | 35 | broadcast | 9.0 | 8.5 | 8.5 | 8.5 | 9.0 | 8.70 | +0.12 | Visual: stat card top accents, section rule, premium share buttons |
+| 36 | arena | 9.0 | 8.5 | 9.0 | 9.0 | 9.0 | 8.88 | +0.23 | Visual+emotion: hero rule, W screen date+context, premium share buttons |
+
+### Full Scorecard — After Cycle 36 (all directions touched — REFINEMENT round 6 complete)
+
+| Direction | Visual | Conversion | Emotion | Interaction | Purity | Weighted |
+|-----------|--------|------------|---------|-------------|--------|----------|
+| Supreme | 9.0 | 8.5 | 9.0 | 8.5 | 9.0 | **8.80** |
+| Broadcast | 9.0 | 8.5 | 8.5 | 8.5 | 9.0 | **8.70** |
+| Arena | 9.0 | 8.5 | 9.0 | 9.0 | 9.0 | **8.88** |
+
+**REFINEMENT round 6 complete.** All 3 directions now have Visual at 9.0. Arena leads (8.88) with 3 dimensions at 9.0. Supreme at 8.80 with 2 at 9.0. Broadcast weakest (8.70) — Emotion (8.5) and Interaction (8.5) drag. The remaining frontier is Conversion (8.5 across all 3) and Broadcast Emotion/Interaction. Next round starts with Supreme.

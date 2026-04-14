@@ -307,3 +307,13 @@
 - Visual jumped 8.5→9.0 from stat accents + section rule. Small visual details compound when the foundation is already strong.
 - Broadcast Emotion (8.5) is now the weakest non-Conversion dim. Could add a more impactful emotional element — perhaps a subtle ambient video or more dramatic hero treatment.
 - Next cycle: Arena (rotation). Arena at 8.65 — Visual (8.5) and Emotion (8.5) are the targets.
+
+## Cycle 36 Learnings
+- Team-color gradient rules between sections (hero→feed, hero→content) are a cheap, high-impact visual polish across all directions. All 3 now have them.
+- Date stamp + matchup context on W screens is essential for screenshot permanence. Supreme and Arena now have it; Broadcast already had it via the certificate card's date field.
+- Share buttons with icon glyphs (𝕏, ◎, ⎘) + team-color hover are now standardized across all 3 directions. Consistency in shared patterns, variation in direction-specific styling.
+- Arena Visual jumped 8.5→9.0 and Emotion jumped 8.5→9.0 from the hero rule + W screen enrichment. These are the same patterns that worked for Supreme in cycle 34.
+- All 3 directions now have Visual at 9.0. The remaining frontier is Conversion (8.5 across all 3).
+- Conversion at 8.5 is the universal ceiling. To push to 9.0, need something structural: maybe Apple Pay / stored-payment simulation, or a more aggressive sticky CTA, or CTA copy A/B testing.
+- Broadcast Emotion (8.5) is the single weakest non-Conversion dim. The narrative content is rich but the emotional framing could be more impactful — maybe a more dramatic pull quote treatment.
+- Next cycle: Supreme (rotation). Target Conversion (8.5) — the universal ceiling.

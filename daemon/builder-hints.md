@@ -478,3 +478,12 @@
 - Disabled during ENDED (hero is grayscale — shimmer would break the "lights off" mood) and purchasing (hero is blurred — focus should be on the CTA, not the name).
 - Supreme now has 5 simultaneous visual polish systems: parallax (scroll depth), Ken Burns (slow zoom), light sweep (hero diagonal), breathing vignette (edge glow), and name shimmer (text foil). None are obvious alone — together they create a living, premium display.
 - Next cycle: Broadcast (rotation). Broadcast could use an editorial "byline" reveal animation, or a subtle parchment/paper texture on the narrative section.
+
+## Cycle 55 Learnings
+- Anamorphic lens flares are THE defining visual artifact of cinematic broadcast production. A thin horizontal streak immediately reads as "professional camera" without any additional context.
+- The flare is 2px tall but extends 120% width (-10% left to -10% right overshoot) — the extra width prevents hard edge cutoff. The center is white (35%) and edges are team-color (15%), so the streak feels warm and adapted per moment.
+- 12s cycle is the sweet spot — fast enough to notice (you'll see 4-5 passes per minute) but slow enough to feel natural, not mechanical. The drift goes top-to-bottom, pausing at 70% height before fading.
+- z-17 stacks correctly: grain (::after, z-auto) → scanlines (::before, z-16) → flare (z-17) → text (z-20). Each broadcast atmosphere layer occupies its own z-plane.
+- Opacity keyframing (0 → 1 at 10%, hold → 0 at 90%) prevents the streak from appearing/disappearing abruptly. The gradual fade mimics a camera slowly panning past a light source.
+- Broadcast hero now has 4 simultaneous atmosphere effects: Ken Burns drift, film grain, CRT scanlines, and anamorphic flare. All are classic broadcast/cinema production techniques, each operating independently.
+- Next cycle: Arena (rotation). Arena could use a jumbotron pixel grid effect, or a "wave" animation through the purchase feed items.

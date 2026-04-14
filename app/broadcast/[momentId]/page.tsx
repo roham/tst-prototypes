@@ -900,6 +900,16 @@ export default function BroadcastPage() {
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [proto.state]);
 
+  // "SOLD TO" lower-third — broadcast auction announcement on purchase confirmation
+  const [soldToVisible, setSoldToVisible] = useState(false);
+  useEffect(() => {
+    if (proto.state === 'purchasing' && purchaseStage === 2) {
+      setSoldToVisible(true);
+    } else if (proto.state !== 'purchasing') {
+      setSoldToVisible(false);
+    }
+  }, [proto.state, purchaseStage]);
+
   // Sticky bottom bar: show when main CTA scrolls out of viewport
   useEffect(() => {
     const el = ctaRef.current;
@@ -1001,6 +1011,63 @@ export default function BroadcastPage() {
 
       {/* ━━━ FEED CUT — camera switch static band on phase transition ━━━ */}
       {feedCut && <div className="broadcast-feed-cut" />}
+
+      {/* ━━━ "SOLD TO" LOWER-THIRD — broadcast auction announcement on confirmation ━━━ */}
+      <div
+        className="fixed z-[56] pointer-events-none"
+        style={{
+          bottom: '18%',
+          left: 0,
+          right: 0,
+          transform: soldToVisible ? 'translateX(0)' : 'translateX(-105%)',
+          opacity: soldToVisible ? 1 : 0,
+          transition: soldToVisible
+            ? 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease-out'
+            : 'transform 0.4s ease-in, opacity 0.3s ease-in',
+        }}
+      >
+        <div className="flex items-stretch max-w-[380px]">
+          {/* Team-color accent bar */}
+          <div
+            className="w-[3px] shrink-0"
+            style={{ backgroundColor: moment.teamColors.primary }}
+          />
+          {/* Content */}
+          <div
+            className="flex-1 px-4 py-2.5"
+            style={{
+              backgroundColor: 'rgba(11,14,20,0.92)',
+              backdropFilter: 'blur(12px)',
+              borderBottom: `1px solid rgba(${rgb},0.15)`,
+            }}
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <span
+                className="text-[9px] font-bold uppercase tracking-[0.25em] px-1.5 py-0.5"
+                style={{
+                  backgroundColor: `rgba(${rgb},0.15)`,
+                  color: moment.teamColors.primary,
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                }}
+              >
+                SOLD
+              </span>
+              <span className="text-[9px] uppercase tracking-[0.2em] text-white/30">
+                Live Auction Result
+              </span>
+            </div>
+            <p
+              className="text-[13px] text-white/80 tracking-wide"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 600 }}
+            >
+              {moment.player} &middot; {selectedTier.tier} Edition
+            </p>
+            <p className="text-[10px] text-white/30 mt-0.5 font-mono tabular-nums">
+              Acquired for ${selectedTier.price} &middot; Edition #{(moment.editionsClaimed + 1).toLocaleString()}
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* ━━━ CHANNEL SWITCH — TV static flash + channel number on tier change ━━━ */}
       {channelSwitch !== null && (

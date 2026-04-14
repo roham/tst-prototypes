@@ -516,3 +516,13 @@
 - The team-color accent bar (3px vertical) + dot + Oswald text is consistent with the broadcast lower-third's left-edge accent — same visual language, different position.
 - Broadcast hero now has 5 graphic overlay elements: score ticker (top), network bug (corner), instant replay tag (mid-right), lower-third (bottom-left), and lens flare (drifting). Together with film grain and scanlines, the broadcast illusion is nearly complete.
 - Next cycle: Arena (rotation). Arena could use a "timeout" or "challenge" themed overlay, or animated seat-filling visualization.
+
+## Cycle 59 Learnings
+- Shot clock ring (circular SVG) is the quintessential arena/basketball UI element — immediately reads as "game clock" without any label. The depleting ring creates visceral urgency.
+- `strokeDasharray` + `strokeDashoffset` is the standard SVG technique for circular progress. The formula `offset = circumference * (1 - fraction)` depletes clockwise when combined with `rotate(-90 cx cy)`.
+- 58×58px ring at 25% opacity is subtle enough to sit behind the countdown text without competing — it's environmental context, not a chart.
+- Using `totalSeconds / (12 * 60)` as the fraction (assuming 12min default) keeps the ring proportional to total drop time.
+- Color transitions through phases (team-color → amber → red) use CSS `transition: stroke 0.5s` — smooth, not jarring.
+- Critical pulse at 0.8s (faster than the 1.2s vignette pulse) gives the shot clock extra panic energy. The ring literally throbs.
+- Arena now has a basketball-specific urgency element that no other direction should have. Broadcast has its score ticker; Supreme has its thin urgency bar; Arena has its shot clock. Each direction's timer visualization matches its identity.
+- Next cycle: Supreme (rotation). Supreme could use a subtle "edition counter" progress visualization, or an ambient gradient color temperature shift as urgency increases.

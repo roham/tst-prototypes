@@ -268,6 +268,8 @@
 | 56 | arena | 9.0 | 9.0 | 9.0+ | 9.0+ | 9.0+ | 9.00+ | — | Beyond-9.0: buyer heat map (geographic purchase visualization) |
 
 | 57 | supreme | 9.0+ | 9.0 | 9.0+ | 9.0 | 9.0 | 9.00+ | — | Beyond-9.0: ambient particle drift (museum dust motes) |
+| 58 | broadcast | 9.0+ | 9.0 | 9.0+ | 9.0 | 9.0+ | 9.00+ | — | Beyond-9.0: INSTANT REPLAY broadcast overlay |
+| 59 | arena | 9.0 | 9.0 | 9.0+ | 9.0+ | 9.0+ | 9.00+ | — | Beyond-9.0: shot clock ring countdown |
 
 | 58 | broadcast | 9.0+ | 9.0 | 9.0+ | 9.0 | 9.0+ | 9.00+ | — | Beyond-9.0: INSTANT REPLAY broadcast overlay |
 

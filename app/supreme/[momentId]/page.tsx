@@ -2069,6 +2069,44 @@ export default function SupremePage() {
               Secondary
             </span>
           </div>
+          {/* Value trend sparkline — implied secondary value rising with demand */}
+          {/* At real auction houses, lot estimates get revised upward when interest is high */}
+          <div className="flex items-center justify-center gap-1.5 mt-1.5">
+            <svg width="48" height="12" viewBox="0 0 48 12" fill="none" style={{ opacity: 0.15 }}>
+              {/* Upward trend line — value increasing as claimed % grows */}
+              <polyline
+                points={(() => {
+                  const pct = claimed / moment.editionSize;
+                  // Generate 8 points showing upward value trend
+                  const pts = Array.from({ length: 8 }, (_, i) => {
+                    const x = (i / 7) * 48;
+                    // Base upward curve with slight noise
+                    const progress = i / 7;
+                    const noise = (moment.id.charCodeAt(i % moment.id.length) % 5) * 0.3;
+                    const y = 11 - (progress * pct * 8 + noise);
+                    return `${x.toFixed(1)},${Math.max(1, Math.min(11, y)).toFixed(1)}`;
+                  });
+                  return pts.join(' ');
+                })()}
+                stroke={tierAccentColor}
+                strokeWidth="1"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+              {/* Current value dot — pulsing at the trend tip */}
+              <circle
+                cx="48"
+                cy={Math.max(1, 11 - (claimed / moment.editionSize) * 8).toString()}
+                r="1.5"
+                fill={tierAccentColor}
+                style={{ opacity: 0.7 }}
+              />
+            </svg>
+            <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/10">
+              {claimed / moment.editionSize > 0.5 ? '↑ Rising' : 'Tracking'}
+            </span>
+          </div>
         </div>
       )}
 

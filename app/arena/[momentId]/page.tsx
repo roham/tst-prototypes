@@ -369,6 +369,37 @@ function CrowdNoiseEQ({ teamColor, isActive }: { teamColor: string; isActive: bo
   );
 }
 
+/* ─── Arena Camera Flash — brief white burst simulating crowd cameras ── */
+
+function ArenaCameraFlash({ events }: { events: PurchaseEvent[] }) {
+  const [flash, setFlash] = useState(false);
+  const prevLen = useRef(0);
+
+  useEffect(() => {
+    if (events.length > prevLen.current && prevLen.current > 0) {
+      // Only flash ~40% of the time for natural randomness
+      if (Math.random() < 0.4) {
+        setFlash(true);
+        const t = setTimeout(() => setFlash(false), 80);
+        prevLen.current = events.length;
+        return () => clearTimeout(t);
+      }
+    }
+    prevLen.current = events.length;
+  }, [events.length]);
+
+  return (
+    <div
+      className="pointer-events-none fixed inset-0 z-[22] transition-opacity"
+      style={{
+        backgroundColor: 'white',
+        opacity: flash ? 0.04 : 0,
+        transitionDuration: flash ? '0ms' : '120ms',
+      }}
+    />
+  );
+}
+
 /* ─── Panic Banner ─────────────────────────────────────────────── */
 
 function PanicBanner({ claimed, total, isCritical, isClosing }: {
@@ -1005,6 +1036,9 @@ export default function ArenaPage({
 
       {/* ─── Arena LED flash — team-color edge pulse on each purchase ─── */}
       {!countdown.isEnded && <ArenaLedFlash events={feedEvents} teamColor={moment.teamColors.primary} />}
+
+      {/* ─── Camera flash — brief white burst simulating crowd cameras ─── */}
+      {!countdown.isEnded && <ArenaCameraFlash events={feedEvents} />}
 
       {/* ─── Purchase streak badge — combo multiplier on rapid buys ─── */}
       {!countdown.isEnded && <StreakBadge streak={streak} visible={streakVisible} teamColor={moment.teamColors.primary} />}

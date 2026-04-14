@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { getMoment, SALE_DURATION_MS } from '@/lib/mock-data';
+import { getMoment, SALE_DURATION_MS, MOMENTS } from '@/lib/mock-data';
 import type { Moment } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
 import { usePrototypeState } from '@/lib/use-prototype-state';
@@ -1392,6 +1392,45 @@ export default function SupremePage() {
           {moment.historicalNote.split('.')[0]}.
         </p>
       </div>
+
+      {/* ============================================================= */}
+      {/* RESERVE STATUS — auction house reserve price indicator */}
+      {/* ============================================================= */}
+      {(() => {
+        const reserveThreshold = Math.floor(moment.editionSize * 0.2);
+        const reserveMet = claimed >= reserveThreshold;
+        return (
+          <div className="flex items-center justify-center gap-2 px-5 py-2 supreme-info-enter">
+            {/* Status dot — red→green transition */}
+            <div
+              className="h-[5px] w-[5px] rounded-full transition-all duration-700 ease-out"
+              style={{
+                backgroundColor: reserveMet ? '#00E5A0' : '#EF4444',
+                boxShadow: reserveMet
+                  ? '0 0 6px rgba(0,229,160,0.5), 0 0 12px rgba(0,229,160,0.2)'
+                  : '0 0 4px rgba(239,68,68,0.3)',
+              }}
+            />
+            <span
+              className="text-[8px] font-mono uppercase tracking-[0.35em] transition-colors duration-700"
+              style={{
+                color: reserveMet ? 'rgba(0,229,160,0.4)' : 'rgba(239,68,68,0.35)',
+              }}
+            >
+              {reserveMet ? 'Reserve met' : 'Reserve not met'}
+            </span>
+            {/* Progress toward reserve — thin line only when not yet met */}
+            {!reserveMet && !isEnded && (
+              <>
+                <span className="text-[7px] font-mono text-white/8">·</span>
+                <span className="text-[8px] font-mono tabular-nums text-white/12">
+                  {claimed}/{reserveThreshold}
+                </span>
+              </>
+            )}
+          </div>
+        );
+      })()}
 
       {/* ============================================================= */}
       {/* INFO STRIP — timer + edition counter */}

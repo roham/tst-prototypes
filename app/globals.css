@@ -1245,3 +1245,26 @@ body {
   0% { opacity: 1; }
   100% { opacity: 0; pointer-events: none; }
 }
+
+/* Arena CO2 fog — slow-rolling haze near hero bottom like NBA player intro fog machines */
+@keyframes arena-fog-drift-1 {
+  0%   { transform: translateX(-10%) scaleX(1.2); opacity: 0.5; }
+  25%  { transform: translateX(5%) scaleX(1.3); opacity: 0.7; }
+  50%  { transform: translateX(15%) scaleX(1.1); opacity: 0.55; }
+  75%  { transform: translateX(0%) scaleX(1.25); opacity: 0.65; }
+  100% { transform: translateX(-10%) scaleX(1.2); opacity: 0.5; }
+}
+
+@keyframes arena-fog-drift-2 {
+  0%   { transform: translateX(10%) scaleX(1.1); opacity: 0.4; }
+  30%  { transform: translateX(-8%) scaleX(1.3); opacity: 0.6; }
+  60%  { transform: translateX(5%) scaleX(1.15); opacity: 0.45; }
+  100% { transform: translateX(10%) scaleX(1.1); opacity: 0.4; }
+}
+
+@keyframes arena-fog-drift-3 {
+  0%   { transform: translateX(0%) scaleX(1.3); opacity: 0.35; }
+  35%  { transform: translateX(12%) scaleX(1.15); opacity: 0.55; }
+  65%  { transform: translateX(-5%) scaleX(1.25); opacity: 0.4; }
+  100% { transform: translateX(0%) scaleX(1.3); opacity: 0.35; }
+}

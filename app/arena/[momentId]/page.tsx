@@ -1864,6 +1864,40 @@ function CourtLines({ teamColor, isEnded }: { teamColor: string; isEnded: boolea
   );
 }
 
+/* ─── Arena CO2 Fog — low-lying atmospheric haze like NBA player intros ── */
+/* Every NBA arena fires CO2 fog machines during player introductions —     */
+/* thick low-lying clouds that hug the court. Three staggered fog layers    */
+/* drift at different speeds with team-color tinting, creating atmospheric  */
+/* depth near the hero section bottom. Hidden when drop ends.              */
+
+function ArenaCO2Fog({ teamColor, isActive }: { teamColor: string; isActive: boolean }) {
+  if (!isActive) return null;
+
+  const layers = [
+    { animation: 'arena-fog-drift-1 14s ease-in-out infinite', bottom: '-2%', height: '28%', opacity: 0.06 },
+    { animation: 'arena-fog-drift-2 18s ease-in-out infinite', bottom: '-4%', height: '22%', opacity: 0.04 },
+    { animation: 'arena-fog-drift-3 11s ease-in-out infinite', bottom: '0%', height: '18%', opacity: 0.05 },
+  ];
+
+  return (
+    <div className="pointer-events-none absolute inset-0 z-[5] overflow-hidden">
+      {layers.map((layer, i) => (
+        <div
+          key={i}
+          className="absolute left-[-15%] right-[-15%]"
+          style={{
+            bottom: layer.bottom,
+            height: layer.height,
+            background: `radial-gradient(ellipse 80% 100% at 50% 100%, ${teamColor}${Math.round(layer.opacity * 255).toString(16).padStart(2, '0')} 0%, rgba(255,255,255,${layer.opacity * 0.6}) 30%, transparent 70%)`,
+            filter: 'blur(20px)',
+            animation: layer.animation,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 /* ─── Arena Laser Show — criss-crossing team-color laser beams in hero ── */
 
 function ArenaLaserShow({ teamColor, isActive }: { teamColor: string; isActive: boolean }) {
@@ -2371,6 +2405,9 @@ export default function ArenaPage({
         )}
         {/* Arena laser show — criss-crossing team-color beams like NBA arena light rig */}
         <ArenaLaserShow teamColor={moment.teamColors.primary} isActive={!countdown.isEnded} />
+
+        {/* Arena CO2 fog — low-lying atmospheric haze like NBA player intro fog machines */}
+        <ArenaCO2Fog teamColor={moment.teamColors.primary} isActive={!countdown.isEnded} />
 
         {/* Dark overlay for legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/40 to-transparent" />

@@ -1263,3 +1263,11 @@
 - The 4-state gavel system (0/1/2/3) is clean but approaching the limit — further auction timeline additions should use a different mechanism (e.g., CSS-only timed overlays) rather than expanding the state machine.
 - At this level of Supreme polish, the most impactful additions are ones that complete spatial metaphors (gallery viewing) rather than adding new UI elements.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 149 Learnings
+- Analyst commentary adds a "voice" layer missing from the broadcast editorial. The page now has: narration (omniscient), data (stats), analysis (expert opinion), comparison (tale of the tape). Four distinct editorial modes.
+- Using real analyst names (Richard Jefferson, JJ Redick, Chiney Ogwumike) grounds the broadcast in reality and adds credibility over generic "Analyst" labels.
+- Matching analyst personas to moments (RJ's player perspective on Bam, JJ's analytical breakdown of Jokić, Chiney's eye-test assessment of SGA) makes each analyst card feel authentic rather than templated.
+- The card sits naturally in the editorial flow because it uses the same visual language as other broadcast elements: lower-third badge header, team-color accent, Georgia serif quotes.
+- At this stage, Broadcast's editorial section is the most complete — future improvements should focus on the transaction area or W screen rather than adding more editorial content.
+- Next cycle: Arena (rotation).

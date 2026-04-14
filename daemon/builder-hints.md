@@ -692,3 +692,13 @@
 - 2s duration matches the pacing of other Arena effects (buzzer is 2.2s, LED flash is 0.35s, camera flash is 0.08s). Phase transitions are significant but not as dramatic as the final buzzer.
 - The `useArenaTimeout` hook follows the same pattern as `useArenaBuzzer` — useRef to track previous phase, fire once per transition, auto-cleanup timer. This pattern is now proven for all three directions.
 - Next cycle: Supreme (rotation). Supreme is at parity with the other two directions. Could explore: ambient audio visualizer (silent but visual), or a premium unboxing reveal on the hero image.
+
+## Cycle 78 Learnings
+- Price scramble/decrypt reveal is a conversion micro-interaction — the price feels "earned" and "decoded" rather than static. This is distinct from the existing slot-machine edition counter (W screen) — that reveals a number you've received, this reveals a price you're about to pay.
+- The left-to-right settling pattern (character i settles at `progress - i/length*0.4`) creates a natural cascade: `$` stays fixed, first digit locks, then cascading rightward. More premium than all-at-once reveal.
+- 500ms for tier switch, 600ms for initial page load — the initial reveal is slightly longer to build anticipation. Tier switch is faster because the user is actively browsing and shouldn't be slowed down.
+- The `usePriceScramble` hook separates concerns cleanly: it takes a price number, returns `{ display, isScrambling }`. The scramble string preserves `$`, `,`, `.` characters — only digits randomize.
+- Two separate useEffect hooks (one for price changes, one for mount) is cleaner than a combined effect that checks "is this the first render?" The mount effect runs once with a longer duration; the price-change effect tracks `prevPrice` via useRef.
+- The scramble integrates seamlessly with all CTA text variants: "OWN THIS MOMENT — $5", "CLOSING SOON — $5", "LAST CHANCE — $99". The static prefix text stays stable while the price portion scrambles.
+- This is Supreme's first CTA TEXT animation (all previous CTA enhancements were container-level: glow, bounce, ring, lock icon). The text itself coming alive adds a new dimension of interaction quality.
+- Next cycle: Broadcast (rotation). Broadcast could explore a dramatic editorial headline reveal animation, or a lower-third "Now Playing" tag on the hero that changes with the current phase.

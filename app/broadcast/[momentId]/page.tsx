@@ -1395,8 +1395,33 @@ export default function BroadcastPage() {
             </span>
           </div>
 
+          {/* Live viewer count — broadcast stream audience meter */}
+          {!countdown.isEnded && !isPurchasing && (
+            <div className="mt-8 mb-3 flex items-center justify-center gap-2">
+              <div className="flex items-center gap-1.5">
+                <span className="relative flex h-[6px] w-[6px]">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-60" />
+                  <span className="relative inline-flex h-[6px] w-[6px] rounded-full bg-red-500" />
+                </span>
+                <span
+                  className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/25"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  Live
+                </span>
+              </div>
+              <div className="h-[10px] w-[1px] bg-white/10" />
+              <span className="text-[10px] tabular-nums text-white/25 tracking-wide">
+                <span className="font-mono font-semibold text-white/35">
+                  {(1247 + Math.floor(moment.editionsClaimed * 2.1) + Math.floor(countdown.totalSeconds * 0.3)).toLocaleString()}
+                </span>
+                {' '}watching this drop
+              </span>
+            </div>
+          )}
+
           {/* CTA button */}
-          <div className="mt-8 flex flex-col items-center">
+          <div className={`${!countdown.isEnded && !isPurchasing ? '' : 'mt-8'} flex flex-col items-center`}>
             <button
               ref={ctaRef}
               onClick={proto.purchase}

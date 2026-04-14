@@ -1191,6 +1191,16 @@ export default function ArenaPage({
         }}
       />
 
+      {/* ─── Arena crowd wave — horizontal light band sweeps across page ─── */}
+      {!countdown.isEnded && (
+        <div
+          className="pointer-events-none fixed inset-0 z-[6] arena-crowd-wave"
+          style={{
+            background: `linear-gradient(180deg, transparent 0%, ${moment.teamColors.primary}06 45%, ${moment.teamColors.primary}10 50%, ${moment.teamColors.primary}06 55%, transparent 100%)`,
+          }}
+        />
+      )}
+
       {/* ─── Critical vignette — red edge glow when time is almost up ─── */}
       {isCritical && !countdown.isEnded && (
         <div

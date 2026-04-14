@@ -561,3 +561,15 @@ body {
   58% { opacity: 0; }
   100% { left: 110%; opacity: 0; }
 }
+
+/* Arena crowd wave — horizontal light band sweeps vertically down the page, like "the wave" at a basketball game */
+@keyframes arena-crowd-wave {
+  0% { transform: translateY(-100%); opacity: 0; }
+  5% { opacity: 1; }
+  45% { opacity: 1; }
+  50% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+.arena-crowd-wave {
+  animation: arena-crowd-wave 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

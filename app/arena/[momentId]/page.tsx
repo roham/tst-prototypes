@@ -14,8 +14,18 @@ const BUYER_NAMES = [
   'Charlotte G.', 'Aiden V.', 'Harper Q.', 'Lucas Z.', 'Ella Y.',
 ];
 
+const CITIES = [
+  'Miami', 'New York', 'LA', 'Chicago', 'Houston', 'Denver',
+  'Atlanta', 'Boston', 'Phoenix', 'Dallas', 'Portland', 'Toronto',
+  'Oakland', 'Detroit', 'Memphis', 'Charlotte', 'San Antonio',
+];
+
 function randomBuyer(): string {
   return BUYER_NAMES[Math.floor(Math.random() * BUYER_NAMES.length)];
+}
+
+function randomCity(): string {
+  return CITIES[Math.floor(Math.random() * CITIES.length)];
 }
 
 /* ─── Types ────────────────────────────────────────────────────── */
@@ -23,6 +33,7 @@ function randomBuyer(): string {
 interface PurchaseEvent {
   id: string;
   name: string;
+  city: string;
   edition: number;
 }
 
@@ -91,12 +102,90 @@ function LiveFeed({ events, teamColor }: { events: PurchaseEvent[]; teamColor?: 
               />
             )}
             <span className="text-white/70">{ev.name}</span>
+            <span className="text-white/30">{ev.city}</span>
             <span className="font-mono font-semibold text-[#00E5A0]">
               #{ev.edition.toLocaleString()}
             </span>
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+/* ─── Velocity Sparkline ──────────────────────────────────────── */
+
+function VelocitySparkline({ history }: { history: number[] }) {
+  if (history.length < 2) return null;
+  const max = Math.max(...history, 1);
+  const w = 60;
+  const h = 20;
+  const points = history.map((v, i) => {
+    const x = (i / (history.length - 1)) * w;
+    const y = h - (v / max) * h;
+    return `${x},${y}`;
+  }).join(' ');
+
+  return (
+    <svg width={w} height={h} className="mt-1.5 mx-auto" viewBox={`0 0 ${w} ${h}`}>
+      <polyline
+        points={points}
+        fill="none"
+        stroke="#00E5A0"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/* ─── Panic Banner ─────────────────────────────────────────────── */
+
+function PanicBanner({ claimed, total, isCritical, isClosing }: {
+  claimed: number;
+  total: number;
+  isCritical: boolean;
+  isClosing: boolean;
+}) {
+  const pct = (claimed / total) * 100;
+  const remaining = total - claimed;
+
+  let copy: string | null = null;
+  let color = '#F59E0B';
+
+  if (isCritical || remaining < 200) {
+    copy = `ALMOST GONE — ${remaining.toLocaleString()} LEFT`;
+    color = '#EF4444';
+  } else if (isClosing || pct >= 75) {
+    copy = `SELLING FAST — ${remaining.toLocaleString()} REMAINING`;
+    color = '#F59E0B';
+  }
+
+  if (!copy) return null;
+
+  return (
+    <div
+      className="mx-4 mb-3 flex items-center justify-center gap-2 rounded-lg py-2 px-3"
+      style={{
+        backgroundColor: `${color}10`,
+        border: `1px solid ${color}25`,
+        animation: isCritical ? 'urgency-pulse-fast 0.5s ease-in-out infinite' : undefined,
+      }}
+    >
+      <div
+        className="h-1.5 w-1.5 rounded-full animate-pulse flex-shrink-0"
+        style={{ backgroundColor: color }}
+      />
+      <span
+        className="text-[11px] font-bold uppercase tracking-[0.15em]"
+        style={{
+          fontFamily: 'var(--font-oswald), sans-serif',
+          color,
+        }}
+      >
+        {copy}
+      </span>
     </div>
   );
 }
@@ -112,6 +201,7 @@ function StatsBar({
   isClosing,
   isCritical,
   velocity,
+  velocityHistory,
 }: {
   claimed: number;
   total: number;
@@ -121,6 +211,7 @@ function StatsBar({
   isClosing: boolean;
   isCritical: boolean;
   velocity: number;
+  velocityHistory: number[];
 }) {
   const pct = Math.min(100, (claimed / total) * 100);
   const timeStr = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
@@ -175,6 +266,7 @@ function StatsBar({
         <p className="mt-0.5 text-center text-[10px] font-semibold uppercase tracking-widest text-white/40">
           Velocity
         </p>
+        <VelocitySparkline history={velocityHistory} />
       </div>
     </div>
   );
@@ -390,6 +482,7 @@ export default function ArenaPage({
       const newEvent: PurchaseEvent = {
         id: `${Date.now()}-${Math.random()}`,
         name: randomBuyer(),
+        city: randomCity(),
         edition: editionCounter.current,
       };
       setFeedEvents((prev) => [...prev.slice(-9), newEvent]);
@@ -414,11 +507,16 @@ export default function ArenaPage({
     };
   }, [moment]);
 
-  /* ── Velocity jitter ────────────────────────────────────────── */
+  /* ── Velocity jitter + history ──────────────────────────────── */
+  const [velocityHistory, setVelocityHistory] = useState<number[]>([14]);
   useEffect(() => {
     if (!moment) return;
     const id = setInterval(() => {
-      setLiveVelocity((v) => Math.max(1, v + Math.floor(Math.random() * 5) - 2));
+      setLiveVelocity((v) => {
+        const next = Math.max(1, v + Math.floor(Math.random() * 5) - 2);
+        setVelocityHistory((h) => [...h.slice(-11), next]);
+        return next;
+      });
     }, 4000);
     return () => clearInterval(id);
   }, [moment]);
@@ -566,10 +664,19 @@ export default function ArenaPage({
         isClosing={isClosing}
         isCritical={isCritical}
         velocity={liveVelocity}
+        velocityHistory={velocityHistory}
+      />
+
+      {/* ─── Panic Banner ─── */}
+      <PanicBanner
+        claimed={liveClaimed}
+        total={moment.editionSize}
+        isCritical={isCritical}
+        isClosing={isClosing}
       />
 
       {/* ─── CTA Section ─── */}
-      <div className="px-4 pt-4">
+      <div className="px-4 pt-1">
         <button
           onClick={proto.purchase}
           disabled={proto.state === 'purchasing'}

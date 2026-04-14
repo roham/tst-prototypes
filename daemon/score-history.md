@@ -76,3 +76,5 @@
 | Arena | 7.5 | 7.0 | 7.0 | 7.5 | 8.0 | **7.35** |
 
 **RARITY TIERS phase complete.** All 3 directions have selectable tier systems with dynamic pricing. Supreme is weakest (7.15) — Interaction (6.5) and Emotion (7.0) lag. Broadcast leads (7.55) with strongest Visual (8.5) and Purity (8.5). Cycles 16-18 = STATE TRANSITIONS.
+
+| 16 | supreme | 8.0 | 7.0 | 7.5 | 7.0 | 8.5 | 7.58 | +0.43 | State transitions: critical vignette, phase labels, hero desaturation on ended, timer scaling |

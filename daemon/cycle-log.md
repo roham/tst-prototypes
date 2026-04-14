@@ -33,3 +33,5 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 ## Cycle 14 | Direction: Broadcast | Score: 7.55 (+0.37) | Built: Prestige rarity tier cards — editorial taglines (Collector Edition / Limited Series / Museum Edition / Vault Reserve), diamond hierarchy icons, "X of Y" edition context, shimmer animation on premium tiers, low-stock amber pulse, tier tagline + diamonds in W certificate, removed unused QRPlaceholder | Time: 18:25
 
 ## Cycle 15 | Direction: Arena | Score: 7.35 (+0.32) | Built: Selectable rarity tiers (all 4 tiers visible), dynamic CTA price updates on selection, tier-specific colors (Open=teal, Rare=blue, Legendary=purple, Ultimate=amber), top accent bars, low-stock red urgency pulse, tier moved above CTA for better flow | Time: 18:45
+
+## Cycle 16 | Direction: Supreme | Score: 7.58 (+0.43) | Built: State transitions — critical red vignette with pulse, phase labels (Live now / Closing soon / Final seconds / Drop closed), hero desaturation+dimming on ended, timer grows to 32px in critical, ended shows "X editions collected" instead of claim ticker | Time: 19:05

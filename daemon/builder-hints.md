@@ -129,3 +129,12 @@
 - Supreme already has phase-based urgency (OPEN/CLOSING/CRITICAL/ENDED). Need to make each feel more distinct visually.
 - Broadcast has urgency banner for CLOSING/CRITICAL. Needs pre-drop and sold-out states.
 - Arena has PanicBanner for closing. Needs pre-drop hype and sold-out finality.
+
+## Cycle 16 Learnings
+- Phase labels ("Live now" / "Closing soon" / "Final seconds" / "Drop closed") cost almost nothing to add but make state changes much more legible.
+- Critical vignette (red box-shadow inset, pulsing) makes the entire viewport feel urgent without adding new elements — very Supreme.
+- Hero desaturation on ENDED (grayscale 0.7 + brightness 0.6) makes the page feel definitively over. No ambiguity.
+- Timer growing from 28px to 32px in CRITICAL draws the eye naturally. Size = attention.
+- ENDED social proof switches from claim ticker to "X editions collected" — past tense signals finality.
+- All these transitions use CSS `transition-all duration-500/1000` — smooth, no jarring state flips.
+- Supreme Purity jumped to 8.5 — all changes were minimal (a label, a vignette, a filter). That's the Supreme way.

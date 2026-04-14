@@ -182,6 +182,68 @@ function CrowdReactions({ events }: { events: PurchaseEvent[] }) {
   );
 }
 
+/* ─── Jumbotron Stat Counter (animated roll-up on page load) ───── */
+
+function useCountUp(target: number, durationMs = 1200) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    let start: number | null = null;
+    let raf: number;
+    const step = (ts: number) => {
+      if (!start) start = ts;
+      const progress = Math.min((ts - start) / durationMs, 1);
+      // ease-out quad
+      const eased = 1 - (1 - progress) * (1 - progress);
+      setValue(Math.round(eased * target));
+      if (progress < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [target, durationMs]);
+  return value;
+}
+
+function JumbotronStatLine({ statLine, teamColor }: { statLine: string; teamColor: string }) {
+  const stats = statLine.split('/').map((s) => {
+    const trimmed = s.trim();
+    const match = trimmed.match(/^(\d+)\s+(.+)$/);
+    return match ? { value: parseInt(match[1], 10), label: match[2] } : { value: 0, label: trimmed };
+  });
+
+  return (
+    <div className="flex items-baseline gap-1.5">
+      <div
+        className="h-[14px] w-[2px] rounded-full"
+        style={{ backgroundColor: teamColor }}
+      />
+      {stats.map((stat, i) => (
+        <span key={stat.label} className="flex items-baseline gap-0.5">
+          {i > 0 && <span className="text-white/20 mx-1">/</span>}
+          <CountUpNumber target={stat.value} />
+          <span
+            className="text-sm font-medium text-white/50 uppercase"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
+          >
+            {stat.label}
+          </span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function CountUpNumber({ target }: { target: number }) {
+  const displayValue = useCountUp(target, 1400);
+  return (
+    <span
+      className="text-lg font-bold text-white/90 tabular-nums"
+      style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 700 }}
+    >
+      {displayValue}
+    </span>
+  );
+}
+
 /* ─── Panic Banner ─────────────────────────────────────────────── */
 
 function PanicBanner({ claimed, total, isCritical, isClosing }: {
@@ -955,17 +1017,9 @@ export default function ArenaPage({
           >
             {moment.player}
           </h1>
-          <div className="mt-1.5 flex items-center gap-2">
-            <div
-              className="h-[14px] w-[2px] rounded-full"
-              style={{ backgroundColor: moment.teamColors.primary }}
-            />
-            <p
-              className="text-lg font-medium text-white/80"
-              style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
-            >
-              {moment.statLine}
-            </p>
+          {/* Jumbotron stat counter — numbers roll up on page load */}
+          <div className="mt-1.5">
+            <JumbotronStatLine statLine={moment.statLine} teamColor={moment.teamColors.primary} />
           </div>
           {/* Context line — enhanced emotional weight */}
           <p className="mt-2 text-sm leading-relaxed text-white/50 tracking-wide">

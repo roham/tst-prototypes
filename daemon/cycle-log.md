@@ -16,3 +16,5 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 ## Cycle 6 | Direction: Arena | Score: 5.85 (+0.50) | Built: Team-color celebration flash, staggered W reveal, player name in celebration, context line in hero, team-color feed dots, improved spacing | Time: 15:50
 
 ## Cycle 7 | Direction: Supreme | Score: 6.35 (+0.60) | Built: Full-width depleting urgency bar (phase-color + critical glow), live-decrementing edition counter with claim flash, rotating buyer name ticker, supply scarcity labels (Almost gone/Going fast/Open) | Time: 16:10
+
+## Cycle 8 | Direction: Broadcast | Score: 6.53 (+0.53) | Built: Editorial urgency banner (FINAL MINUTES / CLOSING NOW lower-third style), narrative supply copy that intensifies with claim %, recent collectors competition counter, italic Georgia supply narrative | Time: 16:30

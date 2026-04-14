@@ -45,9 +45,17 @@
 - The urgency bar at top is only 2px but creates powerful visual tension when it glows in CRITICAL phase
 - Claim ticker key includes Date.now() to force re-render animation — needed for repeated same-name claims
 
+## Cycle 8 Learnings
+- Editorial urgency (narrated, not raw numbers) fits Broadcast perfectly — "FINAL MINUTES" feels like ESPN breaking news
+- Georgia italic for supply narrative adds editorial gravitas vs plain sans-serif
+- `useRecentCollectors` hook simulates competition — simple but effective
+- The urgency banner uses max-height animation for smooth reveal without layout shift
+- Supply narrative changes at 60%/80%/95% thresholds — each level adds more pressure
+
 ## Strategic Notes
-- Cycles 7-9 = URGENCY. Implement triple urgency stack in each direction's style
-- Supreme now 6.35 (was weakest, now strongest) — urgency stack was high-impact
-- Broadcast next (6.00) — needs editorial urgency: narrated countdown, supply narrative, exclusive framing
-- Arena (5.85) — needs social panic urgency: velocity visualization, crowd reactions, competitive claiming
+- Cycles 7-9 = URGENCY. Supreme & Broadcast done. Arena next.
+- Supreme 6.35, Broadcast 6.53, Arena 5.85 (weakest by 0.50)
+- Arena needs SOCIAL PANIC urgency: velocity tickers, crowd reactions, competitive claiming energy
+- After Cycle 9 (Arena urgency), all 3 will have triple urgency — full scorecard needed
 - Conversion scores still the biggest opportunity across all 3 (5.0-6.5 range)
+- Interaction scores lag across all 3 (4.5-5.0) — Cycles 10-12 (W SCREEN) should address this

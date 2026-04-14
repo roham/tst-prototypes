@@ -31,4 +31,6 @@
 
 | 7 | supreme | 7.0 | 6.5 | 5.5 | 5.0 | 7.5 | 6.35 | +0.60 | Triple urgency: time bar, live claim ticker, edition flash, scarcity labels |
 
-**Current: Supreme 6.35, Broadcast 6.00, Arena 5.85** — Broadcast next in Cycle 8 (URGENCY phase).
+| 8 | broadcast | 7.5 | 6.0 | 6.5 | 4.5 | 8.0 | 6.53 | +0.53 | Editorial urgency banner, supply narrative, collector competition |
+
+**Current: Supreme 6.35, Broadcast 6.53, Arena 5.85** — Arena next in Cycle 9 (URGENCY phase).

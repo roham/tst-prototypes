@@ -890,6 +890,24 @@ export default function SupremePage() {
           <AmbientParticles teamColor={moment.teamColors.primary} />
         )}
 
+        {/* SOLD watermark — auction house finality on ended drops */}
+        {isEnded && (
+          <div className="absolute inset-0 z-[9] pointer-events-none flex items-center justify-center overflow-hidden supreme-sold-stamp">
+            <span
+              className="text-[120px] sm:text-[160px] uppercase tracking-[0.15em] select-none"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                fontWeight: 700,
+                color: 'rgba(255,255,255,0.03)',
+                transform: 'rotate(-15deg) translateY(-10%)',
+                textShadow: `0 0 60px ${moment.teamColors.primary}06`,
+              }}
+            >
+              SOLD
+            </span>
+          </div>
+        )}
+
         {/* Player name + stat line — bottom-left */}
         <div className="absolute bottom-6 left-5 right-5 z-10 supreme-hero-enter">
           {/* Play type + matchup — grounded context */}
@@ -935,7 +953,7 @@ export default function SupremePage() {
       {/* ============================================================= */}
       {/* CONTEXT — one emotional sentence, given room to breathe */}
       {/* ============================================================= */}
-      <div className="px-5 pt-4 pb-2">
+      <div className="px-5 pt-4 pb-2 supreme-context-enter">
         <div
           className="h-[1px] w-8 mb-3"
           style={{ backgroundColor: `${moment.teamColors.primary}50` }}

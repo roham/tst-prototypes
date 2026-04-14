@@ -388,6 +388,20 @@ body {
   animation: supreme-heartbeat 1.1s ease-in-out infinite;
 }
 
+/* Supreme context section — staggered entrance between hero and info strip */
+.supreme-context-enter {
+  animation: supreme-info-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+/* Supreme SOLD watermark — auction house finality on ended drops */
+@keyframes supreme-sold-fade {
+  from { opacity: 0; transform: rotate(-15deg) translateY(-10%) scale(1.1); }
+  to { opacity: 1; transform: rotate(-15deg) translateY(-10%) scale(1); }
+}
+.supreme-sold-stamp {
+  animation: supreme-sold-fade 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
 /* Supreme noise texture — premium dark paper grain over the void background */
 .supreme-noise-texture::before {
   content: '';

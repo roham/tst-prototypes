@@ -2136,6 +2136,64 @@ export default function SupremePage() {
       <div className="flex-1" />
 
       {/* ============================================================= */}
+      {/* AUCTIONEER'S BID CALL — "The bid stands at $5. Do I hear $25?" */}
+      {/* At Christie's/Sotheby's the auctioneer verbally frames the     */}
+      {/* current bid and invites the next increment. This creates both  */}
+      {/* urgency (the sale is active) and subtle upsell (there's a     */}
+      {/* higher tier). Minimal text, big psychological framing.         */}
+      {/* ============================================================= */}
+      {!isEnded && !isPurchasing && (
+        <div className="flex items-center justify-center px-5 mb-3">
+          <p
+            className="text-[10px] tracking-[0.15em] text-center"
+            style={{
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+              color: 'rgba(255,255,255,0.14)',
+            }}
+          >
+            {(() => {
+              const nextTier = moment.rarityTiers[selectedTierIdx + 1];
+              if (nextTier) {
+                return (
+                  <>
+                    The bid stands at{' '}
+                    <span
+                      className="font-mono not-italic tabular-nums"
+                      style={{ color: `${tierAccentColor}40`, letterSpacing: '0.05em' }}
+                    >
+                      ${selectedTier.price}
+                    </span>
+                    .{' '}Do I hear{' '}
+                    <span
+                      className="font-mono not-italic tabular-nums"
+                      style={{ color: 'rgba(255,255,255,0.22)', letterSpacing: '0.05em' }}
+                    >
+                      ${nextTier.price}
+                    </span>
+                    ?
+                  </>
+                );
+              }
+              // Highest tier selected — no upsell, just authority
+              return (
+                <>
+                  The bid stands at{' '}
+                  <span
+                    className="font-mono not-italic tabular-nums"
+                    style={{ color: `${tierAccentColor}40`, letterSpacing: '0.05em' }}
+                  >
+                    ${selectedTier.price}
+                  </span>
+                  . Final offer.
+                </>
+              );
+            })()}
+          </p>
+        </div>
+      )}
+
+      {/* ============================================================= */}
       {/* LAST LIGHT — spotlight dim funnels attention to CTA in CRITICAL */}
       {/* ============================================================= */}
       {dropPhase === 'CRITICAL' && !isPurchasing && (

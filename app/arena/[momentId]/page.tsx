@@ -477,6 +477,64 @@ function ScoringRunBanner({ run, visible, teamColor }: { run: number; visible: b
   );
 }
 
+/* ─── Jumbotron Noise Prompt — "MAKE SOME NOISE" crowd engagement ─── */
+// Triggers when velocity spikes >= 16, shows for 2.5s, cooldown 35s.
+// Every arena fan has seen the jumbotron tell the crowd to get louder.
+
+function useJumbotronNoise(velocity: number, isEnded: boolean) {
+  const [visible, setVisible] = useState(false);
+  const lastShown = useRef(0);
+
+  useEffect(() => {
+    if (isEnded || velocity < 16) return;
+    const now = Date.now();
+    if (now - lastShown.current < 35000) return;
+    lastShown.current = now;
+    setVisible(true);
+    const t = setTimeout(() => setVisible(false), 2500);
+    return () => clearTimeout(t);
+  }, [velocity, isEnded]);
+
+  return visible;
+}
+
+function JumbotronNoisePrompt({ visible, teamColor }: { visible: boolean; teamColor: string }) {
+  if (!visible) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[36] pointer-events-none flex items-center justify-center"
+      style={{
+        animation: 'arena-noise-prompt 2.5s ease-out forwards',
+      }}
+    >
+      <div className="flex flex-col items-center gap-2">
+        {/* Megaphone icon */}
+        <span className="text-3xl" style={{ filter: `drop-shadow(0 0 12px ${teamColor})` }}>📣</span>
+        <h2
+          className="text-[clamp(2.5rem,10vw,5rem)] uppercase leading-[0.85] tracking-tight text-white text-center px-4"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            fontWeight: 700,
+            textShadow: `0 0 30px ${teamColor}, 0 0 60px ${teamColor}60, 0 4px 20px rgba(0,0,0,0.5)`,
+          }}
+        >
+          Make Some<br />Noise!
+        </h2>
+        {/* Pulsing team-color underline */}
+        <div
+          className="h-[3px] w-32 rounded-full"
+          style={{
+            backgroundColor: teamColor,
+            boxShadow: `0 0 12px ${teamColor}, 0 0 24px ${teamColor}60`,
+            animation: 'pulse 1s ease-in-out infinite',
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
 /* ─── Crowd Noise Equalizer — mini bars suggesting live arena audio ── */
 
 function CrowdNoiseEQ({ teamColor, isActive }: { teamColor: string; isActive: boolean }) {
@@ -1707,6 +1765,9 @@ export default function ArenaPage({
     return () => clearInterval(id);
   }, [moment]);
 
+  /* ── Jumbotron noise prompt — "MAKE SOME NOISE" on velocity spike ── */
+  const noisePromptVisible = useJumbotronNoise(liveVelocity, countdown.isEnded);
+
   /* ── Jumbotron instant replay entrance — fires once on mount ── */
   const [replayActive, setReplayActive] = useState(true);
   useEffect(() => {
@@ -1812,6 +1873,9 @@ export default function ArenaPage({
 
       {/* ─── Arena Timeout — jumbotron overlay on phase transitions ─── */}
       <TimeoutOverlay active={timeoutActive} label={timeoutLabel} teamColor={moment.teamColors.primary} />
+
+      {/* ─── Jumbotron Noise Prompt — "MAKE SOME NOISE" on velocity spike ─── */}
+      <JumbotronNoisePrompt visible={noisePromptVisible} teamColor={moment.teamColors.primary} />
 
       {/* ─── Fixed Header Bar ─── */}
       <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between border-b border-white/[0.06] bg-[#0B0E14]/90 px-4 py-3 backdrop-blur-md">

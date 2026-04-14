@@ -1002,6 +1002,16 @@ body {
   100% { opacity: 0; transform: translateX(-100%) scale(0.95); }
 }
 
+/* Arena jumbotron noise prompt — "MAKE SOME NOISE" scales in and fades out */
+@keyframes arena-noise-prompt {
+  0%   { opacity: 0; transform: scale(1.6); }
+  10%  { opacity: 1; transform: scale(0.98); }
+  15%  { opacity: 1; transform: scale(1.02); }
+  20%  { opacity: 1; transform: scale(1); }
+  75%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.95); }
+}
+
 /* Arena crowd chant ticker — jumbotron "LET'S GO [TEAM]" scrolling text */
 @keyframes arena-chant-scroll {
   0% { transform: translateX(0); }

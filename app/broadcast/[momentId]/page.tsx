@@ -2494,6 +2494,92 @@ export default function BroadcastPage() {
           </p>
         </section>
 
+        {/* ━━━ POST-GAME INTERVIEW — player quote in broadcast graphic card ━━━ */}
+        {/* Every ESPN/TNT broadcast closes with post-game interview quotes.     */}
+        {/* This adds the player's voice right before the purchase decision —    */}
+        {/* emotional weight from the athlete themselves, not just editorial.    */}
+        <div className="mx-auto max-w-2xl px-5 pb-8 md:px-10">
+          <div
+            className="relative overflow-hidden rounded-sm"
+            style={{
+              backgroundColor: 'rgba(20,25,37,0.7)',
+              border: `1px solid rgba(${rgb},0.1)`,
+            }}
+          >
+            {/* Team-color top accent bar */}
+            <div
+              className="h-[2px] w-full"
+              style={{
+                background: `linear-gradient(to right, ${moment.teamColors.primary}, ${moment.teamColors.primary}40)`,
+              }}
+            />
+            <div className="px-5 py-4 sm:px-6">
+              {/* POST-GAME label */}
+              <div className="flex items-center gap-2.5 mb-3">
+                {/* Mic icon */}
+                <svg className="h-3 w-3 shrink-0" viewBox="0 0 12 12" fill="none" style={{ color: moment.teamColors.primary, opacity: 0.6 }}>
+                  <rect x="4" y="0.5" width="4" height="7" rx="2" stroke="currentColor" strokeWidth="0.8" />
+                  <path d="M2.5 5.5 C2.5 7.5 4 9 6 9 C8 9 9.5 7.5 9.5 5.5" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" />
+                  <line x1="6" y1="9" x2="6" y2="11" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" />
+                  <line x1="4.5" y1="11" x2="7.5" y2="11" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" />
+                </svg>
+                <span
+                  className="text-[9px] font-bold uppercase tracking-[0.3em]"
+                  style={{ color: moment.teamColors.primary, fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  Post-Game
+                </span>
+                <span className="text-[8px] uppercase tracking-[0.2em] text-white/15">
+                  Interview
+                </span>
+              </div>
+
+              {/* Quote — large Georgia italic with team-color open-quote mark */}
+              <div className="relative pl-4">
+                <span
+                  className="absolute left-0 top-0 text-[28px] leading-none"
+                  style={{
+                    fontFamily: 'Georgia, serif',
+                    color: `rgba(${rgb},0.15)`,
+                  }}
+                >
+                  &ldquo;
+                </span>
+                <p
+                  className="text-[15px] sm:text-[16px] leading-relaxed text-white/60"
+                  style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+                >
+                  {moment.id === 'bam'
+                    ? 'I wanted to come out and make a statement. Playoffs, on the road \u2014 this is what I live for.'
+                    : moment.id === 'jokic'
+                    ? 'I don\u2019t think about the stats. I just try to make the right play every time. Tonight it worked out.'
+                    : 'When I get in that zone, I feel like I can\u2019t miss. The team needed me to be aggressive, and I was.'}
+                </p>
+              </div>
+
+              {/* Attribution — player name + context */}
+              <div className="mt-3 flex items-center gap-2.5 pl-4">
+                <div
+                  className="h-[1px] w-4"
+                  style={{ backgroundColor: `rgba(${rgb},0.2)` }}
+                />
+                <span
+                  className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/40"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  {moment.player}
+                </span>
+                <span className="text-[9px] text-white/15">&middot;</span>
+                <span
+                  className="text-[9px] uppercase tracking-[0.15em] text-white/20"
+                >
+                  {moment.team} vs {moment.opponent}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Team-color thin divider — cinematic section reveal (expands from center on scroll) */}
         <SectionRevealLine teamColor={moment.teamColors.primary} />
 

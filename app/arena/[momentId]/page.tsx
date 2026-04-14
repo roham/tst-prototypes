@@ -656,6 +656,80 @@ function ArenaCameraFlash({ events }: { events: PurchaseEvent[] }) {
   );
 }
 
+/* ─── Crowd Energy Meter — jumbotron noise/decibel gauge ──────── */
+
+const ENERGY_LEVELS = [
+  { threshold: 0, label: 'QUIET', color: '#3D4B66' },
+  { threshold: 4, label: 'BUILDING', color: '#6B7A99' },
+  { threshold: 8, label: 'LOUD', color: '#F59E0B' },
+  { threshold: 14, label: 'ROARING', color: '#FF6B35' },
+  { threshold: 20, label: 'DEAFENING', color: '#EF4444' },
+];
+
+function CrowdEnergyMeter({ velocity, teamColor, isEnded }: { velocity: number; teamColor: string; isEnded: boolean }) {
+  if (isEnded) return null;
+
+  // Map velocity (0-30+) to fill percentage (5-100%)
+  const fillPct = Math.min(100, Math.max(5, (velocity / 25) * 100));
+  // Determine current energy level
+  const level = [...ENERGY_LEVELS].reverse().find((l) => velocity >= l.threshold) ?? ENERGY_LEVELS[0];
+  const isHot = velocity >= 14;
+
+  return (
+    <div className="mx-4 mt-2 mb-1">
+      {/* Header row */}
+      <div className="flex items-center justify-between mb-1.5">
+        <div className="flex items-center gap-1.5">
+          <span
+            className="text-[8px] font-bold uppercase tracking-[0.25em] text-white/25"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            Crowd Energy
+          </span>
+          {isHot && (
+            <span
+              className="h-[5px] w-[5px] rounded-full animate-ping"
+              style={{ backgroundColor: level.color }}
+            />
+          )}
+        </div>
+        <span
+          className="text-[9px] font-bold uppercase tracking-[0.2em] transition-colors duration-500"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: level.color,
+            textShadow: isHot ? `0 0 8px ${level.color}40` : 'none',
+          }}
+        >
+          {level.label}
+        </span>
+      </div>
+
+      {/* Meter bar — segmented like a real decibel gauge */}
+      <div className="flex gap-[2px] h-[8px] rounded-sm overflow-hidden bg-white/[0.03]">
+        {Array.from({ length: 20 }).map((_, i) => {
+          const segPct = ((i + 1) / 20) * 100;
+          const isActive = segPct <= fillPct;
+          // Color ramp: green → yellow → orange → red
+          const segColor = i < 8 ? '#22c55e' : i < 12 ? '#F59E0B' : i < 16 ? '#FF6B35' : '#EF4444';
+          return (
+            <div
+              key={i}
+              className="flex-1 rounded-[1px] transition-all duration-500"
+              style={{
+                backgroundColor: isActive ? segColor : 'rgba(255,255,255,0.04)',
+                opacity: isActive ? (isHot && i >= 14 ? undefined : 0.7) : 1,
+                boxShadow: isActive && i >= 14 ? `0 0 4px ${segColor}40` : 'none',
+                animation: isActive && isHot && i >= 16 ? 'pulse 1s ease-in-out infinite' : 'none',
+              }}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Buyer Heat Map — mini US map with purchase dots ─────────── */
 
 const CITY_COORDS: Record<string, [number, number]> = {
@@ -2351,6 +2425,9 @@ export default function ArenaPage({
 
       {/* ─── Buyer Heat Map — geographic purchase visualization ─── */}
       <BuyerHeatMap events={feedEvents} teamColor={moment.teamColors.primary} isEnded={countdown.isEnded} />
+
+      {/* ─── Crowd Energy Meter — jumbotron noise gauge ─── */}
+      <CrowdEnergyMeter velocity={liveVelocity} teamColor={moment.teamColors.primary} isEnded={countdown.isEnded} />
 
       {/* ─── Stats Bar ─── */}
       <StatsBar

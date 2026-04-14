@@ -831,3 +831,15 @@
 - The dual-layer text-shadow (12px tight + 24px bloom) creates a glow that reads as "urgency" even in peripheral vision. The glow intensification is more impactful than the scale alone.
 - CRITICAL phase is Arena's most dramatic state: red vignette + urgency-fast pulse + shot clock depletion + panic banner + clock ticks. Each adds one layer of tension.
 - Next cycle: Supreme (rotation). Supreme could explore a "vault door" animation on tier selection, or a signature/autograph effect on the W screen.
+
+## Cycle 93 Learnings
+- Magnetic button uses rAF-throttled mousemove for smooth 60fps tracking without firing on every pixel. The `cancelAnimationFrame` before each new request prevents frame stacking.
+- Max 6px displacement is the sweet spot — noticeable enough to feel "alive" but subtle enough to not feel buggy. 10px+ feels like a UI glitch. 3px is barely perceptible.
+- Cubic-bezier(0.33, 1, 0.68, 1) for the spring-back on mouse leave creates natural elastic deceleration — the button doesn't snap back mechanically, it settles.
+- The glass highlight (radial gradient light spot following cursor) adds a second layer of responsiveness that makes the magnetic pull feel intentional rather than broken. Without the highlight, the pull alone could feel like a rendering bug.
+- Merged ref pattern (callback ref assigning to two ref objects) is needed when a single element must serve two purposes — IntersectionObserver for sticky CTA visibility + magnetic hook for cursor tracking.
+- Mouse-only events (no touch) are intentional — magnetic pull on touch doesn't work conceptually (no hover state) and would conflict with tap. Desktop-only polish is fine.
+- `overflow-hidden` on the button is needed for the glass highlight radial gradient to be clipped to the button's rounded corners.
+- `will-change: transform` on the button helps GPU compositing for the translate() animation — prevents layout thrashing during continuous mousemove updates.
+- The glass highlight only renders when `offset !== (0,0)` — no DOM noise when cursor isn't on the button.
+- Next cycle: Broadcast (rotation). Broadcast could explore a "director's commentary" text annotation that appears on extended hover over stats, or a TV-static channel-switch effect on tier changes.

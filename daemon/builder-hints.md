@@ -326,3 +326,12 @@
 - The conversion ceiling (8.5) was broken by making the existing CTA feel more trustworthy, not by adding new UI. Lesson: conversion lifts at this score level come from friction reduction, not feature addition.
 - These 3 patterns (lock icon, card hint, checkmark draw) should be adapted for Broadcast and Arena in upcoming cycles.
 - Next cycle: Broadcast (rotation). Broadcast at 8.70 — weakest overall. Conversion (8.5), Emotion (8.5), Interaction (8.5) all need attention. Apply the same conversion patterns in editorial style.
+
+## Cycle 38 Learnings
+- Broadcast's checkmark draw animation uses a slower ease (0.5s vs Supreme's 0.35s) with `cubic-bezier(0.22, 1, 0.36, 1)` — more elegant, less snappy. Matches editorial tempo.
+- Lock icon at 40% opacity (vs Supreme's 60%) feels more subdued and editorial — Broadcast doesn't shout, it implies.
+- The checkmark on "Acquired." is paired with the progress wipe reaching 100% — two visual confirmations at once. Very satisfying.
+- Broadcast Conversion and Interaction both jumped 8.5→9.0. Same pattern as Supreme, adapted for editorial identity.
+- Broadcast Emotion (8.5) is now the single remaining sub-9.0 dimension. The narrative content is rich but could use a more dramatic pull quote or ambient treatment.
+- The conversion pattern (lock + card + checkmark) is now proven across 2 directions. Arena next.
+- Next cycle: Arena (rotation). Arena at 8.88 — Conversion (8.5) is the only sub-9.0 dimension. Apply the same pattern in live-commerce style.

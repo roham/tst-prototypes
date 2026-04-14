@@ -468,6 +468,18 @@ export default function BroadcastPage() {
 
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=authenticating, 2=acquired
+
+  // Channel switch static — brief TV static flash + channel number on tier change
+  const [channelSwitch, setChannelSwitch] = useState<number | null>(null);
+  const prevTierRef = useRef(0);
+  const handleTierSelect = useCallback((idx: number) => {
+    if (idx === prevTierRef.current) return;
+    prevTierRef.current = idx;
+    setChannelSwitch(idx + 1); // CH 1, CH 2, CH 3, CH 4
+    setSelectedTierIdx(idx);
+    const t = setTimeout(() => setChannelSwitch(null), 400);
+    return () => clearTimeout(t);
+  }, []);
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [showPip, setShowPip] = useState(false);
   const ctaRef = useRef<HTMLButtonElement>(null);
@@ -580,6 +592,34 @@ export default function BroadcastPage() {
 
       {/* ━━━ FEED CUT — camera switch static band on phase transition ━━━ */}
       {feedCut && <div className="broadcast-feed-cut" />}
+
+      {/* ━━━ CHANNEL SWITCH — TV static flash + channel number on tier change ━━━ */}
+      {channelSwitch !== null && (
+        <div className="fixed inset-0 z-[55] pointer-events-none broadcast-channel-switch">
+          {/* Brief static noise overlay */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)',
+              mixBlendMode: 'screen',
+            }}
+          />
+          {/* Channel number indicator — top-right like old TV sets */}
+          <div className="absolute top-16 right-6 flex items-baseline gap-1">
+            <span
+              className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/40"
+            >
+              CH
+            </span>
+            <span
+              className="text-[28px] font-mono font-bold tabular-nums text-white/50"
+              style={{ textShadow: '0 0 12px rgba(255,255,255,0.2)' }}
+            >
+              {channelSwitch}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* ━━━ NETWORK BUG — ESPN/TNT corner watermark ━━━━━━━━━━━━━━━━━ */}
       <div
@@ -1041,7 +1081,7 @@ export default function BroadcastPage() {
                 isSelected={idx === selectedTierIdx}
                 teamColor={moment.teamColors.primary}
                 rgb={rgb}
-                onSelect={() => setSelectedTierIdx(idx)}
+                onSelect={() => handleTierSelect(idx)}
               />
             ))}
           </div>

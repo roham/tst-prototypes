@@ -105,9 +105,14 @@ function StatBreakdown({ statLine, teamColor }: { statLine: string; teamColor: s
       {stats.map((stat, i) => (
         <div
           key={stat.label}
-          className="flex-1 rounded-lg bg-white/[0.04] border border-white/[0.06] px-3 py-3 text-center"
+          className="flex-1 rounded-lg bg-white/[0.04] border border-white/[0.06] px-3 py-3 text-center relative overflow-hidden"
           style={{ animation: `stat-fly-in 0.5s ease-out ${0.15 * i}s both` }}
         >
+          {/* Broadcast-style top accent */}
+          <div
+            className="absolute top-0 left-0 right-0 h-[2px]"
+            style={{ backgroundColor: teamColor, opacity: 0.6 }}
+          />
           <div
             className="text-2xl font-bold tabular-nums"
             style={{ fontFamily: 'var(--font-oswald), sans-serif', color: teamColor }}
@@ -426,6 +431,16 @@ export default function BroadcastPage() {
             </div>
           </div>
         )}
+
+        {/* Team-color section rule — broadcast segment divider */}
+        <div className="mx-auto max-w-2xl px-5 md:px-10">
+          <div
+            className="h-[1px]"
+            style={{
+              background: `linear-gradient(90deg, ${moment.teamColors.primary}40, ${moment.teamColors.primary}15, transparent)`,
+            }}
+          />
+        </div>
 
         {/* ━━━ EDITORIAL PULL QUOTE — emotional hook ━━━━━━━━━━━━━━━━━━━ */}
         <section className="mx-auto max-w-2xl px-5 py-8 md:px-10 md:py-10">
@@ -1124,9 +1139,9 @@ function CertificateScreen({
           }}
         >
           <div className="flex items-center gap-3">
-            <ShareButton label="Share on X" />
-            <ShareButton label="Instagram" />
-            <ShareButton label="Copy Link" />
+            <ShareButton label="Share on X" icon="𝕏" teamColor={moment.teamColors.primary} />
+            <ShareButton label="Instagram" icon="◎" teamColor={moment.teamColors.primary} />
+            <ShareButton label="Copy Link" icon="⎘" teamColor={moment.teamColors.primary} />
           </div>
 
           <p className="mt-4 text-[10px] text-white/15 uppercase tracking-[0.2em]">
@@ -1149,12 +1164,21 @@ function CertificateScreen({
 // Small shared components
 // ═══════════════════════════════════════════════════════════════════════════
 
-function ShareButton({ label }: { label: string }) {
+function ShareButton({ label, icon, teamColor }: { label: string; icon: string; teamColor: string }) {
   return (
     <button
-      className="rounded-md border border-white/[0.08] bg-white/[0.02] px-5 py-2.5 text-xs font-medium tracking-wide text-white/40 transition-all hover:border-white/[0.16] hover:text-white/60"
+      className="flex items-center gap-1.5 rounded-md border border-white/[0.08] bg-white/[0.03] px-5 py-2.5 text-[11px] font-medium tracking-wide text-white/45 transition-all duration-200 hover:text-white/70"
       onClick={(e) => e.preventDefault()}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = `${teamColor}40`;
+        (e.currentTarget as HTMLElement).style.backgroundColor = `${teamColor}10`;
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)';
+        (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.03)';
+      }}
     >
+      <span className="text-[13px]">{icon}</span>
       {label}
     </button>
   );

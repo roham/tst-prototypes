@@ -378,3 +378,11 @@
 - The parallax wrapper contains only the background layers (action image, player image, gradients). The text overlay sits outside and stays fixed — this is the key to the depth effect.
 - Supreme is the only direction that benefits from scroll parallax because it's the only one designed as a single-screen experience that MIGHT scroll. Broadcast is always scrollable (editorial), Arena is dashboard-style.
 - Next cycle: Broadcast (rotation). Broadcast needs a beyond-9.0 experiment. Ideas: animated ESPN-style stat counter (numbers roll up in the stat breakdown cards), or a more dramatic hero reveal animation.
+
+## Cycle 43 Learnings
+- IntersectionObserver-triggered stat counter (threshold: 0.3) is better for Broadcast than page-load trigger — the scroll-based reveal matches the editorial pacing. Arena fires on load (jumbotron always visible); Broadcast fires on scroll-into-view (editorial reveal).
+- Separated `useAnimatedCounter` hook from `AnimatedStatCard` component — clean separation allows reuse while keeping the IntersectionObserver logic local to the StatBreakdown container.
+- easeOutQuad at 1200ms (vs Arena's 1400ms) feels right for editorial — slightly faster, more decisive. The broadcast graphic should appear and settle quickly, not linger.
+- Stagger delay (150ms per card) syncs with the existing `stat-fly-in` CSS animation stagger — numbers start counting as each card flies in.
+- All 3 directions now have animated stat counters, each with identity-correct triggers and timing: Arena (page load, 1400ms, jumbotron), Broadcast (scroll-into-view, 1200ms, editorial), Supreme (static — confident, already-known).
+- Next cycle: Arena (rotation). Arena needs its own beyond-9.0 experiment.

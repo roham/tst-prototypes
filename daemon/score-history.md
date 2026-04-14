@@ -221,3 +221,7 @@
 | 42 | supreme | 9.0 | 9.0 | 9.0 | 9.0+ | 9.0 | 9.00+ | — | Beyond-9.0: scroll parallax hero depth (0.4x) |
 
 **Cycle 42: Supreme parallax.** Hero background moves at 0.4x scroll speed while text stays fixed — creates Apple-product-page depth separation. Next: Broadcast (rotation).
+
+| 43 | broadcast | 9.0 | 9.0 | 9.0+ | 9.0 | 9.0 | 9.00+ | — | Beyond-9.0: ESPN stat counter roll-up animation |
+
+**Cycle 43: Broadcast stat counters.** StatBreakdown cards now animate from 0 to final value on scroll-into-view — ESPN broadcast graphics energy. IntersectionObserver triggers, easeOutQuad easing (1.2s), staggered 150ms per card. Next: Arena (rotation).

@@ -2106,6 +2106,246 @@ const SC_TOP_10: Record<string, { rank1Desc: string; others: { rank: number; des
   },
 };
 
+// ---------------------------------------------------------------------------
+// Analyst Desk — "Inside the NBA" multi-analyst roundtable panel
+// 3 analysts with contrasting perspectives: enthusiastic, analytical, historical
+// ---------------------------------------------------------------------------
+
+const ANALYST_DESK: Record<string, Array<{
+  initials: string;
+  name: string;
+  role: string;
+  take: string;
+  style: 'hot' | 'analytical' | 'historical';
+}>> = {
+  bam: [
+    {
+      initials: 'RJ',
+      name: 'Richard Jefferson',
+      role: 'Studio Analyst',
+      take: 'This is the Bam we\u2019ve been waiting for. When he\u2019s this aggressive, Miami is a different team. You don\u2019t see bigs take over games like this anymore.',
+      style: 'hot',
+    },
+    {
+      initials: 'TL',
+      name: 'Tim Legler',
+      role: 'NBA Analyst',
+      take: 'Look at the efficiency — 12-for-16 from the field with 6 assists. He was the primary ball-handler on half those possessions. That\u2019s point-center basketball at the highest level.',
+      style: 'analytical',
+    },
+    {
+      initials: 'MJ',
+      name: 'Mark Jackson',
+      role: 'Game Analyst',
+      take: 'Mama, there goes that man. Alonzo Mourning paved the way, Shaq carried the torch — Bam is writing the next chapter of Heat big man dominance.',
+      style: 'historical',
+    },
+  ],
+  jokic: [
+    {
+      initials: 'JJ',
+      name: 'JJ Redick',
+      role: 'Studio Analyst',
+      take: 'There is no playbook for guarding Joki\u0107. He sees passes two moves ahead. This is the best passing big man in NBA history \u2014 and I don\u2019t think it\u2019s close.',
+      style: 'hot',
+    },
+    {
+      initials: 'ZL',
+      name: 'Zach Lowe',
+      role: 'NBA Analyst',
+      take: 'The assist-to-turnover ratio tonight was 4.3. He touched the ball on 62% of Denver\u2019s possessions. The gravity numbers are off the charts — every defender shifted when he caught it.',
+      style: 'analytical',
+    },
+    {
+      initials: 'HH',
+      name: 'Hubie Brown',
+      role: 'Hall of Fame Analyst',
+      take: 'Give this guy credit. In 50 years of basketball, I\u2019ve never seen a center with this passing IQ. Bird, Magic — this kid belongs in that conversation for pure court vision.',
+      style: 'historical',
+    },
+  ],
+  sga: [
+    {
+      initials: 'CW',
+      name: 'Chiney Ogwumike',
+      role: 'Studio Analyst',
+      take: 'SGA is the most unguardable player in the league right now. That mid-range is automatic, and he\u2019s doing it in the biggest moments. This kid is special.',
+      style: 'hot',
+    },
+    {
+      initials: 'SAS',
+      name: 'Stephen A. Smith',
+      role: 'NBA Analyst',
+      take: 'Forty-two points on 58% shooting? In THESE playoffs? Let me tell you something \u2014 we are witnessing the ascension. This is an MVP doing MVP things when it matters MOST.',
+      style: 'analytical',
+    },
+    {
+      initials: 'VH',
+      name: 'Vince Carter',
+      role: 'Game Analyst',
+      take: 'The mid-range game is dying? Tell that to SGA. He\u2019s bringing back the lost art. Kobe, MJ, D-Wade \u2014 he\u2019s got that same killer instinct from 15 feet.',
+      style: 'historical',
+    },
+  ],
+};
+
+function AnalystDesk({ moment, rgb }: { moment: Moment; rgb: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const analysts = ANALYST_DESK[moment.id] ?? ANALYST_DESK.bam;
+  const styleIcons: Record<string, string> = { hot: '\ud83d\udd25', analytical: '\ud83d\udcca', historical: '\ud83c\udfc6' };
+  const styleLabels: Record<string, string> = { hot: 'Hot Take', analytical: 'By the Numbers', historical: 'Historical Context' };
+
+  return (
+    <div ref={ref} className="mt-8 mb-8 relative">
+      {/* Broadcast lower-third style header */}
+      <div className="flex items-center gap-2 mb-3">
+        <span
+          className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
+          style={{
+            backgroundColor: `rgba(${rgb},0.12)`,
+            color: moment.teamColors.primary,
+            fontFamily: 'var(--font-oswald), sans-serif',
+          }}
+        >
+          Analyst Desk
+        </span>
+        <span className="text-[8px] font-mono uppercase tracking-[0.15em] text-white/20">
+          Inside the Moment
+        </span>
+        <div className="h-[1px] flex-1 bg-white/[0.06]" />
+      </div>
+
+      {/* Studio desk card — frosted dark surface */}
+      <div
+        className="relative rounded-md border overflow-hidden"
+        style={{
+          borderColor: `rgba(${rgb},0.12)`,
+          backgroundColor: 'rgba(20,25,37,0.5)',
+        }}
+      >
+        {/* Team-color top accent bar */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{ backgroundColor: `${moment.teamColors.primary}40` }}
+        />
+
+        {/* "LIVE FROM STUDIO" label — broadcast production tag */}
+        <div className="px-4 pt-3 pb-1.5 flex items-center gap-2">
+          <span className="relative flex h-[5px] w-[5px]">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-50" style={{ backgroundColor: '#EF4444' }} />
+            <span className="relative inline-flex h-[5px] w-[5px] rounded-full" style={{ backgroundColor: '#EF4444' }} />
+          </span>
+          <span
+            className="text-[7px] font-bold uppercase tracking-[0.35em] text-white/20"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            Live from Studio
+          </span>
+          <div className="h-[1px] flex-1 bg-white/[0.04]" />
+          <span className="text-[7px] font-mono uppercase tracking-[0.15em] text-white/10">
+            3 analysts
+          </span>
+        </div>
+
+        {/* Analyst rows — each with avatar, name, take style badge, and quote */}
+        {analysts.map((analyst, i) => (
+          <div
+            key={analyst.initials}
+            className="px-4 py-3 flex gap-3 border-t"
+            style={{
+              borderColor: 'rgba(255,255,255,0.04)',
+              opacity: visible ? 1 : 0,
+              transform: visible ? 'translateX(0)' : 'translateX(-16px)',
+              transition: `opacity 0.5s ease-out ${0.1 + i * 0.15}s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${0.1 + i * 0.15}s`,
+            }}
+          >
+            {/* Analyst avatar — circular initial with team-color tint */}
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+              style={{
+                backgroundColor: `rgba(${rgb},${i === 0 ? 0.18 : 0.1})`,
+                border: `1px solid rgba(${rgb},${i === 0 ? 0.25 : 0.15})`,
+              }}
+            >
+              <span
+                className="text-[10px] font-bold"
+                style={{ color: `${moment.teamColors.primary}${i === 0 ? 'CC' : '66'}`, fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                {analyst.initials}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              {/* Name + role + take style badge */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span
+                  className="text-[11px] font-bold uppercase tracking-[0.08em] text-white/60"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  {analyst.name}
+                </span>
+                <span className="text-[7px] font-mono uppercase tracking-[0.12em] text-white/15">
+                  {analyst.role}
+                </span>
+              </div>
+              {/* Take style label — small colored badge */}
+              <div className="flex items-center gap-1.5 mt-1">
+                <span className="text-[8px]">{styleIcons[analyst.style]}</span>
+                <span
+                  className="text-[7px] font-bold uppercase tracking-[0.2em]"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: analyst.style === 'hot'
+                      ? '#FF6B35'
+                      : analyst.style === 'analytical'
+                        ? '#00E5A0'
+                        : '#F59E0B',
+                    opacity: 0.6,
+                  }}
+                >
+                  {styleLabels[analyst.style]}
+                </span>
+              </div>
+              {/* The take — Georgia italic, broadcast expert commentary */}
+              <p
+                className="mt-1.5 text-[12px] leading-relaxed text-white/35"
+                style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+              >
+                &ldquo;{analyst.take}&rdquo;
+              </p>
+            </div>
+          </div>
+        ))}
+
+        {/* Bottom production bar — broadcast graphic footer */}
+        <div
+          className="px-4 py-1.5 flex items-center gap-2"
+          style={{ backgroundColor: `rgba(${rgb},0.03)`, borderTop: '1px solid rgba(255,255,255,0.03)' }}
+        >
+          <span className="text-[6px] font-mono uppercase tracking-[0.2em] text-white/10">
+            TST BROADCAST
+          </span>
+          <div className="h-[1px] flex-1 bg-white/[0.03]" />
+          <span className="text-[6px] font-mono uppercase tracking-[0.15em] text-white/10">
+            POST-GAME ANALYSIS
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SportsCenterTop10({ moment, rgb }: { moment: Moment; rgb: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -3586,81 +3826,11 @@ export default function BroadcastPage() {
           {/* at the peak — visually placing the play at the game's climax */}
           <GameFlowChart moment={moment} rgb={rgb} />
 
-          {/* ── ANALYST REACTION — ESPN "SportsCenter" studio take ── */}
-          {/* Every broadcast cuts to the analyst desk for expert commentary. */}
-          <div className="mt-8 mb-8 relative">
-            {/* Broadcast lower-third style header */}
-            <div className="flex items-center gap-2 mb-3">
-              <span
-                className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
-                style={{
-                  backgroundColor: `rgba(${rgb},0.12)`,
-                  color: moment.teamColors.primary,
-                  fontFamily: 'var(--font-oswald), sans-serif',
-                }}
-              >
-                Analysis
-              </span>
-              <div className="h-[1px] flex-1 bg-white/[0.06]" />
-            </div>
-            {/* Analyst card — studio desk energy */}
-            <div
-              className="relative rounded-md border overflow-hidden"
-              style={{
-                borderColor: `rgba(${rgb},0.12)`,
-                backgroundColor: 'rgba(20,25,37,0.5)',
-              }}
-            >
-              {/* Team-color top accent bar */}
-              <div
-                className="absolute top-0 left-0 right-0 h-[2px]"
-                style={{ backgroundColor: `${moment.teamColors.primary}40` }}
-              />
-              <div className="px-4 py-3.5 flex gap-3">
-                {/* Analyst avatar — circular initial */}
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{
-                    backgroundColor: `rgba(${rgb},0.15)`,
-                    border: `1px solid rgba(${rgb},0.2)`,
-                  }}
-                >
-                  <span
-                    className="text-[10px] font-bold"
-                    style={{ color: `${moment.teamColors.primary}80`, fontFamily: 'var(--font-oswald), sans-serif' }}
-                  >
-                    {moment.id === 'bam' ? 'RJ' : moment.id === 'jokic' ? 'JJ' : 'CW'}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  {/* Name + role */}
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="text-[11px] font-bold uppercase tracking-[0.08em] text-white/60"
-                      style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
-                    >
-                      {moment.id === 'bam' ? 'Richard Jefferson' : moment.id === 'jokic' ? 'JJ Redick' : 'Chiney Ogwumike'}
-                    </span>
-                    <span className="text-[8px] font-mono uppercase tracking-[0.15em] text-white/20">
-                      TST Analyst
-                    </span>
-                  </div>
-                  {/* Hot take — per-moment expert opinion */}
-                  <p
-                    className="mt-1.5 text-[12px] leading-relaxed text-white/35"
-                    style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
-                  >
-                    &ldquo;{moment.id === 'bam'
-                      ? 'This is the Bam we\u2019ve been waiting for. When he\u2019s this aggressive, Miami is a different team. You don\u2019t see bigs take over games like this anymore.'
-                      : moment.id === 'jokic'
-                        ? 'There is no playbook for guarding Joki\u0107. He sees passes two moves ahead. This is the best passing big man in NBA history \u2014 and I don\u2019t think it\u2019s close.'
-                        : 'SGA is the most unguardable player in the league right now. That mid-range is automatic, and he\u2019s doing it in the biggest moments. This kid is special.'
-                    }&rdquo;
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* ── ANALYST DESK — "Inside the NBA" multi-analyst roundtable ── */}
+          {/* The studio desk panel is the defining broadcast format. Multiple   */}
+          {/* analysts with contrasting takes — enthusiastic, analytical,        */}
+          {/* historical — create the ESPN/TNT "let's go to the studio" energy.  */}
+          <AnalystDesk moment={moment} rgb={rgb} />
 
           {/* Tale of the Tape — tonight vs season average comparison */}
           <TaleOfTheTape moment={moment} rgb={rgb} />

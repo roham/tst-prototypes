@@ -117,39 +117,83 @@ export default function BroadcastPage() {
           {/* Dark overlay from bottom for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/70 to-transparent" />
 
-          {/* "INSTANT CLASSIC" badge — top-left */}
-          <div className="absolute left-5 top-5 z-20 flex items-center gap-2.5 md:left-10 md:top-10">
-            <div className="h-px w-6 bg-[#F59E0B]" />
-            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#F59E0B]">
-              Instant Classic
-            </span>
+          {/* Top bar: "INSTANT CLASSIC" + LIVE badge + countdown */}
+          <div className="absolute left-5 right-5 top-5 z-20 flex items-center justify-between md:left-10 md:right-10 md:top-10">
+            <div className="flex items-center gap-2.5">
+              <div className="h-px w-6 bg-[#F59E0B]" />
+              <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#F59E0B]">
+                Instant Classic
+              </span>
+            </div>
+            {/* LIVE badge + countdown */}
+            <div className="flex items-center gap-3">
+              {!countdown.isEnded && (
+                <div className="flex items-center gap-1.5 rounded-full bg-black/40 backdrop-blur-sm px-3 py-1">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#EF4444] animate-pulse" />
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-white/70">
+                    Live
+                  </span>
+                </div>
+              )}
+              <span
+                className="font-mono text-sm font-semibold tabular-nums tracking-wider"
+                style={{
+                  color: countdown.isEnded
+                    ? 'rgba(255,255,255,0.25)'
+                    : isUrgent
+                      ? '#F59E0B'
+                      : 'rgba(255,255,255,0.5)',
+                }}
+              >
+                {countdown.isEnded ? 'ENDED' : formatCountdown(countdown.totalSeconds)}
+              </span>
+            </div>
           </div>
 
-          {/* Broadcast lower-third — bottom of hero */}
-          <div className="absolute inset-x-0 bottom-0 z-20 px-5 pb-7 md:px-10 md:pb-12">
+          {/* Broadcast lower-third — slides in from left */}
+          <div
+            className="absolute inset-x-0 bottom-0 z-20 px-5 pb-7 md:px-10 md:pb-12 broadcast-lower-third"
+          >
+            {/* Team-color left edge accent */}
+            <div
+              className="absolute left-0 bottom-7 top-0 w-[3px] md:bottom-12"
+              style={{ backgroundColor: moment.teamColors.primary }}
+            />
+
             {/* Matchup context */}
-            <span className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-white/35 mb-1.5 sm:text-xs">
+            <span className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-white/35 mb-1.5 pl-3 sm:text-xs">
               {fullTeam(moment.team)} vs {fullTeam(moment.opponent)}
             </span>
 
-            {/* Player name — bold condensed broadcast feel */}
-            <h1 className="text-[clamp(2.5rem,8vw,5rem)] font-black uppercase leading-[0.92] tracking-tight text-white">
+            {/* Player name — Oswald condensed broadcast headline */}
+            <h1
+              className="text-[clamp(2.8rem,9vw,5.5rem)] uppercase leading-[0.88] tracking-tight text-white pl-3"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                fontWeight: 700,
+              }}
+            >
               {moment.player}
             </h1>
 
-            {/* Stat line */}
-            <p className="mt-3 text-lg font-medium tracking-wide text-white/85 sm:text-xl md:text-2xl">
-              {moment.statLine}
-            </p>
+            {/* Stat line — broadcast stat card style */}
+            <div className="mt-3 pl-3 flex items-center gap-3">
+              <p
+                className="text-lg font-semibold tracking-wide text-white/90 sm:text-xl md:text-2xl"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
+              >
+                {moment.statLine}
+              </p>
+            </div>
 
             {/* Team-color accent rule */}
             <div
-              className="mt-4 h-[2px] w-20 sm:w-28 md:w-32"
+              className="mt-4 ml-3 h-[2px] w-20 sm:w-28 md:w-32"
               style={{ backgroundColor: moment.teamColors.primary }}
             />
 
             {/* Context line */}
-            <p className="mt-3 text-sm tracking-wide text-white/45 md:text-base">
+            <p className="mt-3 pl-3 text-sm tracking-wide text-white/40 md:text-base">
               {moment.context}
             </p>
           </div>
@@ -181,26 +225,21 @@ export default function BroadcastPage() {
             ))}
           </div>
 
-          {/* Countdown — elegant, understated */}
+          {/* Countdown — centered, elegant */}
           <div className="mt-8 flex items-center justify-center gap-2.5">
             <div
               className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                isUrgent ? 'animate-pulse bg-[#F59E0B]' : 'bg-white/25'
+                isUrgent ? 'animate-pulse bg-[#F59E0B]' : 'bg-white/20'
               }`}
             />
             <span
-              className={`text-sm tracking-[0.15em] transition-colors ${
+              className={`font-mono text-sm tabular-nums tracking-[0.12em] transition-colors ${
                 countdown.isEnded
-                  ? 'text-white/25'
+                  ? 'text-white/20'
                   : isUrgent
                     ? 'text-[#F59E0B]'
-                    : 'text-white/35'
+                    : 'text-white/30'
               }`}
-              style={
-                isUrgent && !countdown.isEnded
-                  ? { filter: 'drop-shadow(0 0 6px rgba(245,158,11,0.35))' }
-                  : undefined
-              }
             >
               {countdown.isEnded
                 ? 'DROP ENDED'
@@ -387,19 +426,36 @@ function CertificateScreen({
           transform: show ? 'translateY(0)' : 'translateY(16px)',
         }}
       >
-        {/* Header */}
-        <p className="text-center text-[10px] font-semibold uppercase tracking-[0.35em] text-white/35">
+        {/* Header — staggered entrance */}
+        <p
+          className="text-center text-[10px] font-semibold uppercase tracking-[0.35em] text-white/35 transition-all duration-500 delay-100"
+          style={{
+            opacity: show ? 1 : 0,
+            transform: show ? 'translateY(0)' : 'translateY(8px)',
+          }}
+        >
           Certificate of Ownership
         </p>
 
-        {/* Accent rule */}
+        {/* Accent rule — grows from center */}
         <div
-          className="mx-auto mt-4 h-[1px] w-14"
-          style={{ backgroundColor: moment.teamColors.primary }}
+          className="mx-auto mt-4 h-[1px] transition-all duration-700 delay-200"
+          style={{
+            backgroundColor: moment.teamColors.primary,
+            width: show ? 56 : 0,
+          }}
         />
 
-        {/* Player name */}
-        <h2 className="mt-8 text-center text-3xl font-black uppercase tracking-tight sm:text-4xl">
+        {/* Player name — Oswald broadcast style */}
+        <h2
+          className="mt-8 text-center text-4xl uppercase tracking-tight sm:text-5xl transition-all duration-500 delay-300"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            fontWeight: 700,
+            opacity: show ? 1 : 0,
+            transform: show ? 'translateY(0)' : 'translateY(12px)',
+          }}
+        >
           {moment.player}
         </h2>
 

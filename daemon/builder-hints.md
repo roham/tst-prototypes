@@ -1294,3 +1294,11 @@
 - "Presented by" sponsor tags work best in Georgia serif italic — it's the broadcast editorial voice, distinct from Oswald production text.
 - The broadcast overlay inventory is now comprehensive. Future broadcast improvements should focus on interaction quality, W screen enrichment, or editorial narrative rather than adding more overlays.
 - Next cycle: Arena (rotation).
+
+## Cycle 153 Learnings
+- Post-game award cards (Player/Collector of the Game) are a natural W screen addition for Arena — they add a celebratory competitive layer distinct from Supreme's auction documents and Broadcast's editorial credits.
+- The "Presented by" sponsor tag at the bottom of the award card is a small but authentic detail that grounds the card in real arena production. Every jumbotron award has a presenting sponsor.
+- 3-column stat grids with teal values and team-color gutter gaps look clean and jumbotron-authentic. The grid pattern (stat label above, stat value below) is standard for NBA broadcast stat graphics.
+- Staggering reveal delays between adjacent W screen cards (0.2s → 0.22s → 0.28s) creates a cascading reveal that feels like content loading onto the jumbotron sequentially.
+- The W screen is getting content-rich. Future Arena W screen additions should consider scrollability or vertical condensation — the celebration needs to be screenshot-capturable in a single viewport.
+- Next cycle: Supreme (rotation).

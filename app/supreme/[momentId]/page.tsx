@@ -1498,6 +1498,31 @@ export default function SupremePage() {
           )}
         </div>
 
+        {/* Evening Sale catalogue header — institutional authority */}
+        {/* Every Christie's/Sotheby's catalogue page has a formal header: */}
+        {/* house name, sale title, date, location. Subliminal institutional gravitas. */}
+        <div
+          className="absolute top-5 left-1/2 -translate-x-1/2 z-[12] pointer-events-none flex flex-col items-center gap-0.5 supreme-lot-enter"
+          style={{ opacity: isEnded ? 0.06 : 0.1 }}
+        >
+          <span
+            className="text-[6px] font-bold uppercase tracking-[0.5em] text-white/40"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            TST
+          </span>
+          <span
+            className="text-[7px] uppercase tracking-[0.35em] text-white/25 font-mono"
+          >
+            Evening Sale
+          </span>
+          <span
+            className="text-[6px] uppercase tracking-[0.25em] text-white/15 font-mono"
+          >
+            {new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()} · NEW YORK
+          </span>
+        </div>
+
         {/* Auction catalog lot number + PSA condition grade — top-right */}
         <div
           className="absolute top-4 right-4 z-[12] pointer-events-none supreme-lot-enter flex flex-col items-end gap-1.5"

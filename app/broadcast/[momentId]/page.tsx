@@ -5311,6 +5311,132 @@ function CertificateScreen({
           </div>
         </div>
 
+        {/* ── PLAYER OF THE GAME — ESPN-style award graphic ──────────── */}
+        {/* Every ESPN/TNT broadcast ends with a "Player of the Game"   */}
+        {/* graphic: the highest individual honor in a broadcast recap.  */}
+        {/* This frames the collected player as THE player of the game,  */}
+        {/* creating prestige and screenshot-worthy celebration content.  */}
+        <div
+          className="mt-6 w-full max-w-md mx-auto px-5 transition-all duration-700 ease-out"
+          style={{
+            opacity: phase >= 3 ? 1 : 0,
+            transform: phase >= 3 ? 'translateY(0)' : 'translateY(14px)',
+            transitionDelay: '0.5s',
+          }}
+        >
+          <div
+            className="relative overflow-hidden rounded-md"
+            style={{
+              border: `1px solid rgba(${rgb},0.2)`,
+              backgroundColor: 'rgba(20,25,37,0.7)',
+              backdropFilter: 'blur(8px)',
+            }}
+          >
+            {/* Gold gradient top accent — award prestige */}
+            <div
+              className="h-[2px] w-full"
+              style={{
+                background: `linear-gradient(90deg, #D4A017, ${moment.teamColors.primary}, #D4A017)`,
+              }}
+            />
+
+            <div className="px-5 py-5 sm:px-6 flex items-center gap-4">
+              {/* Trophy icon — broadcast award emblem */}
+              <div className="flex-shrink-0">
+                <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                  {/* Trophy cup */}
+                  <path
+                    d="M10 6h16v2c0 5.5-3.6 10-8 10s-8-4.5-8-10V6z"
+                    stroke="#D4A017"
+                    strokeWidth="1.2"
+                    fill="none"
+                    opacity="0.7"
+                  />
+                  {/* Left handle */}
+                  <path
+                    d="M10 9H7c0 3 1.5 5 3 5.5"
+                    stroke="#D4A017"
+                    strokeWidth="0.8"
+                    fill="none"
+                    opacity="0.4"
+                  />
+                  {/* Right handle */}
+                  <path
+                    d="M26 9h3c0 3-1.5 5-3 5.5"
+                    stroke="#D4A017"
+                    strokeWidth="0.8"
+                    fill="none"
+                    opacity="0.4"
+                  />
+                  {/* Stem */}
+                  <line x1="18" y1="18" x2="18" y2="24" stroke="#D4A017" strokeWidth="0.8" opacity="0.5" />
+                  {/* Base */}
+                  <rect x="13" y="24" width="10" height="2" rx="0.5" stroke="#D4A017" strokeWidth="0.8" fill="none" opacity="0.4" />
+                  {/* Star — award symbol */}
+                  <path
+                    d="M18 9l1.2 2.4 2.6.4-1.9 1.8.5 2.6L18 14.8l-2.4 1.4.5-2.6-1.9-1.8 2.6-.4z"
+                    fill="#D4A017"
+                    opacity="0.6"
+                  />
+                </svg>
+              </div>
+
+              {/* Award text */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span
+                    className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-0.5 rounded-sm"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(212,160,23,0.2), rgba(212,160,23,0.08))',
+                      color: '#D4A017',
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      border: '1px solid rgba(212,160,23,0.15)',
+                    }}
+                  >
+                    Player of the Game
+                  </span>
+                </div>
+                <p
+                  className="text-[18px] uppercase tracking-tight leading-tight"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    fontWeight: 700,
+                    color: moment.teamColors.primary,
+                    textShadow: `0 0 16px rgba(${rgb},0.25)`,
+                  }}
+                >
+                  {moment.player}
+                </p>
+                <p
+                  className="mt-0.5 text-[11px] tracking-wide text-white/40"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 400 }}
+                >
+                  {moment.statLine}
+                </p>
+              </div>
+            </div>
+
+            {/* Bottom bar — production detail */}
+            <div
+              className="px-5 py-1.5 flex items-center justify-between"
+              style={{
+                borderTop: `1px solid rgba(${rgb},0.08)`,
+                backgroundColor: 'rgba(11,14,20,0.4)',
+              }}
+            >
+              <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/15">
+                {fullTeam(moment.team)} vs {fullTeam(moment.opponent)}
+              </span>
+              <span
+                className="text-[7px] uppercase tracking-[0.2em]"
+                style={{ color: `rgba(212,160,23,0.35)`, fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                ESPN Award
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* ── POST-GAME PRESS CONFERENCE — player quote, broadcast editorial depth ── */}
         <div
           className="mt-5 w-full max-w-md mx-auto px-5 transition-all duration-700 ease-out"

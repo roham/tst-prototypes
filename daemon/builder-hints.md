@@ -217,4 +217,13 @@
 - Supreme Purity stays at 9.0 because all additions are minimal: a line, a sentence, a number. The direction hasn't drifted.
 - Context was always in the data (moment.context) — it was just invisible. Check all directions for hidden emotional content.
 - Both Emotion and Conversion jumped 7.5→8.0 from these tiny changes. Lesson: visibility of existing content > new features.
-- Next cycle: Broadcast (rotation). Interaction (7.5) is still the weakest dim for Broadcast. Target the browsing/scroll experience.
+- Next cycle: Arena (rotation completes round 3). Arena weakest at 8.08. Visual polish and Purity could use attention.
+
+## Cycle 26 Learnings
+- Sticky bottom CTA bar is the highest-impact interaction lift for long-scroll pages like Broadcast. IntersectionObserver on the main button is clean and reliable.
+- The sticky bar is both Interaction AND Conversion — user can always buy regardless of scroll position. Both jumped 7.5→8.0.
+- Hero scroll chevron (animate-bounce, opacity-30) is subtle enough for Broadcast's editorial tone but functional.
+- safe-area-inset-bottom on sticky bars is essential for modern notch phones — one line prevents button clipping.
+- Broadcast's editorial scroll model (hero → narrative → transaction) benefits from this pattern more than Supreme or Arena.
+- IntersectionObserver pattern: observe the main CTA, show sticky when !isIntersecting. Simple, reliable, no scroll listeners.
+- All 3 directions now have all dimensions ≥8.0. Entering polish territory — diminishing returns per cycle. Focus on the weakest direction each round.

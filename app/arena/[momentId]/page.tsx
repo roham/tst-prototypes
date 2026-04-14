@@ -1283,6 +1283,17 @@ export default function ArenaPage({
             filter: countdown.isEnded ? 'grayscale(0.7) brightness(0.5)' : undefined,
           }}
         />
+        {/* Arena spotlight sweep — cone of light panning across hero like intro light rig */}
+        {!countdown.isEnded && (
+          <div
+            className="absolute top-0 bottom-0 z-[7] pointer-events-none"
+            style={{
+              width: '40%',
+              background: `radial-gradient(ellipse 50% 100% at 50% 0%, ${moment.teamColors.primary}12 0%, ${moment.teamColors.primary}06 40%, transparent 70%)`,
+              animation: 'arena-spotlight-sweep 10s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            }}
+          />
+        )}
         {/* Dark overlay for legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/40 to-transparent" />
 

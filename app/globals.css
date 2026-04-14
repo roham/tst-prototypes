@@ -530,3 +530,12 @@ body {
   30% { transform: translateY(-50px) scale(1); opacity: 0.9; }
   100% { transform: translateY(-180px) scale(0.7); opacity: 0; }
 }
+
+/* Arena spotlight sweep — cone of light panning across hero like NBA intro light rig */
+@keyframes arena-spotlight-sweep {
+  0% { left: -20%; opacity: 0; }
+  8% { opacity: 1; }
+  50% { left: 110%; opacity: 1; }
+  58% { opacity: 0; }
+  100% { left: 110%; opacity: 0; }
+}

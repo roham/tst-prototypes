@@ -362,3 +362,11 @@
   - All: Skeleton loading state that teases the content before reveal
   - All: Share preview cards (OG meta tags) for when users share their W screen
 - The loop continues. "There is no done. There is only more polished."
+
+## Cycle 41 Learnings
+- `useCountUp` hook with requestAnimationFrame + ease-out quad is smooth and performant. The numbers feel alive, like a jumbotron scoreboard updating.
+- 1400ms duration is the sweet spot for stat counter — fast enough to feel responsive, slow enough to register visually. Too fast (500ms) and you miss it. Too slow (2500ms) and it feels laggy.
+- Extracting JumbotronStatLine as its own component keeps the hero section clean. Each stat segment (30 PTS / 8 REB / 4 AST) is its own CountUpNumber instance.
+- The animated stat counter is deeply Arena — no other direction should have it. Supreme's stats are static (confident, already-known). Broadcast's stats fly in as cards. Arena's stats roll up like a scoreboard.
+- Beyond-9.0 improvements are experiential: they don't change the scoring model but make the page feel genuinely alive and surprising. These are the details that make someone say "whoa" on first visit.
+- Next cycle: Supreme (rotation). Supreme needs its own beyond-9.0 experiment — perhaps the hero image having a subtle parallax effect on scroll, or the edition number having a premium engraving-style appearance.

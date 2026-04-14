@@ -213,3 +213,7 @@
 | Arena | 9.0 | 9.0 | 9.0 | 9.0 | 9.0 | **9.00** |
 
 **ALL THREE DIRECTIONS AT 9.00.** Every dimension at 9.0 across all 3 directions. The Broadcast emotion gap (8.5) was closed with cinematic Ken Burns drift, a dramatic oversized pull quote treatment, and an editorial thesis closing line. Per the loop rules: if 3 consecutive cycles produce < 0.15 delta on any direction, try something completely unexpected. All directions are now at the ceiling — next cycles should push beyond 9.0 with bold, unexpected experiments.
+
+| 41 | arena | 9.0 | 9.0 | 9.0 | 9.0+ | 9.0 | 9.00+ | — | Beyond-9.0: jumbotron stat counter roll-up animation |
+
+**Cycle 41: BEYOND-9.0 TERRITORY.** Arena gets animated stat counter that rolls up from 0 to final value on page load — pure jumbotron energy. Scoring model maxes at 9.0 but experiential polish continues. Next: Supreme (rotation).

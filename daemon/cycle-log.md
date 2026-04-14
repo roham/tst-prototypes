@@ -83,3 +83,5 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 ## Cycle 39 | Direction: Arena | Score: 9.00 (+0.12) | Built: Conversion lift — lock icon on CTA (main + sticky), checkmark draw on "SECURED!" (punchy spring), stored card hint (Visa ··4242) | Time: 01:50
 
 ## Cycle 40 | Direction: Broadcast | Score: 9.00 (+0.10) | Built: Emotion lift — cinematic Ken Burns hero drift, dramatic oversized pull quote with decorative quotation mark, editorial closing thesis line | Time: 02:10
+
+## Cycle 41 | Direction: Arena | Score: 9.00 (beyond-9.0 polish) | Built: Jumbotron stat counter roll-up animation — numbers count from 0 to final value on page load with ease-out quad easing (1.4s) | Time: 02:25

@@ -545,3 +545,13 @@
 - The `broadcast-reveal-line` class sets initial state (`scaleX(0)`) and `broadcast-reveal-line-active` triggers the animation. This two-class pattern (state + trigger) is clean for IntersectionObserver-driven animations.
 - This replaces a static `opacity-20` divider with a dynamic reveal — a net zero DOM change but adds significant editorial polish.
 - Next cycle: Arena (rotation). Arena could use a "wave" animation through purchase feed items, or a jumbotron-style scoreboard transition effect.
+
+## Cycle 62 Learnings
+- Arena spotlight sweep uses a radial gradient (ellipse 50%×100% at 50% 0%) — anchored to top center, stretching full height. This creates a cone shape that widens as it reaches the bottom, like a real overhead spotlight.
+- 10s cycle with cubic-bezier(0.4, 0, 0.6, 1) creates smooth acceleration/deceleration — the spotlight doesn't "jump" at edges. The ease-in-out mimics a motorized spotlight rig panning.
+- Team-color tinting at very low opacity (primary at 7% + 3.5%) keeps the spotlight subtle. Higher opacity (>10%) made it compete with the player image. The effect should be atmospheric, not literal.
+- z-[7] positions the sweep above the action/player images but below the dark overlay and text. This means the light illuminates the images without washing out legibility.
+- Width at 40% of the hero means the cone covers about 2/5 of the viewport at any moment — wide enough to be visible, narrow enough to "sweep" across. 60% felt like a floodlight; 20% was too narrow to register.
+- Keyframe uses opacity fade: 0% start → 8% fade in → 50% fade out → 58% invisible → hold to 100%. This prevents the spotlight from appearing/disappearing at the hero edges with hard cuts.
+- Arena hero now has 3 atmosphere layers: action image backdrop (static), player gradient (static), and spotlight sweep (animated). This is lighter than Supreme (7 effects) or Broadcast (5+ overlays), which is correct — Arena's visual energy comes from the LIVE FEED and purchase reactions below the hero, not from the hero itself. The spotlight is the one ambient hero effect Arena needs.
+- Next cycle: Supreme (rotation). Supreme could use a subtle frost/glass morphism on the edition badge, or a premium micro-texture on the void background.

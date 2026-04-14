@@ -965,4 +965,16 @@
 - 30% opacity is the sweet spot for authentication details — visible enough that collectors notice, subtle enough not to compete with the hero content.
 - Supreme's auction house identity stack is now complete: lot number (cataloging) → holographic sticker (authentication) → gavel countdown (bidding) → SOLD stamp (finality) → provenance chain (verification). Each element maps to a real auction house process.
 - z-13 for the sticker sits above the vitrine glass (z-12) but below hero text — proper layering for a background detail.
-- Next cycle: Broadcast (rotation).
+
+## Cycle 109 Learnings
+- VU meters are a perfect fit for broadcast production overlay — adds audio dimension to a purely visual medium.
+- CSS custom properties (--vu-peak) allow per-bar variation without JS — stagger peaks for organic equalizer feel.
+
+## Cycle 110 Learnings
+- Arena now has 5 layered hero atmosphere effects: action image, player gradient, spotlight sweep, laser beams, crowd wave. Each operates at different z-levels and animation frequencies to avoid visual competition.
+- Thin laser beams (1.5px) work better than thick ones — real laser light is razor-thin, and thick beams would look more like spotlight than laser.
+- White center peak + team-color edges is the key to realistic laser rendering — lasers have a bright core that washes out to color at the edges.
+- Staggering 3 beams at different angles and speeds (7s/9s/8s) with delays (0s/2.5s/4s) creates organic cross-patterns without synchronization artifacts.
+- z-8 for lasers between spotlight (z-7) and content keeps proper visual hierarchy.
+- Arena page is now 2,440+ lines — increasingly important to keep new additions lightweight (this one is just a component + 3 CSS keyframes).
+- Next cycle: Supreme (rotation).

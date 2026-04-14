@@ -586,3 +586,8 @@
 
 **Cycle 162: Arena jumbotron highlight replay.** Compact 16:9 action image card on the W screen showing the actual basketball moment. INSTANT REPLAY red badge with play triangle icon, replay count (×N), scanline overlay for LED jumbotron texture, bottom vignette with team-color tint, player name and play type overlay, stat line bar parsing the statLine string into individual labeled stat chips. The W screen had extensive purchase metrics but never showed the play itself — this fills that gap. Every NBA arena replays the highlight during post-game celebration. Placed between Decibel Meter and FAN CAM edition card.
 
+
+| 163 | supreme | 9.0+ | 9.0+ | 9.0+ | 9.0+ | 9.0+ | 9.00+ | — | Beyond-9.0: auctioneer's bid call above CTA ("The bid stands at $5. Do I hear $25?") |
+
+**Cycle 163: Supreme auctioneer's bid call.** Georgia serif italic text above CTA that frames the selected tier price in auction language and subtly upsells to the next tier. Current bid in tier-accent color at 40% opacity, next bid in white at 22% opacity. When highest tier selected: "Final offer." Hidden during purchasing/ended. The auctioneer's voice was the one missing element from Supreme's auction house fiction — all other institutional details (catalogue, specialist's note, condition report, gavel calls, paddle, viewing room, ledger) were visual, but none had the auctioneer's verbal framing. Pure conversion psychology at 14% white opacity — subliminal but effective.
+

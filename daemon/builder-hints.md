@@ -1369,3 +1369,10 @@
 - Scanline overlay (repeating-linear-gradient with 2px transparent / 2px rgba(0,0,0,0.08)) creates the LED jumbotron texture without adding a real image asset. Subtle but adds authenticity.
 - The Arena W screen is now very long (12+ elements). Future Arena improvements should focus on the browsing/purchase flow rather than adding more W screen cards.
 - Next cycle: Supreme (rotation).
+
+## Cycle 163 Learnings
+- The auctioneer's bid call is a text-only addition (no new components, no keyframes) that creates strong psychological framing. Text is the cheapest, highest-impact improvement when the copy is right.
+- "Do I hear $25?" naturally upsells by making the next tier feel like a logical step up, not a separate product. Framing purchases as bid increments changes the decision architecture.
+- Georgia serif italic at 14% white opacity is the sweet spot for Supreme's subliminal register — visible when reading, invisible when scanning. Matches specialist's note and catalogue text styling.
+- The "Final offer" variant for highest tier creates closing energy without adding urgency mechanics. The words alone carry the weight.
+- Next cycle: Broadcast (rotation).

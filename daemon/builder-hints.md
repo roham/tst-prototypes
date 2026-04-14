@@ -1556,3 +1556,10 @@
 - Each direction now approaches haptics according to its philosophy: Supreme = institutional taps (6-15ms), Arena = crowd stomps and bass hits (50-90ms). Broadcast probably shouldn't get haptics — broadcasts are watched, not felt.
 - The countdownTick distinction (15ms normal, [25,10,25] double-tap for ≤3s) creates tactile urgency escalation that pairs with the visual crowd countdown numbers growing larger.
 - Next cycle: Supreme (rotation).
+
+## Cycle 193 Learnings
+- Sliding underline with spring easing (0.34,1.56,0.64,1) on `left` property is cleaner than per-button show/hide — the indicator physically travels. Equal-width flex buttons (`flex: 1 1 0%`) are essential for consistent slide distances.
+- Reserve met celebration via `useRef` to detect boolean flip is the right pattern for one-shot state transitions. Reusing existing haptic pattern (gavelStrike) avoids adding more vibration patterns.
+- The scale(1.18x) spring overshoot on the reserve container is noticeable but not disruptive — it draws the eye for 1.2s then settles. Good amplitude for institutional micro-celebration.
+- Status dot expanding to 2.5x with triple-layer glow creates a satisfying "light bloom" that reads as celebratory without being flashy — perfectly Supreme.
+- Next cycle: Broadcast (rotation).

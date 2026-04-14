@@ -504,6 +504,34 @@ export default function BroadcastPage() {
             </p>
           </div>
 
+          {/* INSTANT REPLAY — broadcast overlay tag, slides in from right */}
+          {!countdown.isEnded && (
+            <div className="absolute top-[38%] right-0 z-20 broadcast-replay-tag pointer-events-none">
+              <div className="flex items-center gap-0">
+                {/* Team-color accent bar */}
+                <div
+                  className="h-[28px] w-[3px] flex-shrink-0"
+                  style={{ backgroundColor: moment.teamColors.primary }}
+                />
+                <div
+                  className="flex items-center gap-2.5 px-4 py-1.5"
+                  style={{ backgroundColor: 'rgba(11,14,20,0.85)', backdropFilter: 'blur(8px)' }}
+                >
+                  <div
+                    className="h-[5px] w-[5px] rounded-full"
+                    style={{ backgroundColor: moment.teamColors.primary }}
+                  />
+                  <span
+                    className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/70"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    Instant Replay
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Anamorphic lens flare — horizontal light streak, classic broadcast camera */}
           {!countdown.isEnded && (
             <div

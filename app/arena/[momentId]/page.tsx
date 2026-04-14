@@ -439,6 +439,7 @@ function CelebrationScreen({
 }) {
   const acquireTime = (1.5 + Math.random() * 3).toFixed(1);
   const percentile = Math.max(1, Math.round((1 - editionNumber / total) * 100));
+  const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
   const [flash, setFlash] = useState(true);
   const [shake, setShake] = useState(true);
   const [showDetails, setShowDetails] = useState(false);
@@ -545,6 +546,19 @@ function CelebrationScreen({
           </span>
         </div>
 
+        {/* Matchup + date — screenshot permanence */}
+        <div
+          className="mt-4 flex items-center justify-center gap-3 text-[10px] uppercase tracking-[0.2em] text-white/25 transition-all duration-500 ease-out"
+          style={{
+            opacity: showDetails ? 1 : 0,
+            transitionDelay: '0.15s',
+          }}
+        >
+          <span>{moment.team} vs {moment.opponent}</span>
+          <span className="text-white/10">·</span>
+          <span className="font-mono tabular-nums">{dateStr}</span>
+        </div>
+
         {/* Competition stats — three columns */}
         <div
           className="mt-5 grid grid-cols-3 gap-4 text-center transition-all duration-500 ease-out"
@@ -581,14 +595,28 @@ function CelebrationScreen({
             Flex Your W
           </button>
 
-          {/* Secondary share */}
+          {/* Secondary share — team-color hover */}
           <div className="mt-3 flex items-center gap-3">
-            <button className="rounded-full bg-white/[0.06] px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-white/50 transition-colors hover:bg-white/10">
-              Share on X
-            </button>
-            <button className="rounded-full bg-white/[0.06] px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-white/50 transition-colors hover:bg-white/10">
-              Copy Link
-            </button>
+            {[
+              { label: 'Share on X', icon: '𝕏' },
+              { label: 'Copy Link', icon: '⎘' },
+            ].map(({ label, icon }) => (
+              <button
+                key={label}
+                className="flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-white/50 transition-all duration-200 hover:text-white/70"
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = `${moment.teamColors.primary}40`;
+                  (e.currentTarget as HTMLElement).style.backgroundColor = `${moment.teamColors.primary}15`;
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)';
+                  (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.04)';
+                }}
+              >
+                <span className="text-[13px]">{icon}</span>
+                {label}
+              </button>
+            ))}
           </div>
 
           {/* Reset */}
@@ -953,6 +981,16 @@ export default function ArenaPage({
           </p>
         </div>
       </section>
+
+      {/* Team-color hero bottom rule — jumbotron segment divider */}
+      <div className="px-4">
+        <div
+          className="h-[1px]"
+          style={{
+            background: `linear-gradient(90deg, ${moment.teamColors.primary}50, ${moment.teamColors.secondary ?? moment.teamColors.primary}30, transparent)`,
+          }}
+        />
+      </div>
 
       {/* ─── Live Activity Feed (hidden when ended) ─── */}
       {!countdown.isEnded && (

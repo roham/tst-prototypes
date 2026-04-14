@@ -1294,6 +1294,24 @@ export default function SupremePage() {
     }
   }, [selectedTierIdx]);
 
+  // Reserve met celebration — pulse when threshold first crossed
+  const reserveThreshold = useMemo(
+    () => Math.floor((moment?.editionSize ?? 5000) * 0.2),
+    [moment?.editionSize],
+  );
+  const reserveMet = claimed >= reserveThreshold;
+  const prevReserveMet = useRef(reserveMet);
+  const [reserveCelebration, setReserveCelebration] = useState(false);
+  useEffect(() => {
+    if (!prevReserveMet.current && reserveMet) {
+      setReserveCelebration(true);
+      HAPTIC.gavelStrike();
+      const t = setTimeout(() => setReserveCelebration(false), 1200);
+      return () => clearTimeout(t);
+    }
+    prevReserveMet.current = reserveMet;
+  }, [reserveMet]);
+
   // Sticky CTA — show when main button overflows on small screens
   useEffect(() => {
     const el = ctaRef.current;
@@ -2144,24 +2162,39 @@ export default function SupremePage() {
       {/* RESERVE STATUS — auction house reserve price indicator */}
       {/* ============================================================= */}
       {(() => {
-        const reserveThreshold = Math.floor(moment.editionSize * 0.2);
-        const reserveMet = claimed >= reserveThreshold;
         return (
-          <div className="flex items-center justify-center gap-2 px-5 py-2 supreme-info-enter">
-            {/* Status dot — red→green transition */}
+          <div
+            className="flex items-center justify-center gap-2 px-5 py-2 supreme-info-enter"
+            style={{
+              transition: 'transform 0.5s cubic-bezier(0.34,1.56,0.64,1), filter 0.5s ease-out',
+              transform: reserveCelebration ? 'scale(1.18)' : 'scale(1)',
+            }}
+          >
+            {/* Status dot — red→green transition + celebration glow burst */}
             <div
               className="h-[5px] w-[5px] rounded-full transition-all duration-700 ease-out"
               style={{
                 backgroundColor: reserveMet ? '#00E5A0' : '#EF4444',
-                boxShadow: reserveMet
-                  ? '0 0 6px rgba(0,229,160,0.5), 0 0 12px rgba(0,229,160,0.2)'
-                  : '0 0 4px rgba(239,68,68,0.3)',
+                boxShadow: reserveCelebration
+                  ? '0 0 12px rgba(0,229,160,0.9), 0 0 24px rgba(0,229,160,0.5), 0 0 40px rgba(0,229,160,0.2)'
+                  : reserveMet
+                    ? '0 0 6px rgba(0,229,160,0.5), 0 0 12px rgba(0,229,160,0.2)'
+                    : '0 0 4px rgba(239,68,68,0.3)',
+                transform: reserveCelebration ? 'scale(2.5)' : 'scale(1)',
+                transition: 'all 0.7s cubic-bezier(0.34,1.56,0.64,1)',
               }}
             />
             <span
               className="text-[8px] font-mono uppercase tracking-[0.35em] transition-colors duration-700"
               style={{
-                color: reserveMet ? 'rgba(0,229,160,0.4)' : 'rgba(239,68,68,0.35)',
+                color: reserveCelebration
+                  ? 'rgba(0,229,160,0.8)'
+                  : reserveMet
+                    ? 'rgba(0,229,160,0.4)'
+                    : 'rgba(239,68,68,0.35)',
+                textShadow: reserveCelebration
+                  ? '0 0 8px rgba(0,229,160,0.4)'
+                  : 'none',
               }}
             >
               {reserveMet ? 'Reserve met' : 'Reserve not met'}
@@ -2431,7 +2464,7 @@ export default function SupremePage() {
             </span>
           </div>
         )}
-        <div className="flex items-center justify-center gap-1">
+        <div className="relative flex items-center justify-center gap-1">
           {moment.rarityTiers.map((tier, idx) => {
             const isSelected = idx === selectedTierIdx;
             const isLow = tier.remaining <= 5;
@@ -2442,6 +2475,7 @@ export default function SupremePage() {
                 key={tier.tier}
                 onClick={() => { setSelectedTierIdx(idx); HAPTIC.tierSelect(); }}
                 className="relative px-3 py-2 text-center transition-all duration-200 active:scale-95"
+                style={{ flex: '1 1 0%' }}
               >
                 <span
                   className={`block text-[10px] uppercase tracking-[0.15em] font-semibold transition-colors duration-200 ${
@@ -2489,17 +2523,28 @@ export default function SupremePage() {
                     Est. ${Math.round(tier.price * 1.8)}–${Math.round(tier.price * 3.2)}
                   </span>
                 )}
-                {/* Underline indicator — tints with tier accent */}
-                <div
-                  className="absolute bottom-0 left-3 right-3 h-[1px] transition-all duration-300"
-                  style={{
-                    backgroundColor: isSelected ? tierAccentColor : 'transparent',
-                    opacity: isSelected ? 0.6 : 0,
-                  }}
-                />
               </button>
             );
           })}
+          {/* Sliding underline — single indicator that glides between tiers */}
+          {(() => {
+            const tierCount = moment.rarityTiers.length;
+            const cellWidth = 100 / tierCount;
+            const padding = 12; // matches px-3 on buttons
+            return (
+              <div
+                className="absolute bottom-0 h-[1px] pointer-events-none"
+                style={{
+                  left: `calc(${selectedTierIdx * cellWidth}% + ${padding}px)`,
+                  width: `calc(${cellWidth}% - ${padding * 2}px)`,
+                  transition: 'left 0.4s cubic-bezier(0.34,1.56,0.64,1), background-color 0.3s ease',
+                  backgroundColor: tierAccentColor,
+                  opacity: 0.6,
+                  boxShadow: `0 0 4px ${tierAccentColor}30`,
+                }}
+              />
+            );
+          })()}
         </div>
       </div>
 

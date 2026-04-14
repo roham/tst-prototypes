@@ -862,3 +862,13 @@
 - Hidden during purchasing and ended states — no visual noise when the meter isn't useful.
 - Arena now has a crowd energy visualization both geographic (heat map) and temporal (energy meter). Together they answer "where are buyers?" and "how fast are they buying?"
 - Next cycle: Supreme (rotation). Supreme could explore a hover state on the tier labels, or a subtle card-tilt perspective on the hero image during scroll.
+
+## Cycle 96 Learnings
+- Supreme's critical timer pulse (1.03x) is intentionally less dramatic than Arena's (1.12x) — Supreme whispers where Arena shouts. The restraint IS the identity.
+- 60ms spring-in vs Arena's 80ms — Supreme's tick is slightly faster, creating a "sharper" pulse that feels more precise and controlled.
+- 120ms ease-out for the return (vs Arena's 150ms) — the pulse resolves quickly, keeping the minimal aesthetic. No lingering glow.
+- The text-shadow goes from a subtle 4px baseline glow to 8px+20px on tick. The delta is small but the double-layer (tight + bloom) makes it register subconsciously.
+- Using `countdown.totalSeconds > 0` instead of `!isEnded` because `isEnded` is defined later in the component. Same logic, different variable access.
+- The tick effect uses inline style transition override (60ms on tick, 120ms on release) because CSS class-based transitions would require adding/removing classes every second, which is noisier.
+- Supreme and Arena now both have per-second CRITICAL timer feedback but in completely different styles. Broadcast doesn't need this — its urgency is editorial (text-based), not rhythmic.
+- Next cycle: Broadcast (rotation). Broadcast could explore a dramatic "COMMERCIAL BREAK" bumper between tiers, or a Ken Burns speed-up in CRITICAL phase (the camera operator is getting nervous).

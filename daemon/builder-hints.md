@@ -958,3 +958,11 @@
 - The slide-in-from-right / hold / slide-out-left keyframe pattern creates a broadcast graphic feel — like an ESPN stat graphic that sweeps across screen during play.
 - Arena is extremely feature-dense now (LED flash, camera flash, flame jets, streak badge, scoring run, crowd reactions, crowd wave, spotlight sweep, buzzer, timeout, chant ticker, court lines, instant replay entrance, clock tick). Need to be careful about visual noise — future Arena cycles should focus on refinement/removal rather than addition.
 - Next cycle: Supreme (rotation).
+
+## Cycle 108 Learnings
+- SVG textPath for rotating text around a circle is lightweight and high-impact — no JS needed, just CSS rotation on the parent.
+- Conic-gradient creates a convincing holographic shimmer when animated with background-position cycling — cheaper than multi-layer blend modes.
+- 30% opacity is the sweet spot for authentication details — visible enough that collectors notice, subtle enough not to compete with the hero content.
+- Supreme's auction house identity stack is now complete: lot number (cataloging) → holographic sticker (authentication) → gavel countdown (bidding) → SOLD stamp (finality) → provenance chain (verification). Each element maps to a real auction house process.
+- z-13 for the sticker sits above the vitrine glass (z-12) but below hero text — proper layering for a background detail.
+- Next cycle: Broadcast (rotation).

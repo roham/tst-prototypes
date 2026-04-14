@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { getMoment, SALE_DURATION_MS } from '@/lib/mock-data';
+import { getMoment, SALE_DURATION_MS, MOMENTS } from '@/lib/mock-data';
 import type { Moment, RarityTier } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
 import { usePrototypeState } from '@/lib/use-prototype-state';
@@ -374,6 +374,89 @@ function BroadcastTicker() {
             </span>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Broadcast BREAKING NEWS Crawl — red urgency ticker during CRITICAL phase
+// Every major news network replaces the normal ticker with a red "BREAKING"
+// crawl during emergencies. This fires when ≤2 min remain, scrolling urgent
+// drop stats across a fixed bar near the bottom — maximum conversion pressure
+// right where the user is deciding to buy.
+// ---------------------------------------------------------------------------
+
+function BreakingNewsCrawl({
+  moment,
+  totalSeconds,
+  rgb,
+}: {
+  moment: Moment;
+  totalSeconds: number;
+  rgb: string;
+}) {
+  const remaining = moment.editionSize - moment.editionsClaimed;
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  const timeStr = `${m}:${s.toString().padStart(2, '0')}`;
+
+  const messages = [
+    `BREAKING: ${moment.player.toUpperCase()} MOMENT CLOSING IN ${timeStr}`,
+    `${remaining.toLocaleString()} EDITIONS REMAINING`,
+    `CLAIM NOW — FROM $${moment.price}`,
+    `${moment.editionsClaimed.toLocaleString()} COLLECTORS ALREADY OWN THIS MOMENT`,
+    `FINAL MINUTES — ${moment.team} vs ${moment.opponent}`,
+    `DO NOT MISS: ${moment.playType.toUpperCase()} — ${moment.statLine}`,
+  ];
+
+  const crawlText = messages.join('   ●   ');
+
+  return (
+    <div
+      className="fixed left-0 right-0 z-[48] pointer-events-none overflow-hidden"
+      style={{
+        bottom: '56px',
+        height: '26px',
+        background: 'linear-gradient(90deg, rgba(239,68,68,0.12) 0%, rgba(239,68,68,0.06) 100%)',
+        borderTop: '1px solid rgba(239,68,68,0.25)',
+        borderBottom: '1px solid rgba(239,68,68,0.15)',
+        backdropFilter: 'blur(8px)',
+      }}
+    >
+      {/* BREAKING label — pinned left */}
+      <div
+        className="absolute left-0 top-0 bottom-0 z-10 flex items-center px-3"
+        style={{
+          backgroundColor: 'rgba(239,68,68,0.9)',
+          boxShadow: '4px 0 12px rgba(239,68,68,0.3)',
+        }}
+      >
+        <span
+          className="text-[9px] font-bold uppercase tracking-[0.3em] text-white"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+        >
+          Breaking
+        </span>
+      </div>
+      {/* Scrolling crawl text */}
+      <div className="absolute inset-0 flex items-center pl-[88px]">
+        <div
+          className="flex whitespace-nowrap animate-[broadcast-breaking-crawl_20s_linear_infinite]"
+        >
+          <span
+            className="text-[10px] font-semibold uppercase tracking-[0.15em] text-red-400/80 px-4"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            {crawlText}
+          </span>
+          <span
+            className="text-[10px] font-semibold uppercase tracking-[0.15em] text-red-400/80 px-4"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            {crawlText}
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -1934,6 +2017,15 @@ export default function BroadcastPage() {
         </section>
       </div>
 
+      {/* ━━━ BREAKING NEWS CRAWL — red urgency ticker during CRITICAL phase ━━━ */}
+      {dropPhase === 'CRITICAL' && !isPurchasing && (
+        <BreakingNewsCrawl
+          moment={moment}
+          totalSeconds={countdown.totalSeconds}
+          rgb={rgb}
+        />
+      )}
+
       {/* ━━━ PiP THUMBNAIL — broadcast picture-in-picture when hero scrolls out ━━━ */}
       {!countdown.isEnded && (
         <div
@@ -2642,6 +2734,81 @@ function CertificateScreen({
             />
           </div>
         </div>
+
+        {/* ── UP NEXT — broadcast promo for next available moment ── */}
+        {(() => {
+          const others = MOMENTS.filter((m) => m.id !== moment.id);
+          const next = others[Math.floor((editionNumber ?? 1) % others.length)];
+          if (!next) return null;
+          return (
+            <div
+              className="mt-6 w-full max-w-md mx-auto px-5 transition-all duration-700 ease-out"
+              style={{
+                opacity: phase >= 4 ? 1 : 0,
+                transform: phase >= 4 ? 'translateY(0)' : 'translateY(12px)',
+                transitionDelay: '0.2s',
+              }}
+            >
+              {/* Broadcast-style "UP NEXT" header */}
+              <div className="flex items-center gap-2 mb-2">
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
+                  style={{
+                    backgroundColor: `rgba(${rgb},0.12)`,
+                    color: moment.teamColors.primary,
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                  }}
+                >
+                  Up Next
+                </span>
+                <div className="h-[1px] flex-1 bg-white/[0.06]" />
+              </div>
+
+              {/* Promo card — compact horizontal layout */}
+              <a
+                href={`/broadcast/${next.id}`}
+                className="group flex items-center gap-3 rounded-md border border-white/[0.06] px-3 py-2.5 transition-all duration-300 hover:border-white/[0.12] hover:bg-white/[0.02]"
+                style={{ cursor: 'pointer' }}
+              >
+                {/* Thumbnail — small, broadcast-graded */}
+                <div
+                  className="w-14 h-14 flex-shrink-0 rounded-sm bg-cover bg-center relative overflow-hidden"
+                  style={{
+                    backgroundImage: `url(${next.actionImageUrl})`,
+                    filter: 'saturate(0.8) contrast(1.1) brightness(0.85)',
+                  }}
+                >
+                  {/* Team-color accent */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-[2px]"
+                    style={{ backgroundColor: next.teamColors.primary }}
+                  />
+                </div>
+
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <p
+                    className="text-[12px] font-bold uppercase tracking-[0.05em] text-white/70 truncate group-hover:text-white/90 transition-colors"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {next.player}
+                  </p>
+                  <p className="text-[10px] text-white/30 truncate mt-0.5">
+                    {next.playType} &middot; {next.team} vs {next.opponent}
+                  </p>
+                  <p className="text-[10px] font-mono tabular-nums text-white/20 mt-0.5">
+                    From ${next.price}
+                  </p>
+                </div>
+
+                {/* Arrow — broadcast transition indicator */}
+                <svg className="w-4 h-4 text-white/20 flex-shrink-0 group-hover:text-white/40 transition-all group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          );
+        })()}
 
         {/* ── SHARE — appears last ── */}
         <div

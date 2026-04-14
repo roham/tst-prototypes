@@ -753,6 +753,12 @@ body {
   100% { transform: translateX(-50%); }
 }
 
+/* Broadcast BREAKING NEWS crawl — red urgency ticker for CRITICAL phase */
+@keyframes broadcast-breaking-crawl {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 /* Broadcast W screen — photographer flash burst (prestige auction camera) */
 @keyframes broadcast-flash-burst {
   0% { opacity: 0; }

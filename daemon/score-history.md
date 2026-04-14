@@ -225,3 +225,7 @@
 | 43 | broadcast | 9.0 | 9.0 | 9.0+ | 9.0 | 9.0 | 9.00+ | — | Beyond-9.0: ESPN stat counter roll-up animation |
 
 **Cycle 43: Broadcast stat counters.** StatBreakdown cards now animate from 0 to final value on scroll-into-view — ESPN broadcast graphics energy. IntersectionObserver triggers, easeOutQuad easing (1.2s), staggered 150ms per card. Next: Arena (rotation).
+
+| 44 | arena | 9.0 | 9.0 | 9.0+ | 9.0+ | 9.0 | 9.00+ | — | Beyond-9.0: arena LED flash pulse on purchases |
+
+**Cycle 44: Arena LED flash.** Team-color edge glow pulses inward (350ms) on each purchase event — simulates arena LED strips firing when the home team scores. Subtle boxShadow inset creates the effect without adding DOM noise. Next: Supreme (rotation).

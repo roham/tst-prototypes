@@ -386,3 +386,11 @@
 - Stagger delay (150ms per card) syncs with the existing `stat-fly-in` CSS animation stagger — numbers start counting as each card flies in.
 - All 3 directions now have animated stat counters, each with identity-correct triggers and timing: Arena (page load, 1400ms, jumbotron), Broadcast (scroll-into-view, 1200ms, editorial), Supreme (static — confident, already-known).
 - Next cycle: Arena (rotation). Arena needs its own beyond-9.0 experiment.
+
+## Cycle 44 Learnings
+- Arena LED flash uses inset boxShadow (80px + 160px spread at 18% and 8% opacity) for edge glow — no extra DOM elements needed. Pure CSS transition.
+- 350ms fade duration is the sweet spot for a purchase flash — fast enough to feel reactive, slow enough to register visually. Too fast (150ms) is subliminal; too slow (600ms) competes with the next purchase.
+- prevLen ref pattern (compare events.length to previous) is clean for detecting new purchases without deep comparison. Skip the first event to avoid flash on initial render.
+- The LED flash sits at z-[20], below CrowdReactions (z-[25]) and critical vignette (z-[35]) — layers don't compete.
+- Arena now has 3 simultaneous purchase reaction systems: LED flash (ambient), CrowdReactions (emoji burst), and feed item glow. Each operates at a different visual layer — together they create overwhelming live-event energy.
+- Next cycle: Supreme (rotation). Supreme needs its own beyond-9.0 experiment — perhaps a premium number counter animation on the edition display, or a subtle hover parallax on the hero image.

@@ -67,6 +67,71 @@ function Confetti({ colors }: { colors: string[] }) {
   return <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">{pieces}</div>;
 }
 
+/* ─── Pyrotechnics — arena rafter mortar starbursts on W screen ── */
+
+const PYRO_BURSTS = [
+  { x: 18, y: 12, delay: 0.15, sparks: 14, size: 38 },
+  { x: 78, y: 8, delay: 0.55, sparks: 16, size: 44 },
+  { x: 35, y: 22, delay: 0.95, sparks: 12, size: 32 },
+  { x: 65, y: 18, delay: 1.35, sparks: 14, size: 40 },
+  { x: 50, y: 6, delay: 1.7, sparks: 18, size: 48 },
+] as const;
+
+function Pyrotechnics({ teamColor, secondaryColor }: { teamColor: string; secondaryColor: string }) {
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[49] overflow-hidden">
+      {PYRO_BURSTS.map((burst, bi) => (
+        <div
+          key={bi}
+          className="absolute"
+          style={{ left: `${burst.x}%`, top: `${burst.y}%` }}
+        >
+          {/* Core flash — white-hot center */}
+          <div
+            className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
+            style={{
+              width: 8,
+              height: 8,
+              backgroundColor: '#fff',
+              boxShadow: `0 0 12px #fff, 0 0 24px ${teamColor}`,
+              animation: `arena-pyro-core 0.8s ease-out ${burst.delay}s both`,
+            }}
+          />
+          {/* Radial spark lines */}
+          {Array.from({ length: burst.sparks }).map((_, si) => {
+            const angle = (360 / burst.sparks) * si;
+            const isAccent = si % 3 === 0;
+            return (
+              <div
+                key={si}
+                className="absolute"
+                style={{
+                  left: 0,
+                  top: 0,
+                  width: 2,
+                  height: burst.size,
+                  transformOrigin: '50% 0%',
+                  transform: `rotate(${angle}deg)`,
+                  animation: `arena-pyro-spark 0.9s ease-out ${burst.delay + si * 0.015}s both`,
+                }}
+              >
+                <div
+                  className="w-full rounded-full"
+                  style={{
+                    height: isAccent ? '60%' : '45%',
+                    background: `linear-gradient(to bottom, ${isAccent ? secondaryColor : teamColor}, transparent)`,
+                    boxShadow: `0 0 4px ${isAccent ? secondaryColor : teamColor}80`,
+                  }}
+                />
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /* ─── Live Purchase Feed (horizontal scrolling pills) ──────────── */
 
 function LiveFeed({ events, teamColor }: { events: PurchaseEvent[]; teamColor?: string }) {
@@ -1283,6 +1348,9 @@ function CelebrationScreen({
           moment.teamColors.primary, moment.teamColors.secondary,
         ]}
       />
+
+      {/* Pyrotechnic starbursts — arena rafter mortar effects */}
+      <Pyrotechnics teamColor={moment.teamColors.primary} secondaryColor={moment.teamColors.secondary} />
 
       {/* Team-color ambient glow — intensified */}
       <div

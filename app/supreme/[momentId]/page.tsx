@@ -285,6 +285,70 @@ function ShareButtons({ teamColor }: { teamColor: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// Phone Bidders — Sotheby's staff relaying remote bids, subtle social proof
+// ---------------------------------------------------------------------------
+
+const PHONE_LINES = [
+  { label: 'NEW YORK', top: '22%', delay: 2.5 },
+  { label: 'LONDON', top: '38%', delay: 5.8 },
+  { label: 'HONG KONG', top: '54%', delay: 9.2 },
+] as const;
+
+function PhoneBidders({ teamColor }: { teamColor: string }) {
+  const [activeLine, setActiveLine] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Randomly pulse a phone line every 3-7 seconds
+    let timer: ReturnType<typeof setTimeout>;
+    const pulse = () => {
+      const idx = Math.floor(Math.random() * PHONE_LINES.length);
+      setActiveLine(idx);
+      const holdDuration = 800 + Math.random() * 400;
+      setTimeout(() => setActiveLine(null), holdDuration);
+      timer = setTimeout(pulse, 3000 + Math.random() * 4000);
+    };
+    timer = setTimeout(pulse, PHONE_LINES[0].delay * 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="absolute top-0 right-3 bottom-0 z-[11] pointer-events-none flex flex-col justify-start pt-16 gap-6">
+      {PHONE_LINES.map((line, i) => {
+        const isActive = activeLine === i;
+        return (
+          <div
+            key={line.label}
+            className="flex items-center gap-1.5 transition-opacity duration-500"
+            style={{ opacity: isActive ? 0.45 : 0.12 }}
+          >
+            {/* Phone icon — minimal handset */}
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+              <path
+                d="M1.5 0.5C1.5 0.5 2.5 0.5 3 1.5C3.5 2.5 2 3.5 2 3.5C2 3.5 3 5.5 4.5 6C6 6.5 6 5.5 6 5.5C7 5 7.5 6 7.5 6C7.5 6 7.5 7.5 6 7.5C4.5 7.5 1 5.5 0.5 3C0 0.5 1.5 0.5 1.5 0.5Z"
+                fill="currentColor"
+              />
+            </svg>
+            <span className="text-[7px] font-mono uppercase tracking-[0.3em]"
+              style={{ color: isActive ? teamColor : 'currentColor' }}
+            >
+              {line.label}
+            </span>
+            {/* Bid active indicator — tiny dot */}
+            <div
+              className="h-[3px] w-[3px] rounded-full transition-all duration-300"
+              style={{
+                backgroundColor: isActive ? teamColor : 'transparent',
+                boxShadow: isActive ? `0 0 4px ${teamColor}60` : 'none',
+              }}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Holographic Auth Sticker — PSA/Beckett grading hologram on hero
 // ---------------------------------------------------------------------------
 
@@ -1408,6 +1472,11 @@ export default function SupremePage() {
         {/* Holographic authentication sticker — PSA/Beckett grading hologram */}
         {!isEnded && !isPurchasing && (
           <HolographicSticker teamColor={moment.teamColors.primary} />
+        )}
+
+        {/* Phone bidders — Sotheby's staff relaying bids from remote buyers */}
+        {!isEnded && !isPurchasing && (
+          <PhoneBidders teamColor={moment.teamColors.primary} />
         )}
 
         {/* SOLD watermark — auction house finality on ended drops */}

@@ -402,3 +402,11 @@
 - The counter syncs with `showDetails` (700ms after page enter), so it fires during the detail reveal phase — the number coming alive during an otherwise static section is a nice surprise.
 - All 3 directions now have animated counters in different contexts: Supreme (W screen edition reveal, easeOutExpo 800ms), Broadcast (stat cards on scroll, easeOutQuad 1200ms), Arena (stat line on load, easeOutQuad 1400ms + stat counter on load). Each trigger and timing matches the direction's energy.
 - Next cycle: Broadcast (rotation). Ideas: certificate card could have a subtle wax-seal or emboss effect, or the "Acquired." checkmark could have a more dramatic animation.
+
+## Cycle 46 Learnings
+- SVG wax seal at 50% opacity is the right visibility — it shouldn't compete with the edition number or certificate text. It's a prestige whisper, not a shout.
+- 48×48px is the sweet spot for the seal at mobile — large enough to read "TST" but small enough to fit in the corner without crowding.
+- 12 radial lines at 30° intervals create the notched-edge effect of a real wax seal. Combined with 3 concentric circles (r=22, 18, 14), it reads immediately as an authentication mark.
+- Positioned absolute bottom-4 right-4 (sm:bottom-6 sm:right-6) keeps it in the certificate's corner without overlapping other content.
+- The seal uses team-color strokes/fills, so it adapts per moment — Heat red seal vs Nuggets gold seal vs Thunder blue seal.
+- Next cycle: Arena (rotation). Arena could use a competition leaderboard on the W screen, or a more dramatic confetti burst.

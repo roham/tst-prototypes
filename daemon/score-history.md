@@ -233,3 +233,7 @@
 | 45 | supreme | 9.0 | 9.0 | 9.0+ | 9.0+ | 9.0 | 9.00+ | — | Beyond-9.0: edition number slot-machine reveal on W screen |
 
 **Cycle 45: Supreme edition reveal.** Edition number counts from 0 to target with easeOutExpo (800ms fast→slow deceleration) on the W screen. On lock, a brief scale(1.05) + team-color textShadow glow confirms the number. Creates lottery-ticket anticipation for the "YOURS." moment. Next: Broadcast (rotation).
+
+| 46 | broadcast | 9.0 | 9.0 | 9.0+ | 9.0 | 9.0+ | 9.00+ | — | Beyond-9.0: wax-seal authentication mark on certificate |
+
+**Cycle 46: Broadcast wax seal.** SVG wax-seal emboss on the certificate card — concentric circles, 12 radial lines, TST monogram at center. Positioned bottom-right at 50% opacity. Adds Sotheby's/Christie's auction-house prestige to the certificate. Next: Arena (rotation).

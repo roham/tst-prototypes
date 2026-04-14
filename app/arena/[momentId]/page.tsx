@@ -2093,6 +2093,128 @@ function ArenaGateScan({ teamColor, seatLabel }: { teamColor: string; seatLabel:
   );
 }
 
+// ---------------------------------------------------------------------------
+// Arena Shot Clock — 24-second basketball shot clock for purchase decisions.
+// Every NBA possession has 24 seconds. When the user enters the tier
+// selection zone, the shot clock starts ticking. If it expires, a brief
+// "SHOT CLOCK VIOLATION" flash appears before resetting. Pure arena
+// pressure — decide now, the clock is running.
+// ---------------------------------------------------------------------------
+
+function useShotClock(isActive: boolean, isEnded: boolean) {
+  const [seconds, setSeconds] = useState(24);
+  const [violation, setViolation] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (!isActive || isEnded) {
+      setSeconds(24);
+      return;
+    }
+    intervalRef.current = setInterval(() => {
+      setSeconds((prev) => {
+        if (prev <= 1) {
+          // Violation! Flash then reset
+          setViolation(true);
+          setTimeout(() => {
+            setViolation(false);
+            setSeconds(24);
+          }, 1800);
+          if (intervalRef.current) clearInterval(intervalRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [isActive, isEnded, violation]);
+
+  return { seconds, violation };
+}
+
+function ArenaShotClock({
+  seconds,
+  violation,
+  teamColor,
+  isVisible,
+}: {
+  seconds: number;
+  violation: boolean;
+  teamColor: string;
+  isVisible: boolean;
+}) {
+  if (!isVisible) return null;
+
+  const isLow = seconds <= 5 && seconds > 0;
+  // LED color: red on violation, amber when low, bright red-orange default (like real shot clock)
+  const ledColor = violation
+    ? '#FF1A1A'
+    : isLow
+      ? '#FF3300'
+      : '#FF2200';
+  const displayVal = violation ? '00' : String(seconds).padStart(2, '0');
+
+  return (
+    <div className="flex flex-col items-center gap-1.5 mb-2">
+      {/* Shot clock housing — dark panel like backboard-mounted unit */}
+      <div
+        className="relative flex flex-col items-center rounded-lg border transition-all duration-300"
+        style={{
+          borderColor: violation
+            ? 'rgba(255,26,26,0.5)'
+            : 'rgba(255,255,255,0.06)',
+          backgroundColor: '#0a0a0a',
+          boxShadow: violation
+            ? `0 0 24px rgba(255,26,26,0.3), inset 0 0 12px rgba(255,26,26,0.05)`
+            : isLow
+              ? `0 0 16px rgba(255,51,0,0.15)`
+              : `0 0 8px rgba(0,0,0,0.5)`,
+          padding: '6px 14px 5px',
+        }}
+      >
+        {/* Ghost segments — unlit LED segments visible behind digits */}
+        <div className="relative">
+          <span
+            className="font-mono text-[28px] font-black tabular-nums select-none"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: 'rgba(255,34,0,0.06)',
+              letterSpacing: '0.08em',
+            }}
+            aria-hidden
+          >
+            88
+          </span>
+          {/* Lit digits — actual value */}
+          <span
+            className="absolute inset-0 font-mono text-[28px] font-black tabular-nums select-none transition-all duration-150"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: ledColor,
+              letterSpacing: '0.08em',
+              textShadow: `0 0 6px ${ledColor}80, 0 0 16px ${ledColor}50, 0 0 32px ${ledColor}25`,
+              transform: isLow && !violation ? `scale(${1 + (seconds % 2 === 0 ? 0.03 : 0)})` : undefined,
+            }}
+          >
+            {displayVal}
+          </span>
+        </div>
+        {/* Label */}
+        <span
+          className="text-[6px] font-bold uppercase tracking-[0.3em] -mt-0.5"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: violation ? '#FF1A1A' : 'rgba(255,255,255,0.18)',
+            textShadow: violation ? `0 0 8px rgba(255,26,26,0.4)` : 'none',
+          }}
+        >
+          {violation ? 'VIOLATION' : 'SHOT CLOCK'}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
@@ -2248,6 +2370,24 @@ export default function ArenaPage({
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+
+  /* ── Shot clock — 24s basketball decision timer on tier section ── */
+  const tierSectionRef = useRef<HTMLDivElement>(null);
+  const [tierVisible, setTierVisible] = useState(false);
+  useEffect(() => {
+    const el = tierSectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setTierVisible(entry.isIntersecting),
+      { threshold: 0.3 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  const shotClock = useShotClock(
+    tierVisible && !countdown.isEnded && proto.state === 'browsing',
+    countdown.isEnded,
+  );
 
   /* ── Not found ──────────────────────────────────────────────── */
   if (!moment) {
@@ -2711,7 +2851,7 @@ export default function ArenaPage({
       )}
 
       {/* ─── Rarity Tiers — live auction selector ─── */}
-      <div className={`${countdown.isEnded ? 'mt-3' : 'mt-1'} relative z-[1]`}>
+      <div ref={tierSectionRef} className={`${countdown.isEnded ? 'mt-3' : 'mt-1'} relative z-[1]`}>
         <p className="mb-2 px-4 text-[10px] font-semibold uppercase tracking-widest text-white/30">
           Select Tier
         </p>
@@ -2723,6 +2863,14 @@ export default function ArenaPage({
           isEnded={countdown.isEnded}
         />
       </div>
+
+      {/* ─── Shot Clock — 24s purchase decision timer ─── */}
+      <ArenaShotClock
+        seconds={shotClock.seconds}
+        violation={shotClock.violation}
+        teamColor={moment.teamColors.primary}
+        isVisible={tierVisible && !countdown.isEnded && proto.state === 'browsing'}
+      />
 
       {/* ─── CTA Section ─── */}
       <div className="px-4 pt-1">

@@ -860,6 +860,17 @@ export default function ArenaPage({
 
       {/* ─── Moment Hero Section (40vh) ─── */}
       <section className="relative flex h-[40vh] min-h-[260px] flex-col justify-end overflow-hidden">
+        {/* Action image — jumbotron replay layer */}
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+          style={{
+            backgroundImage: `url(${moment.actionImageUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center 30%',
+            opacity: countdown.isEnded ? 0.04 : 0.08,
+            filter: countdown.isEnded ? 'grayscale(0.8)' : 'grayscale(0.3) contrast(1.1)',
+          }}
+        />
         {/* Gradient "thumbnail" */}
         <div
           className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
@@ -913,15 +924,25 @@ export default function ArenaPage({
           >
             {moment.player}
           </h1>
-          <p
-            className="mt-1.5 text-base font-medium text-white/70"
-            style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
-          >
-            {moment.statLine}
-          </p>
+          <div className="mt-1.5 flex items-center gap-2">
+            <div
+              className="h-[14px] w-[2px] rounded-full"
+              style={{ backgroundColor: moment.teamColors.primary }}
+            />
+            <p
+              className="text-lg font-medium text-white/80"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
+            >
+              {moment.statLine}
+            </p>
+          </div>
           {/* Context line — enhanced emotional weight */}
           <p className="mt-2 text-sm leading-relaxed text-white/50 tracking-wide">
             {moment.context}
+          </p>
+          {/* Punchy hype line from historical note */}
+          <p className="mt-1.5 text-[12px] leading-relaxed text-white/30 tracking-wide">
+            {moment.historicalNote.split('.')[0]}.
           </p>
           <p className="mt-1.5 flex items-center gap-1.5 text-[11px] text-white/35">
             <span className="inline-block h-1 w-1 rounded-full bg-[#00E5A0] animate-pulse" />

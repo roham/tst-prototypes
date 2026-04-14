@@ -52,10 +52,17 @@
 - The urgency banner uses max-height animation for smooth reveal without layout shift
 - Supply narrative changes at 60%/80%/95% thresholds — each level adds more pressure
 
+## Cycle 9 Learnings
+- SVG sparkline is lightweight and high-impact — shows velocity trend visually
+- City-based social proof ("Sarah K. from Miami") adds geographical reality to claiming
+- PanicBanner reuses existing urgency-pulse-fast animation — no new CSS needed
+- Arena is the most feature-dense — be careful about adding MORE features vs polishing existing ones
+- Arena's weakness is now Visual polish (6.5) — it has lots of features but could be more refined
+
 ## Strategic Notes
-- Cycles 7-9 = URGENCY. Supreme & Broadcast done. Arena next.
-- Supreme 6.35, Broadcast 6.53, Arena 5.85 (weakest by 0.50)
-- Arena needs SOCIAL PANIC urgency: velocity tickers, crowd reactions, competitive claiming energy
-- After Cycle 9 (Arena urgency), all 3 will have triple urgency — full scorecard needed
-- Conversion scores still the biggest opportunity across all 3 (5.0-6.5 range)
-- Interaction scores lag across all 3 (4.5-5.0) — Cycles 10-12 (W SCREEN) should address this
+- URGENCY phase complete (cycles 7-9). All 3 directions have triple urgency stack.
+- Cycles 10-12 = W SCREEN. Post-purchase confirmation = viral engine. SNKRS "Got 'Em" is benchmark.
+- Interaction scores are the weakest across all 3 (4.5-5.5) — W screen improvements should fix this
+- Broadcast W screen (Certificate) needs the most work — currently the weakest (4.5 interaction)
+- Supreme W screen has confetti + staggered reveal, Arena has celebration + feed. Broadcast is static.
+- Arena slightly weakest overall (6.30) → gets Cycle 10

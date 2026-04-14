@@ -33,4 +33,14 @@
 
 | 8 | broadcast | 7.5 | 6.0 | 6.5 | 4.5 | 8.0 | 6.53 | +0.53 | Editorial urgency banner, supply narrative, collector competition |
 
-**Current: Supreme 6.35, Broadcast 6.53, Arena 5.85** — Arena next in Cycle 9 (URGENCY phase).
+| 9 | arena | 6.5 | 6.5 | 6.0 | 5.5 | 7.5 | 6.30 | +0.45 | Velocity sparkline, city-based feed, panic banner |
+
+### Full Scorecard — After Cycle 9 (all directions touched — URGENCY phase complete)
+
+| Direction | Visual | Conversion | Emotion | Interaction | Purity | Weighted |
+|-----------|--------|------------|---------|-------------|--------|----------|
+| Supreme | 7.0 | 6.5 | 5.5 | 5.0 | 7.5 | **6.35** |
+| Broadcast | 7.5 | 6.0 | 6.5 | 4.5 | 8.0 | **6.53** |
+| Arena | 6.5 | 6.5 | 6.0 | 5.5 | 7.5 | **6.30** |
+
+**All 3 have triple urgency stack.** Weakest: Arena (6.30). Lowest dimension across all: Interaction (4.5-5.5). Cycles 10-12 = W SCREEN phase.

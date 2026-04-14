@@ -4640,6 +4640,75 @@ export default function ArenaPage({
         <CrowdReactionBar teamColor={moment.teamColors.primary} isCritical={isCritical} isClosing={isClosing} />
       )}
 
+      {/* ─── STEAL DEAL — Whatnot-style live commerce deal alert ─── */}
+      {/* On Whatnot/TikTok Shop, hosts constantly frame the deal:             */}
+      {/* "This card is $20 on eBay but you're getting it for $5!"            */}
+      {/* The price comparison creates instant value perception at the         */}
+      {/* exact decision point. Arena makes it loud and live.                  */}
+      {!countdown.isEnded && proto.state === 'browsing' && (
+        <div className="mx-4 mt-2 mb-1 relative z-[1]">
+          <div
+            className="relative overflow-hidden rounded-lg px-3.5 py-2.5"
+            style={{
+              backgroundColor: 'rgba(0,229,160,0.06)',
+              border: '1px solid rgba(0,229,160,0.15)',
+              boxShadow: '0 0 12px rgba(0,229,160,0.06)',
+            }}
+          >
+            {/* Flash stripe accent */}
+            <div
+              className="absolute top-0 left-0 right-0 h-[2px]"
+              style={{
+                background: `linear-gradient(90deg, #00E5A0, ${moment.teamColors.primary}, #00E5A0)`,
+                opacity: 0.5,
+              }}
+            />
+            <div className="flex items-center justify-between gap-3">
+              {/* Left: deal label + savings badge */}
+              <div className="flex items-center gap-2 min-w-0">
+                <span
+                  className="shrink-0 text-[8px] font-bold uppercase tracking-[0.2em] px-1.5 py-0.5 rounded-sm"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    backgroundColor: '#00E5A020',
+                    color: '#00E5A0',
+                    border: '1px solid #00E5A030',
+                  }}
+                >
+                  Deal
+                </span>
+                <div className="flex flex-col min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[9px] font-mono text-white/25 line-through tabular-nums">
+                      ${Math.round(moment.rarityTiers[selectedTierIdx].price * 3.2)}
+                    </span>
+                    <span className="text-[7px] text-white/15">mkt</span>
+                    <span className="text-white/10">→</span>
+                    <span
+                      className="text-[12px] font-bold tabular-nums"
+                      style={{ fontFamily: 'var(--font-oswald), sans-serif', color: '#00E5A0' }}
+                    >
+                      ${moment.rarityTiers[selectedTierIdx].price}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              {/* Right: savings percentage */}
+              <span
+                className="shrink-0 text-[14px] font-bold tabular-nums"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: '#00E5A0',
+                  textShadow: '0 0 8px rgba(0,229,160,0.3)',
+                }}
+              >
+                {Math.round(((moment.rarityTiers[selectedTierIdx].price * 3.2 - moment.rarityTiers[selectedTierIdx].price) / (moment.rarityTiers[selectedTierIdx].price * 3.2)) * 100)}% OFF
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ─── CTA Section ─── */}
       <div className="px-4 pt-1">
         {/* Active buyers badge — live commerce energy */}

@@ -1040,3 +1040,12 @@
 - Broadcast now has all 3 elements of the triple urgency stack near CTA: time (countdown), supply (editorial narrative), competition (viewer count + recent collectors). Each is presented in broadcast language rather than generic commerce.
 - The `mt-8 mb-3` spacing on the viewer count naturally replaces the CTA's `mt-8` — conditional class application prevents double margin.
 - Next cycle: Arena (rotation).
+
+## Cycle 119 Learnings
+- `useRef(false)` with a `firedRef` is the cleanest pattern for one-shot phase-transition effects — prevents re-triggers if totalSeconds oscillates near the boundary.
+- Staggered ring delays (0s, 0.15s, 0.3s) with slightly increasing durations (1.2s, 1.3s, 1.4s) create natural wave propagation — each ring appears to "spawn" from the previous one.
+- `cubic-bezier(0.16, 1, 0.3, 1)` spring easing on expanding rings makes them accelerate quickly then settle, mimicking a physical shockwave that expands fast then dissipates.
+- Combining a screen flash (team-color overlay fading from 0.25 opacity) with expanding rings creates a "concussive" feeling — the flash is the blast, the rings are the wavefront.
+- z-39 slots perfectly between timeout (z-38) and buzzer (z-45) — Arena's overlay z-stack is now: LED flash (z-20), ribbon pulse (z-21), camera flash (z-22), crowd reactions (z-25), streak badge (z-30), scoring run (z-32), critical vignette (z-35), noise prompt (z-36), timeout (z-38), horn shockwave (z-39), buzzer (z-45-47), confetti (z-50).
+- Arena now has game-clock overlays for every major NBA timing event: replay (load), timeout (CLOSING entry), horn (CRITICAL entry), buzzer (END). Complete temporal coverage.
+- Next cycle: Supreme (rotation).

@@ -66,3 +66,10 @@ body {
 /* Glow effect */
 .glow-teal { box-shadow: 0 0 20px rgba(0, 229, 160, 0.3); }
 .glow-orange { box-shadow: 0 0 20px rgba(255, 107, 53, 0.3); }
+
+/* Supreme CTA ambient glow pulse */
+@keyframes glow-breathe {
+  0%, 100% { opacity: 0.15; transform: translateY(-50%) scaleX(1); }
+  50% { opacity: 0.3; transform: translateY(-50%) scaleX(1.03); }
+}
+.animate-glow-breathe { animation: glow-breathe 3s ease-in-out infinite; }

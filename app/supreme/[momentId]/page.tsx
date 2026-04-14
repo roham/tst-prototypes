@@ -56,6 +56,46 @@ function useSocialProof(base: number) {
 }
 
 // ---------------------------------------------------------------------------
+// Confetti particle for W screen
+// ---------------------------------------------------------------------------
+
+function ConfettiParticles({ teamColor }: { teamColor: string }) {
+  const particles = useMemo(() => {
+    const colors = ['#00E5A0', teamColor, '#FFFFFF', '#F59E0B'];
+    return Array.from({ length: 24 }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 1.5}s`,
+      duration: `${2 + Math.random() * 2}s`,
+      size: 4 + Math.random() * 6,
+      color: colors[i % colors.length],
+      rotation: Math.random() * 360,
+    }));
+  }, [teamColor]);
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          className="absolute rounded-sm"
+          style={{
+            left: p.left,
+            top: '-10px',
+            width: p.size,
+            height: p.size * 0.6,
+            backgroundColor: p.color,
+            opacity: 0.8,
+            animation: `confetti-fall ${p.duration} ${p.delay} ease-in forwards`,
+            transform: `rotate(${p.rotation}deg)`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Share buttons for the W screen
 // ---------------------------------------------------------------------------
 
@@ -96,12 +136,22 @@ function WScreen({
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0B0E14] overflow-hidden">
-      {/* Teal radial burst */}
+      {/* Confetti burst */}
+      <ConfettiParticles teamColor={moment.teamColors.primary} />
+
+      {/* Teal radial burst — intensified */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle at 50% 45%, rgba(0,229,160,0.15) 0%, transparent 70%)',
+            'radial-gradient(circle at 50% 40%, rgba(0,229,160,0.2) 0%, transparent 60%)',
+        }}
+      />
+      {/* Team color accent glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at 50% 60%, ${moment.teamColors.primary}15 0%, transparent 50%)`,
         }}
       />
 
@@ -115,35 +165,43 @@ function WScreen({
       >
         {/* Giant W */}
         <div
-          className="text-[120px] leading-none font-black tracking-tighter"
-          style={{ color: '#00E5A0' }}
+          className="text-[140px] leading-none tracking-tighter"
+          style={{
+            color: '#00E5A0',
+            fontFamily: 'var(--font-oswald), sans-serif',
+            fontWeight: 700,
+            textShadow: '0 0 60px rgba(0,229,160,0.4), 0 0 120px rgba(0,229,160,0.15)',
+          }}
         >
           W
         </div>
 
-        <p className="mt-2 text-sm font-semibold uppercase tracking-[0.25em] text-white/60">
+        <p className="mt-1 text-xs font-semibold uppercase tracking-[0.3em] text-white/50">
           You own this moment
         </p>
 
         {/* Player + play */}
-        <h2 className="mt-6 text-3xl font-bold tracking-tight text-white">
+        <h2
+          className="mt-6 text-4xl uppercase tracking-tight text-white"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 700 }}
+        >
           {moment.player}
         </h2>
-        <p className="mt-1 text-base text-white/50">{moment.playType}</p>
+        <p className="mt-1 text-sm text-white/40">{moment.playType}</p>
 
         {/* Edition pill */}
-        <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5">
+        <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/[0.07] px-5 py-2 border border-white/[0.06]">
           <span className="text-sm font-mono font-semibold text-[#00E5A0]">
             #{editionNumber.toLocaleString()}
           </span>
-          <span className="text-sm text-white/40">
+          <span className="text-xs text-white/30">
             of {moment.editionSize.toLocaleString()}
           </span>
         </div>
 
         {/* Context timestamp */}
-        <p className="mt-4 text-xs text-white/30">
-          Acquired during {moment.team} vs {moment.opponent}
+        <p className="mt-4 text-[11px] text-white/25 uppercase tracking-wider">
+          {moment.team} vs {moment.opponent}
         </p>
 
         {/* Share row */}
@@ -239,14 +297,20 @@ export default function SupremePage() {
     buttonAnimation = 'animate-urgency';
   }
 
+  // Glow intensity increases with urgency
+  const glowOpacity =
+    dropPhase === 'CRITICAL' ? 0.5 : dropPhase === 'CLOSING' ? 0.3 : 0.2;
+  const glowColor =
+    dropPhase === 'CRITICAL' ? '#EF4444' : '#00E5A0';
+
   return (
     <div className="min-h-dvh flex flex-col bg-[#0B0E14] relative overflow-hidden select-none">
       {/* ============================================================= */}
-      {/* HERO — fills top 55% */}
+      {/* HERO — fills top 52% */}
       {/* ============================================================= */}
       <div
         className="relative w-full flex-none"
-        style={{ height: '55dvh' }}
+        style={{ height: '52dvh' }}
       >
         {/* Gradient background */}
         <div
@@ -258,26 +322,41 @@ export default function SupremePage() {
           }}
         />
 
+        {/* Team color ambient glow — top center */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `radial-gradient(ellipse 80% 60% at 50% 30%, ${moment.teamColors.primary}30 0%, transparent 70%)`,
+          }}
+        />
+
         {/* Dark overlay for text legibility */}
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(to top, #0B0E14 0%, transparent 50%)',
+            background: 'linear-gradient(to top, #0B0E14 0%, rgba(11,14,20,0.4) 40%, transparent 70%)',
           }}
         />
 
         {/* Player name + play type — bottom-left */}
         <div className="absolute bottom-6 left-5 right-5 z-10">
+          {/* Play type — above name, small */}
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/35 mb-2">
+            {moment.playType}
+          </p>
           <h1
-            className="text-5xl sm:text-6xl font-black uppercase leading-[0.9] tracking-tight text-white"
+            className="text-[52px] sm:text-[64px] uppercase leading-[0.88] text-white"
             style={{
-              textShadow: '0 2px 20px rgba(0,0,0,0.6)',
+              fontFamily: 'var(--font-oswald), sans-serif',
+              fontWeight: 700,
+              textShadow: '0 2px 30px rgba(0,0,0,0.7)',
             }}
           >
             {moment.player}
           </h1>
-          <p className="mt-2 text-sm font-medium uppercase tracking-widest text-white/40">
-            {moment.playType}
+          {/* Game context */}
+          <p className="mt-2.5 text-xs text-white/30 tracking-wide">
+            {moment.context}
           </p>
         </div>
       </div>
@@ -285,30 +364,42 @@ export default function SupremePage() {
       {/* ============================================================= */}
       {/* INFO STRIP — timer + edition counter */}
       {/* ============================================================= */}
-      <div className="flex items-center justify-between px-5 py-4">
+      <div className="flex items-center justify-between px-5 py-3.5">
         {/* Timer */}
-        <div
-          className="font-mono text-2xl font-bold tabular-nums transition-colors duration-300"
-          style={{ color: timerColor(dropPhase) }}
-        >
-          {isEnded ? (
-            <span className="text-lg font-semibold">Ended</span>
-          ) : (
-            timerDisplay
+        <div className="flex items-baseline gap-2">
+          <div
+            className="font-mono text-[28px] font-bold tabular-nums transition-colors duration-300"
+            style={{ color: timerColor(dropPhase) }}
+          >
+            {isEnded ? (
+              <span className="text-lg font-semibold">Ended</span>
+            ) : (
+              timerDisplay
+            )}
+          </div>
+          {!isEnded && (
+            <span className="text-[10px] uppercase tracking-wider text-white/20">
+              left
+            </span>
           )}
         </div>
 
         {/* Edition counter */}
         <div className="text-right">
-          <p className="text-sm font-mono tabular-nums text-white/70">
-            <span className="text-white font-semibold">
-              {moment.editionsClaimed.toLocaleString()}
+          <div className="flex items-center gap-2 justify-end">
+            <span className="text-[9px] uppercase tracking-wider text-[#00E5A0]/60 font-semibold">
+              Open
             </span>
-            <span className="text-white/30"> / </span>
-            <span>{moment.editionSize.toLocaleString()}</span>
-          </p>
+            <p className="text-sm font-mono tabular-nums text-white/70">
+              <span className="text-white font-semibold">
+                {moment.editionsClaimed.toLocaleString()}
+              </span>
+              <span className="text-white/20"> / </span>
+              <span>{moment.editionSize.toLocaleString()}</span>
+            </p>
+          </div>
           {/* Thin progress bar */}
-          <div className="mt-1.5 w-32 h-[3px] rounded-full bg-white/10 overflow-hidden ml-auto">
+          <div className="mt-1.5 w-32 h-[2px] rounded-full bg-white/[0.06] overflow-hidden ml-auto">
             <div
               className="h-full rounded-full transition-all duration-1000"
               style={{
@@ -320,16 +411,29 @@ export default function SupremePage() {
         </div>
       </div>
 
+      {/* Spacer pushes button to bottom */}
+      <div className="flex-1" />
+
       {/* ============================================================= */}
-      {/* THE BUTTON */}
+      {/* THE BUTTON — with ambient glow */}
       {/* ============================================================= */}
-      <div className="px-5 mt-auto mb-3">
+      <div className="px-5 mb-3 relative">
+        {/* Ambient glow behind button */}
+        {!isEnded && (
+          <div
+            className="absolute inset-x-5 top-1/2 -translate-y-1/2 h-16 rounded-2xl blur-xl transition-all duration-500 pointer-events-none"
+            style={{
+              backgroundColor: glowColor,
+              opacity: glowOpacity,
+            }}
+          />
+        )}
         <button
           onClick={purchase}
           disabled={isPurchasing || isEnded}
           className={`
-            relative w-full h-16 rounded-2xl text-base font-bold uppercase tracking-wider
-            transition-all duration-200 active:scale-[0.98]
+            relative w-full h-[56px] rounded-2xl text-[15px] font-bold uppercase tracking-wider
+            transition-all duration-200 active:scale-[0.97] active:brightness-110
             disabled:cursor-not-allowed
             ${buttonAnimation}
           `}
@@ -340,7 +444,6 @@ export default function SupremePage() {
         >
           {isPurchasing ? (
             <span className="inline-flex items-center gap-2">
-              {/* Spinner */}
               <svg
                 className="animate-spin h-5 w-5"
                 viewBox="0 0 24 24"
@@ -371,7 +474,7 @@ export default function SupremePage() {
       {/* ============================================================= */}
       {/* SOCIAL PROOF — tiny, below button */}
       {/* ============================================================= */}
-      <p className="text-center text-[11px] text-white/25 pb-6">
+      <p className="text-center text-[11px] text-white/20 pb-6 tabular-nums">
         {watching} watching &middot; {claimedPerMin} claimed/min
       </p>
     </div>

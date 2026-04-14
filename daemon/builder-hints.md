@@ -1024,3 +1024,11 @@
 - SVG stroke-dashoffset is the cleanest way to animate a light chasing a rectangular perimeter — no need for clip-path or gradient tricks.
 - Arena W screen now has: headline bounce → PA typewriter → edition card fan cam → ticket stub → share buttons. The typing animation fills the gap between headline and card reveal with dynamic content.
 - Next cycle: Supreme (rotation).
+
+## Cycle 117 Learnings
+- Sale record placard adds information (price, date, status) without breaking Supreme's minimal aesthetic — the key is very small type (7-8px), extreme tracking, and very low opacity borders/text.
+- Reusing `lotNumber` from the card-back (line 539) maintains consistency — the lot number on the sale record matches the lot number visible during the card flip.
+- Timing the reveal with `showSeal` (1.6s) places it after the provenance chain steps finish animating, creating a natural "and here's the final record" moment.
+- Supreme's W screen is now information-dense but feels sparse because everything is at 10-25% opacity with generous spacing. The density is there for screenshots — zoom in and every detail rewards.
+- At this level of polish, each new element must justify its existence. The sale record works because it adds new information (price, date) not shown elsewhere on the W screen.
+- Next cycle: Broadcast (rotation).

@@ -1400,6 +1400,13 @@ export default function ArenaPage({
     return () => clearInterval(id);
   }, [moment]);
 
+  /* ── Jumbotron instant replay entrance — fires once on mount ── */
+  const [replayActive, setReplayActive] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setReplayActive(false), 2200);
+    return () => clearTimeout(t);
+  }, []);
+
   /* ── Arena buzzer — fires once when drop transitions to ended ── */
   const buzzerActive = useArenaBuzzer(countdown.isEnded);
 
@@ -1556,7 +1563,7 @@ export default function ArenaPage({
       <section className="relative flex h-[40vh] min-h-[260px] flex-col justify-end overflow-hidden">
         {/* Action image — jumbotron replay layer */}
         <div
-          className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+          className={`absolute inset-0 bg-cover bg-center transition-all duration-1000${replayActive ? ' arena-replay-hero' : ''}`}
           style={{
             backgroundImage: `url(${moment.actionImageUrl})`,
             backgroundSize: 'cover',
@@ -1567,7 +1574,7 @@ export default function ArenaPage({
         />
         {/* Gradient "thumbnail" */}
         <div
-          className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+          className={`absolute inset-0 bg-cover bg-center transition-all duration-1000${replayActive ? ' arena-replay-hero' : ''}`}
           style={{
             backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
             backgroundSize: 'cover, cover',
@@ -1575,6 +1582,39 @@ export default function ArenaPage({
             filter: countdown.isEnded ? 'grayscale(0.7) brightness(0.5)' : undefined,
           }}
         />
+        {/* Jumbotron instant replay — VHS tracking line on entrance */}
+        {replayActive && (
+          <>
+            <div
+              className="pointer-events-none absolute left-0 right-0 z-[8] h-[4px] arena-replay-tracking"
+              style={{
+                background: `linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.6) 20%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.6) 80%, transparent 95%)`,
+                boxShadow: '0 0 12px rgba(255,255,255,0.3), 0 0 24px rgba(255,255,255,0.1)',
+              }}
+            />
+            <div
+              className="pointer-events-none absolute top-4 right-3 z-[9] flex items-center gap-2 rounded px-3 py-1.5 arena-replay-badge"
+              style={{
+                backgroundColor: 'rgba(0,0,0,0.7)',
+                border: `1px solid ${moment.teamColors.primary}50`,
+              }}
+            >
+              <span
+                className="h-[6px] w-[6px] rounded-full"
+                style={{ backgroundColor: moment.teamColors.primary }}
+              />
+              <span
+                className="text-[10px] font-bold uppercase tracking-[0.2em]"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: moment.teamColors.primary,
+                }}
+              >
+                Instant Replay
+              </span>
+            </div>
+          </>
+        )}
         {/* Arena spotlight sweep — cone of light panning across hero like intro light rig */}
         {!countdown.isEnded && (
           <div

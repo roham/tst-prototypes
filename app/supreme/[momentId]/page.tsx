@@ -631,6 +631,20 @@ export default function SupremePage() {
             background: `linear-gradient(to top, #0B0E14 0%, rgba(11,14,20,0.6) 35%, rgba(11,14,20,0.2) 60%, transparent 80%)`,
           }}
         />
+        {/* Diagonal light sweep — premium card catching light */}
+        {!isEnded && !isPurchasing && (
+          <div
+            className="absolute inset-0 pointer-events-none z-[5] overflow-hidden"
+          >
+            <div
+              className="absolute inset-y-0 w-[60%] supreme-light-sweep"
+              style={{
+                background: `linear-gradient(90deg, transparent 0%, ${moment.teamColors.primary}08 35%, rgba(255,255,255,0.06) 50%, ${moment.teamColors.primary}08 65%, transparent 100%)`,
+              }}
+            />
+          </div>
+        )}
+
         {/* Hero bottom edge shadow — creates depth at content transition */}
         <div
           className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none z-10"

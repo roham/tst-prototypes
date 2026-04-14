@@ -285,6 +285,16 @@ body {
   animation: supreme-ken-burns 20s ease-in-out alternate infinite;
 }
 
+/* Supreme hero — diagonal light sweep, like a premium card catching light */
+@keyframes supreme-light-sweep {
+  0%, 85% { transform: translateX(-120%) rotate(-25deg); opacity: 0; }
+  90% { opacity: 1; }
+  100% { transform: translateX(120%) rotate(-25deg); opacity: 0; }
+}
+.supreme-light-sweep {
+  animation: supreme-light-sweep 8s ease-in-out infinite;
+}
+
 /* Broadcast hero — slow cinematic Ken Burns drift for emotional tension */
 @keyframes broadcast-ken-burns {
   0% { transform: scale(1) translate(0, 0); }

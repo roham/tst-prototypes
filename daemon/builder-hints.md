@@ -437,3 +437,11 @@
 - `broadcast-ticker` keyframe was missing from globals.css — the component referenced `animate-[broadcast-ticker_30s_linear_infinite]` via Tailwind arbitrary animation. Added the keyframe: `translateX(0) → translateX(-50%)` with doubled content for seamless loop.
 - Broadcast now has the most complete TV broadcast metaphor: ESPN BottomLine ticker + network bug + lower-third graphics + urgency chyron + Ken Burns hero + film grain + stat counters. No other direction should borrow these — they're deeply broadcast-specific.
 - Next cycle: Arena (rotation). Arena could use a crowd noise ambient indicator, or a "seats filling up" visualization.
+
+## Cycle 50 Learnings
+- Mini equalizer bars (5 × 2px, staggered animation 380-550ms) instantly read as "live audio" without needing actual sound. The visual metaphor is powerful enough on its own.
+- Placing the EQ next to the viewer count creates a "streaming platform" feel — like Twitch or YouTube Live showing audio activity alongside viewer numbers.
+- The bars use team-color tinting (0.7 opacity) so they adapt per moment page — Heat red EQ vs Nuggets gold EQ vs Thunder blue EQ.
+- Freeze behavior (height: 15%, opacity: 0.3, animation: none) on ended state creates a "stream ended" feeling — the arena has gone quiet. The transition is handled by CSS `transition-all duration-300`.
+- Arena now has the most complete live-event sensory environment: crowd reactions (emoji burst), LED flash (visual), purchase streak (gamification), velocity sparkline (data), and now crowd noise EQ (audio cue). No other direction should have these — they're deeply Arena-specific.
+- Next cycle: Supreme (rotation). Supreme could use a premium engraving effect on the player name, or a subtle vignette breathing effect.

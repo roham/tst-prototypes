@@ -299,3 +299,11 @@
 - Visual jumped 8.5→9.0 and Emotion jumped 8.5→9.0. These are the first non-Purity 9.0 scores for Supreme. Action image + historicalNote were the combo.
 - Supreme is now the leader at 8.80, surpassing Arena (8.65). The subtle layers compound — Supreme's page feels genuinely premium, not just minimal.
 - Next cycle: Broadcast (rotation). Broadcast at 8.58 — Visual (8.5) and Emotion (8.5) are the targets. Broadcast could use similar techniques adapted to its editorial identity.
+
+## Cycle 35 Learnings
+- Stat card top accents (2px team-color bar) transform plain boxes into broadcast scoreboard panels — same pattern used on Arena stats cards, adapted for Broadcast's editorial context.
+- Team-color gradient section rule (primary→transparent left-to-right) is more refined than a solid line — feels like a broadcast segment divider.
+- ShareButton upgrade with icon glyphs + team-color hover is now standardized across Supreme and Broadcast. Arena W screen could use this too.
+- Visual jumped 8.5→9.0 from stat accents + section rule. Small visual details compound when the foundation is already strong.
+- Broadcast Emotion (8.5) is now the weakest non-Conversion dim. Could add a more impactful emotional element — perhaps a subtle ambient video or more dramatic hero treatment.
+- Next cycle: Arena (rotation). Arena at 8.65 — Visual (8.5) and Emotion (8.5) are the targets.

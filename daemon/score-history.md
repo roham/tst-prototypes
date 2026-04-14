@@ -175,3 +175,4 @@
 **REFINEMENT round 5 complete.** Arena leads again (8.65) with Interaction at 9.0 — first non-Purity dimension to hit 9. Supreme and Broadcast tied at 8.58 with all non-Purity dims at 8.5. Diminishing returns territory — each cycle needs targeted, specific improvements. Next round starts with Supreme.
 
 | 34 | supreme | 9.0 | 8.5 | 9.0 | 8.5 | 9.0 | 8.80 | +0.22 | Visual+emotion: action image depth layer, historicalNote accent, premium share buttons |
+| 35 | broadcast | 9.0 | 8.5 | 8.5 | 8.5 | 9.0 | 8.70 | +0.12 | Visual: stat card top accents, section rule, premium share buttons |

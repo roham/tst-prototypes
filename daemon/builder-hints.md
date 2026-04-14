@@ -734,3 +734,14 @@
 - The reveal respects ended/purchasing states — those have their own filter overrides that take priority.
 - This is Supreme's only page-load dramatic effect (everything else is ambient/ongoing). One entrance moment, then restraint.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 82 Learnings
+- `clip-path: inset(0 100% 0 0)` → `inset(0 0% 0 0)` is the cleanest way to create a left-to-right text reveal — no overflow:hidden wrapper needed, no transform trickery. The clip-path respects the text shape perfectly.
+- The traveling edge highlight (3px bright line with team-color box-shadow glow) is what sells the "graphic building" effect — without it, the clip-path reveal is just a silent wipe. The glow makes it feel like a broadcast graphic printer/laser marking the text.
+- The h1 needs to be wrapped in a `relative` container for the edge line to be absolutely positioned against. The original h1 had `pl-3` which moved to the wrapper to maintain spacing.
+- 0.5s delay on the name reveal coordinates with the existing lower-third slide-in animation — the lower-third container slides in first, then the name reveals within it. Two-beat entrance.
+- 0.9s duration with spring cubic-bezier (0.16, 1, 0.3, 1) feels fast and confident. Slower durations (1.5s+) feel sluggish for a name reveal.
+- SMPTE timecode at 30fps using requestAnimationFrame is authentic — broadcast production uses 29.97fps (NTSC) or 30fps. The HH:MM:SS:FF format is immediately recognizable to anyone familiar with video production.
+- The timecode fades in at 1.8s delay — after score bug (1.2s), ticker, and other overlays have settled. Production markers appear last because they're the most subtle/technical detail.
+- Broadcast production overlay count is now: ticker (top), network bug (top-right), score bug (top-left), replay tag (mid-right), lower-third (bottom-left), REC indicator, ISO CAM label, SMPTE timecode, progress bar (bottom), lens flare, scanlines, grain, Ken Burns drift. 13 distinct broadcast elements — this is a genuine production control room.
+- Next cycle: Arena (rotation).

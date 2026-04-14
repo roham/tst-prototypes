@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { getMoment, SALE_DURATION_MS } from '@/lib/mock-data';
 import type { Moment } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
@@ -353,6 +353,8 @@ export default function SupremePage() {
   const watching = useSocialProof(moment ? 30 + moment.editionsClaimed % 40 : 30);
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=confirming, 2=yours
+  const ctaRef = useRef<HTMLButtonElement>(null);
+  const [showStickyCTA, setShowStickyCTA] = useState(false);
 
   // Derive drop phase from countdown
   const dropPhase = derivePhase(countdown.totalSeconds);
@@ -374,6 +376,18 @@ export default function SupremePage() {
     const t2 = setTimeout(() => setPurchaseStage(2), 1200);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [viewPhase]);
+
+  // Sticky CTA — show when main button overflows on small screens
+  useEffect(() => {
+    const el = ctaRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowStickyCTA(!entry.isIntersecting),
+      { threshold: 0 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   if (!moment) {
     return (
@@ -445,9 +459,10 @@ export default function SupremePage() {
         ? `color-mix(in srgb, #0B0E14 96%, ${moment.teamColors.primary})`
         : '#0B0E14';
 
-  // Hero desaturation for ENDED state
+  // Hero desaturation for ENDED / purchasing states
   const heroFilter =
     isEnded ? 'grayscale(0.7) brightness(0.6)' :
+    isPurchasing ? 'brightness(0.7) blur(2px)' :
     dropPhase === 'CRITICAL' ? 'saturate(1.1) contrast(1.05)' :
     'none';
 
@@ -742,6 +757,7 @@ export default function SupremePage() {
           />
         )}
         <button
+          ref={ctaRef}
           onClick={purchase}
           disabled={isPurchasing || isEnded}
           className={`
@@ -825,6 +841,30 @@ export default function SupremePage() {
           )}
         </div>
       </div>
+
+      {/* ============================================================= */}
+      {/* STICKY CTA — appears only when main button scrolls offscreen */}
+      {/* ============================================================= */}
+      {showStickyCTA && !isEnded && !isPurchasing && (
+        <div
+          className="fixed bottom-0 left-0 right-0 z-50 px-5 pb-[max(12px,env(safe-area-inset-bottom))] pt-3"
+          style={{
+            background: 'linear-gradient(to top, #0B0E14 60%, transparent)',
+          }}
+        >
+          <button
+            onClick={purchase}
+            className={`w-full h-[52px] rounded-2xl text-[14px] font-bold uppercase tracking-wider supreme-btn ${buttonAnimation}`}
+            style={{
+              backgroundColor: buttonBg,
+              color: buttonTextColor,
+              boxShadow: `0 4px 24px ${glowColor}30, 0 0 0 1px ${glowColor}10`,
+            }}
+          >
+            {buttonText}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

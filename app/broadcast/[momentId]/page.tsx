@@ -499,8 +499,10 @@ export default function BroadcastPage() {
   }, []);
 
   // Feed cut — brief static band on phase transition (camera feed switch)
+  // Crash zoom — broadcast director punch-in on phase shift
   const [feedCut, setFeedCut] = useState(false);
   const [camLabel, setCamLabel] = useState('ISO CAM 1');
+  const [crashZoom, setCrashZoom] = useState(false);
   const prevBroadcastPhase = useRef<DropPhase>('OPEN');
   useEffect(() => {
     const currentPhase = derivePhase(countdown.totalSeconds);
@@ -511,9 +513,11 @@ export default function BroadcastPage() {
       (prev === 'CLOSING' && currentPhase === 'CRITICAL')
     ) {
       setFeedCut(true);
+      setCrashZoom(true);
       setCamLabel(currentPhase === 'CLOSING' ? 'ISO CAM 2' : 'ISO CAM 3');
       const t = setTimeout(() => setFeedCut(false), 350);
-      return () => clearTimeout(t);
+      const t2 = setTimeout(() => setCrashZoom(false), 500);
+      return () => { clearTimeout(t); clearTimeout(t2); };
     }
   }, [countdown.totalSeconds]);
 
@@ -605,7 +609,15 @@ export default function BroadcastPage() {
         {!countdown.isEnded && <BroadcastTicker />}
 
         {/* ━━━ HERO — 50vh ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="relative h-[50dvh] min-h-[420px] overflow-hidden broadcast-grain broadcast-scanlines">
+        <section
+          className="relative h-[50dvh] min-h-[420px] overflow-hidden broadcast-grain broadcast-scanlines"
+          style={{
+            transform: crashZoom ? 'scale(1.03)' : 'scale(1)',
+            transition: crashZoom
+              ? 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)'
+              : 'transform 300ms ease-out',
+          }}
+        >
           {/* Action image — cinematic depth layer with Ken Burns drift */}
           <div
             className="absolute inset-0 bg-cover bg-center transition-all duration-1000 broadcast-ken-burns"

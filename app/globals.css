@@ -507,6 +507,15 @@ body {
   animation: broadcast-reveal-line 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Broadcast Score Bug — ESPN/TNT persistent game score overlay, slides in from left */
+@keyframes broadcast-score-bug-in {
+  0% { opacity: 0; transform: translateX(-20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+.broadcast-score-bug {
+  animation: broadcast-score-bug-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
+}
+
 /* Broadcast ESPN BottomLine — scrolling score ticker */
 @keyframes broadcast-ticker {
   0% { transform: translateX(0); }

@@ -84,6 +84,92 @@ const TEAM_FULL: Record<string, string> = {
   PHX: 'Phoenix Suns',
 };
 
+// Plausible game scores for score bug (derived from moment context)
+const GAME_SCORES: Record<string, { home: number; away: number; quarter: string }> = {
+  bam: { home: 108, away: 101, quarter: 'FINAL' },
+  jokic: { home: 122, away: 109, quarter: 'FINAL' },
+  sga: { home: 118, away: 112, quarter: 'FINAL' },
+};
+
+// ── Broadcast Score Bug — persistent game score overlay (ESPN/TNT style) ──
+
+function ScoreBug({ moment, isEnded, teamColor, rgb }: {
+  moment: Moment; isEnded: boolean; teamColor: string; rgb: string;
+}) {
+  const scores = GAME_SCORES[moment.id] ?? { home: 110, away: 104, quarter: 'FINAL' };
+
+  return (
+    <div
+      className="fixed top-14 left-4 z-40 pointer-events-none broadcast-score-bug md:top-16 md:left-6"
+      style={{ opacity: isEnded ? 0.25 : 0.75, transition: 'opacity 0.7s ease' }}
+    >
+      <div
+        className="rounded-sm overflow-hidden"
+        style={{
+          backgroundColor: 'rgba(11,14,20,0.92)',
+          backdropFilter: 'blur(8px)',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
+          minWidth: '120px',
+        }}
+      >
+        {/* Team rows */}
+        <div className="flex items-center justify-between gap-3 px-2.5 py-[5px] border-b border-white/[0.04]">
+          <div className="flex items-center gap-1.5">
+            <div
+              className="h-[6px] w-[6px] rounded-sm flex-shrink-0"
+              style={{ backgroundColor: teamColor }}
+            />
+            <span
+              className="text-[10px] font-bold uppercase tracking-wider text-white/70"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              {moment.team}
+            </span>
+          </div>
+          <span
+            className="text-[11px] font-bold tabular-nums text-white/90"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            {scores.home}
+          </span>
+        </div>
+        <div className="flex items-center justify-between gap-3 px-2.5 py-[5px]">
+          <div className="flex items-center gap-1.5">
+            <div className="h-[6px] w-[6px] rounded-sm flex-shrink-0 bg-white/20" />
+            <span
+              className="text-[10px] font-bold uppercase tracking-wider text-white/40"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              {moment.opponent}
+            </span>
+          </div>
+          <span
+            className="text-[11px] font-bold tabular-nums text-white/50"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            {scores.away}
+          </span>
+        </div>
+        {/* Quarter / status bar */}
+        <div
+          className="px-2.5 py-[3px] text-center border-t"
+          style={{
+            borderColor: `rgba(${rgb},0.15)`,
+            backgroundColor: `rgba(${rgb},0.06)`,
+          }}
+        >
+          <span
+            className="text-[8px] font-bold uppercase tracking-[0.25em]"
+            style={{ color: teamColor, fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            {scores.quarter}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function fullTeam(abbr: string): string {
   return TEAM_FULL[abbr] ?? abbr;
 }
@@ -375,6 +461,9 @@ export default function BroadcastPage() {
           </span>
         )}
       </div>
+
+      {/* ━━━ SCORE BUG — persistent game score overlay ━━━━━━━━━━━━━━ */}
+      <ScoreBug moment={moment} isEnded={countdown.isEnded} teamColor={moment.teamColors.primary} rgb={rgb} />
 
       <div className="relative z-10">
         {/* ━━━ ESPN BOTTOMLINE — scrolling score ticker ━━━━━━━━━━━━━━━ */}

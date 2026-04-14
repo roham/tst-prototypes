@@ -786,7 +786,7 @@ function RarityCards({
             key={tier.tier}
             onClick={() => onSelect(idx)}
             className={`group relative flex shrink-0 flex-col items-center rounded-xl border px-4 py-3 transition-all duration-200 active:scale-[0.97] min-w-[80px] ${
-              isLow && isSelected ? 'arena-tier-urgent' : ''
+              isLow && isSelected ? 'arena-tier-urgent' : isSelected && !isEnded ? 'arena-tier-selected-glow' : ''
             }`}
             style={{
               borderColor: isSelected ? color : 'rgba(255,255,255,0.06)',
@@ -1683,8 +1683,58 @@ export default function ArenaPage({
         />
       </div>
 
-      {/* ─── Live Activity Feed (hidden when ended) ─── */}
-      {!countdown.isEnded && (
+      {/* ─── Live Activity Feed / Post-Game Box Score ─── */}
+      {countdown.isEnded ? (
+        <div className="mx-4 mt-3 rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+          {/* Header bar — scoreboard style */}
+          <div
+            className="flex items-center justify-between px-4 py-2.5"
+            style={{ borderBottom: `1px solid ${moment.teamColors.primary}15` }}
+          >
+            <span
+              className="text-[10px] font-bold uppercase tracking-[0.15em]"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif', color: moment.teamColors.primary }}
+            >
+              Post-Game Box Score
+            </span>
+            <span className="text-[9px] font-mono uppercase tracking-wider text-white/20">
+              FINAL
+            </span>
+          </div>
+          {/* Stats grid — 2×2 jumbotron numbers */}
+          <div className="grid grid-cols-2 gap-[1px] bg-white/[0.03]">
+            {[
+              { label: 'Collected', value: liveClaimed.toLocaleString(), sub: `of ${moment.editionSize.toLocaleString()}` },
+              { label: 'Peak Velocity', value: `${Math.max(...velocityHistory)}`, sub: 'per minute' },
+              { label: 'Editions Left', value: `${Math.max(0, moment.editionSize - liveClaimed).toLocaleString()}`, sub: liveClaimed >= moment.editionSize ? 'SOLD OUT' : 'remaining' },
+              { label: 'Buyers', value: `${feedEvents.length}+`, sub: 'collectors' },
+            ].map((stat) => (
+              <div key={stat.label} className="flex flex-col items-center py-3 bg-[#0B0E14]">
+                <span className="text-[8px] font-bold uppercase tracking-[0.15em] text-white/25">{stat.label}</span>
+                <span
+                  className="mt-1 text-2xl font-bold tabular-nums text-white"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  {stat.value}
+                </span>
+                <span
+                  className="mt-0.5 text-[9px] uppercase tracking-wider"
+                  style={{ color: stat.sub === 'SOLD OUT' ? '#EF4444' : 'rgba(255,255,255,0.25)' }}
+                >
+                  {stat.sub}
+                </span>
+              </div>
+            ))}
+          </div>
+          {/* Bottom accent */}
+          <div
+            className="h-[2px]"
+            style={{
+              background: `linear-gradient(90deg, ${moment.teamColors.primary}40, ${moment.teamColors.secondary ?? moment.teamColors.primary}20, transparent)`,
+            }}
+          />
+        </div>
+      ) : (
         <LiveFeed events={feedEvents} teamColor={moment.teamColors.primary} />
       )}
 
@@ -1706,13 +1756,31 @@ export default function ArenaPage({
         teamColor={moment.teamColors.primary}
       />
 
-      {/* ─── Panic Banner ─── */}
-      <PanicBanner
-        claimed={liveClaimed}
-        total={moment.editionSize}
-        isCritical={isCritical}
-        isClosing={isClosing}
-      />
+      {/* ─── Panic Banner / Final Drop Stats ─── */}
+      {countdown.isEnded ? (
+        <div className="mx-4 mt-2 mb-3 flex items-center justify-center gap-4 rounded-lg py-2.5 px-4 border border-white/[0.06] bg-white/[0.03]">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-white/25"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >Drop Stats</span>
+          </div>
+          <div className="h-3 w-[1px] bg-white/10" />
+          <span className="text-[10px] tabular-nums text-white/35">
+            {liveClaimed.toLocaleString()} collected
+          </span>
+          <div className="h-3 w-[1px] bg-white/10" />
+          <span className="text-[10px] tabular-nums text-white/35">
+            Peak {Math.max(...velocityHistory)}/min
+          </span>
+        </div>
+      ) : (
+        <PanicBanner
+          claimed={liveClaimed}
+          total={moment.editionSize}
+          isCritical={isCritical}
+          isClosing={isClosing}
+        />
+      )}
 
       {/* ─── Arena Court Lines — basketball half-court behind transaction area ─── */}
       <div className="relative">

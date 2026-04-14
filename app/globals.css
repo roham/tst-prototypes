@@ -477,6 +477,15 @@ body {
   animation: arena-tier-pulse 1.2s ease-in-out infinite;
 }
 
+/* Arena selected tier — gentle active glow pulse (live auction "your pick" energy) */
+@keyframes arena-tier-selected-glow {
+  0%, 100% { box-shadow: 0 0 12px rgba(0,229,160,0.08), inset 0 0 8px rgba(0,229,160,0.03); }
+  50% { box-shadow: 0 0 20px rgba(0,229,160,0.15), inset 0 0 12px rgba(0,229,160,0.06); }
+}
+.arena-tier-selected-glow {
+  animation: arena-tier-selected-glow 2s ease-in-out infinite;
+}
+
 /* Broadcast film grain — cinematic texture overlay */
 @keyframes broadcast-grain {
   0%, 100% { transform: translate(0, 0); }

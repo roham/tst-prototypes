@@ -491,6 +491,24 @@ export default function SupremePage() {
   const dropPhase = derivePhase(countdown.totalSeconds);
   const timerDisplay = formatTimer(countdown.totalSeconds);
 
+  // Phase transition pulse — the void breathes when phase shifts
+  const [transitionFlash, setTransitionFlash] = useState<'amber' | 'red' | null>(null);
+  const prevPhaseRef = useRef(dropPhase);
+  useEffect(() => {
+    const prev = prevPhaseRef.current;
+    prevPhaseRef.current = dropPhase;
+    if (prev === 'OPEN' && dropPhase === 'CLOSING') {
+      setTransitionFlash('amber');
+      const t = setTimeout(() => setTransitionFlash(null), 600);
+      return () => clearTimeout(t);
+    }
+    if (prev === 'CLOSING' && dropPhase === 'CRITICAL') {
+      setTransitionFlash('red');
+      const t = setTimeout(() => setTransitionFlash(null), 600);
+      return () => clearTimeout(t);
+    }
+  }, [dropPhase]);
+
   // Live claim ticker
   const { claimed, lastClaimer, claimFlash } = useClaimTicker(
     moment?.editionsClaimed ?? 0,
@@ -621,6 +639,18 @@ export default function SupremePage() {
           className="fixed inset-0 z-[5] pointer-events-none supreme-breathe-vignette"
           style={{
             boxShadow: `inset 0 0 120px ${moment.teamColors.primary}08, inset 0 0 60px ${moment.teamColors.primary}05`,
+          }}
+        />
+      )}
+
+      {/* ============================================================= */}
+      {/* PHASE TRANSITION PULSE — void breathes on phase shift */}
+      {/* ============================================================= */}
+      {transitionFlash && (
+        <div
+          className="fixed inset-0 z-[36] pointer-events-none supreme-phase-pulse"
+          style={{
+            backgroundColor: transitionFlash === 'red' ? '#EF4444' : '#F59E0B',
           }}
         />
       )}

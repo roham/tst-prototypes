@@ -213,6 +213,17 @@ body {
   animation: supreme-critical-vignette 1.5s ease-in-out infinite;
 }
 
+/* Supreme phase transition pulse — brief color wash when phase shifts */
+@keyframes supreme-phase-pulse {
+  0% { opacity: 0; }
+  15% { opacity: 0.08; }
+  40% { opacity: 0.05; }
+  100% { opacity: 0; }
+}
+.supreme-phase-pulse {
+  animation: supreme-phase-pulse 0.6s ease-out forwards;
+}
+
 /* Supreme claim ticker fade */
 @keyframes supreme-claim-in {
   0% { opacity: 0; transform: translateY(4px); }

@@ -785,3 +785,12 @@
 - The `tierAccentColor` variable is derived once via useMemo and reused across all 4 application points — DRY and efficient.
 - This is Supreme's first tier-reactive ambient effect. Previously, tier selection only changed the underline indicator color (team-color). Now the entire ambient layer responds.
 - Next cycle: Broadcast (rotation). Broadcast could explore a similar concept — editorial tone shift on tier selection (e.g., different editorial tagline emphasis, or hero treatment variation per tier).
+
+## Cycle 88 Learnings
+- Crash zoom (scale 1→1.03→1.0) on phase transitions is a classic broadcast director technique. 1.03x is the sweet spot — enough to register as a "punch in" without feeling like a layout shift. 1.05x+ would be too dramatic.
+- Coordinating crash zoom with existing feed cut + ISO CAM label switch creates a triple-signal phase transition: visual (static band), spatial (zoom), metadata (camera designation). Multiple signals reinforce the same event.
+- The CSS transition approach (toggle `crashZoom` state on/off with timeout) is simpler than a CSS animation keyframe for this one-shot effect. The state toggle gives you asymmetric timing: fast spring-in (200ms), slower ease-out (300ms).
+- `overflow: hidden` on the hero section is crucial — the 1.03x scale would cause content bleed at edges without it. Hero already had this class.
+- The 500ms total duration matches the feed cut (350ms) — both fire simultaneously but the zoom outlasts the static by 150ms, creating a subtle "settle after disruption" feel.
+- Broadcast phase transitions now have 4 coordinated signals: urgency banner text change, feed cut static band, camera crash zoom, and ISO CAM label switch. The most complete of any direction.
+- Next cycle: Arena (rotation). Arena could benefit from a similar phase-transition technique — perhaps a "jumbotron glitch" effect where the display briefly scrambles.

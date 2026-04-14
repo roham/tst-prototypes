@@ -1168,6 +1168,81 @@ function BuzzerOverlay({ active, teamColor }: { active: boolean; teamColor: stri
   );
 }
 
+/* ─── Arena Timeout — jumbotron "OFFICIAL TIMEOUT" on phase transitions ── */
+
+function useArenaTimeout(totalSeconds: number) {
+  type Phase = 'OPEN' | 'CLOSING' | 'CRITICAL' | 'ENDED';
+  const deriveP = (s: number): Phase => {
+    if (s <= 0) return 'ENDED';
+    if (s <= 120) return 'CRITICAL';
+    if (s <= 600) return 'CLOSING';
+    return 'OPEN';
+  };
+  const [active, setActive] = useState(false);
+  const [label, setLabel] = useState('');
+  const prevPhase = useRef<Phase>('OPEN');
+
+  useEffect(() => {
+    const cur = deriveP(totalSeconds);
+    const prev = prevPhase.current;
+    prevPhase.current = cur;
+    if (
+      (prev === 'OPEN' && cur === 'CLOSING') ||
+      (prev === 'CLOSING' && cur === 'CRITICAL')
+    ) {
+      setLabel(cur === 'CLOSING' ? 'OFFICIAL TIMEOUT' : '20 SECOND TIMEOUT');
+      setActive(true);
+      const t = setTimeout(() => setActive(false), 2000);
+      return () => clearTimeout(t);
+    }
+  }, [totalSeconds]);
+
+  return { active, label };
+}
+
+function TimeoutOverlay({ active, label, teamColor }: { active: boolean; label: string; teamColor: string }) {
+  if (!active) return null;
+
+  return (
+    <div
+      className="pointer-events-none fixed inset-0 z-[38] flex items-center justify-center"
+      style={{ animation: 'arena-timeout-in 2s ease-out forwards' }}
+    >
+      {/* Dark backdrop flash */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundColor: 'rgba(11,14,20,0.6)',
+          animation: 'arena-timeout-backdrop 2s ease-out forwards',
+        }}
+      />
+      {/* Jumbotron text */}
+      <div className="relative flex flex-col items-center gap-2">
+        <div
+          className="h-[2px] w-16"
+          style={{ backgroundColor: teamColor, animation: 'arena-timeout-line 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
+        />
+        <span
+          className="text-3xl uppercase tracking-[0.2em] sm:text-4xl"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            fontWeight: 700,
+            color: teamColor,
+            textShadow: `0 0 40px ${teamColor}60, 0 0 80px ${teamColor}30`,
+            animation: 'arena-timeout-text 2s ease-out forwards',
+          }}
+        >
+          {label}
+        </span>
+        <div
+          className="h-[2px] w-16"
+          style={{ backgroundColor: teamColor, animation: 'arena-timeout-line 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
+        />
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
@@ -1293,6 +1368,9 @@ export default function ArenaPage({
   /* ── Arena buzzer — fires once when drop transitions to ended ── */
   const buzzerActive = useArenaBuzzer(countdown.isEnded);
 
+  /* ── Arena timeout — jumbotron overlay on phase transitions ── */
+  const { active: timeoutActive, label: timeoutLabel } = useArenaTimeout(countdown.totalSeconds);
+
   /* ── Sticky CTA — show when main button scrolls out of view ── */
   useEffect(() => {
     const el = ctaRef.current;
@@ -1376,6 +1454,9 @@ export default function ArenaPage({
 
       {/* ─── Arena Buzzer — red LED flash + FINAL when drop ends ─── */}
       <BuzzerOverlay active={buzzerActive} teamColor={moment.teamColors.primary} />
+
+      {/* ─── Arena Timeout — jumbotron overlay on phase transitions ─── */}
+      <TimeoutOverlay active={timeoutActive} label={timeoutLabel} teamColor={moment.teamColors.primary} />
 
       {/* ─── Fixed Header Bar ─── */}
       <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between border-b border-white/[0.06] bg-[#0B0E14]/90 px-4 py-3 backdrop-blur-md">

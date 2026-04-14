@@ -732,6 +732,30 @@ body {
   70% { opacity: 1; transform: scale(1); }
   100% { opacity: 0; transform: scale(0.95); }
 }
+
+/* Arena Timeout — jumbotron "OFFICIAL TIMEOUT" overlay on phase transitions */
+@keyframes arena-timeout-in {
+  0%   { opacity: 0; }
+  8%   { opacity: 1; }
+  65%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes arena-timeout-backdrop {
+  0%   { opacity: 0; }
+  8%   { opacity: 1; }
+  65%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes arena-timeout-text {
+  0%   { opacity: 0; transform: scale(1.8); letter-spacing: 0.5em; }
+  12%  { opacity: 1; transform: scale(1); letter-spacing: 0.2em; }
+  65%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.97); }
+}
+@keyframes arena-timeout-line {
+  0%   { width: 0; opacity: 0; }
+  100% { width: 64px; opacity: 0.7; }
+}
 @keyframes arena-buzzer-shake {
   0%, 100% { transform: translateX(0); }
   10% { transform: translateX(-3px); }

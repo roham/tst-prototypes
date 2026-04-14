@@ -1418,3 +1418,13 @@
 - Georgia serif italic at 10-18% opacity is the perfect register for Supreme's ambient text. It's readable when you're looking for it, invisible when scanning.
 - Bug fixes are high-value improvements even in the polish phase — they address real user-facing issues.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 170 Learnings
+- Full-screen purchase processing overlays are high-impact because they transform dead loading time into a dramatic production moment. All 3 directions now have direction-specific overlays: Supreme (lot clerk ceremony), Broadcast (breaking news cut-in), Arena (replay center review).
+- The 3-stage structure (alert → details → resolution) maps perfectly to the existing purchaseStage states (0, 1, 2). No new state management needed — just a visual layer that reads the same state the CTA button uses.
+- Multi-stop opacity decay on the red stinger (0→70%→35%→55%→20%→10%→0%) creates a realistic camera flash/strobe effect. Linear fade-out looks synthetic; irregular stops feel like real broadcast equipment.
+- Center-expanding banner via `scaleY(0) → scaleY(1)` with `transform-origin: center` is a signature ESPN breaking news motion. The banner appears to "open" from a center line outward.
+- Green flash on "Confirmed" stage (same technique as red stinger but #00E5A0) creates a satisfying color shift that signals success without needing explicit text — the color does the work.
+- z-58 for the cut-in overlay sits above the SOLD TO lower-third (z-56) so the full-screen overlay dominates during processing, then the SOLD TO banner takes over for the brief period before the W screen appears.
+- Reusing the existing `broadcast-checkmark-draw` CSS class (from the CTA button) on the confirmed stage maintains visual consistency — same checkmark draw animation in both contexts.
+- Next cycle: Arena (rotation). Arena could add a "fan noise meter" that rises during browsing and peaks at purchase, or a jumbotron kiss-cam/dance-cam style engagement overlay during tier browsing.

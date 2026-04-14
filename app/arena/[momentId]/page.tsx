@@ -305,6 +305,106 @@ function CrowdReactions({ events }: { events: PurchaseEvent[] }) {
   );
 }
 
+/* ─── Floating Claim Toasts — Whatnot-style purchase notifications ── */
+/* On live commerce platforms (Whatnot, TikTok Shop), every purchase   */
+/* triggers a floating notification visible regardless of scroll       */
+/* position. This creates persistent FOMO: even when the user is at   */
+/* the tier selector or CTA, they see other people buying in real     */
+/* time. Max 2 stacked, slide in from left, auto-dismiss after 2.5s. */
+
+interface ClaimToast {
+  id: string;
+  name: string;
+  city: string;
+  edition: number;
+  exiting: boolean;
+}
+
+function FloatingClaimToasts({
+  events,
+  teamColor,
+  isActive,
+}: {
+  events: PurchaseEvent[];
+  teamColor: string;
+  isActive: boolean;
+}) {
+  const [toasts, setToasts] = useState<ClaimToast[]>([]);
+  const prevLenRef = useRef(0);
+
+  useEffect(() => {
+    if (!isActive || events.length === 0 || events.length === prevLenRef.current) return;
+    prevLenRef.current = events.length;
+    const latest = events[events.length - 1];
+    const toast: ClaimToast = {
+      id: latest.id,
+      name: latest.name,
+      city: latest.city,
+      edition: latest.edition,
+      exiting: false,
+    };
+    setToasts((prev) => [...prev.slice(-1), toast]); // max 2
+
+    // Start exit animation after 2s
+    const exitTimer = setTimeout(() => {
+      setToasts((prev) =>
+        prev.map((t) => (t.id === toast.id ? { ...t, exiting: true } : t)),
+      );
+    }, 2000);
+    // Remove after exit animation completes (0.4s)
+    const removeTimer = setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== toast.id));
+    }, 2400);
+
+    return () => {
+      clearTimeout(exitTimer);
+      clearTimeout(removeTimer);
+    };
+  }, [events.length, isActive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (toasts.length === 0) return null;
+
+  return (
+    <div className="pointer-events-none fixed top-14 left-3 z-[28] flex flex-col gap-1.5">
+      {toasts.map((t, i) => (
+        <div
+          key={t.id}
+          className="flex items-center gap-2 rounded-lg px-3 py-2"
+          style={{
+            backgroundColor: 'rgba(11,14,20,0.88)',
+            border: `1px solid ${teamColor}30`,
+            boxShadow: `0 0 12px ${teamColor}15, 0 4px 12px rgba(0,0,0,0.4)`,
+            backdropFilter: 'blur(8px)',
+            animation: t.exiting
+              ? 'arena-claim-toast-out 0.4s ease-in forwards'
+              : 'arena-claim-toast-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          }}
+        >
+          {/* Pulsing dot — live indicator */}
+          <span className="relative flex h-1.5 w-1.5 flex-shrink-0">
+            <span
+              className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-50"
+              style={{ backgroundColor: teamColor }}
+            />
+            <span
+              className="relative inline-flex h-1.5 w-1.5 rounded-full"
+              style={{ backgroundColor: teamColor }}
+            />
+          </span>
+          <span className="text-[11px] text-white/70 font-medium">{t.name}</span>
+          <span className="text-[9px] text-white/30">{t.city}</span>
+          <span
+            className="text-[10px] font-bold tabular-nums"
+            style={{ color: '#00E5A0', fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            #{t.edition.toLocaleString()}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /* ─── Jumbotron Stat Counter (animated roll-up on page load) ───── */
 
 function useCountUp(target: number, durationMs = 1200) {
@@ -3690,6 +3790,13 @@ export default function ArenaPage({
       {/* ─── Crowd Reactions — floating emoji burst on purchases ─── */}
       {!countdown.isEnded && <CrowdReactions events={feedEvents} />}
 
+      {/* ─── Floating Claim Toasts — "JUST CLAIMED" notifications at any scroll ─── */}
+      <FloatingClaimToasts
+        events={feedEvents}
+        teamColor={moment.teamColors.primary}
+        isActive={!countdown.isEnded && proto.state === 'browsing'}
+      />
+
       {/* ─── Arena LED flash — team-color edge pulse on each purchase ─── */}
       {!countdown.isEnded && <ArenaLedFlash events={feedEvents} teamColor={moment.teamColors.primary} />}
 
@@ -4415,7 +4522,7 @@ export default function ArenaPage({
                   <path d="M11 7V5a3 3 0 0 0-6 0v2H4a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-1Zm-4.5-2a1.5 1.5 0 0 1 3 0v2h-3V5Z" />
                 </svg>
                 {isCritical
-                  ? `LAST CHANCE — $${moment.rarityTiers[selectedTierIdx].price}`
+                  ? <>LAST CHANCE — ${moment.rarityTiers[selectedTierIdx].price} <span className="inline-flex items-center ml-1 font-mono tabular-nums text-[13px] opacity-80 border-l border-white/20 pl-2">{countdown.minutes}:{String(countdown.seconds).padStart(2, '0')}</span></>
                   : isClosing
                     ? `GOING FAST — $${moment.rarityTiers[selectedTierIdx].price}`
                     : `OWN THIS MOMENT — $${moment.rarityTiers[selectedTierIdx].price}`}
@@ -4578,7 +4685,7 @@ export default function ArenaPage({
                 )}
                 {proto.state === 'purchasing'
                   ? (purchaseStage === 0 ? 'RESERVING...' : purchaseStage === 1 ? 'PROCESSING...' : 'SECURED!')
-                  : isCritical ? 'LAST CHANCE' : isClosing ? 'BUY NOW' : 'OWN IT'}
+                  : isCritical ? <>{`LAST CHANCE `}<span className="font-mono tabular-nums text-[11px] opacity-80">{countdown.minutes}:{String(countdown.seconds).padStart(2, '0')}</span></> : isClosing ? 'BUY NOW' : 'OWN IT'}
               </span>
             </button>
           </div>

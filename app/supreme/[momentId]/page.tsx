@@ -239,6 +239,48 @@ function useClaimTicker(baseClaimed: number, editionSize: number) {
 }
 
 // ---------------------------------------------------------------------------
+// Per-tier interested parties — Sotheby's ⊻ registered interest per lot tier
+// ---------------------------------------------------------------------------
+
+function useTierInterest(tierCount: number) {
+  const [interests, setInterests] = useState<number[]>(() =>
+    Array.from({ length: tierCount }, (_, i) =>
+      // Higher tiers attract fewer but more committed bidders
+      i === 0 ? 18 + Math.floor(Math.random() * 12)  // Open: 18-29
+        : i === 1 ? 8 + Math.floor(Math.random() * 7)  // Rare: 8-14
+        : i === 2 ? 3 + Math.floor(Math.random() * 4)  // Legendary: 3-6
+        : 1 + Math.floor(Math.random() * 2)              // Ultimate: 1-2
+    )
+  );
+  const [flashIdx, setFlashIdx] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Simulate fluctuating interest every 4-8s
+    let timer: ReturnType<typeof setTimeout>;
+    const tick = () => {
+      const delay = 4000 + Math.random() * 4000;
+      timer = setTimeout(() => {
+        setInterests(prev => {
+          const next = [...prev];
+          // Pick a random tier to adjust
+          const idx = Math.floor(Math.random() * tierCount);
+          const delta = Math.random() > 0.3 ? 1 : -1; // bias toward increase
+          next[idx] = Math.max(1, next[idx] + delta);
+          setFlashIdx(idx);
+          setTimeout(() => setFlashIdx(null), 600);
+          return next;
+        });
+        tick();
+      }, delay);
+    };
+    tick();
+    return () => clearTimeout(timer);
+  }, [tierCount]);
+
+  return { interests, flashIdx };
+}
+
+// ---------------------------------------------------------------------------
 // Radial burst — clean expanding ring of light (replaces confetti)
 // ---------------------------------------------------------------------------
 
@@ -1093,6 +1135,9 @@ export default function SupremePage() {
       return () => clearTimeout(t);
     }
   }, [dropPhase]);
+
+  // Per-tier interested parties — Sotheby's ⊻ indicator
+  const { interests: tierInterests, flashIdx: interestFlashIdx } = useTierInterest(moment?.rarityTiers.length ?? 4);
 
   // Live claim ticker
   const { claimed, lastClaimer, claimFlash, bidLog } = useClaimTicker(
@@ -2343,13 +2388,25 @@ export default function SupremePage() {
       </div>
 
       {/* ============================================================= */}
-      {/* RARITY TIERS — minimal horizontal selector */}
+      {/* RARITY TIERS — minimal horizontal selector with ⊻ interests   */}
       {/* ============================================================= */}
       <div className="px-5 mt-3 supreme-info-enter">
+        {/* Interested Parties header — Sotheby's convention */}
+        {!isEnded && (
+          <div className="flex items-center justify-center gap-1.5 mb-2">
+            <span
+              className="text-[7px] font-mono uppercase tracking-[0.3em] text-white/10"
+            >
+              ⊻ Interested Parties
+            </span>
+          </div>
+        )}
         <div className="flex items-center justify-center gap-1">
           {moment.rarityTiers.map((tier, idx) => {
             const isSelected = idx === selectedTierIdx;
             const isLow = tier.remaining <= 5;
+            const interest = tierInterests[idx] ?? 0;
+            const isInterestFlash = interestFlashIdx === idx;
             return (
               <button
                 key={tier.tier}
@@ -2377,6 +2434,23 @@ export default function SupremePage() {
                     }`}
                   >
                     {tier.remaining} left
+                  </span>
+                )}
+                {/* Interested parties count — Sotheby's ⊻ per-tier interest */}
+                {!isEnded && (
+                  <span
+                    className="block text-[7px] font-mono tabular-nums mt-0.5 tracking-wide transition-all duration-300"
+                    style={{
+                      color: isSelected
+                        ? `${tierAccentColor}${isInterestFlash ? '50' : '30'}`
+                        : `rgba(255,255,255,${isInterestFlash ? '0.18' : '0.08'})`,
+                      transform: isInterestFlash ? 'scale(1.08)' : 'scale(1)',
+                      textShadow: isInterestFlash && isSelected
+                        ? `0 0 6px ${tierAccentColor}20`
+                        : 'none',
+                    }}
+                  >
+                    {interest} {interest === 1 ? 'interest' : 'interests'}
                   </span>
                 )}
                 {/* Pre-sale estimate — Christie's "Est. $X–$Y" beneath price */}

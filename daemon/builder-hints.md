@@ -1505,3 +1505,14 @@
 - Teal (#00E5A0) for the buy price and white for the secondary estimate creates visual hierarchy: the teal says "this is what you pay (friendly)" while the white says "this is what it's worth (neutral data)."
 - ROI percentage at the bottom ("220% est. upside") is the summary stat — like ESPN's "Player X has 30% better FG% than Player Y." One number that tells the whole story.
 - Next cycle: Arena (rotation).
+
+## Cycle 183 Learnings
+- Value comparison badges ("STEAL", "DEAL") on tier cards are the live commerce equivalent of price anchoring. Showing the gap between buy price and estimated secondary value right on the tier card makes the value proposition immediate.
+- Next cycle: Supreme (rotation).
+
+## Cycle 184 Learnings
+- Per-tier social proof (interested parties counts) creates tier-specific competition anxiety — more targeted than page-level social proof (viewing room count). The bidder doesn't just know "people are watching," they know "14 people are interested in THIS tier."
+- Sotheby's ⊻ convention is a real auction house pattern. Using institutional language ("interests" not "bidders") keeps Supreme's voice consistent while delivering the same competitive pressure.
+- Distributing interest counts realistically (Open=18-29, Rare=8-14, Legendary=3-6, Ultimate=1-2) prevents the "everything is equally popular" flatness. Premium tiers should show FEWER interests but each feels more significant — 2 interests on Ultimate is more intimidating than 25 on Open.
+- The flash animation (scale 1.08 + text-shadow) on interest count changes provides real-time "activity" signal without being disruptive. At 4-8s intervals, it's frequent enough to notice but not chaotic.
+- Next cycle: Broadcast (rotation).

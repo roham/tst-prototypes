@@ -662,3 +662,11 @@
 | 182 | broadcast | 9.0+ | 9.0+ | 9.0+ | 9.0+ | 9.0+ | 9.00+ | — | Beyond-9.0: market snapshot value comparison graphic (buy price vs secondary estimate) |
 
 **Cycle 182: Broadcast Market Snapshot graphic.** ESPN-style split data card showing buy price vs estimated secondary value. Two-column layout: teal Oswald "$5" (buy price) vs white Oswald "$16+" (est. secondary), with "$9-$40 range" detail and "220% est. upside" ROI indicator. Chart icon, team-color accent bar, frosted dark surface. Placed between edition stat bar and CTA — the last data the user processes before the buy button. Every ESPN broadcast uses side-by-side stat comparisons; this applies that format to the most powerful conversion argument: price vs. value. The graphic frames the purchase as an investment, not a cost. Reactively updates with tier selection.
+
+| 183 | arena | 9.0+ | 9.0+ | 9.0+ | 9.0+ | 9.0+ | 9.00+ | — | Beyond-9.0: steal deal live commerce price alert (Whatnot-style value badge on tier cards) |
+
+**Cycle 183: Arena steal deal price alert.** Whatnot-style value comparison badge on tier cards. "STEAL" or "DEAL" badges appear on tiers where buy price represents >2x estimated secondary upside. Pulsing teal glow with arena-steal-pulse keyframe. Live commerce platforms flag value opportunities in real-time — Arena applies that energy to tier browsing.
+
+| 184 | supreme | 9.0+ | 9.0+ | 9.0+ | 9.0+ | 9.0+ | 9.00+ | — | Beyond-9.0: per-tier registered interests (Sotheby's ⊻ interested parties at decision point) |
+
+**Cycle 184: Supreme per-tier registered interests.** Sotheby's ⊻ interested parties indicator per tier. useTierInterest hook simulates fluctuating per-tier interest counts with realistic distribution (Open highest, Ultimate lowest). Interest pulse animation on count change. "⊻ Interested Parties" header. Per-tier competition anxiety at the exact decision point — institutional language creating social proof without panic. Conversion tool: bidder sees competition on their specific tier and feels urgency to act.

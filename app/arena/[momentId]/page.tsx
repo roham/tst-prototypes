@@ -271,6 +271,75 @@ function ArenaLedFlash({ events, teamColor }: { events: PurchaseEvent[]; teamCol
   );
 }
 
+/* ─── Purchase Streak Counter — combo multiplier on rapid buys ── */
+
+function usePurchaseStreak(events: PurchaseEvent[]) {
+  const [streak, setStreak] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const lastTime = useRef(0);
+  const hideTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    if (events.length === 0) return;
+    const now = Date.now();
+    const gap = now - lastTime.current;
+    lastTime.current = now;
+
+    if (gap < 4000 && gap > 0) {
+      // Rapid succession — streak!
+      setStreak((s) => s + 1);
+      setVisible(true);
+      clearTimeout(hideTimer.current);
+      hideTimer.current = setTimeout(() => {
+        setVisible(false);
+        setTimeout(() => setStreak(0), 400);
+      }, 2500);
+    } else {
+      setStreak(1);
+    }
+
+    return () => clearTimeout(hideTimer.current);
+  }, [events.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return { streak, visible };
+}
+
+function StreakBadge({ streak, visible, teamColor }: { streak: number; visible: boolean; teamColor: string }) {
+  if (streak < 2) return null;
+
+  const label = streak >= 5 ? 'ON FIRE' : streak >= 3 ? 'STREAK' : 'COMBO';
+
+  return (
+    <div
+      className="pointer-events-none fixed top-16 left-0 right-0 z-[30] flex justify-center transition-all duration-300"
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0) scale(1)' : 'translateY(-10px) scale(0.9)',
+      }}
+    >
+      <div
+        className="flex items-center gap-2 rounded-full px-4 py-1.5 backdrop-blur-sm"
+        style={{
+          backgroundColor: streak >= 5 ? 'rgba(239,68,68,0.2)' : `${teamColor}20`,
+          border: `1px solid ${streak >= 5 ? 'rgba(239,68,68,0.3)' : `${teamColor}30`}`,
+          boxShadow: streak >= 5 ? '0 0 20px rgba(239,68,68,0.15)' : `0 0 16px ${teamColor}15`,
+        }}
+      >
+        <span className="text-sm">{streak >= 5 ? '🔥' : '⚡'}</span>
+        <span
+          className="text-[12px] font-bold uppercase tracking-wider"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: streak >= 5 ? '#EF4444' : teamColor,
+          }}
+        >
+          {streak}x {label}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Panic Banner ─────────────────────────────────────────────── */
 
 function PanicBanner({ claimed, total, isCritical, isClosing }: {
@@ -763,6 +832,9 @@ export default function ArenaPage({
   const [feedEvents, setFeedEvents] = useState<PurchaseEvent[]>([]);
   const editionCounter = useRef(moment?.editionsClaimed ?? 0);
 
+  /* ── Purchase streak (combo multiplier on rapid buys) ──────── */
+  const { streak, visible: streakVisible } = usePurchaseStreak(feedEvents);
+
   /* ── Animated metrics ───────────────────────────────────────── */
   const [liveVelocity, setLiveVelocity] = useState(14);
   const [viewers, setViewers] = useState(847);
@@ -904,6 +976,9 @@ export default function ArenaPage({
 
       {/* ─── Arena LED flash — team-color edge pulse on each purchase ─── */}
       {!countdown.isEnded && <ArenaLedFlash events={feedEvents} teamColor={moment.teamColors.primary} />}
+
+      {/* ─── Purchase streak badge — combo multiplier on rapid buys ─── */}
+      {!countdown.isEnded && <StreakBadge streak={streak} visible={streakVisible} teamColor={moment.teamColors.primary} />}
 
       {/* ─── Animated background gradient pulse ─── */}
       <div

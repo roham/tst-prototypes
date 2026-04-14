@@ -272,38 +272,78 @@ function StatsBar({
   );
 }
 
-/* ─── Rarity Tier Cards (horizontal scroll) ────────────────────── */
+/* ─── Rarity Tier Cards (selectable, all tiers) ────────────────── */
 
-function RarityCards({ tiers }: { tiers: RarityTier[] }) {
-  // Skip the Open tier — that's the main CTA
-  const premiumTiers = tiers.filter((t) => t.tier !== 'Open');
+const TIER_COLOR: Record<string, string> = {
+  Open: '#00E5A0',
+  Rare: '#3B82F6',
+  Legendary: '#A855F7',
+  Ultimate: '#F59E0B',
+};
 
-  const tierColor: Record<string, string> = {
-    Rare: '#3B82F6',
-    Legendary: '#A855F7',
-    Ultimate: '#F59E0B',
-  };
-
+function RarityCards({
+  tiers,
+  selectedIdx,
+  onSelect,
+}: {
+  tiers: RarityTier[];
+  selectedIdx: number;
+  onSelect: (idx: number) => void;
+}) {
   return (
-    <div className="flex gap-3 overflow-x-auto px-4 pb-4" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
-      {premiumTiers.map((tier) => {
-        const color = tierColor[tier.tier] ?? '#6B7A99';
+    <div className="flex gap-2 overflow-x-auto px-4 pb-4" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+      {tiers.map((tier, idx) => {
+        const color = TIER_COLOR[tier.tier] ?? '#6B7A99';
+        const isSelected = idx === selectedIdx;
+        const isLow = tier.tier !== 'Open' && tier.remaining <= 5;
+        const isUrgent = tier.tier !== 'Open' && tier.remaining <= 10;
+
         return (
           <button
             key={tier.tier}
-            className="group relative flex shrink-0 flex-col items-center rounded-xl border bg-white/[0.03] px-5 py-3 transition-all duration-200 hover:bg-white/[0.06] active:scale-[0.97]"
-            style={{ borderColor: `${color}40` }}
+            onClick={() => onSelect(idx)}
+            className={`group relative flex shrink-0 flex-col items-center rounded-xl border px-4 py-3 transition-all duration-200 active:scale-[0.97] min-w-[80px] ${
+              isLow && isSelected ? 'arena-tier-urgent' : ''
+            }`}
+            style={{
+              borderColor: isSelected ? color : 'rgba(255,255,255,0.06)',
+              backgroundColor: isSelected ? `${color}12` : 'rgba(255,255,255,0.03)',
+              boxShadow: isSelected
+                ? `0 0 20px ${color}20, inset 0 0 12px ${color}08`
+                : 'none',
+            }}
           >
+            {/* Top accent bar */}
             <div
-              className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity group-hover:opacity-100"
-              style={{ boxShadow: `inset 0 0 20px ${color}20, 0 0 15px ${color}15` }}
+              className="absolute top-0 left-0 right-0 h-[2px] rounded-t-xl transition-opacity duration-200"
+              style={{
+                backgroundColor: color,
+                opacity: isSelected ? 1 : 0,
+              }}
             />
-            <span className="text-xs font-bold uppercase tracking-wider" style={{ color }}>
+
+            <span
+              className="text-[10px] font-bold uppercase tracking-wider transition-colors duration-200"
+              style={{ color: isSelected ? color : 'rgba(255,255,255,0.35)' }}
+            >
               {tier.tier}
             </span>
-            <span className="mt-1 text-lg font-bold text-white">${tier.price}</span>
-            <span className="mt-0.5 text-[10px] text-white/40">
-              {tier.remaining} left of {tier.size}
+            <span className={`mt-1 text-lg font-bold tabular-nums transition-colors duration-200 ${
+              isSelected ? 'text-white' : 'text-white/50'
+            }`}>
+              ${tier.price}
+            </span>
+            <span
+              className={`mt-0.5 text-[10px] tabular-nums transition-colors duration-200 ${
+                isLow ? 'font-semibold' : ''
+              }`}
+              style={{
+                color: isLow ? '#EF4444' : isUrgent ? '#F59E0B' : 'rgba(255,255,255,0.3)',
+              }}
+            >
+              {tier.tier === 'Open' ? `${tier.remaining.toLocaleString()} left` :
+               isLow ? `${tier.remaining} LEFT!` :
+               `${tier.remaining} of ${tier.size}`}
             </span>
           </button>
         );
@@ -530,6 +570,7 @@ export default function ArenaPage({
   /* ── Hooks (called unconditionally) ─────────────────────────── */
   const countdown = useCountdown(SALE_DURATION_MS[momentId] ?? 12 * 60 * 1000);
   const proto = usePrototypeState(momentId);
+  const [selectedTierIdx, setSelectedTierIdx] = useState(0);
 
   /* ── Live feed state ────────────────────────────────────────── */
   const [feedEvents, setFeedEvents] = useState<PurchaseEvent[]>([]);
@@ -744,6 +785,18 @@ export default function ArenaPage({
         isClosing={isClosing}
       />
 
+      {/* ─── Rarity Tiers — live auction selector ─── */}
+      <div className="mt-3">
+        <p className="mb-2 px-4 text-[10px] font-semibold uppercase tracking-widest text-white/30">
+          Select Tier
+        </p>
+        <RarityCards
+          tiers={moment.rarityTiers}
+          selectedIdx={selectedTierIdx}
+          onSelect={setSelectedTierIdx}
+        />
+      </div>
+
       {/* ─── CTA Section ─── */}
       <div className="px-4 pt-1">
         <button
@@ -766,9 +819,9 @@ export default function ArenaPage({
               SECURING YOUR MOMENT...
             </span>
           ) : isCritical ? (
-            `LAST CHANCE — $${moment.price}`
+            `LAST CHANCE — $${moment.rarityTiers[selectedTierIdx].price}`
           ) : (
-            `OWN THIS MOMENT — $${moment.price}`
+            `OWN THIS MOMENT — $${moment.rarityTiers[selectedTierIdx].price}`
           )}
         </button>
 
@@ -776,14 +829,6 @@ export default function ArenaPage({
         <p className="mt-2 text-center text-xs text-white/40">
           &#128293; {recentBuyers} people bought in the last minute
         </p>
-      </div>
-
-      {/* ─── Rarity Tiers ─── */}
-      <div className="mt-4">
-        <p className="mb-2 px-4 text-[10px] font-semibold uppercase tracking-widest text-white/30">
-          Premium Tiers
-        </p>
-        <RarityCards tiers={moment.rarityTiers} />
       </div>
 
       {/* Bottom safe area */}

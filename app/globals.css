@@ -261,3 +261,12 @@ body {
 .broadcast-low-stock-pulse {
   animation: broadcast-low-stock 1.5s ease-in-out infinite;
 }
+
+/* Arena tier card — urgent pulse for low-stock premium tiers */
+@keyframes arena-tier-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(239,68,68,0.15), inset 0 0 12px rgba(239,68,68,0.05); }
+  50% { box-shadow: 0 0 30px rgba(239,68,68,0.25), inset 0 0 16px rgba(239,68,68,0.08); }
+}
+.arena-tier-urgent {
+  animation: arena-tier-pulse 1.2s ease-in-out infinite;
+}

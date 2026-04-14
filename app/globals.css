@@ -807,6 +807,27 @@ body {
   animation: broadcast-end-slate-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
 }
 
+/* Broadcast countdown leader — 3-2-1-LIVE intro sequence */
+@keyframes broadcast-leader-digit {
+  0% { opacity: 0; transform: scale(1.4); }
+  12% { opacity: 1; transform: scale(1); }
+  75% { opacity: 1; transform: scale(0.98); }
+  100% { opacity: 0; transform: scale(0.85); }
+}
+@keyframes broadcast-leader-flash {
+  0% { opacity: 0; }
+  10% { opacity: 0.6; }
+  100% { opacity: 0; }
+}
+@keyframes broadcast-leader-crosshair-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(90deg); }
+}
+@keyframes broadcast-leader-fade-out {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* Arena W screen — crowd roar EQ bars (dramatic spike on reveal) */
 @keyframes arena-roar-bar {
   0% { height: 8%; }

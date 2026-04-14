@@ -114,6 +114,125 @@ function useSmpteTimecode(isEnded: boolean) {
   return tc;
 }
 
+// ── Broadcast Countdown Leader — "3-2-1-LIVE" intro sequence ──────────────
+// Classic broadcast TV countdown leader that plays on first page load.
+// Every sports fan recognizes this from live TV production.
+
+function BroadcastCountdownLeader({ teamColor, rgb, onComplete }: {
+  teamColor: string; rgb: string; onComplete: () => void;
+}) {
+  const [digit, setDigit] = useState<number | null>(3);
+  const [flash, setFlash] = useState(false);
+  const [showLive, setShowLive] = useState(false);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    // 3 → 2 → 1 → LIVE → fade out
+    const t1 = setTimeout(() => { setFlash(true); }, 380);
+    const t1b = setTimeout(() => { setFlash(false); setDigit(2); }, 480);
+    const t2 = setTimeout(() => { setFlash(true); }, 860);
+    const t2b = setTimeout(() => { setFlash(false); setDigit(1); }, 960);
+    const t3 = setTimeout(() => { setFlash(true); }, 1340);
+    const t3b = setTimeout(() => { setFlash(false); setDigit(null); setShowLive(true); }, 1440);
+    const t4 = setTimeout(() => setFading(true), 1900);
+    const t5 = setTimeout(() => onComplete(), 2300);
+    return () => { clearTimeout(t1); clearTimeout(t1b); clearTimeout(t2); clearTimeout(t2b); clearTimeout(t3); clearTimeout(t3b); clearTimeout(t4); clearTimeout(t5); };
+  }, [onComplete]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0B0E14]"
+      style={{
+        animation: fading ? 'broadcast-leader-fade-out 0.4s ease-out forwards' : 'none',
+      }}
+    >
+      {/* Registration crosshair — classic film leader element */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '160px',
+          height: '160px',
+          animation: 'broadcast-leader-crosshair-spin 2.3s linear',
+        }}
+      >
+        {/* Circle */}
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 160 160" fill="none">
+          <circle cx="80" cy="80" r="72" stroke={`rgba(${rgb},0.12)`} strokeWidth="1" />
+          <circle cx="80" cy="80" r="48" stroke={`rgba(${rgb},0.08)`} strokeWidth="0.5" />
+          {/* Crosshair lines */}
+          <line x1="80" y1="4" x2="80" y2="156" stroke={`rgba(${rgb},0.10)`} strokeWidth="0.5" />
+          <line x1="4" y1="80" x2="156" y2="80" stroke={`rgba(${rgb},0.10)`} strokeWidth="0.5" />
+          {/* Tick marks */}
+          <line x1="80" y1="4" x2="80" y2="16" stroke={`rgba(${rgb},0.2)`} strokeWidth="1" />
+          <line x1="80" y1="144" x2="80" y2="156" stroke={`rgba(${rgb},0.2)`} strokeWidth="1" />
+          <line x1="4" y1="80" x2="16" y2="80" stroke={`rgba(${rgb},0.2)`} strokeWidth="1" />
+          <line x1="144" y1="80" x2="156" y2="80" stroke={`rgba(${rgb},0.2)`} strokeWidth="1" />
+        </svg>
+      </div>
+
+      {/* Flash between digits */}
+      {flash && (
+        <div
+          className="absolute inset-0 bg-white pointer-events-none"
+          style={{ animation: 'broadcast-leader-flash 100ms ease-out forwards' }}
+        />
+      )}
+
+      {/* Countdown digit */}
+      {digit !== null && (
+        <span
+          key={digit}
+          className="relative z-10 text-[120px] font-bold tabular-nums text-white/90"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            animation: 'broadcast-leader-digit 480ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            textShadow: `0 0 40px rgba(${rgb},0.3)`,
+          }}
+        >
+          {digit}
+        </span>
+      )}
+
+      {/* LIVE badge — appears after 1 */}
+      {showLive && (
+        <div
+          className="relative z-10 flex items-center gap-3"
+          style={{ animation: 'broadcast-leader-digit 460ms cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
+        >
+          <div
+            className="h-[10px] w-[10px] rounded-full"
+            style={{
+              backgroundColor: '#EF4444',
+              boxShadow: '0 0 12px rgba(239,68,68,0.6)',
+            }}
+          />
+          <span
+            className="text-[48px] font-bold uppercase tracking-[0.15em] text-white"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              textShadow: `0 0 30px rgba(${rgb},0.3)`,
+            }}
+          >
+            Live
+          </span>
+        </div>
+      )}
+
+      {/* Production label — bottom */}
+      <div className="absolute bottom-12 left-0 right-0 text-center">
+        <span
+          className="text-[8px] font-mono uppercase tracking-[0.4em] text-white/10"
+        >
+          TST Broadcast · Program Leader
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // Full team name for the broadcast overlay
 const TEAM_FULL: Record<string, string> = {
   MIA: 'Miami Heat',
@@ -468,6 +587,8 @@ export default function BroadcastPage() {
 
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=authenticating, 2=acquired
+  const [leaderDone, setLeaderDone] = useState(false);
+  const handleLeaderComplete = useCallback(() => setLeaderDone(true), []);
 
   // Channel switch static — brief TV static flash + channel number on tier change
   const [channelSwitch, setChannelSwitch] = useState<number | null>(null);
@@ -582,6 +703,15 @@ export default function BroadcastPage() {
 
   return (
     <div className="relative min-h-dvh bg-[#0B0E14] text-white selection:bg-white/20">
+      {/* ━━━ BROADCAST COUNTDOWN LEADER — 3-2-1-LIVE intro sequence ━━━ */}
+      {!leaderDone && (
+        <BroadcastCountdownLeader
+          teamColor={moment.teamColors.primary}
+          rgb={rgb}
+          onComplete={handleLeaderComplete}
+        />
+      )}
+
       {/* Subtle team-color ambient wash */}
       <div
         className="pointer-events-none fixed inset-0 z-0"

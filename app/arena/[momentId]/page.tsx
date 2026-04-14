@@ -340,6 +340,35 @@ function StreakBadge({ streak, visible, teamColor }: { streak: number; visible: 
   );
 }
 
+/* ─── Crowd Noise Equalizer — mini bars suggesting live arena audio ── */
+
+function CrowdNoiseEQ({ teamColor, isActive }: { teamColor: string; isActive: boolean }) {
+  const bars = [
+    { height: '60%', duration: '0.43s', delay: '0s' },
+    { height: '80%', duration: '0.55s', delay: '0.12s' },
+    { height: '45%', duration: '0.38s', delay: '0.07s' },
+    { height: '70%', duration: '0.48s', delay: '0.18s' },
+    { height: '50%', duration: '0.42s', delay: '0.05s' },
+  ];
+
+  return (
+    <div className="flex items-end gap-[2px] h-3 w-[18px]" title="Arena crowd noise">
+      {bars.map((bar, i) => (
+        <div
+          key={i}
+          className="w-[2px] rounded-full transition-all duration-300"
+          style={{
+            height: isActive ? bar.height : '15%',
+            backgroundColor: isActive ? teamColor : 'rgba(255,255,255,0.15)',
+            animation: isActive ? `arena-eq-bar ${bar.duration} ease-in-out ${bar.delay} infinite` : 'none',
+            opacity: isActive ? 0.7 : 0.3,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 /* ─── Panic Banner ─────────────────────────────────────────────── */
 
 function PanicBanner({ claimed, total, isCritical, isClosing }: {
@@ -1043,13 +1072,16 @@ export default function ArenaPage({
           Top Shot This
         </span>
 
-        {/* Viewers */}
-        <div className="flex items-center gap-1.5 text-xs text-white/50">
-          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-          <span className="tabular-nums">{countdown.isEnded ? '—' : `${viewers.toLocaleString()} watching`}</span>
+        {/* Viewers + Crowd Noise EQ */}
+        <div className="flex items-center gap-2.5 text-xs text-white/50">
+          <CrowdNoiseEQ teamColor={moment.teamColors.primary} isActive={!countdown.isEnded} />
+          <div className="flex items-center gap-1.5">
+            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <span className="tabular-nums">{countdown.isEnded ? '—' : `${viewers.toLocaleString()} watching`}</span>
+          </div>
         </div>
       </header>
 

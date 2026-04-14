@@ -445,3 +445,11 @@
 - Freeze behavior (height: 15%, opacity: 0.3, animation: none) on ended state creates a "stream ended" feeling — the arena has gone quiet. The transition is handled by CSS `transition-all duration-300`.
 - Arena now has the most complete live-event sensory environment: crowd reactions (emoji burst), LED flash (visual), purchase streak (gamification), velocity sparkline (data), and now crowd noise EQ (audio cue). No other direction should have these — they're deeply Arena-specific.
 - Next cycle: Supreme (rotation). Supreme could use a premium engraving effect on the player name, or a subtle vignette breathing effect.
+
+## Cycle 51 Learnings
+- Ambient breathing vignette at z-[5] (below content, above nothing) creates a subconscious living-room glow. The 6s cycle is slow enough to feel organic — you notice it subconsciously, not consciously.
+- Team-color inset box-shadow (`120px + 60px spread at 08% and 05% opacity`) is barely there but creates warmth at the edges. Heat pages have a warm red border-glow, Nuggets have gold, Thunder have blue.
+- Disabled during CRITICAL (where the red vignette takes over at z-40) and ENDED — no animation competition. The breathing stops when the drop closes, like the screen powers down.
+- Embossed text shadow uses 3 layers: dark drop shadow (depth), team-color glow (identity), white highlight (emboss). The white at 0.04 opacity is barely visible but creates a raised-letter effect on dark backgrounds.
+- Supreme now has 4 ambient hero effects: parallax (scroll), Ken Burns (20s zoom), light sweep (8s diagonal), and breathing vignette (6s edge glow). Together they create a premium living display without any single effect being obvious.
+- Next cycle: Broadcast (rotation). Broadcast could use a subtle film reel frame flicker, or animated "BREAKING" text treatment on the urgency banner.

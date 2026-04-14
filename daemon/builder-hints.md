@@ -148,6 +148,15 @@
 - Arena-critical-vignette at 1.2s is faster than Supreme's 1.5s — Arena should feel more frantic.
 - All 3 Purity scores now at 8.5 — state transitions were an opportunity to reinforce each direction's identity.
 
+## Cycle 64 Learnings
+- Score bug is one of the highest-ROI broadcast elements — small, instantly recognizable, minimal code.
+- Per-moment plausible scores (home team winning) reinforce the emotional narrative of the moment.
+- The team-color accent dot on the home team row + dimmed opponent is how real ESPN score bugs work — visual hierarchy through opacity, not size.
+- Fixed positioning at top-left avoids conflict with network bug (top-right) and ticker (top edge scroll).
+- Slide-in delay of 1.2s lets the page load and ticker start first — staggered reveal feels more broadcast.
+- Broadcast page now has 5 distinct broadcast UI layers: ticker, network bug, score bug, replay tag, lower-third. The metaphor is complete.
+- Next cycle: Arena (rotation). Consider what Arena atmospheric element hasn't been explored yet.
+
 ## Strategic Notes — Post State Transitions Phase
 - STATE TRANSITIONS phase complete (cycles 16-18). All 3 have full lifecycle.
 - Entering REFINEMENT phase (cycles 19+). Agent picks weakest dimension.

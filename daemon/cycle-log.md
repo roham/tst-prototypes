@@ -35,3 +35,5 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 ## Cycle 15 | Direction: Arena | Score: 7.35 (+0.32) | Built: Selectable rarity tiers (all 4 tiers visible), dynamic CTA price updates on selection, tier-specific colors (Open=teal, Rare=blue, Legendary=purple, Ultimate=amber), top accent bars, low-stock red urgency pulse, tier moved above CTA for better flow | Time: 18:45
 
 ## Cycle 16 | Direction: Supreme | Score: 7.58 (+0.43) | Built: State transitions — critical red vignette with pulse, phase labels (Live now / Closing soon / Final seconds / Drop closed), hero desaturation+dimming on ended, timer grows to 32px in critical, ended shows "X editions collected" instead of claim ticker | Time: 19:05
+
+## Cycle 17 | Direction: Broadcast | Score: 7.80 (+0.25) | Built: Editorial state transitions — phase labels (Instant Classic / Final Minutes / Breaking / Archived), LIVE badge → Concluded, hero desaturation on ended, CRITICAL red CTA glow + progress bar, "Collect Now" urgency CTA copy, "Drop Concluded" ended button, editorial wrap-up copy | Time: 19:25

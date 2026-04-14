@@ -200,6 +200,7 @@ function StatsBar({
   totalSeconds,
   isClosing,
   isCritical,
+  isEnded,
   velocity,
   velocityHistory,
 }: {
@@ -210,28 +211,31 @@ function StatsBar({
   totalSeconds: number;
   isClosing: boolean;
   isCritical: boolean;
+  isEnded: boolean;
   velocity: number;
   velocityHistory: number[];
 }) {
   const pct = Math.min(100, (claimed / total) * 100);
-  const timeStr = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  const timeStr = isEnded ? '00:00' : `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
   return (
     <div className="grid grid-cols-3 gap-3 px-4">
       {/* Claimed */}
       <div className="rounded-xl bg-white/[0.04] p-3">
         <div className="text-center">
-          <span className="text-lg font-bold tabular-nums text-white">
+          <span className={`text-lg font-bold tabular-nums ${isEnded ? 'text-white/50' : 'text-white'}`}>
             {claimed.toLocaleString()}
           </span>
           <span className="text-lg text-white/40"> / {total.toLocaleString()}</span>
         </div>
         <p className="mt-0.5 text-center text-[10px] font-semibold uppercase tracking-widest text-white/40">
-          Claimed
+          {isEnded ? 'Collected' : 'Claimed'}
         </p>
         <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/[0.08]">
           <div
-            className="h-full rounded-full bg-[#00E5A0] transition-all duration-1000 ease-out"
+            className={`h-full rounded-full transition-all duration-1000 ease-out ${
+              isEnded ? 'bg-white/20' : isCritical ? 'bg-red-500' : 'bg-[#00E5A0]'
+            }`}
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -241,32 +245,36 @@ function StatsBar({
       <div className="rounded-xl bg-white/[0.04] p-3">
         <div className="text-center">
           <span
-            className={`text-lg font-bold font-mono tabular-nums ${
-              isCritical
-                ? 'text-red-400 animate-urgency-fast'
-                : isClosing
-                  ? 'text-amber-400 animate-urgency'
-                  : 'text-white'
+            className={`font-bold font-mono tabular-nums transition-all duration-500 ${
+              isEnded
+                ? 'text-lg text-white/25'
+                : isCritical
+                  ? 'text-xl text-red-400 animate-urgency-fast'
+                  : isClosing
+                    ? 'text-lg text-amber-400 animate-urgency'
+                    : 'text-lg text-white'
             }`}
           >
             {timeStr}
           </span>
         </div>
         <p className="mt-0.5 text-center text-[10px] font-semibold uppercase tracking-widest text-white/40">
-          Remaining
+          {isEnded ? 'Closed' : 'Remaining'}
         </p>
       </div>
 
       {/* Velocity */}
       <div className="rounded-xl bg-white/[0.04] p-3">
         <div className="text-center">
-          <span className="text-lg font-bold tabular-nums text-[#00E5A0]">{velocity}</span>
-          <span className="text-sm text-white/40">/min</span>
+          <span className={`text-lg font-bold tabular-nums ${isEnded ? 'text-white/25' : 'text-[#00E5A0]'}`}>
+            {isEnded ? '—' : velocity}
+          </span>
+          {!isEnded && <span className="text-sm text-white/40">/min</span>}
         </div>
         <p className="mt-0.5 text-center text-[10px] font-semibold uppercase tracking-widest text-white/40">
           Velocity
         </p>
-        <VelocitySparkline history={velocityHistory} />
+        {!isEnded && <VelocitySparkline history={velocityHistory} />}
       </div>
     </div>
   );
@@ -678,25 +686,60 @@ export default function ArenaPage({
     <div className="relative flex min-h-screen flex-col bg-[#0B0E14]">
       {/* ─── Animated background gradient pulse ─── */}
       <div
-        className="pointer-events-none fixed inset-0"
+        className="pointer-events-none fixed inset-0 transition-opacity duration-1000"
         style={{
           background: `radial-gradient(ellipse at 50% 30%, ${moment.teamColors.primary}, transparent 60%), radial-gradient(ellipse at 80% 70%, ${moment.teamColors.secondary}, transparent 50%)`,
-          opacity: 0.07,
-          animation: 'bgPulse 4s ease-in-out infinite',
+          opacity: countdown.isEnded ? 0.03 : 0.07,
+          animation: countdown.isEnded ? undefined : 'bgPulse 4s ease-in-out infinite',
         }}
       />
 
+      {/* ─── Critical vignette — red edge glow when time is almost up ─── */}
+      {isCritical && !countdown.isEnded && (
+        <div
+          className="pointer-events-none fixed inset-0 z-[35] arena-critical-vignette"
+          style={{
+            boxShadow: 'inset 0 0 120px rgba(239,68,68,0.25), inset 0 0 60px rgba(239,68,68,0.15)',
+          }}
+        />
+      )}
+
       {/* ─── Fixed Header Bar ─── */}
       <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between border-b border-white/[0.06] bg-[#0B0E14]/90 px-4 py-3 backdrop-blur-md">
-        {/* LIVE badge */}
+        {/* LIVE / Phase badge */}
         <div className="flex items-center gap-2">
-          <div className="relative flex items-center gap-1.5 rounded-full bg-red-500/15 px-3 py-1">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
-            </span>
-            <span className="text-xs font-bold uppercase tracking-wider text-red-400">Live</span>
-          </div>
+          {countdown.isEnded ? (
+            <div className="flex items-center gap-1.5 rounded-full bg-white/[0.08] px-3 py-1">
+              <span className="relative flex h-2 w-2">
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-white/30" />
+              </span>
+              <span className="text-xs font-bold uppercase tracking-wider text-white/40">Ended</span>
+            </div>
+          ) : isCritical ? (
+            <div className="relative flex items-center gap-1.5 rounded-full bg-red-500/20 px-3 py-1 animate-urgency-fast">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+              </span>
+              <span className="text-xs font-bold uppercase tracking-wider text-red-400">Final seconds</span>
+            </div>
+          ) : isClosing ? (
+            <div className="relative flex items-center gap-1.5 rounded-full bg-amber-500/15 px-3 py-1">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-500" />
+              </span>
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Closing soon</span>
+            </div>
+          ) : (
+            <div className="relative flex items-center gap-1.5 rounded-full bg-red-500/15 px-3 py-1">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+              </span>
+              <span className="text-xs font-bold uppercase tracking-wider text-red-400">Live now</span>
+            </div>
+          )}
         </div>
 
         {/* Logo */}
@@ -710,7 +753,7 @@ export default function ArenaPage({
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
-          <span className="tabular-nums">{viewers.toLocaleString()} watching</span>
+          <span className="tabular-nums">{countdown.isEnded ? '—' : `${viewers.toLocaleString()} watching`}</span>
         </div>
       </header>
 
@@ -720,11 +763,15 @@ export default function ArenaPage({
       {/* ─── Moment Hero Section (40vh) ─── */}
       <section className="relative flex h-[40vh] min-h-[260px] flex-col justify-end overflow-hidden">
         {/* Gradient "thumbnail" */}
-        <div className="absolute inset-0 bg-cover bg-center" style={{
-          backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
-          backgroundSize: 'cover, cover',
-          backgroundPosition: 'center top, center',
-        }} />
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+          style={{
+            backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
+            backgroundSize: 'cover, cover',
+            backgroundPosition: 'center top, center',
+            filter: countdown.isEnded ? 'grayscale(0.7) brightness(0.5)' : undefined,
+          }}
+        />
         {/* Dark overlay for legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/40 to-transparent" />
 
@@ -761,8 +808,10 @@ export default function ArenaPage({
         </div>
       </section>
 
-      {/* ─── Live Activity Feed ─── */}
-      <LiveFeed events={feedEvents} teamColor={moment.teamColors.primary} />
+      {/* ─── Live Activity Feed (hidden when ended) ─── */}
+      {!countdown.isEnded && (
+        <LiveFeed events={feedEvents} teamColor={moment.teamColors.primary} />
+      )}
 
       {/* ─── Stats Bar ─── */}
       <StatsBar
@@ -773,6 +822,7 @@ export default function ArenaPage({
         totalSeconds={countdown.totalSeconds}
         isClosing={isClosing}
         isCritical={isCritical}
+        isEnded={countdown.isEnded}
         velocity={liveVelocity}
         velocityHistory={velocityHistory}
       />
@@ -800,34 +850,43 @@ export default function ArenaPage({
       {/* ─── CTA Section ─── */}
       <div className="px-4 pt-1">
         <button
-          onClick={proto.purchase}
-          disabled={proto.state === 'purchasing'}
-          className={`relative w-full rounded-xl py-4 text-base font-bold transition-all duration-200 active:scale-[0.98] disabled:cursor-wait ${
-            proto.state === 'purchasing'
-              ? 'bg-[#00E5A0]/60 text-black/60'
-              : isCritical
-                ? 'bg-red-500 text-white shadow-[0_0_30px_rgba(239,68,68,0.4)]'
-                : isClosing
-                  ? 'bg-amber-500 text-black shadow-[0_0_30px_rgba(245,158,11,0.3)]'
-                  : 'bg-[#00E5A0] text-black shadow-[0_0_30px_rgba(0,229,160,0.3)]'
-          } ${isCritical && proto.state !== 'purchasing' ? 'animate-urgency-fast' : ''}`}
-          style={shaking && proto.state === 'browsing' ? { animation: 'buttonShake 0.3s ease-in-out' } : undefined}
+          onClick={countdown.isEnded ? undefined : proto.purchase}
+          disabled={proto.state === 'purchasing' || countdown.isEnded}
+          className={`relative w-full rounded-xl py-4 text-base font-bold transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed ${
+            countdown.isEnded
+              ? 'bg-white/[0.06] text-white/30 cursor-not-allowed'
+              : proto.state === 'purchasing'
+                ? 'bg-[#00E5A0]/60 text-black/60 cursor-wait'
+                : isCritical
+                  ? 'bg-red-500 text-white shadow-[0_0_30px_rgba(239,68,68,0.4)]'
+                  : isClosing
+                    ? 'bg-amber-500 text-black shadow-[0_0_30px_rgba(245,158,11,0.3)]'
+                    : 'bg-[#00E5A0] text-black shadow-[0_0_30px_rgba(0,229,160,0.3)]'
+          } ${isCritical && !countdown.isEnded && proto.state !== 'purchasing' ? 'animate-urgency-fast' : ''}`}
+          style={shaking && proto.state === 'browsing' && !countdown.isEnded ? { animation: 'buttonShake 0.3s ease-in-out' } : undefined}
         >
-          {proto.state === 'purchasing' ? (
+          {countdown.isEnded ? (
+            'DROP CLOSED'
+          ) : proto.state === 'purchasing' ? (
             <span className="flex items-center justify-center gap-2">
               <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
               SECURING YOUR MOMENT...
             </span>
           ) : isCritical ? (
             `LAST CHANCE — $${moment.rarityTiers[selectedTierIdx].price}`
+          ) : isClosing ? (
+            `GOING FAST — $${moment.rarityTiers[selectedTierIdx].price}`
           ) : (
             `OWN THIS MOMENT — $${moment.rarityTiers[selectedTierIdx].price}`
           )}
         </button>
 
-        {/* Social proof */}
+        {/* Social proof — changes on ended */}
         <p className="mt-2 text-center text-xs text-white/40">
-          &#128293; {recentBuyers} people bought in the last minute
+          {countdown.isEnded
+            ? `${liveClaimed.toLocaleString()} editions collected during this drop`
+            : <>&#128293; {recentBuyers} people bought in the last minute</>
+          }
         </p>
       </div>
 

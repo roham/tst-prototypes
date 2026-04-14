@@ -271,6 +271,15 @@ body {
   animation: broadcast-low-stock 1.5s ease-in-out infinite;
 }
 
+/* Arena critical vignette — red edge glow intensifying */
+@keyframes arena-critical-vignette {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+.arena-critical-vignette {
+  animation: arena-critical-vignette 1.2s ease-in-out infinite;
+}
+
 /* Arena tier card — urgent pulse for low-stock premium tiers */
 @keyframes arena-tier-pulse {
   0%, 100% { box-shadow: 0 0 20px rgba(239,68,68,0.15), inset 0 0 12px rgba(239,68,68,0.05); }

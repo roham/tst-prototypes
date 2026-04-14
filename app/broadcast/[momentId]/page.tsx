@@ -1061,6 +1061,15 @@ export default function BroadcastPage() {
     const t = setTimeout(() => setChannelSwitch(null), 400);
     return () => clearTimeout(t);
   }, []);
+  // Replay count — increments periodically like a broadcast replaying the highlight
+  const [replayCount, setReplayCount] = useState(1);
+  useEffect(() => {
+    const id = setInterval(() => {
+      setReplayCount((prev) => Math.min(prev + 1, 12));
+    }, 8000 + Math.random() * 4000);
+    return () => clearInterval(id);
+  }, []);
+
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [showPip, setShowPip] = useState(false);
   const ctaRef = useRef<HTMLButtonElement>(null);
@@ -1640,6 +1649,13 @@ export default function BroadcastPage() {
                     style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
                   >
                     Instant Replay
+                  </span>
+                  {/* Replay count — how many times the broadcast has replayed this highlight */}
+                  <span
+                    className="text-[9px] font-mono tabular-nums tracking-wider"
+                    style={{ color: `${moment.teamColors.primary}90` }}
+                  >
+                    ×{replayCount}
                   </span>
                 </div>
               </div>
@@ -2995,16 +3011,38 @@ function CertificateScreen({
                 {(847 + Math.floor(moment.editionsClaimed * 1.3)).toLocaleString()} viewers tuned in
               </span>
             </div>
-            {/* Program sign-off — broadcast lifecycle bookend */}
+            {/* Production credits — broadcast end card with crew roles */}
             <div
               className="h-[1px] w-16 mx-auto"
               style={{ backgroundColor: `rgba(${rgb},0.12)` }}
             />
+            <div className="mt-3 flex flex-col items-center gap-1">
+              {[
+                { role: 'Director', name: 'R. Chen' },
+                { role: 'Executive Producer', name: 'M. Ramirez' },
+                { role: 'Technical Director', name: 'J. Okafor' },
+              ].map((credit) => (
+                <div key={credit.role} className="flex items-center gap-2">
+                  <span className="text-[6px] font-mono uppercase tracking-[0.2em] text-white/8 w-[80px] text-right">
+                    {credit.role}
+                  </span>
+                  <span className="text-[7px] tracking-wide text-white/15">
+                    {credit.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Program sign-off — broadcast lifecycle bookend */}
+            <div
+              className="h-[1px] w-16 mx-auto mt-3"
+              style={{ backgroundColor: `rgba(${rgb},0.12)` }}
+            />
             <p
-              className="text-[7px] uppercase tracking-[0.3em] text-white/10"
+              className="text-[7px] uppercase tracking-[0.3em] text-white/10 mt-2"
               style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
             >
-              TST Broadcast · Program Complete · {dateStr}
+              A TST Broadcast Production · {dateStr}
             </p>
           </div>
 

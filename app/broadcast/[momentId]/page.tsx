@@ -2069,6 +2069,176 @@ function GameFlowChart({ moment, rgb }: { moment: Moment; rgb: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// SportsCenter Top 10 — "#1 Play of the Night" ranking graphic
+// Every NBA fan knows the SportsCenter Top 10. This card ranks the moment as
+// tonight's #1 play with dimmed lower-ranked plays for context. The ranking
+// badge uses a bold countdown-style number. Triggered by IntersectionObserver.
+// Adds editorial prestige: the play isn't just a moment — it's THE moment.
+// ---------------------------------------------------------------------------
+
+const SC_TOP_10: Record<string, { rank1Desc: string; others: { rank: number; desc: string }[] }> = {
+  bam: {
+    rank1Desc: 'Bam Adebayo one-handed poster over two defenders',
+    others: [
+      { rank: 2, desc: 'Edwards coast-to-coast windmill in transition' },
+      { rank: 3, desc: 'Brunson step-back three to force overtime' },
+      { rank: 4, desc: 'Wembanyama chasedown block at the rim' },
+      { rank: 5, desc: 'Fox behind-the-back dish for the and-one' },
+    ],
+  },
+  jokic: {
+    rank1Desc: 'Jokić no-look dagger assist with 47 seconds left',
+    others: [
+      { rank: 2, desc: 'Gilgeous-Alexander pull-up three from the logo' },
+      { rank: 3, desc: 'Davis alley-oop putback off the glass' },
+      { rank: 4, desc: 'Haliburton full-court bounce pass for the layup' },
+      { rank: 5, desc: 'Tatum poster dunk in transition' },
+    ],
+  },
+  sga: {
+    rank1Desc: 'SGA 42-point masterclass — unguardable mid-range clinic',
+    others: [
+      { rank: 2, desc: 'Adebayo one-handed slam over two defenders' },
+      { rank: 3, desc: 'Luka step-back dagger from 30 feet' },
+      { rank: 4, desc: 'Jokić behind-the-back no-look assist' },
+      { rank: 5, desc: 'Ant-Man 360 layup through contact' },
+    ],
+  },
+};
+
+function SportsCenterTop10({ moment, rgb }: { moment: Moment; rgb: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.2 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const data = SC_TOP_10[moment.id] ?? SC_TOP_10.bam;
+
+  return (
+    <div ref={ref} className="mt-8 mb-4">
+      {/* Broadcast graphic header */}
+      <div className="flex items-center gap-2 mb-3">
+        <span
+          className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
+          style={{
+            backgroundColor: `rgba(${rgb},0.12)`,
+            color: moment.teamColors.primary,
+            fontFamily: 'var(--font-oswald), sans-serif',
+          }}
+        >
+          Top 10
+        </span>
+        <span
+          className="text-[8px] font-mono uppercase tracking-[0.15em] text-white/20"
+        >
+          SportsCenter
+        </span>
+        <div className="h-[1px] flex-1 bg-white/[0.06]" />
+      </div>
+
+      {/* Card */}
+      <div
+        className="relative overflow-hidden rounded-md border"
+        style={{
+          borderColor: `rgba(${rgb},0.12)`,
+          backgroundColor: 'rgba(20,25,37,0.5)',
+        }}
+      >
+        {/* Team-color top accent */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{ backgroundColor: `${moment.teamColors.primary}40` }}
+        />
+
+        {/* #1 Play — highlighted row */}
+        <div
+          className="relative flex items-center gap-3 px-4 py-3.5 border-b"
+          style={{
+            borderColor: `rgba(${rgb},0.08)`,
+            backgroundColor: `rgba(${rgb},0.04)`,
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translateX(0)' : 'translateX(-20px)',
+            transition: 'opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+          }}
+        >
+          {/* Rank badge — large "#1" with team-color glow */}
+          <div
+            className="relative flex items-center justify-center w-10 h-10 rounded-md flex-shrink-0"
+            style={{
+              backgroundColor: `rgba(${rgb},0.15)`,
+              border: `1px solid ${moment.teamColors.primary}40`,
+              boxShadow: visible ? `0 0 16px rgba(${rgb},0.2)` : 'none',
+              transition: 'box-shadow 0.8s ease-out 0.3s',
+            }}
+          >
+            <span
+              className="text-[22px] font-bold leading-none"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: moment.teamColors.primary,
+              }}
+            >
+              1
+            </span>
+          </div>
+          {/* Play description */}
+          <div className="flex-1 min-w-0">
+            <p
+              className="text-[12px] font-semibold uppercase tracking-[0.04em] text-white/75 leading-snug"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              {data.rank1Desc}
+            </p>
+            <p className="text-[9px] text-white/25 mt-0.5 tracking-wide">
+              {fullTeam(moment.team)} vs {fullTeam(moment.opponent)} &middot; Tonight
+            </p>
+          </div>
+          {/* Highlight indicator — pulsing team-color dot */}
+          <div
+            className="w-[6px] h-[6px] rounded-full flex-shrink-0 animate-pulse"
+            style={{ backgroundColor: moment.teamColors.primary }}
+          />
+        </div>
+
+        {/* Remaining plays — dimmed rows */}
+        {data.others.map((play, i) => (
+          <div
+            key={play.rank}
+            className="flex items-center gap-3 px-4 py-2 border-b last:border-b-0"
+            style={{
+              borderColor: 'rgba(255,255,255,0.03)',
+              opacity: visible ? 1 : 0,
+              transform: visible ? 'translateX(0)' : 'translateX(-12px)',
+              transition: `opacity 0.5s ease-out ${0.15 + i * 0.1}s, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${0.15 + i * 0.1}s`,
+            }}
+          >
+            {/* Rank number — small, dimmed */}
+            <span
+              className="text-[14px] font-bold tabular-nums w-10 text-center flex-shrink-0 text-white/15"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              {play.rank}
+            </span>
+            {/* Description */}
+            <p className="text-[10px] text-white/20 tracking-wide truncate">
+              {play.desc}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Cinematic Section Reveal — line expands from center on scroll-into-view
 // ---------------------------------------------------------------------------
 
@@ -3497,6 +3667,9 @@ export default function BroadcastPage() {
 
           {/* Fan Verdict — ESPN live poll (social proof as broadcast data) */}
           <FanVerdict moment={moment} rgb={rgb} />
+
+          {/* SportsCenter Top 10 — #1 Play of the Night ranking graphic */}
+          <SportsCenterTop10 moment={moment} rgb={rgb} />
 
           {/* Emotional closing beat — editorial thesis */}
           <p

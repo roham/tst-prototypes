@@ -985,3 +985,11 @@
 - 20% opacity matches the LOT number — both are background prestige details, not primary UI.
 - Supreme's auction identity stack: PADDLE (top-left, your identity) → LOT (top-right, item identity) → holographic sticker (bottom-right, authentication) → gavel countdown (live bidding drama) → SOLD watermark (ended finality) → provenance chain (W screen verification). Complete auction lifecycle.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 112 Learnings
+- Location tags are a simple, high-impact broadcast element — one component, two keyframes, instant authenticity.
+- Three-tier text hierarchy (label → name → detail) in different fonts/sizes creates broadcast-quality information density.
+- Timed overlays (show → hold → dismiss) keep the page dynamic without cluttering — each element has a lifecycle.
+- Arena data lookup tables are lightweight and easily extensible when new teams/moments are added.
+- Broadcast overlay inventory is now comprehensive: ticker, score bug, network bug, replay tag, location tag, lower-third, production markers, film frame, lens flare, PiP, countdown leader, end slate, feed cuts, channel switch. Consider focusing future broadcast cycles on the purchase flow and W screen rather than adding more overlays.
+- Next cycle: Arena (rotation).

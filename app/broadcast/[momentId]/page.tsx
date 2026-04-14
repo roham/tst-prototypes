@@ -2856,9 +2856,11 @@ export default function BroadcastPage() {
 
   // Feed cut — brief static band on phase transition (camera feed switch)
   // Crash zoom — broadcast director punch-in on phase shift
+  // Quarter break bumper — ESPN quarter-transition graphic on phase change
   const [feedCut, setFeedCut] = useState(false);
   const [camLabel, setCamLabel] = useState('ISO CAM 1');
   const [crashZoom, setCrashZoom] = useState(false);
+  const [quarterBumper, setQuarterBumper] = useState<{ phase: 'CLOSING' | 'CRITICAL'; state: 'in' | 'hold' | 'out' } | null>(null);
   const prevBroadcastPhase = useRef<DropPhase>('OPEN');
   useEffect(() => {
     const currentPhase = derivePhase(countdown.totalSeconds);
@@ -2871,9 +2873,14 @@ export default function BroadcastPage() {
       setFeedCut(true);
       setCrashZoom(true);
       setCamLabel(currentPhase === 'CLOSING' ? 'ISO CAM 2' : 'ISO CAM 3');
+      // Quarter break bumper: in → hold → out → gone
+      setQuarterBumper({ phase: currentPhase as 'CLOSING' | 'CRITICAL', state: 'in' });
+      const tHold = setTimeout(() => setQuarterBumper((prev) => prev ? { ...prev, state: 'hold' } : null), 400);
+      const tOut = setTimeout(() => setQuarterBumper((prev) => prev ? { ...prev, state: 'out' } : null), 2400);
+      const tGone = setTimeout(() => setQuarterBumper(null), 3000);
       const t = setTimeout(() => setFeedCut(false), 350);
       const t2 = setTimeout(() => setCrashZoom(false), 500);
-      return () => { clearTimeout(t); clearTimeout(t2); };
+      return () => { clearTimeout(t); clearTimeout(t2); clearTimeout(tHold); clearTimeout(tOut); clearTimeout(tGone); };
     }
   }, [countdown.totalSeconds]);
 
@@ -2932,6 +2939,110 @@ export default function BroadcastPage() {
 
       {/* ━━━ FEED CUT — camera switch static band on phase transition ━━━ */}
       {feedCut && <div className="broadcast-feed-cut" />}
+
+      {/* ━━━ QUARTER BREAK BUMPER — ESPN quarter-transition graphic on phase change ━━━ */}
+      {/* Every ESPN/TNT broadcast shows a dramatic quarter-break graphic between       */}
+      {/* periods: the team logos swoosh in, "END OF 3RD QUARTER" slams center, the     */}
+      {/* network brand flashes. This fires when the drop phase transitions (OPEN →     */}
+      {/* CLOSING, CLOSING → CRITICAL) to make the urgency escalation unmissable.       */}
+      {/* Without it, users might not notice the phase changed — the feed cut flash is  */}
+      {/* too subtle. This adds broadcast-weight to the moment the clock gets serious.  */}
+      {quarterBumper && (
+        <div
+          className="fixed inset-0 z-[55] pointer-events-none flex items-center justify-center"
+          style={{
+            opacity: quarterBumper.state === 'out' ? 0 : 1,
+            transition: 'opacity 0.5s ease-out',
+          }}
+        >
+          {/* Dark scrim — broadcast cuts to near-black between segments */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: quarterBumper.state === 'in' ? 'rgba(11,14,20,0.96)' : 'rgba(11,14,20,0.88)',
+              transition: 'background-color 0.4s ease-out',
+            }}
+          />
+
+          {/* Team-color accent swoosh — top and bottom lines that wipe in */}
+          <div
+            className="absolute top-[42%] left-0 right-0 h-[1px]"
+            style={{
+              background: `linear-gradient(90deg, transparent 5%, ${
+                quarterBumper.phase === 'CRITICAL' ? '#EF4444' : '#F59E0B'
+              } 50%, transparent 95%)`,
+              opacity: quarterBumper.state === 'in' ? 0 : 0.6,
+              transition: 'opacity 0.3s ease-out 0.15s',
+            }}
+          />
+          <div
+            className="absolute bottom-[42%] left-0 right-0 h-[1px]"
+            style={{
+              background: `linear-gradient(90deg, transparent 5%, ${
+                quarterBumper.phase === 'CRITICAL' ? '#EF4444' : '#F59E0B'
+              } 50%, transparent 95%)`,
+              opacity: quarterBumper.state === 'in' ? 0 : 0.6,
+              transition: 'opacity 0.3s ease-out 0.15s',
+            }}
+          />
+
+          {/* Center content — phase announcement */}
+          <div
+            className="relative z-10 flex flex-col items-center gap-2"
+            style={{
+              transform: quarterBumper.state === 'in'
+                ? 'scale(1.15)'
+                : quarterBumper.state === 'out'
+                  ? 'scale(0.95)'
+                  : 'scale(1)',
+              opacity: quarterBumper.state === 'in' ? 0 : 1,
+              transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease-out',
+            }}
+          >
+            {/* Phase label — small tracked header */}
+            <span
+              className="text-[9px] font-bold uppercase tracking-[0.4em]"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: quarterBumper.phase === 'CRITICAL' ? '#EF444490' : '#F59E0B90',
+              }}
+            >
+              {quarterBumper.phase === 'CRITICAL' ? 'Broadcast Alert' : 'Drop Update'}
+            </span>
+
+            {/* Main headline — large broadcast text */}
+            <span
+              className="text-[clamp(1.8rem,7vw,3.2rem)] font-bold uppercase leading-none tracking-tight text-center"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: quarterBumper.phase === 'CRITICAL' ? '#EF4444' : '#F59E0B',
+                textShadow: quarterBumper.phase === 'CRITICAL'
+                  ? '0 0 30px rgba(239,68,68,0.3), 0 0 80px rgba(239,68,68,0.1)'
+                  : '0 0 30px rgba(245,158,11,0.3), 0 0 80px rgba(245,158,11,0.1)',
+              }}
+            >
+              {quarterBumper.phase === 'CRITICAL' ? 'Final 2 Minutes' : 'Final Minutes'}
+            </span>
+
+            {/* Sub-label — team-color accent */}
+            <span
+              className="text-[10px] uppercase tracking-[0.25em] text-white/25 mt-1"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              {moment.player} &middot; {moment.team} vs {moment.opponent}
+            </span>
+
+            {/* Team-color dot separator */}
+            <div
+              className="mt-2 h-[3px] w-[3px] rounded-full"
+              style={{
+                backgroundColor: moment.teamColors.primary,
+                boxShadow: `0 0 6px ${moment.teamColors.primary}60`,
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* ━━━ BREAKING NEWS CUT-IN — full-screen overlay during purchase processing ━━━ */}
       {isPurchasing && (

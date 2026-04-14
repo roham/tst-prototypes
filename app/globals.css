@@ -480,6 +480,20 @@ body {
   100% { width: 100%; }
 }
 
+/* Broadcast cinematic section reveal — line expands from center outward */
+@keyframes broadcast-reveal-line {
+  0% { transform: scaleX(0); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: scaleX(1); opacity: 1; }
+}
+.broadcast-reveal-line {
+  transform: scaleX(0);
+  transform-origin: center;
+}
+.broadcast-reveal-line-active {
+  animation: broadcast-reveal-line 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* Broadcast ESPN BottomLine — scrolling score ticker */
 @keyframes broadcast-ticker {
   0% { transform: translateX(0); }

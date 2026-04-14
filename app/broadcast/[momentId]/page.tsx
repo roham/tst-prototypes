@@ -229,6 +229,37 @@ function StatBreakdown({ statLine, teamColor }: { statLine: string; teamColor: s
 }
 
 // ---------------------------------------------------------------------------
+// Cinematic Section Reveal — line expands from center on scroll-into-view
+// ---------------------------------------------------------------------------
+
+function SectionRevealLine({ teamColor }: { teamColor: string }) {
+  const lineRef = useRef<HTMLDivElement>(null);
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    const el = lineRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setRevealed(true); observer.disconnect(); } },
+      { threshold: 0.5 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={lineRef} className="mx-auto max-w-2xl px-5 md:px-10">
+      <div
+        className={`h-[1px] broadcast-reveal-line ${revealed ? 'broadcast-reveal-line-active' : ''}`}
+        style={{
+          background: `linear-gradient(90deg, transparent, ${teamColor}50 30%, ${teamColor} 50%, ${teamColor}50 70%, transparent)`,
+        }}
+      />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main Page
 // ---------------------------------------------------------------------------
 
@@ -693,13 +724,8 @@ export default function BroadcastPage() {
           </p>
         </section>
 
-        {/* Team-color thin divider */}
-        <div className="mx-auto max-w-2xl px-5 md:px-10">
-          <div
-            className="h-[1px] opacity-20"
-            style={{ backgroundColor: moment.teamColors.primary }}
-          />
-        </div>
+        {/* Team-color thin divider — cinematic section reveal (expands from center on scroll) */}
+        <SectionRevealLine teamColor={moment.teamColors.primary} />
 
         {/* ━━━ TRANSACTION SECTION ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section ref={transactionRef} className="mx-auto max-w-3xl px-5 pt-10 pb-16 md:px-10 md:pb-24 scroll-mt-4">

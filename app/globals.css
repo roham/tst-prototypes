@@ -1088,6 +1088,15 @@ body {
   50% { opacity: 0.8; transform: scale(1.15); }
 }
 
+/* Arena POPULAR tier badge — breathing glow on the most-selected tier */
+@keyframes arena-popular-pulse {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+.arena-popular-badge {
+  animation: arena-popular-pulse 2s ease-in-out infinite;
+}
+
 /* Arena jumbotron pixel grid — dot matrix overlay on hero (arena LED screen feel) */
 .arena-pixel-grid::after {
   content: '';

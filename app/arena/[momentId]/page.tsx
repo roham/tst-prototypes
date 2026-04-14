@@ -1288,6 +1288,14 @@ const TIER_COLOR: Record<string, string> = {
   Ultimate: '#F59E0B',
 };
 
+/* Arena seating section labels — map rarity to arena seating proximity */
+const TIER_SECTION: Record<string, string> = {
+  Open: 'UPPER DECK',
+  Rare: 'CLUB LEVEL',
+  Legendary: 'COURTSIDE',
+  Ultimate: 'FLOOR SEAT',
+};
+
 /* ─── Live Bidder Indicators — other users "selecting" each tier ── */
 
 function useTierBidders(tierCount: number) {
@@ -1353,6 +1361,10 @@ function RarityCards({
   bidderCounts: number[];
   isEnded: boolean;
 }) {
+  /* Find the tier with the most bidders for the POPULAR badge */
+  const maxBidders = Math.max(...bidderCounts);
+  const popularIdx = bidderCounts.indexOf(maxBidders);
+
   return (
     <div className="flex gap-2 overflow-x-auto px-4 pb-4" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
       {tiers.map((tier, idx) => {
@@ -1361,6 +1373,8 @@ function RarityCards({
         const isLow = tier.tier !== 'Open' && tier.remaining <= 5;
         const isUrgent = tier.tier !== 'Open' && tier.remaining <= 10;
         const bidders = bidderCounts[idx] ?? 0;
+        const isPopular = idx === popularIdx && !isEnded && maxBidders >= 5;
+        const sectionLabel = TIER_SECTION[tier.tier] ?? '';
 
         return (
           <button
@@ -1385,6 +1399,37 @@ function RarityCards({
                 opacity: isSelected ? 1 : 0,
               }}
             />
+
+            {/* POPULAR badge — dynamic, follows highest bidder count */}
+            {isPopular && (
+              <div
+                className="absolute -top-2.5 right-1.5 flex items-center gap-0.5 rounded-full px-1.5 py-0.5 arena-popular-badge"
+                style={{
+                  backgroundColor: `${color}25`,
+                  border: `1px solid ${color}50`,
+                  boxShadow: `0 0 8px ${color}20`,
+                }}
+              >
+                <span className="text-[7px]">🔥</span>
+                <span
+                  className="text-[7px] font-bold uppercase tracking-wider"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif', color }}
+                >
+                  Popular
+                </span>
+              </div>
+            )}
+
+            {/* Arena seating section label */}
+            <span
+              className="text-[7px] font-semibold uppercase tracking-[0.15em] transition-colors duration-200 mb-0.5"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: isSelected ? `${color}80` : 'rgba(255,255,255,0.15)',
+              }}
+            >
+              {sectionLabel}
+            </span>
 
             <span
               className="text-[10px] font-bold uppercase tracking-wider transition-colors duration-200"

@@ -555,3 +555,13 @@
 - Keyframe uses opacity fade: 0% start → 8% fade in → 50% fade out → 58% invisible → hold to 100%. This prevents the spotlight from appearing/disappearing at the hero edges with hard cuts.
 - Arena hero now has 3 atmosphere layers: action image backdrop (static), player gradient (static), and spotlight sweep (animated). This is lighter than Supreme (7 effects) or Broadcast (5+ overlays), which is correct — Arena's visual energy comes from the LIVE FEED and purchase reactions below the hero, not from the hero itself. The spotlight is the one ambient hero effect Arena needs.
 - Next cycle: Supreme (rotation). Supreme could use a subtle frost/glass morphism on the edition badge, or a premium micro-texture on the void background.
+
+## Cycle 63 Learnings
+- SVG fractalNoise at 3.5% opacity is the sweet spot for noise texture on dark backgrounds. At 2% it's invisible; at 5% it looks like JPEG compression artifacts. 3.5% creates subliminal material quality.
+- `baseFrequency="0.85"` with `numOctaves="4"` produces fine-grained noise that reads as paper/card stock texture, not static/TV snow. Lower frequencies (0.3-0.5) create cloud-like patterns instead.
+- The SVG is inlined as a data URI in the CSS background-image — no external file, no fetch, instant render. The 256×256 tile size is small enough to load fast, large enough that the repeat isn't obvious.
+- Fixed positioning (not absolute) ensures the grain stays stationary during scroll. If it scrolled with content, the parallax effect would make the grain visible and distracting. Static grain = invisible grain.
+- z-index:1 on the ::before is minimal — above the background paint, below everything else. Since Supreme has effects at z-5 (light sweep), z-6 (particles), z-10 (text), etc., the texture doesn't interfere.
+- This is a foundational visual change — it affects the entire page uniformly. Supreme's minimalism means every surface improvement compounds because there's less to compete with.
+- The noise texture could theoretically be applied to Broadcast and Arena too, but each would need different treatment: Broadcast might want a more structured grain (like film grain, which it already has), Arena doesn't need it (too much visual activity already).
+- Next cycle: Broadcast (rotation). Broadcast could use a subtle editorial "chapter number" above the narrative section, or an animated "Now Showing" theater marquee above the hero.

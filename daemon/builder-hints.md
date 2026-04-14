@@ -317,3 +317,12 @@
 - Conversion at 8.5 is the universal ceiling. To push to 9.0, need something structural: maybe Apple Pay / stored-payment simulation, or a more aggressive sticky CTA, or CTA copy A/B testing.
 - Broadcast Emotion (8.5) is the single weakest non-Conversion dim. The narrative content is rich but the emotional framing could be more impactful — maybe a more dramatic pull quote treatment.
 - Next cycle: Supreme (rotation). Target Conversion (8.5) — the universal ceiling.
+
+## Cycle 37 Learnings
+- Lock icon SVG on the CTA button is a cheap but powerful trust signal — the user sees "secure" at the exact moment of decision. Supreme's version uses a filled lock at 60% opacity, minimal but present.
+- Animated SVG checkmark draw (stroke-dasharray/dashoffset animation, 350ms) on the "Yours." purchase stage is more satisfying than a full progress ring. The ring fills to 75% across 2 stages, then morphs to checkmark. The transition from ring to checkmark is the payoff moment.
+- "Visa ··4242" in the stored-payment line makes the simulated payment feel tangible and real. Users see their "card" is ready — reduces "what happens when I tap?" anxiety.
+- Supreme hit 9.0 across ALL dimensions. First direction to achieve a perfect score. The key was 3 tiny conversion micro-lifts that each addressed a different friction point: trust (lock), confidence (card), satisfaction (checkmark).
+- The conversion ceiling (8.5) was broken by making the existing CTA feel more trustworthy, not by adding new UI. Lesson: conversion lifts at this score level come from friction reduction, not feature addition.
+- These 3 patterns (lock icon, card hint, checkmark draw) should be adapted for Broadcast and Arena in upcoming cycles.
+- Next cycle: Broadcast (rotation). Broadcast at 8.70 — weakest overall. Conversion (8.5), Emotion (8.5), Interaction (8.5) all need attention. Apply the same conversion patterns in editorial style.

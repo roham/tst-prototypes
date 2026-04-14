@@ -187,3 +187,5 @@
 | Arena | 9.0 | 8.5 | 9.0 | 9.0 | 9.0 | **8.88** |
 
 **REFINEMENT round 6 complete.** All 3 directions now have Visual at 9.0. Arena leads (8.88) with 3 dimensions at 9.0. Supreme at 8.80 with 2 at 9.0. Broadcast weakest (8.70) — Emotion (8.5) and Interaction (8.5) drag. The remaining frontier is Conversion (8.5 across all 3) and Broadcast Emotion/Interaction. Next round starts with Supreme.
+
+| 37 | supreme | 9.0 | 9.0 | 9.0 | 9.0 | 9.0 | 9.00 | +0.20 | Conversion lift: lock icon on CTA, checkmark draw on confirmation, stored card hint |

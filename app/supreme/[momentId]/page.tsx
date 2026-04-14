@@ -1541,6 +1541,43 @@ export default function SupremePage() {
         </div>
       </div>
 
+      {/* ============================================================= */}
+      {/* AUCTION ESTIMATE — projected secondary value, collector prestige */}
+      {/* Christie's/Sotheby's always show "Estimate: $X–$Y" on the lot. */}
+      {/* ============================================================= */}
+      {!isEnded && !isPurchasing && (
+        <div className="px-5 mt-2 supreme-info-enter">
+          <div className="flex items-center justify-center gap-2">
+            <span
+              className="text-[8px] font-mono uppercase tracking-[0.3em] text-white/15"
+            >
+              Est. Value
+            </span>
+            <span
+              className="text-[8px] font-mono uppercase tracking-[0.15em] text-white/10"
+            >
+              ·
+            </span>
+            <span
+              className="text-[10px] font-mono tabular-nums text-white/25"
+            >
+              ${(selectedTier.price * 2.5).toFixed(0)}–${(selectedTier.price * 8).toFixed(0)}
+            </span>
+            <span
+              className="text-[8px] font-mono uppercase tracking-[0.15em] text-white/10"
+            >
+              ·
+            </span>
+            <span
+              className="text-[8px] font-mono uppercase tracking-[0.2em]"
+              style={{ color: `${moment.teamColors.primary}35` }}
+            >
+              Secondary
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Spacer pushes button to bottom */}
       <div className="flex-1" />
 

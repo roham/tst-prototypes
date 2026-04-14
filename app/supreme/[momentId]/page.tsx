@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
-import { getMoment } from '@/lib/mock-data';
+import { getMoment, getSaleEndsAt } from '@/lib/mock-data';
 import type { Moment } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
 import { usePrototypeState } from '@/lib/use-prototype-state';
@@ -180,13 +180,8 @@ export default function SupremePage() {
 
   const moment = useMemo(() => getMoment(momentId), [momentId]);
 
-  // Countdown: compute initial seconds from saleEndsAt
-  const initialSeconds = useMemo(() => {
-    if (!moment) return 0;
-    return Math.max(0, Math.floor((moment.saleEndsAt - Date.now()) / 1000));
-  }, [moment]);
-
-  const countdown = useCountdown(initialSeconds);
+  const [saleEnd] = useState(() => getSaleEndsAt(momentId));
+  const countdown = useCountdown(saleEnd);
   const { state: viewPhase, editionNumber, purchase, reset } = usePrototypeState(momentId);
 
   const watching = useSocialProof(moment ? 30 + moment.editionsClaimed % 40 : 30);

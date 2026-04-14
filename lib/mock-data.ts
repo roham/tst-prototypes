@@ -25,10 +25,12 @@ export interface Moment {
   teamColors: { primary: string; secondary: string };
 }
 
-function randomEndTime(): number {
-  const minMs = 5 * 60 * 1000;
-  const maxMs = 20 * 60 * 1000;
-  return Date.now() + minMs + Math.random() * (maxMs - minMs);
+// Sale ends far in the future so drops are always live during prototype demos
+// Bam: 14 min, Jokic: 9 min, SGA: 18 min — realistic mid-drop feel
+const SALE_MINUTES: Record<string, number> = { bam: 14, jokic: 9, sga: 18 };
+
+export function getSaleEndsAt(momentId: string): number {
+  return Date.now() + (SALE_MINUTES[momentId] ?? 12) * 60 * 1000;
 }
 
 export const MOMENTS: Moment[] = [
@@ -51,7 +53,7 @@ export const MOMENTS: Moment[] = [
       { tier: "Legendary", size: 25, remaining: 9, price: 99 },
       { tier: "Ultimate", size: 5, remaining: 2, price: 499 },
     ],
-    saleEndsAt: randomEndTime(),
+    saleEndsAt: 0, // Use getSaleEndsAt(id) client-side
     saleStartedAt: Date.now() - 15 * 60 * 1000,
     videoUrl: "/videos/bam-dunk.mp4",
     thumbnailGradient: "linear-gradient(135deg, #98002E 0%, #F9A01B 100%)",
@@ -76,7 +78,7 @@ export const MOMENTS: Moment[] = [
       { tier: "Legendary", size: 25, remaining: 14, price: 99 },
       { tier: "Ultimate", size: 5, remaining: 3, price: 499 },
     ],
-    saleEndsAt: randomEndTime(),
+    saleEndsAt: 0, // Use getSaleEndsAt(id) client-side
     saleStartedAt: Date.now() - 15 * 60 * 1000,
     videoUrl: "/videos/jokic-triple.mp4",
     thumbnailGradient: "linear-gradient(135deg, #0E2240 0%, #FEC524 100%)",
@@ -101,7 +103,7 @@ export const MOMENTS: Moment[] = [
       { tier: "Legendary", size: 25, remaining: 19, price: 99 },
       { tier: "Ultimate", size: 5, remaining: 4, price: 499 },
     ],
-    saleEndsAt: randomEndTime(),
+    saleEndsAt: 0, // Use getSaleEndsAt(id) client-side
     saleStartedAt: Date.now() - 15 * 60 * 1000,
     videoUrl: "/videos/sga-40piece.mp4",
     thumbnailGradient: "linear-gradient(135deg, #007AC1 0%, #EF6100 100%)",

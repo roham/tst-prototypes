@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useState, useEffect, useRef } from 'react';
-import { getMoment, type Moment, type RarityTier } from '@/lib/mock-data';
+import { getMoment, getSaleEndsAt, type Moment, type RarityTier } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
 import { usePrototypeState } from '@/lib/use-prototype-state';
 
@@ -308,7 +308,8 @@ export default function ArenaPage({
   const moment = getMoment(momentId);
 
   /* ── Hooks (called unconditionally) ─────────────────────────── */
-  const countdown = useCountdown(moment?.saleEndsAt ?? 0);
+  const [saleEnd] = useState(() => getSaleEndsAt(momentId));
+  const countdown = useCountdown(saleEnd);
   const proto = usePrototypeState(momentId);
 
   /* ── Live feed state ────────────────────────────────────────── */

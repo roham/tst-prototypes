@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
-import { getMoment } from '@/lib/mock-data';
+import { getMoment, getSaleEndsAt } from '@/lib/mock-data';
 import type { Moment, RarityTier } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
 import { usePrototypeState } from '@/lib/use-prototype-state';
@@ -61,7 +61,8 @@ export default function BroadcastPage() {
 
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
 
-  const countdown = useCountdown(moment?.saleEndsAt ?? 0);
+  const [saleEnd] = useState(() => getSaleEndsAt(params.momentId as string));
+  const countdown = useCountdown(saleEnd);
   const proto = usePrototypeState(momentId);
 
   if (!moment) {

@@ -905,3 +905,13 @@
 - State management: `leaderDone` boolean set by `handleLeaderComplete` (useCallback for stability). No sessionStorage needed — replaying on each navigation is fine, even desirable, since it reinforces the broadcast identity.
 - Broadcast direction now has a complete production lifecycle: countdown leader → live broadcast → feed cuts → phase transitions → end slate. This is the most narratively complete of the 3 directions.
 - Next cycle: Arena (rotation). Arena could explore a pre-game warmup sequence, arena lights dimming effect, or a "starting lineup" entrance.
+
+## Cycle 101 Learnings
+- ArenaFlameJets was already coded (component + keyframe) but never wired into the render tree. Always check for orphaned components before building new ones — free wins hiding in the codebase.
+- The ticket stub connects the hero's "SEC 108 · ROW C · SEAT 12" badge to the W screen — continuity between browsing and confirmation makes the "you were at the game" metaphor hold together end-to-end.
+- Perforated left edge (12 circular cutouts with negative margin) creates the torn-ticket effect without SVG — simple `bg-[#0B0E14]` divots that "cut" into the card border.
+- Team-color gradient background on the ticket stub (primary 12% → white 3% → secondary 8%) is subtle enough not to compete with the main YOURS content but distinct enough to feel like a team-branded ticket.
+- Dashed border divider between seat info and stats creates natural visual grouping — mirrors real ticket stub tear line.
+- Ticket ID format (TST-XXXX-0000) using moment.id + padded edition number adds authenticating detail without a full barcode/QR — minimal ticket stub energy.
+- Arena now has 4 simultaneous purchase reaction systems: LED flash (ambient glow), CrowdReactions (emoji burst), CameraFlash (white strobe), FlameJets (pyrotechnic columns). Each at different z-layers, different trigger rates (~100%, ~100%, ~40%, ~50%) — together they create overwhelming arena energy without any single effect dominating.
+- Next cycle: Supreme (rotation). Supreme could explore a "lot provenance" detail on the W screen, or a premium unboxing reveal animation.

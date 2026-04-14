@@ -872,3 +872,12 @@
 - The tick effect uses inline style transition override (60ms on tick, 120ms on release) because CSS class-based transitions would require adding/removing classes every second, which is noisier.
 - Supreme and Arena now both have per-second CRITICAL timer feedback but in completely different styles. Broadcast doesn't need this — its urgency is editorial (text-based), not rhythmic.
 - Next cycle: Broadcast (rotation). Broadcast could explore a dramatic "COMMERCIAL BREAK" bumper between tiers, or a Ken Burns speed-up in CRITICAL phase (the camera operator is getting nervous).
+
+## Cycle 97 Learnings
+- 35mm film frame sprocket holes use CSS custom properties (--film-hole-color, --film-border-color) for per-moment team-color tinting — this pattern is reusable for any direction that needs adaptive-color decorative elements.
+- `radial-gradient(ellipse 6px 8px ...)` creates realistic rounded-rectangle sprocket holes at minimal CSS cost. Real 35mm sprocket holes are slightly taller than wide, so ellipse > circle.
+- 28px pitch (vertical repeat) with 18px-wide strips creates proportions close to actual 35mm film (0.166" holes at 0.187" pitch on 0.0512" margins). Close enough for metaphor, not obsessing over spec.
+- The film frame only appears on the hero section (via class) — it would be inappropriate on the editorial text section. The hero IS the "film frame" containing the moment.
+- The 1px inner edge lines (`border-right`/`border-left` on pseudo-elements) subtly separate the sprocket strip from the hero image area, like the boundary between film emulsion and sprocket rail.
+- Broadcast hero now has layered atmospheric effects: Ken Burns drift, film grain, CRT scanlines, lens flare, crash zoom, and now film frame. Each references a different aspect of broadcast/cinema production (camera movement, analog media, monitor technology, optics, direction, physical film).
+- Next cycle: Arena (rotation). Arena could explore a "coach's challenge" replay mechanic on hover, or a crowd wave speed-up in CRITICAL phase.

@@ -456,7 +456,11 @@ export default function BroadcastPage() {
               onClick={proto.purchase}
               disabled={isPurchasing || countdown.isEnded}
               className={`group relative w-full max-w-md overflow-hidden rounded-lg border px-8 py-4 text-center text-base font-semibold tracking-wide transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed sm:text-lg ${
-                dropPhase === 'CRITICAL' && !isPurchasing ? 'animate-urgency' : ''
+                dropPhase === 'CRITICAL' && !isPurchasing
+                  ? 'animate-urgency-fast'
+                  : dropPhase === 'CLOSING' && !isPurchasing
+                    ? 'animate-urgency'
+                    : ''
               }`}
               style={{
                 borderColor: countdown.isEnded
@@ -508,7 +512,11 @@ export default function BroadcastPage() {
                 </span>
               ) : (
                 <span className="text-white">
-                  {dropPhase === 'CRITICAL' ? 'Collect Now' : 'Own This Piece of History'}
+                  {dropPhase === 'CRITICAL'
+                    ? 'Collect Now'
+                    : dropPhase === 'CLOSING'
+                      ? 'Closing Soon — Collect Now'
+                      : 'Own This Piece of History'}
                   <span className={dropPhase === 'CRITICAL' ? 'text-white/60' : 'text-white/40'}>
                     {' '}&mdash; ${selectedTier.price}
                   </span>
@@ -534,11 +542,16 @@ export default function BroadcastPage() {
                 : supplyNarrative(moment.editionsClaimed, moment.editionSize)}
             </p>
 
-            {/* Competition signal */}
+            {/* Competition signal + checkout reassurance */}
             {!countdown.isEnded && (
-              <p className="mt-2 text-[11px] text-white/20 tabular-nums">
-                {recentCollectors} collectors joined in the last minute
-              </p>
+              <>
+                <p className="mt-2 text-[11px] text-white/20 tabular-nums">
+                  {recentCollectors} collectors joined in the last minute
+                </p>
+                <p className="mt-2 text-[10px] uppercase tracking-[0.15em] text-white/12">
+                  Registered collector &middot; Instant acquisition
+                </p>
+              </>
             )}
           </div>
         </section>
@@ -587,7 +600,7 @@ function TierCard({
   return (
     <button
       onClick={onSelect}
-      className={`group relative flex flex-col items-start rounded-lg border p-4 text-left transition-all duration-300 overflow-hidden md:p-5 ${
+      className={`group relative flex flex-col items-start rounded-lg border p-4 text-left transition-all duration-300 overflow-hidden active:scale-[0.97] md:p-5 ${
         isPremium && isSelected ? 'broadcast-tier-shimmer' : ''
       }`}
       style={{

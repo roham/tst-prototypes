@@ -1130,3 +1130,11 @@
 - The W screen now has 7 distinct authentication layers — each maps to a real auction house document. When looking for future Supreme improvements, check what physical artifact from an auction house is still missing.
 - Italic within tracked uppercase (the play type in catalogue entry) creates the typographic variation that real catalogues use — "Lot 1234. Digital Collectible. Bam Adebayo, *Monster Dunk*, 2026."
 - Next cycle: Broadcast (rotation).
+
+## Cycle 130 Learnings
+- Letterbox bars are the cheapest way to add cinematic prestige — two gradient divs at 4.5% hero height. The transition to 7% during CRITICAL creates tension without any new animations.
+- "Continuing Live Coverage" bumper bridges editorial→transaction naturally. The IntersectionObserver approach means it fires at exactly the right scroll moment without manual timing.
+- State machine (hidden→in→out→done) for one-shot overlays prevents re-trigger on scroll back — important for scroll-based triggers.
+- Sliding the bumper out to the RIGHT (vs Special Report sliding out LEFT) creates visual variety in the broadcast's motion language.
+- Broadcast now has complete segment structure: countdown leader (cold open) → special report (breaking news) → editorial (feature segment) → coverage bumper (return from break) → transaction (closing segment). This is a full TV broadcast arc.
+- Next cycle: Arena (rotation).

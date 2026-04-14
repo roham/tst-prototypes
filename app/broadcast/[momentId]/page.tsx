@@ -279,6 +279,19 @@ const COMMENTATOR_CALLS: Record<string, { call: string; announcer: string; netwo
 };
 
 // ---------------------------------------------------------------------------
+// Sideline Report data — per-moment courtside reporter inserts.
+// Every ESPN/TNT broadcast cuts to the sideline reporter for courtside color:
+// injury updates, locker room intel, and emotional context the booth can't see.
+// Lisa Salters, Katie George, Jorge Sedano — real ESPN sideline voices.
+// ---------------------------------------------------------------------------
+
+const SIDELINE_REPORTS: Record<string, { reporter: string; report: string; arena: string }> = {
+  bam:   { reporter: 'Lisa Salters', report: 'I spoke with Erik Spoelstra at the break — he said Bam came into tonight with something to prove. You can see it in every possession.', arena: 'Kaseya Center, Miami' },
+  jokic: { reporter: 'Katie George', report: 'The Nuggets bench hasn\u2019t stopped talking about that pass. Michael Malone told me this is the kind of play you can\u2019t coach — pure basketball IQ.', arena: 'Ball Arena, Denver' },
+  sga:   { reporter: 'Jorge Sedano', report: 'Mark Daigneault just shook his head and smiled when I asked about SGA\u2019s fourth quarter. He said: \u201CWe just get out of his way.\u201D', arena: 'Paycom Center, OKC' },
+};
+
+// ---------------------------------------------------------------------------
 // Commentator Call Banner — iconic play-by-play announcer call on replay
 // ESPN/TNT replays always overlay the announcer's call as a dramatic text
 // treatment. "BANG!" "ARE YOU KIDDING ME?!" "THROWS IT DOWN!" — the voice
@@ -370,6 +383,118 @@ function CommentatorCallBanner({ momentId, teamColor, rgb }: {
               }}
             >
               &mdash; {callData.announcer}, {callData.network}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Sideline Report Insert — courtside reporter graphic on hero.
+// Appears after the commentator call fades (~10.5s). The sideline reporter
+// is the broadcast's courtside voice: emotional context, coach quotes,
+// locker room intel. Every ESPN/TNT game has 2-3 sideline inserts per half.
+// Visual: left-anchored card with reporter circle avatar, name badge, and
+// one-line report in Georgia serif italic. Slides in from left, holds, exits.
+// ---------------------------------------------------------------------------
+
+function SidelineReportInsert({ momentId, teamColor, rgb }: {
+  momentId: string; teamColor: string; rgb: string;
+}) {
+  const [phase, setPhase] = useState<'waiting' | 'in' | 'holding' | 'out' | 'done'>('waiting');
+  const data = SIDELINE_REPORTS[momentId] ?? SIDELINE_REPORTS.bam;
+
+  useEffect(() => {
+    // Sequence: in at 10.5s (after commentator call exits at ~9.2s), hold 3.5s, out
+    const t1 = setTimeout(() => setPhase('in'), 10500);
+    const t2 = setTimeout(() => setPhase('holding'), 11300);
+    const t3 = setTimeout(() => setPhase('out'), 14800);
+    const t4 = setTimeout(() => setPhase('done'), 15600);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+  }, []);
+
+  if (phase === 'done' || phase === 'waiting') return null;
+
+  return (
+    <div
+      className="absolute left-0 right-0 z-[21] pointer-events-none"
+      style={{
+        top: '56%',
+        animation: phase === 'out'
+          ? 'broadcast-call-fade-out 0.7s ease-in forwards'
+          : 'broadcast-sideline-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+      }}
+    >
+      <div className="flex items-stretch max-w-[88%]">
+        {/* Team-color accent bar — left edge, thinner than commentator call */}
+        <div
+          className="w-[3px] flex-shrink-0"
+          style={{ backgroundColor: teamColor }}
+        />
+        <div
+          className="relative flex items-center gap-3 px-4 py-2.5 overflow-hidden"
+          style={{
+            backgroundColor: 'rgba(11,14,20,0.88)',
+            backdropFilter: 'blur(10px)',
+            boxShadow: `4px 0 16px rgba(0,0,0,0.35), inset 0 0 0 0.5px rgba(${rgb},0.08)`,
+          }}
+        >
+          {/* Reporter avatar circle — initial letter, ESPN sideline reporter style */}
+          <div
+            className="flex-shrink-0 w-[28px] h-[28px] rounded-full flex items-center justify-center"
+            style={{
+              backgroundColor: `rgba(${rgb},0.15)`,
+              border: `1px solid ${teamColor}40`,
+            }}
+          >
+            <span
+              className="text-[11px] font-bold"
+              style={{ color: teamColor, fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              {data.reporter.charAt(0)}
+            </span>
+          </div>
+
+          {/* Content */}
+          <div className="flex flex-col gap-0.5 min-w-0">
+            {/* Reporter name + SIDELINE badge */}
+            <div className="flex items-center gap-2">
+              <span
+                className="text-[8px] font-bold uppercase tracking-[0.25em] px-1.5 py-px rounded-sm"
+                style={{
+                  backgroundColor: `rgba(${rgb},0.18)`,
+                  color: teamColor,
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                }}
+              >
+                Sideline
+              </span>
+              <span
+                className="text-[9px] font-bold uppercase tracking-[0.12em] text-white/60"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                {data.reporter}
+              </span>
+            </div>
+            {/* Report text — Georgia italic, courtside voice */}
+            <p
+              className="text-[10px] leading-[1.4] text-white/50"
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontStyle: 'italic',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical' as const,
+                overflow: 'hidden',
+              }}
+            >
+              {data.report}
+            </p>
+            {/* Location — courtside + arena */}
+            <span className="text-[7px] uppercase tracking-[0.2em] text-white/20">
+              Courtside &middot; {data.arena}
             </span>
           </div>
         </div>
@@ -1925,6 +2050,15 @@ export default function BroadcastPage() {
           {/* COMMENTATOR CALL — iconic announcer call overlay on replay */}
           {!countdown.isEnded && leaderDone && (
             <CommentatorCallBanner
+              momentId={moment.id}
+              teamColor={moment.teamColors.primary}
+              rgb={rgb}
+            />
+          )}
+
+          {/* SIDELINE REPORT — courtside reporter insert after commentator call */}
+          {!countdown.isEnded && leaderDone && (
+            <SidelineReportInsert
               momentId={moment.id}
               teamColor={moment.teamColors.primary}
               rgb={rgb}

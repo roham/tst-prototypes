@@ -1458,3 +1458,10 @@
 - The `exiting` flag pattern (set state to trigger exit animation, then remove after animation duration) keeps exit animations smooth without needing an animation library.
 - z-28 is the right layer: above page content (z-1) and crowd reactions (z-25), below the fixed header (z-30) and jumbotron overlays (z-60). The toasts should feel part of the environment, not interrupt it.
 - Next cycle: Supreme (rotation).
+
+## Cycle 175 Learnings
+- Unused data hooks are free improvement opportunities. `lastClaimer` was returned by `useClaimTicker` but never rendered — adding the whisper required zero new state management, just a conditional render.
+- The animation duration (2.8s) matches `lastClaimer`'s timeout (2800ms in useClaimTicker). Syncing CSS animation duration with state lifecycle prevents orphaned renders.
+- Georgia serif italic at team-color/18% opacity is the exact right register for Supreme's ambient text. Visible when looking for it, invisible when scanning. The institutional voice should never compete with the CTA or tier selector.
+- Social proof works differently per direction: Arena shouts it (floating toasts, bidder counts, crowd energy), Broadcast frames it editorially (viewer count, analyst commentary), Supreme whispers it (auctioneer's formal bid acknowledgment). Each creates the same psychological effect through direction-appropriate means.
+- Next cycle: Broadcast (rotation).

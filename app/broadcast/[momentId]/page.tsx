@@ -2023,6 +2023,78 @@ function CertificateScreen({
           </div>
         </div>
 
+        {/* ── INSTANT REPLAY — broadcast director cuts to the replay ── */}
+        <div
+          className="mt-6 w-full max-w-md mx-auto px-5 transition-all duration-700 ease-out"
+          style={{
+            opacity: phase >= 3 ? 1 : 0,
+            transform: phase >= 3 ? 'translateY(0)' : 'translateY(16px)',
+            transitionDelay: '0.4s',
+          }}
+        >
+          <div className="relative rounded-md overflow-hidden" style={{ aspectRatio: '16/9' }}>
+            {/* Action image — broadcast-graded */}
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${moment.actionImageUrl})`,
+                backgroundPosition: 'center 30%',
+                filter: 'saturate(0.85) contrast(1.15) brightness(0.9)',
+              }}
+            />
+            {/* Dark vignette */}
+            <div
+              className="absolute inset-0"
+              style={{ background: 'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 30%, rgba(11,14,20,0.7) 100%)' }}
+            />
+            {/* Play triangle — suggests replayable moment */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center"
+                style={{
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  backdropFilter: 'blur(4px)',
+                  border: '1.5px solid rgba(255,255,255,0.25)',
+                }}
+              >
+                <svg className="w-4 h-4 ml-0.5 text-white/80" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M4 2.5v11l10-5.5L4 2.5z" />
+                </svg>
+              </div>
+            </div>
+            {/* REPLAY badge — top-left, broadcast style */}
+            <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+              <div
+                className="flex items-center gap-1 px-2 py-0.5 rounded-sm"
+                style={{
+                  backgroundColor: 'rgba(11,14,20,0.8)',
+                  backdropFilter: 'blur(6px)',
+                  border: `1px solid rgba(${rgb},0.3)`,
+                }}
+              >
+                {/* Replay icon — circular arrow */}
+                <svg className="w-2.5 h-2.5" viewBox="0 0 12 12" fill="none" stroke={moment.teamColors.primary} strokeWidth="1.2" strokeLinecap="round">
+                  <path d="M1 4.5A5 5 0 0 1 10.5 3.5" />
+                  <path d="M11 1v3H8" />
+                  <path d="M11 7.5A5 5 0 0 1 1.5 8.5" />
+                  <path d="M1 11V8h3" />
+                </svg>
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.2em]"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif', color: moment.teamColors.primary }}
+                >
+                  Replay
+                </span>
+              </div>
+            </div>
+            {/* Team-color accent line — bottom */}
+            <div
+              className="absolute bottom-0 left-0 right-0 h-[2px]"
+              style={{ backgroundColor: moment.teamColors.primary }}
+            />
+          </div>
+        </div>
+
         {/* ── SHARE — appears last ── */}
         <div
           className="mt-8 mb-12 flex flex-col items-center transition-all duration-600 ease-out"

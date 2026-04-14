@@ -1049,3 +1049,11 @@
 - z-39 slots perfectly between timeout (z-38) and buzzer (z-45) — Arena's overlay z-stack is now: LED flash (z-20), ribbon pulse (z-21), camera flash (z-22), crowd reactions (z-25), streak badge (z-30), scoring run (z-32), critical vignette (z-35), noise prompt (z-36), timeout (z-38), horn shockwave (z-39), buzzer (z-45-47), confetti (z-50).
 - Arena now has game-clock overlays for every major NBA timing event: replay (load), timeout (CLOSING entry), horn (CRITICAL entry), buzzer (END). Complete temporal coverage.
 - Next cycle: Supreme (rotation).
+
+## Cycle 120 Learnings
+- Auction house estimate is a powerful endowment effect trigger — the buyer sees future value before spending. The multiplier range (×2.5–×8) is believable for sports collectibles.
+- Ultra-subtle typography (8-10px mono, white/15-25 opacity) keeps the estimate subliminal — it's information for sophisticated collectors, not a sales pitch. Supreme's voice is quiet confidence.
+- The estimate naturally scales with tier selection thanks to reactive derivation from `selectedTier.price` — no hardcoded values needed.
+- Placing it between tier selector and CTA catches the eye at the decision point without cluttering the button area.
+- Supreme's information architecture below the fold is now: context → info strip (timer + editions) → tiers → estimate → CTA. Each row adds one decision-relevant data point.
+- Next cycle: Broadcast (rotation).

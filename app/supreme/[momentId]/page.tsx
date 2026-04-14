@@ -617,6 +617,25 @@ export default function SupremePage() {
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [viewPhase]);
 
+  // CTA sonar invite — single ring pulse on page load, draws eye to button
+  const [sonarFired, setSonarFired] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setSonarFired(true), 1200); // after entrance animations
+    return () => clearTimeout(t);
+  }, []);
+
+  // Tier switch breathe — brief content shift acknowledges tier change
+  const [tierBreathe, setTierBreathe] = useState(false);
+  const prevTierIdx = useRef(selectedTierIdx);
+  useEffect(() => {
+    if (prevTierIdx.current !== selectedTierIdx) {
+      prevTierIdx.current = selectedTierIdx;
+      setTierBreathe(true);
+      const t = setTimeout(() => setTierBreathe(false), 350);
+      return () => clearTimeout(t);
+    }
+  }, [selectedTierIdx]);
+
   // Sticky CTA — show when main button overflows on small screens
   useEffect(() => {
     const el = ctaRef.current;
@@ -1176,7 +1195,18 @@ export default function SupremePage() {
       {/* ============================================================= */}
       {/* THE BUTTON — with ambient glow */}
       {/* ============================================================= */}
-      <div className="px-5 mb-3 relative supreme-info-enter">
+      <div className={`px-5 mb-3 relative supreme-info-enter${tierBreathe ? ' supreme-tier-breathe' : ''}`}>
+        {/* Sonar invite — single ring pulse drawing eye to CTA on load */}
+        {sonarFired && !isEnded && (
+          <div
+            className="absolute inset-x-5 top-1/2 -translate-y-1/2 h-[56px] rounded-2xl pointer-events-none z-20 supreme-sonar-invite"
+            style={{
+              border: `1px solid ${tierAccentColor}`,
+              boxShadow: `0 0 12px ${tierAccentColor}30`,
+            }}
+            onAnimationEnd={() => setSonarFired(false)}
+          />
+        )}
         {/* Ambient glow behind button */}
         {!isEnded && (
           <div

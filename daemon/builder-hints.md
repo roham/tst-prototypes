@@ -915,3 +915,12 @@
 - Ticket ID format (TST-XXXX-0000) using moment.id + padded edition number adds authenticating detail without a full barcode/QR — minimal ticket stub energy.
 - Arena now has 4 simultaneous purchase reaction systems: LED flash (ambient glow), CrowdReactions (emoji burst), CameraFlash (white strobe), FlameJets (pyrotechnic columns). Each at different z-layers, different trigger rates (~100%, ~100%, ~40%, ~50%) — together they create overwhelming arena energy without any single effect dominating.
 - Next cycle: Supreme (rotation). Supreme could explore a "lot provenance" detail on the W screen, or a premium unboxing reveal animation.
+
+## Cycle 102 Learnings
+- Provenance chain on the W screen is pure Supreme — text-only, no flashy visuals, just formal verification language that makes the purchase feel officially documented.
+- 200ms stagger between steps (800→1000→1200→1400ms) creates a satisfying cascade that feels like a system processing in real-time, not just showing static text.
+- Each step uses translateX(-8px)→0 entrance (not Y) — the horizontal slide-in feels like items being checked off a physical list, distinct from the vertical reveals elsewhere.
+- Team-color checkmark SVG circles (12×12px, 0.75 stroke width, 0.3 opacity ring + 0.5 opacity checkmark) are subtle enough to read as verification marks without looking like a success toast.
+- The provenance chain lives between the matchup/date stamp and the share section — positioned as authentication documentation below the edition number, above the social actions. Natural hierarchy.
+- Supreme's W screen now has: giant "W" → "YOURS." → divider → player name → edition counter + auth seal → matchup + date → provenance chain → share buttons. The information cascade tells a story: you won → here's what → here's the number → here's the proof → share it.
+- Next cycle: Broadcast (rotation). Broadcast could explore a "post-game interview" style quote treatment or a sports analyst commentary section on the W screen.

@@ -764,3 +764,13 @@
 - 0.5s delay on the end slate animation lets the hero desaturation settle first, then the card fades in — two-beat sequence.
 - Broadcast end slate is restrained — small centered card vs. Supreme's full-hero diagonal. Each direction's ENDED treatment matches its personality.
 - Next cycle: Arena (rotation).
+
+## Cycle 86 Learnings
+- Post-game box score card in the live feed area is a smart spatial reuse — the feed is hidden on ended, so the same real estate becomes a stats recap. Zero layout shift.
+- `grid grid-cols-2 gap-[1px] bg-white/[0.03]` with `bg-[#0B0E14]` cells creates scoreboard-style cell dividers without actual border elements. The gap color bleeds through as divider lines.
+- FINAL badge in mono tracking (font-mono uppercase tracking-wider) reads as "official" — mimics the scoreboard display markers you see in NBA post-game graphics.
+- "SOLD OUT" in red vs "remaining" in muted gray is a cheap conditional that adds drama when the drop fully sells through.
+- Drop stats summary (compact horizontal layout replacing panic banner on ended) is a better use of that space than just hiding the banner. Shows collected + peak velocity as retrospective highlights.
+- Tier selected glow (`arena-tier-selected-glow` 2s breathing pulse) is subtle but important — during live drops, it visually confirms "this is your selection" without adding text. Live auction highlight energy.
+- All 3 directions now have ENDED-state visual treatments: Supreme (SOLD watermark), Broadcast (end slate card), Arena (post-game box score + buzzer effect). Arena's is the most data-driven, which is on-brand.
+- Next cycle: Supreme (rotation).

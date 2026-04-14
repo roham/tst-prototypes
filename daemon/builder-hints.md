@@ -526,3 +526,13 @@
 - Critical pulse at 0.8s (faster than the 1.2s vignette pulse) gives the shot clock extra panic energy. The ring literally throbs.
 - Arena now has a basketball-specific urgency element that no other direction should have. Broadcast has its score ticker; Supreme has its thin urgency bar; Arena has its shot clock. Each direction's timer visualization matches its identity.
 - Next cycle: Supreme (rotation). Supreme could use a subtle "edition counter" progress visualization, or an ambient gradient color temperature shift as urgency increases.
+
+## Cycle 60 Learnings
+- Edge light trace (luminous point traveling along hero bottom border) creates a premium card-edge effect — like tilting a luxury card and seeing the light catch its gilt edge.
+- The trace uses `radial-gradient(ellipse)` with team-color at 90% center opacity fading to transparent. The elliptical shape creates a wider, softer light spot than a circular gradient would.
+- Dual-layer glow (8px tight + 20px diffuse boxShadow at 50% and 25% opacity) makes the point feel luminous, not just colored. The diffuse layer creates a subtle halo on the dark surface.
+- 6s `cubic-bezier(0.25, 0.1, 0.25, 1)` timing is smoother than linear — slight ease at edges means the light "enters and exits" the frame gracefully rather than popping in/out.
+- w-12 (48px) width for the light point is the right scale — wide enough to read as "light catching an edge," narrow enough to be a point, not a bar. Wider (w-24) reads as a progress indicator.
+- z-[11] puts it above the hero edge shadow (z-10) but below the text overlay — the light appears to trace the physical edge of the hero container.
+- This is the 7th ambient effect on the Supreme hero section: parallax, Ken Burns, light sweep, breathing vignette, name shimmer, particles, and now edge trace. Each operates on a different spatial axis: parallax=depth, Ken Burns=scale, sweep=diagonal, vignette=edges, shimmer=text, particles=floating, edge trace=border. No two effects share a spatial domain.
+- Next cycle: Broadcast (rotation). Broadcast could use a subtle "PRESENTED BY" sponsor tag at hero bottom for broadcast authenticity, or a cinematic fade-to-black transition between page states.

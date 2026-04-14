@@ -536,3 +536,12 @@
 - z-[11] puts it above the hero edge shadow (z-10) but below the text overlay — the light appears to trace the physical edge of the hero container.
 - This is the 7th ambient effect on the Supreme hero section: parallax, Ken Burns, light sweep, breathing vignette, name shimmer, particles, and now edge trace. Each operates on a different spatial axis: parallax=depth, Ken Burns=scale, sweep=diagonal, vignette=edges, shimmer=text, particles=floating, edge trace=border. No two effects share a spatial domain.
 - Next cycle: Broadcast (rotation). Broadcast could use a subtle "PRESENTED BY" sponsor tag at hero bottom for broadcast authenticity, or a cinematic fade-to-black transition between page states.
+
+## Cycle 61 Learnings
+- IntersectionObserver-triggered one-shot animations are the right pattern for scroll-based reveals in editorial/broadcast layouts. The user scrolls into the transaction section and the divider line "opens" like a curtain — cinematic.
+- `scaleX(0)` → `scaleX(1)` with `transform-origin: center` is simpler and more performant than animating width from 0%. The transform avoids layout recalc.
+- Gradient on the line (transparent → team-color → transparent) ensures the edges fade naturally. A solid-color line expanding would have harsh endpoints.
+- 0.8s duration with `cubic-bezier(0.16, 1, 0.3, 1)` (fast start, gentle settle) creates the feeling of a broadcast graphic resolving — decisive, not lingering.
+- The `broadcast-reveal-line` class sets initial state (`scaleX(0)`) and `broadcast-reveal-line-active` triggers the animation. This two-class pattern (state + trigger) is clean for IntersectionObserver-driven animations.
+- This replaces a static `opacity-20` divider with a dynamic reveal — a net zero DOM change but adds significant editorial polish.
+- Next cycle: Arena (rotation). Arena could use a "wave" animation through purchase feed items, or a jumbotron-style scoreboard transition effect.

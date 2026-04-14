@@ -271,6 +271,7 @@
 | 58 | broadcast | 9.0+ | 9.0 | 9.0+ | 9.0 | 9.0+ | 9.00+ | — | Beyond-9.0: INSTANT REPLAY broadcast overlay |
 | 59 | arena | 9.0 | 9.0 | 9.0+ | 9.0+ | 9.0+ | 9.00+ | — | Beyond-9.0: shot clock ring countdown |
 | 60 | supreme | 9.0+ | 9.0 | 9.0+ | 9.0 | 9.0 | 9.00+ | — | Beyond-9.0: hero edge light trace (luxury card edge) |
+| 61 | broadcast | 9.0+ | 9.0 | 9.0+ | 9.0+ | 9.0+ | 9.00+ | — | Beyond-9.0: cinematic section reveal line (broadcast wipe) |
 
 **Cycle 58: Broadcast INSTANT REPLAY overlay.** ESPN/TNT-style "Instant Replay" tag slides in from the right side of the hero section 0.8s after page load. The tag has a team-color accent bar (3px vertical), a team-color dot, and Oswald-tracked uppercase text on a dark translucent backdrop with blur. It slides in with a spring cubic-bezier, holds for ~2.5s, then fades out — exactly how broadcast networks mark replay segments. Positioned at 38% from top (mid-hero, between top bar and lower-third). Hidden during ENDED. CSS-only animation (`broadcast-replay-in` keyframe, 4s total duration). This completes the broadcast metaphor: the page now has a score ticker (top), network bug (corner), instant replay tag (hero), lower-third (bottom), lens flare, scanlines, grain, and Ken Burns drift. It genuinely feels like watching a broadcast production. Next: Arena (rotation).
 

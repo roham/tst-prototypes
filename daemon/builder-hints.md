@@ -1498,3 +1498,10 @@
 - Tracking `prevLastClaimerRef` prevents duplicate fires when the same `lastClaimer` value persists across renders. The claim ticker sets `lastClaimer` and then clears it after 2800ms — the ref comparison ensures we only fire once per unique bid.
 - The CRITICAL phase urgency cascade is now a complete sequence: bid whisper (who bid) → lot extension (the auction is extending) → gallery closing (time is running out) → gavel countdown (FAIR WARNING → GOING ONCE → GOING TWICE). Each layer adds a different type of urgency: social proof → competition proof → temporal urgency → finality.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 182 Learnings
+- Value comparison graphics are high-impact conversion tools because they reframe the purchase from "cost" to "investment." Showing "$5 → $16+ est." as broadcast data rather than sales copy makes it feel objective and trustworthy.
+- The split-column ESPN stat comparison format is instantly recognizable to sports fans — they've seen "Player A vs Player B" a thousand times. Using the same visual language for "Buy Price vs. Secondary Value" creates familiarity and credibility.
+- Teal (#00E5A0) for the buy price and white for the secondary estimate creates visual hierarchy: the teal says "this is what you pay (friendly)" while the white says "this is what it's worth (neutral data)."
+- ROI percentage at the bottom ("220% est. upside") is the summary stat — like ESPN's "Player X has 30% better FG% than Player Y." One number that tells the whole story.
+- Next cycle: Arena (rotation).

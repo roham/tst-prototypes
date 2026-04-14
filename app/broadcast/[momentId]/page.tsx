@@ -207,8 +207,19 @@ export default function BroadcastPage() {
 
       <div className="relative z-10">
         {/* ━━━ HERO — 50vh ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="relative h-[50dvh] min-h-[420px] overflow-hidden">
-          {/* Thumbnail gradient background */}
+        <section className="relative h-[50dvh] min-h-[420px] overflow-hidden broadcast-grain">
+          {/* Action image — cinematic depth layer */}
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+            style={{
+              backgroundImage: `url(${moment.actionImageUrl})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center 30%',
+              opacity: countdown.isEnded ? 0.06 : 0.10,
+              filter: countdown.isEnded ? 'grayscale(0.8) brightness(0.5)' : 'grayscale(0.2) brightness(0.8)',
+            }}
+          />
+          {/* Player headshot + gradient overlay */}
           <div
             className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
             style={{
@@ -300,10 +311,22 @@ export default function BroadcastPage() {
               style={{ backgroundColor: moment.teamColors.primary }}
             />
 
-            {/* Matchup context */}
-            <span className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-white/35 mb-1.5 pl-3 sm:text-xs">
-              {fullTeam(moment.team)} vs {fullTeam(moment.opponent)}
-            </span>
+            {/* Editorial badge — emotional framing */}
+            <div className="flex items-center gap-2 mb-2 pl-3">
+              <span
+                className="inline-block px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.25em] rounded-sm"
+                style={{
+                  backgroundColor: `${moment.teamColors.primary}25`,
+                  color: moment.teamColors.primary,
+                  border: `1px solid ${moment.teamColors.primary}40`,
+                }}
+              >
+                Play of the Game
+              </span>
+              <span className="text-[10px] text-white/25 tracking-wide">
+                {fullTeam(moment.team)} vs {fullTeam(moment.opponent)}
+              </span>
+            </div>
 
             {/* Player name — Oswald condensed broadcast headline */}
             <h1
@@ -399,8 +422,33 @@ export default function BroadcastPage() {
           </div>
         )}
 
+        {/* ━━━ EDITORIAL PULL QUOTE — emotional hook ━━━━━━━━━━━━━━━━━━━ */}
+        <section className="mx-auto max-w-2xl px-5 py-8 md:px-10 md:py-10">
+          <blockquote
+            className="relative pl-5 border-l-2"
+            style={{ borderColor: `${moment.teamColors.primary}60` }}
+          >
+            <p
+              className="text-xl leading-[1.6] text-white/50 md:text-2xl md:leading-[1.55]"
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+            >
+              {/* First sentence of historicalNote as a cinematic pull quote */}
+              {moment.historicalNote.split('.')[0]}.
+            </p>
+            <footer className="mt-3 flex items-center gap-2">
+              <div
+                className="h-[1px] w-4"
+                style={{ backgroundColor: `${moment.teamColors.primary}40` }}
+              />
+              <span className="text-[10px] uppercase tracking-[0.2em] text-white/20">
+                {moment.context}
+              </span>
+            </footer>
+          </blockquote>
+        </section>
+
         {/* ━━━ EDITORIAL NARRATIVE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        <section className="mx-auto max-w-2xl px-5 py-10 md:px-10 md:py-14">
+        <section className="mx-auto max-w-2xl px-5 pb-10 md:px-10 md:pb-14">
           {/* Section header — broadcast style */}
           <div className="flex items-center gap-3 mb-6">
             <div

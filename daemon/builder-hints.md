@@ -1355,3 +1355,10 @@
 - Bevel shadows on the mount (inset light-above, dark-below) add perceived depth even at very low opacity — the eye reads the material separation subconsciously.
 - The gilt fillet (inner hairline in team-color) is an extremely subtle detail but it connects the mat border to the moment's team palette without being heavy. 8% opacity is the sweet spot.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 161 Learnings
+- ESPN stat bar graphics need 4 elements to feel authentic: header label, filled bar, tip marker, and footer stats. Missing any one makes it look generic.
+- The tip marker dot at fill edge is the key detail separating "progress bar" from "broadcast stat graphic."
+- Gradient shift at thresholds (team-color→amber at ≥80%) adds urgency without changing structure.
+- Placing edition graphic between viewer count and CTA creates a 3-element conversion stack: social proof → supply visual → action. All in broadcast language.
+- Next cycle: Arena (rotation).

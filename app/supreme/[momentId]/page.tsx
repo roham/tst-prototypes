@@ -657,6 +657,16 @@ export default function SupremePage() {
   const totalDuration = SALE_DURATION_MS[momentId] ?? 12 * 60 * 1000;
   const timeProgressPct = Math.max(0, Math.min(100, ((totalDuration / 1000 - countdown.totalSeconds) / (totalDuration / 1000)) * 100));
 
+  // Tier ambient shift — page aura reacts to tier selection
+  // Open = teal (default), Rare = team-color, Legendary = team+gold, Ultimate = gold
+  const tierAccentColor = useMemo(() => {
+    const tier = selectedTier.tier;
+    if (tier === 'Rare') return moment.teamColors.primary;
+    if (tier === 'Legendary') return '#D4A017'; // warm gold
+    if (tier === 'Ultimate') return '#FEC524'; // pure gold
+    return '#00E5A0'; // teal default for Open
+  }, [selectedTier.tier, moment.teamColors.primary]);
+
   // ---- CONFIRMED state ----
   if (viewPhase === 'confirmed' || viewPhase === 'sharing') {
     return (
@@ -697,11 +707,13 @@ export default function SupremePage() {
     buttonAnimation = 'animate-urgency';
   }
 
-  // Glow intensity increases with urgency
+  // Glow intensity increases with urgency; tier accent tints glow during OPEN
   const glowOpacity =
     dropPhase === 'CRITICAL' ? 0.5 : dropPhase === 'CLOSING' ? 0.3 : 0.2;
   const glowColor =
-    dropPhase === 'CRITICAL' ? '#EF4444' : '#00E5A0';
+    dropPhase === 'CRITICAL' ? '#EF4444' :
+    dropPhase === 'CLOSING' ? '#00E5A0' :
+    tierAccentColor;
 
   // Background shifts toward team color in urgency phases
   const bgColor =
@@ -730,7 +742,8 @@ export default function SupremePage() {
         <div
           className="fixed inset-0 z-[5] pointer-events-none supreme-breathe-vignette"
           style={{
-            boxShadow: `inset 0 0 120px ${moment.teamColors.primary}08, inset 0 0 60px ${moment.teamColors.primary}05`,
+            boxShadow: `inset 0 0 120px ${tierAccentColor}08, inset 0 0 60px ${tierAccentColor}05`,
+            transition: 'box-shadow 1.2s ease',
           }}
         />
       )}
@@ -872,14 +885,15 @@ export default function SupremePage() {
         />
         </div>{/* End parallax wrapper */}
 
-        {/* Edge light trace — luminous point traveling along hero bottom edge */}
+        {/* Edge light trace — luminous point traveling along hero bottom edge, tints with tier */}
         {!isEnded && !isPurchasing && (
           <div className="absolute bottom-0 left-0 right-0 h-[1px] z-[11] pointer-events-none overflow-hidden">
             <div
               className="absolute top-0 w-12 h-[1px] supreme-edge-trace"
               style={{
-                background: `radial-gradient(ellipse at center, ${moment.teamColors.primary}90 0%, ${moment.teamColors.primary}40 30%, transparent 70%)`,
-                boxShadow: `0 0 8px ${moment.teamColors.primary}50, 0 0 20px ${moment.teamColors.primary}25`,
+                background: `radial-gradient(ellipse at center, ${tierAccentColor}90 0%, ${tierAccentColor}40 30%, transparent 70%)`,
+                boxShadow: `0 0 8px ${tierAccentColor}50, 0 0 20px ${tierAccentColor}25`,
+                transition: 'background 1s ease, box-shadow 1s ease',
               }}
             />
           </div>
@@ -889,6 +903,27 @@ export default function SupremePage() {
         {!isEnded && !isPurchasing && (
           <AmbientParticles teamColor={moment.teamColors.primary} />
         )}
+
+        {/* Vitrine glass edge — thin inner border like a museum display case */}
+        <div
+          className="absolute inset-3 z-[12] pointer-events-none rounded-sm"
+          style={{
+            border: '1px solid rgba(255,255,255,0.04)',
+            boxShadow: isEnded ? 'none' : `inset 0 0 20px rgba(255,255,255,0.01), 0 0 1px rgba(255,255,255,0.06)`,
+          }}
+        />
+
+        {/* Auction catalog lot number — top-right, subtle prestige detail */}
+        <div
+          className="absolute top-4 right-4 z-[12] pointer-events-none supreme-lot-enter"
+          style={{ opacity: isEnded ? 0.12 : 0.2 }}
+        >
+          <span
+            className="text-[9px] font-mono uppercase tracking-[0.3em] text-white/40"
+          >
+            LOT {((moment.id.charCodeAt(0) * 37 + moment.id.charCodeAt(1) * 13) % 9000 + 1000)}
+          </span>
+        </div>
 
         {/* SOLD watermark — auction house finality on ended drops */}
         {isEnded && (
@@ -1090,11 +1125,11 @@ export default function SupremePage() {
                     {tier.remaining} left
                   </span>
                 )}
-                {/* Underline indicator */}
+                {/* Underline indicator — tints with tier accent */}
                 <div
-                  className="absolute bottom-0 left-3 right-3 h-[1px] transition-all duration-200"
+                  className="absolute bottom-0 left-3 right-3 h-[1px] transition-all duration-300"
                   style={{
-                    backgroundColor: isSelected ? moment.teamColors.primary : 'transparent',
+                    backgroundColor: isSelected ? tierAccentColor : 'transparent',
                     opacity: isSelected ? 0.6 : 0,
                   }}
                 />

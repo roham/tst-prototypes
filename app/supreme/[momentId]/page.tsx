@@ -372,6 +372,7 @@ export default function SupremePage() {
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=confirming, 2=yours
   const ctaRef = useRef<HTMLButtonElement>(null);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
 
   // Derive drop phase from countdown
   const dropPhase = derivePhase(countdown.totalSeconds);
@@ -404,6 +405,17 @@ export default function SupremePage() {
     );
     observer.observe(el);
     return () => observer.disconnect();
+  }, []);
+
+  // Parallax scroll — hero moves at 0.4x speed for Apple-like depth
+  useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => setScrollY(window.scrollY));
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
   }, []);
 
   if (!moment) {
@@ -532,9 +544,14 @@ export default function SupremePage() {
       {/* HERO — fills top 52% */}
       {/* ============================================================= */}
       <div
-        className="relative w-full flex-none"
+        className="relative w-full flex-none overflow-hidden"
         style={{ height: '52dvh' }}
       >
+        {/* Parallax wrapper — hero moves at 0.4x scroll speed */}
+        <div
+          className="absolute inset-0 will-change-transform"
+          style={{ transform: `translateY(${scrollY * 0.4}px)` }}
+        >
         {/* Action image — cinematic depth layer behind player */}
         <div
           className="absolute inset-0 bg-cover bg-center pointer-events-none transition-opacity duration-1000"
@@ -581,6 +598,7 @@ export default function SupremePage() {
             background: 'linear-gradient(to top, #0B0E14, transparent)',
           }}
         />
+        </div>{/* End parallax wrapper */}
 
         {/* Player name + stat line — bottom-left */}
         <div className="absolute bottom-6 left-5 right-5 z-10 supreme-hero-enter">

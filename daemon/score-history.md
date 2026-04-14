@@ -253,3 +253,10 @@
 | 50 | arena | 9.0 | 9.0 | 9.0+ | 9.0+ | 9.0 | 9.00+ | — | Beyond-9.0: crowd noise equalizer bars in header |
 
 **Cycle 50: Arena crowd noise EQ.** 5 mini animated bars (2px wide, team-color tinted, 0.7 opacity) next to the viewer count in the header. Each bar has a different animation duration (380-550ms) and delay (0-180ms), creating an organic, staggered bounce that reads as "live audio equalizer." When the drop ends, bars flatten to 15% height and dim to 0.3 opacity — the arena has gone quiet. Pure CSS animation (`arena-eq-bar` keyframe), no JS. The EQ bars complete the Arena's sensory environment: you can almost hear the crowd. Next: Supreme (rotation).
+
+| 51 | supreme | 9.0+ | 9.0 | 9.0 | 9.0 | 9.0 | 9.00+ | — | Beyond-9.0: ambient breathing vignette + embossed player name |
+| 52 | broadcast | 9.0 | 9.0 | 9.0+ | 9.0 | 9.0+ | 9.00+ | — | Beyond-9.0: CRT scanlines + BREAKING text glow |
+| 53 | arena | 9.0 | 9.0 | 9.0+ | 9.0+ | 9.0 | 9.00+ | — | Beyond-9.0: camera flash effect on purchases |
+| 54 | supreme | 9.0+ | 9.0 | 9.0+ | 9.0 | 9.0 | 9.00+ | — | Beyond-9.0: holographic name shimmer (trading card foil) |
+
+**Cycle 54: Supreme holographic name shimmer.** Team-color metallic gradient passes across the player name text using `background-clip: text` on a 10-second cycle. The highlight band (120deg angle, 18% width) contains the team primary color flanked by white, creating a premium holographic foil effect like a rare trading card catching light. The animation pauses at the end (85-100% keyframe holds position) so the shimmer feels like a natural light-catch, not a loop. Disabled during ENDED and purchasing states. Complements the embossed text-shadow from cycle 51 — the shadow provides depth, the shimmer provides life. Next: Broadcast (rotation).

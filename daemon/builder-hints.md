@@ -469,3 +469,12 @@
 - z-22 sits between ArenaLedFlash (z-20, team-color edges) and CrowdReactions (z-25, emoji burst). The three purchase reaction layers are: warm team-color glow → cold white flash → colorful emoji burst. Different visual frequencies.
 - Arena now has 5 simultaneous purchase reaction systems: LED flash (edge glow), camera flash (screen burst), CrowdReactions (emoji), feed item glow (feed), and streak counter (gamification). The layered approach creates overwhelming arena energy.
 - Next cycle: Supreme (rotation). Supreme could use a subtle heartbeat pulse on the CTA glow (matching the breathing vignette rhythm), or a premium "collector since" timestamp in the W screen.
+
+## Cycle 54 Learnings
+- Holographic name shimmer uses `background-clip: text` with `-webkit-text-fill-color: transparent` to turn the player name into a gradient canvas. The gradient is 250% width so the highlight band can travel off-screen between passes.
+- The highlight band (38%→56%) is narrow (18% of gradient width) so the shimmer reads as a light-catch, not a color wash. Team-color at center flanked by #F0F2F5 creates a metallic sheen specific to each moment.
+- 10s cycle with a hold at 85-100% (same `background-position`) means the shimmer travels once, then pauses — mimicking a card catching light as you tilt it, not a spinning hologram.
+- `textShadow` still works with `-webkit-text-fill-color: transparent` — the embossed shadow from cycle 51 persists beneath the gradient fill. The two effects layer: shimmer provides surface life, shadow provides depth.
+- Disabled during ENDED (hero is grayscale — shimmer would break the "lights off" mood) and purchasing (hero is blurred — focus should be on the CTA, not the name).
+- Supreme now has 5 simultaneous visual polish systems: parallax (scroll depth), Ken Burns (slow zoom), light sweep (hero diagonal), breathing vignette (edge glow), and name shimmer (text foil). None are obvious alone — together they create a living, premium display.
+- Next cycle: Broadcast (rotation). Broadcast could use an editorial "byline" reveal animation, or a subtle parchment/paper texture on the narrative section.

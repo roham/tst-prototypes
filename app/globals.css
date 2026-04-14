@@ -255,6 +255,15 @@ body {
   animation: supreme-critical-vignette 1.5s ease-in-out infinite;
 }
 
+/* Supreme saleroom spotlight — slow breathing while gallery lights narrow */
+@keyframes supreme-spotlight-breathe {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+.supreme-spotlight-breathe {
+  animation: supreme-spotlight-breathe 4s ease-in-out infinite;
+}
+
 /* Supreme phase transition pulse — brief color wash when phase shifts */
 @keyframes supreme-phase-pulse {
   0% { opacity: 0; }

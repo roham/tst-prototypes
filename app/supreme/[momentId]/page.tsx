@@ -1312,6 +1312,16 @@ export default function SupremePage() {
     prevReserveMet.current = reserveMet;
   }, [reserveMet]);
 
+  // Saleroom spotlight — during CRITICAL, gallery lighting narrows to a tight
+  // auction spotlight on the lot. As seconds drain, the cone tightens and edges
+  // darken, mimicking the saleroom moment when house lights dim and a single spot
+  // focuses on the object under the hammer. Intensity 0→1 over CRITICAL (120→0s).
+  const spotlightIntensity = useMemo(() => {
+    if (dropPhase !== 'CRITICAL' || countdown.totalSeconds <= 0) return 0;
+    // 1.0 at 0 seconds, 0.0 at 120 seconds
+    return Math.max(0, Math.min(1, 1 - countdown.totalSeconds / 120));
+  }, [dropPhase, countdown.totalSeconds]);
+
   // Sticky CTA — show when main button overflows on small screens
   useEffect(() => {
     const el = ctaRef.current;
@@ -1548,6 +1558,23 @@ export default function SupremePage() {
           className="fixed inset-0 z-40 pointer-events-none supreme-critical-vignette"
           style={{
             boxShadow: 'inset 0 0 80px rgba(239,68,68,0.15), inset 0 0 200px rgba(239,68,68,0.06)',
+          }}
+        />
+      )}
+
+      {/* ============================================================= */}
+      {/* SALEROOM SPOTLIGHT — gallery lights narrow to a single spot    */}
+      {/* on the lot as the gavel approaches. Edges darken, center cone  */}
+      {/* tightens. The saleroom holds its breath.                       */}
+      {/* ============================================================= */}
+      {dropPhase === 'CRITICAL' && spotlightIntensity > 0 && viewPhase !== 'purchasing' && (
+        <div
+          className="fixed inset-0 z-[39] pointer-events-none supreme-spotlight-breathe"
+          style={{
+            // Radial gradient spotlight: cone shrinks from 70% → 35% as intensity rises
+            // Edge darkness increases from 0.15 → 0.55 opacity
+            background: `radial-gradient(ellipse ${70 - spotlightIntensity * 35}% ${55 - spotlightIntensity * 25}% at 50% 35%, transparent 0%, rgba(0,0,0,${(0.15 + spotlightIntensity * 0.4).toFixed(2)}) 100%)`,
+            transition: 'background 1s ease',
           }}
         />
       )}

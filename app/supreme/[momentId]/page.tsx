@@ -473,6 +473,9 @@ function WScreen({
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
   }, [purchaseTime]);
 
+  // Lot number for card back (matches hero lot number formula)
+  const lotNumber = (moment.id.charCodeAt(0) * 37 + moment.id.charCodeAt(1) * 13) % 9000 + 1000;
+
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0B0E14] overflow-hidden">
       {/* Entry flash — team color */}
@@ -484,8 +487,49 @@ function WScreen({
         }}
       />
 
+      {/* Card back — team-color pattern visible during flip's first half */}
+      <div
+        className="fixed inset-0 z-[15] pointer-events-none flex flex-col items-center justify-center supreme-card-back"
+        style={{ backgroundColor: '#0B0E14' }}
+      >
+        {/* Diamond crosshatch pattern */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `repeating-linear-gradient(45deg, ${moment.teamColors.primary}06 0px, ${moment.teamColors.primary}06 1px, transparent 1px, transparent 24px), repeating-linear-gradient(-45deg, ${moment.teamColors.primary}06 0px, ${moment.teamColors.primary}06 1px, transparent 1px, transparent 24px)`,
+          }}
+        />
+        {/* Center monogram */}
+        <div className="relative flex flex-col items-center gap-3">
+          <div
+            className="text-[72px] leading-none tracking-tighter"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              fontWeight: 700,
+              color: `${moment.teamColors.primary}15`,
+            }}
+          >
+            TST
+          </div>
+          <div
+            className="text-[9px] uppercase tracking-[0.5em]"
+            style={{ color: `${moment.teamColors.primary}12` }}
+          >
+            LOT {lotNumber}
+          </div>
+        </div>
+        {/* Thin border inset — card edge */}
+        <div
+          className="absolute inset-6 border rounded-sm pointer-events-none"
+          style={{ borderColor: `${moment.teamColors.primary}08` }}
+        />
+      </div>
+
       {/* Radial burst — clean expanding rings */}
       <RadialBurst teamColor={moment.teamColors.primary} />
+
+      {/* 3D card-flip wrapper — flips from back to front */}
+      <div className="absolute inset-0 supreme-card-flip" style={{ transformOrigin: 'center center' }}>
 
       {/* Action image — ghosted backdrop, more visible than before */}
       <div
@@ -649,6 +693,7 @@ function WScreen({
           reset prototype
         </button>
       </div>
+      </div>{/* End card-flip wrapper */}
     </div>
   );
 }

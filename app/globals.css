@@ -449,6 +449,30 @@ body {
   background-size: 256px 256px;
 }
 
+/* Supreme W screen card flip — 3D trading card reveal */
+@keyframes supreme-card-flip {
+  0% { transform: perspective(1200px) rotateY(180deg) scale(0.88); opacity: 0; }
+  20% { opacity: 1; }
+  60% { transform: perspective(1200px) rotateY(8deg) scale(1.02); }
+  80% { transform: perspective(1200px) rotateY(-2deg) scale(1); }
+  100% { transform: perspective(1200px) rotateY(0deg) scale(1); }
+}
+.supreme-card-flip {
+  animation: supreme-card-flip 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-style: preserve-3d;
+}
+/* Card back — visible during first half of flip */
+@keyframes supreme-card-back-fade {
+  0% { opacity: 1; }
+  40% { opacity: 1; }
+  55% { opacity: 0; }
+  100% { opacity: 0; }
+}
+.supreme-card-back {
+  animation: supreme-card-back-fade 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  backface-visibility: hidden;
+}
+
 /* Broadcast hero — slow cinematic Ken Burns drift for emotional tension */
 @keyframes broadcast-ken-burns {
   0% { transform: scale(1) translate(0, 0); }

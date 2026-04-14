@@ -352,6 +352,7 @@ export default function SupremePage() {
 
   const watching = useSocialProof(moment ? 30 + moment.editionsClaimed % 40 : 30);
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
+  const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=confirming, 2=yours
 
   // Derive drop phase from countdown
   const dropPhase = derivePhase(countdown.totalSeconds);
@@ -362,6 +363,17 @@ export default function SupremePage() {
     moment?.editionsClaimed ?? 0,
     moment?.editionSize ?? 5000,
   );
+
+  // Purchase stage progression (3 stages in 1.5s)
+  useEffect(() => {
+    if (viewPhase !== 'purchasing') {
+      setPurchaseStage(0);
+      return;
+    }
+    const t1 = setTimeout(() => setPurchaseStage(1), 500);
+    const t2 = setTimeout(() => setPurchaseStage(2), 1200);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [viewPhase]);
 
   if (!moment) {
     return (
@@ -403,7 +415,7 @@ export default function SupremePage() {
 
   if (isPurchasing) {
     buttonBg = '#00E5A0';
-    buttonText = 'Processing...';
+    buttonText = purchaseStage === 0 ? 'Reserving...' : purchaseStage === 1 ? 'Confirming...' : 'Yours.';
     buttonTextColor = '#0B0E14';
   } else if (isEnded) {
     buttonBg = '#1C2333';
@@ -708,25 +720,39 @@ export default function SupremePage() {
           className={`
             relative w-full h-[56px] rounded-2xl text-[15px] font-bold uppercase tracking-wider
             supreme-btn disabled:cursor-not-allowed
-            ${isPurchasing ? 'supreme-purchasing' : ''}
             ${buttonAnimation}
           `}
           style={{
             backgroundColor: buttonBg,
             color: buttonTextColor,
-            boxShadow: !isEnded && !isPurchasing
-              ? `0 4px 24px ${glowColor}30, 0 0 0 1px ${glowColor}10`
-              : undefined,
+            boxShadow: isPurchasing
+              ? `0 4px 40px ${glowColor}50, 0 0 0 1px ${glowColor}20`
+              : !isEnded
+                ? `0 4px 24px ${glowColor}30, 0 0 0 1px ${glowColor}10`
+                : undefined,
+            transition: 'box-shadow 0.5s ease, background-color 0.3s ease',
           }}
         >
           {isPurchasing ? (
             <span className="inline-flex items-center gap-2.5">
-              {/* Minimal progress ring */}
-              <svg className="h-4 w-4 animate-spin" viewBox="0 0 20 20" fill="none">
-                <circle cx="10" cy="10" r="8" stroke="#0B0E14" strokeWidth="2" opacity="0.2" />
-                <path d="M10 2a8 8 0 0 1 8 8" stroke="#0B0E14" strokeWidth="2" strokeLinecap="round" />
+              {/* Deterministic progress ring — fills in stages */}
+              <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="8" stroke="#0B0E14" strokeWidth="2" opacity="0.15" />
+                <circle
+                  cx="10" cy="10" r="8"
+                  stroke="#0B0E14"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeDasharray={`${2 * Math.PI * 8}`}
+                  strokeDashoffset={`${2 * Math.PI * 8 * (1 - (purchaseStage === 0 ? 0.33 : purchaseStage === 1 ? 0.75 : 1))}`}
+                  style={{
+                    transform: 'rotate(-90deg)',
+                    transformOrigin: 'center',
+                    transition: 'stroke-dashoffset 0.4s ease-out',
+                  }}
+                />
               </svg>
-              Securing...
+              {buttonText}
             </span>
           ) : (
             buttonText

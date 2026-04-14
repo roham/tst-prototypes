@@ -1483,3 +1483,37 @@ body {
   50%      { transform: scaleY(0.55); }
   75%      { transform: scaleY(0.85); }
 }
+
+/* Broadcast Breaking News Acquisition Cut-In — full-screen overlay during purchase processing */
+@keyframes broadcast-cutin-stinger {
+  0%   { opacity: 0; }
+  8%   { opacity: 0.7; }
+  20%  { opacity: 0.35; }
+  35%  { opacity: 0.55; }
+  50%  { opacity: 0.2; }
+  70%  { opacity: 0.1; }
+  100% { opacity: 0; }
+}
+@keyframes broadcast-cutin-band-expand {
+  0%   { transform: scaleY(0); opacity: 0; }
+  30%  { opacity: 1; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+@keyframes broadcast-cutin-text-in {
+  0%   { opacity: 0; transform: translateY(6px); letter-spacing: 0.5em; }
+  100% { opacity: 1; transform: translateY(0); letter-spacing: 0.2em; }
+}
+@keyframes broadcast-cutin-detail-wipe {
+  0%   { opacity: 0; transform: translateX(-20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes broadcast-cutin-confirmed-flash {
+  0%   { opacity: 0; }
+  15%  { opacity: 0.6; }
+  40%  { opacity: 0.25; }
+  100% { opacity: 0; }
+}
+@keyframes broadcast-cutin-scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}

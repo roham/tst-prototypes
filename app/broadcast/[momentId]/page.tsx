@@ -292,6 +292,257 @@ const SIDELINE_REPORTS: Record<string, { reporter: string; report: string; arena
 };
 
 // ---------------------------------------------------------------------------
+// Breaking News Acquisition Cut-In — ESPN-style full-screen overlay during
+// the 1.5s purchase processing window. Every ESPN breaking news interruption
+// has: red stinger flash → "BREAKING NEWS" banner expanding from center →
+// detail text wiping in → resolution. This transforms a generic loading state
+// into a broadcast production event. Supreme has "lot clerk ceremony," Arena
+// has "replay center review" — Broadcast has "breaking news cut-in."
+// ---------------------------------------------------------------------------
+
+function BreakingNewsCutIn({ moment, tier, purchaseStage, rgb }: {
+  moment: Moment; tier: RarityTier; purchaseStage: number; rgb: string;
+}) {
+  return (
+    <div className="fixed inset-0 z-[58] pointer-events-none flex items-center justify-center">
+      {/* Dark backdrop — broadcast cuts to dark before graphics */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundColor: `rgba(11,14,20,${purchaseStage === 2 ? 0.88 : 0.92})`,
+          transition: 'background-color 0.3s ease-out',
+        }}
+      />
+
+      {/* Red stinger flash — the initial breaking news alert flash */}
+      {purchaseStage === 0 && (
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundColor: '#EF4444',
+            animation: 'broadcast-cutin-stinger 0.5s ease-out forwards',
+          }}
+        />
+      )}
+
+      {/* Confirmed green flash */}
+      {purchaseStage === 2 && (
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundColor: '#00E5A0',
+            animation: 'broadcast-cutin-confirmed-flash 0.4s ease-out forwards',
+          }}
+        />
+      )}
+
+      {/* Scanline sweep — production cut artifact */}
+      <div
+        className="absolute inset-x-0 h-[2px] pointer-events-none"
+        style={{
+          background: `linear-gradient(90deg, transparent, rgba(${rgb},0.15), transparent)`,
+          animation: 'broadcast-cutin-scanline 0.8s ease-out forwards',
+        }}
+      />
+
+      {/* Center banner — the core breaking news graphic */}
+      <div
+        className="relative z-10 w-full flex flex-col items-center"
+        style={{
+          animation: 'broadcast-cutin-band-expand 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          transformOrigin: 'center',
+        }}
+      >
+        {/* Red accent lines — top and bottom bracket the banner */}
+        <div
+          className="w-full h-[2px]"
+          style={{
+            background: purchaseStage === 2
+              ? `linear-gradient(90deg, transparent 10%, #00E5A0 50%, transparent 90%)`
+              : `linear-gradient(90deg, transparent 10%, #EF4444 30%, ${moment.teamColors.primary} 50%, #EF4444 70%, transparent 90%)`,
+            transition: 'background 0.3s ease-out',
+          }}
+        />
+
+        {/* Banner body */}
+        <div
+          className="w-full py-6 px-4 flex flex-col items-center gap-3"
+          style={{
+            background: `linear-gradient(180deg, rgba(11,14,20,0.96) 0%, rgba(${rgb},0.06) 50%, rgba(11,14,20,0.96) 100%)`,
+          }}
+        >
+          {/* Stage 0: BREAKING NEWS */}
+          {purchaseStage === 0 && (
+            <>
+              <div className="flex items-center gap-2.5">
+                {/* Red pulse dot */}
+                <div
+                  className="h-[8px] w-[8px] rounded-full"
+                  style={{
+                    backgroundColor: '#EF4444',
+                    boxShadow: '0 0 8px rgba(239,68,68,0.6)',
+                    animation: 'pulse 1s ease-in-out infinite',
+                  }}
+                />
+                <span
+                  className="text-[11px] font-bold uppercase tracking-[0.3em]"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: '#EF4444',
+                    animation: 'broadcast-cutin-text-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both',
+                  }}
+                >
+                  Breaking News
+                </span>
+              </div>
+              <p
+                className="text-[10px] uppercase tracking-[0.15em] text-white/30"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  animation: 'broadcast-cutin-detail-wipe 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both',
+                }}
+              >
+                Acquisition in progress&hellip;
+              </p>
+            </>
+          )}
+
+          {/* Stage 1: Details wiping in — player + tier */}
+          {purchaseStage === 1 && (
+            <>
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="h-[8px] w-[8px] rounded-full"
+                  style={{
+                    backgroundColor: moment.teamColors.primary,
+                    boxShadow: `0 0 8px rgba(${rgb},0.5)`,
+                    animation: 'pulse 1s ease-in-out infinite',
+                  }}
+                />
+                <span
+                  className="text-[10px] font-bold uppercase tracking-[0.25em]"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: moment.teamColors.primary,
+                    animation: 'broadcast-cutin-text-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                  }}
+                >
+                  Live Acquisition
+                </span>
+              </div>
+              <p
+                className="text-[18px] font-bold uppercase tracking-[0.05em] text-white/90"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  animation: 'broadcast-cutin-detail-wipe 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both',
+                }}
+              >
+                {moment.player}
+              </p>
+              <div
+                className="flex items-center gap-2 text-[10px] uppercase tracking-[0.12em] text-white/35"
+                style={{
+                  animation: 'broadcast-cutin-detail-wipe 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both',
+                }}
+              >
+                <span style={{ fontFamily: 'var(--font-oswald), sans-serif' }}>
+                  {tier.tier} Edition
+                </span>
+                <span className="text-white/15">&middot;</span>
+                <span className="font-mono tabular-nums">${tier.price}</span>
+              </div>
+              {/* Authenticating — broadcast verification text */}
+              <p
+                className="text-[9px] tracking-[0.2em] text-white/20 mt-1"
+                style={{
+                  fontFamily: "Georgia, 'Times New Roman', serif",
+                  fontStyle: 'italic',
+                  animation: 'broadcast-cutin-detail-wipe 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both',
+                }}
+              >
+                Authenticating ownership&hellip;
+              </p>
+            </>
+          )}
+
+          {/* Stage 2: CONFIRMED — resolution */}
+          {purchaseStage === 2 && (
+            <>
+              <div className="flex items-center gap-2.5">
+                {/* Green checkmark */}
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none">
+                  <circle cx="10" cy="10" r="8" stroke="#00E5A0" strokeWidth="1.2" opacity="0.4" />
+                  <path
+                    d="M6 10.5 L9 13.5 L14 7"
+                    stroke="#00E5A0"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="broadcast-checkmark-draw"
+                  />
+                </svg>
+                <span
+                  className="text-[12px] font-bold uppercase tracking-[0.25em]"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: '#00E5A0',
+                    animation: 'broadcast-cutin-text-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                  }}
+                >
+                  Confirmed
+                </span>
+              </div>
+              <p
+                className="text-[15px] font-bold uppercase tracking-[0.05em] text-white/80"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  animation: 'broadcast-cutin-detail-wipe 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both',
+                }}
+              >
+                {moment.player} &middot; {tier.tier}
+              </p>
+              <p
+                className="text-[10px] font-mono tabular-nums text-white/30"
+                style={{
+                  animation: 'broadcast-cutin-detail-wipe 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both',
+                }}
+              >
+                Edition #{(moment.editionsClaimed + 1).toLocaleString()} &middot; ${tier.price}
+              </p>
+            </>
+          )}
+        </div>
+
+        {/* Bottom accent line */}
+        <div
+          className="w-full h-[2px]"
+          style={{
+            background: purchaseStage === 2
+              ? `linear-gradient(90deg, transparent 10%, #00E5A0 50%, transparent 90%)`
+              : `linear-gradient(90deg, transparent 10%, #EF4444 30%, ${moment.teamColors.primary} 50%, #EF4444 70%, transparent 90%)`,
+            transition: 'background 0.3s ease-out',
+          }}
+        />
+
+        {/* SMPTE timecode — production technical detail */}
+        <div className="mt-3 flex items-center gap-2">
+          <div
+            className="h-[5px] w-[5px] rounded-full"
+            style={{
+              backgroundColor: purchaseStage === 2 ? '#00E5A0' : '#EF4444',
+              opacity: 0.4,
+            }}
+          />
+          <span className="text-[7px] font-mono uppercase tracking-[0.3em] text-white/12">
+            TST Broadcast &middot; Live Acquisition
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Commentator Call Banner — iconic play-by-play announcer call on replay
 // ESPN/TNT replays always overlay the announcer's call as a dramatic text
 // treatment. "BANG!" "ARE YOU KIDDING ME?!" "THROWS IT DOWN!" — the voice
@@ -1603,6 +1854,16 @@ export default function BroadcastPage() {
 
       {/* ━━━ FEED CUT — camera switch static band on phase transition ━━━ */}
       {feedCut && <div className="broadcast-feed-cut" />}
+
+      {/* ━━━ BREAKING NEWS CUT-IN — full-screen overlay during purchase processing ━━━ */}
+      {isPurchasing && (
+        <BreakingNewsCutIn
+          moment={moment}
+          tier={selectedTier}
+          purchaseStage={purchaseStage}
+          rgb={rgb}
+        />
+      )}
 
       {/* ━━━ "SOLD TO" LOWER-THIRD — broadcast auction announcement on confirmation ━━━ */}
       <div

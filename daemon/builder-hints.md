@@ -1279,3 +1279,11 @@
 - The "timeout" concept works because every basketball fan recognizes the whistle-stop-and-refocus moment. Using sport-native metaphors for conversion nudges feels natural rather than manipulative.
 - Placing the reaction bar directly above the CTA means social proof (others reacting) is visible at the exact moment of decision. Position matters more than density.
 - Next cycle: Supreme (rotation).
+
+## Cycle 151 Learnings
+- Condition reports with verification checkmarks add institutional credibility at near-zero visual cost. The green SVG checkmarks provide the only color accent in an otherwise monochrome section — draws the eye to "everything checks out."
+- Pre-sale estimate ranges (1.8×–3.2× of price) create anchoring bias — the buyer sees $5 against "$9–$16" and perceives a deal. This is one of the cheapest conversion improvements possible.
+- Viewing room bidder count is Supreme's version of social proof: quiet, factual, institutional. Not "47 people are watching!" (Arena energy) but "47 registered bidders" (auction house formality).
+- Adding the pre-sale estimate to the W screen sale record completes the auction receipt: hammer price → pre-sale estimate → acquired date → status → buyer's premium → total. The buyer can see they acquired below estimate.
+- Supreme's catalogue section is now feature-complete. Future Supreme improvements should focus on the transaction flow, hero atmosphere, or W screen enrichment rather than adding more catalogue metadata.
+- Next cycle: Broadcast (rotation).

@@ -243,6 +243,16 @@ const TEAM_FULL: Record<string, string> = {
   PHX: 'Phoenix Suns',
 };
 
+// Arena locations — broadcast geography identifier
+const TEAM_ARENA: Record<string, { arena: string; city: string }> = {
+  MIA: { arena: 'Kaseya Center', city: 'Miami, FL' },
+  BOS: { arena: 'TD Garden', city: 'Boston, MA' },
+  DEN: { arena: 'Ball Arena', city: 'Denver, CO' },
+  LAL: { arena: 'Crypto.com Arena', city: 'Los Angeles, CA' },
+  OKC: { arena: 'Paycom Center', city: 'Oklahoma City, OK' },
+  PHX: { arena: 'Footprint Center', city: 'Phoenix, AZ' },
+};
+
 // Plausible game scores for score bug (derived from moment context)
 const GAME_SCORES: Record<string, { home: number; away: number; quarter: string }> = {
   bam: { home: 108, away: 101, quarter: 'FINAL' },
@@ -364,6 +374,91 @@ function BroadcastTicker() {
             </span>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Broadcast Location Tag — "LIVE FROM [ARENA]" geography identifier
+// Slides in from left after countdown leader, holds 4s, slides out.
+// Every live sports broadcast shows where they're reporting from.
+// ---------------------------------------------------------------------------
+
+function BroadcastLocationTag({ team, teamColor, rgb }: {
+  team: string; teamColor: string; rgb: string;
+}) {
+  const [phase, setPhase] = useState<'in' | 'hold' | 'out' | 'gone'>('in');
+  const arena = TEAM_ARENA[team] ?? { arena: 'Arena', city: '' };
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase('hold'), 800);
+    const t2 = setTimeout(() => setPhase('out'), 4800);
+    const t3 = setTimeout(() => setPhase('gone'), 5400);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, []);
+
+  if (phase === 'gone') return null;
+
+  return (
+    <div
+      className="absolute bottom-32 left-0 z-20 pointer-events-none md:bottom-36"
+      style={{
+        animation: phase === 'in'
+          ? 'broadcast-location-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+          : phase === 'out'
+            ? 'broadcast-location-out 0.5s ease-in forwards'
+            : 'none',
+      }}
+    >
+      <div className="flex items-stretch">
+        {/* Team-color accent bar — left edge */}
+        <div
+          className="w-[3px] flex-shrink-0"
+          style={{ backgroundColor: teamColor }}
+        />
+        <div
+          className="flex flex-col gap-0.5 pl-3 pr-5 py-2"
+          style={{
+            backgroundColor: 'rgba(11,14,20,0.88)',
+            backdropFilter: 'blur(10px)',
+            boxShadow: `2px 0 16px rgba(0,0,0,0.3), inset 0 0 0 0.5px rgba(${rgb},0.08)`,
+          }}
+        >
+          {/* "LIVE FROM" label */}
+          <div className="flex items-center gap-1.5">
+            <div
+              className="h-[5px] w-[5px] rounded-full flex-shrink-0"
+              style={{
+                backgroundColor: '#EF4444',
+                boxShadow: '0 0 6px rgba(239,68,68,0.5)',
+                animation: 'pulse 2s ease-in-out infinite',
+              }}
+            />
+            <span
+              className="text-[7px] font-bold uppercase tracking-[0.35em] text-white/40"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              Live from
+            </span>
+          </div>
+          {/* Arena name — bold, larger */}
+          <span
+            className="text-[12px] font-bold uppercase tracking-[0.12em] text-white/80 leading-tight"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            {arena.arena}
+          </span>
+          {/* City — muted, smaller */}
+          {arena.city && (
+            <span
+              className="text-[8px] tracking-[0.2em] text-white/25 leading-tight"
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+            >
+              {arena.city}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -1063,6 +1158,15 @@ export default function BroadcastPage() {
                 </span>
               </div>
             </div>
+          )}
+
+          {/* LOCATION TAG — "LIVE FROM [ARENA]" broadcast geography identifier */}
+          {!countdown.isEnded && leaderDone && (
+            <BroadcastLocationTag
+              team={moment.team}
+              teamColor={moment.teamColors.primary}
+              rgb={rgb}
+            />
           )}
 
           {/* Broadcast END SLATE — off-air card when drop concludes */}

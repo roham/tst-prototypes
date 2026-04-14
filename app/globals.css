@@ -697,6 +697,17 @@ body {
   100% { opacity: 0; }
 }
 
+/* Broadcast location tag — "LIVE FROM [ARENA]" slides in from left, exits left */
+@keyframes broadcast-location-in {
+  0% { transform: translateX(-110%); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes broadcast-location-out {
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(-110%); opacity: 0; }
+}
+
 /* Broadcast W screen — BREAKING chyron slides in from left */
 @keyframes broadcast-chyron-in {
   0% { transform: translateX(-110%); opacity: 0; }

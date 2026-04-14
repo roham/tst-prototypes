@@ -153,3 +153,5 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 ## Cycle 74 | Direction: Arena | Score: 9.00 (beyond-9.0 polish) | Built: Live bidder indicators on rarity tier cards — animated dots + "X selecting" counts per tier, jittering every 2-4s. Open tier ~15-20 bidders, Ultimate ~3-5. Staggered pulse animation on dots. Hidden when ended. Live auction FOMO energy. | Time: 10:55
 
 ## Cycle 75 | Direction: Supreme | Score: 9.00 (beyond-9.0 polish) | Built: Phase transition pulse — brief full-page color wash (amber for OPEN→CLOSING, red for CLOSING→CRITICAL) when countdown shifts phases. 600ms ease-out, peaks at 8% opacity. The void itself breathes to mark the moment. CSS-only animation. | Time: 11:10
+
+## Cycle 76 | Direction: Broadcast | Score: 9.00 (beyond-9.0 polish) | Built: Feed cut static band on phase transition — horizontal noise/static band sweeps vertically across screen (350ms) when phases shift OPEN→CLOSING→CRITICAL, mimicking broadcast camera feed switch. Dynamic ISO CAM label updates (CAM 1→CAM 2→CAM 3) in production markers. CSS-only animation with repeating-linear-gradient static pattern. | Time: 11:30

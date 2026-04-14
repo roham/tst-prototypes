@@ -672,3 +672,13 @@
 - z-36 positions the pulse above the breathing vignette (z-5) but below the CRITICAL vignette (z-40) and last-light dim (z-38) — the layers compose correctly.
 - The pulse is a state transition marker, not an ongoing effect. It fires once and disappears. This aligns with Supreme's philosophy: minimal, purposeful, no noise.
 - Next cycle: Broadcast (rotation). Broadcast could explore a "channel change" static effect between phase transitions — like switching broadcast feeds.
+
+## Cycle 76 Learnings
+- The `feedCut` state and phase-transition detection logic existed since earlier cycles but had zero visual output. Always render what you detect — half-implemented state is wasted code.
+- The static band uses `repeating-linear-gradient` with alternating white lines at 1-4px pitch and 3-8% opacity to simulate analog TV static. The `::after` overlay adds a Gaussian brightness peak at 50% height for a scanning beam effect.
+- 350ms sweep duration (top to bottom) is fast enough to feel like a real camera feed cut, not a distracting animation. 200ms was too fast to register; 500ms felt like a loading bar.
+- z-42 positions the feed cut above all broadcast overlays (score bug z-40, replay tag z-20, etc) so it sweeps over everything, which is correct — a feed cut affects the entire broadcast signal.
+- Dynamic ISO CAM label (1→2→3) on phase transitions reinforces the multi-camera production metaphor. Sports broadcasts use multiple camera angles, and the "ISO" designation is production jargon that fans recognize from behind-the-scenes content.
+- The 8% height band (instead of full-screen white flash) is important — it looks like a scanning interference band, not a flash. Full-screen effects feel like errors; narrow bands feel like authentic broadcast artifacts.
+- This completes the broadcast phase-transition vocabulary: urgency banner changes text, progress bar depletes, hero saturation shifts, CTA copy updates, and now a camera feed cut sweeps the screen. Multiple signals reinforcing the same event.
+- Next cycle: Arena (rotation). Arena could benefit from a "timeout huddle" overlay on phase transitions — like a basketball timeout called during critical moments.

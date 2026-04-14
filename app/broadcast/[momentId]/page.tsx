@@ -1239,6 +1239,44 @@ function CertificateScreen({
                 Verified on Flow blockchain
               </span>
             </div>
+
+            {/* Wax seal — Sotheby's authentication mark */}
+            <div
+              className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6"
+              style={{ opacity: 0.5 }}
+            >
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                {/* Outer notched circle — wax seal edge */}
+                <circle cx="24" cy="24" r="22" stroke={moment.teamColors.primary} strokeWidth="1" opacity="0.4" />
+                <circle cx="24" cy="24" r="18" stroke={moment.teamColors.primary} strokeWidth="0.5" opacity="0.25" />
+                {/* Radial lines — emboss detail */}
+                {Array.from({ length: 12 }).map((_, i) => {
+                  const angle = (i * 30 * Math.PI) / 180;
+                  const x1 = 24 + Math.cos(angle) * 18;
+                  const y1 = 24 + Math.sin(angle) * 18;
+                  const x2 = 24 + Math.cos(angle) * 22;
+                  const y2 = 24 + Math.sin(angle) * 22;
+                  return (
+                    <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={moment.teamColors.primary} strokeWidth="0.5" opacity="0.3" />
+                  );
+                })}
+                {/* Inner circle — seal center */}
+                <circle cx="24" cy="24" r="14" stroke={moment.teamColors.primary} strokeWidth="0.5" opacity="0.3" />
+                {/* TST monogram */}
+                <text
+                  x="24" y="26"
+                  textAnchor="middle"
+                  fontSize="8"
+                  fontWeight="700"
+                  letterSpacing="0.1em"
+                  fill={moment.teamColors.primary}
+                  opacity="0.5"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  TST
+                </text>
+              </svg>
+            </div>
           </div>
         </div>
 

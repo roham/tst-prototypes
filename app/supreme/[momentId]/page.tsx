@@ -2108,6 +2108,38 @@ export default function SupremePage() {
       )}
 
       {/* ============================================================= */}
+      {/* SALEROOM BID WHISPER — auctioneer acknowledges live bids      */}
+      {/* At Christie's/Sotheby's, the auctioneer announces each bid:  */}
+      {/* "Bid received from the telephone" or "New bid from the       */}
+      {/* floor." This whisper briefly appears when a simulated claim   */}
+      {/* fires, creating social proof in Supreme's institutional      */}
+      {/* voice — quiet, formal, not panic-inducing.                   */}
+      {/* ============================================================= */}
+      {!isEnded && !isPurchasing && lastClaimer && bidLog.length > 0 && (
+        <div
+          className="flex items-center justify-center px-5 py-1 supreme-bid-whisper-enter"
+          style={{ animation: 'supreme-bid-whisper 2.8s ease-out forwards' }}
+        >
+          <p
+            className="text-[9px] text-center tracking-[0.08em]"
+            style={{
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+              color: `${moment.teamColors.primary}18`,
+            }}
+          >
+            Bid received — <span className="not-italic font-mono text-[8px] tracking-[0.15em]" style={{ color: 'rgba(255,255,255,0.12)' }}>
+              {lastClaimer}
+            </span>
+            <span className="text-white/6 mx-1">·</span>
+            <span className="not-italic font-mono text-[8px] tabular-nums" style={{ color: `${moment.teamColors.primary}15` }}>
+              Edition #{bidLog[0].edition.toLocaleString()}
+            </span>
+          </p>
+        </div>
+      )}
+
+      {/* ============================================================= */}
       {/* GALLERY CLOSING NOTICE — institutional announcement when       */}
       {/* auction enters final phases. At Christie's/Sotheby's, the     */}
       {/* auctioneer announces "We are approaching the close of this    */}

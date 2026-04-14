@@ -662,6 +662,35 @@ export default function BroadcastPage() {
             />
           )}
 
+          {/* Production markers — broadcast control room details (bottom-right of hero) */}
+          {!countdown.isEnded && (
+            <div className="absolute bottom-16 right-5 z-20 flex flex-col items-end gap-1 pointer-events-none md:bottom-20 md:right-10"
+              style={{ opacity: 0.25 }}
+            >
+              {/* REC indicator with blinking dot */}
+              <div className="flex items-center gap-1.5">
+                <div
+                  className="h-[5px] w-[5px] rounded-full"
+                  style={{
+                    backgroundColor: '#EF4444',
+                    animation: 'pulse 2s ease-in-out infinite',
+                    boxShadow: '0 0 4px #EF444480',
+                  }}
+                />
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.3em] text-[#EF4444]/70"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  Rec
+                </span>
+              </div>
+              {/* ISO CAM label — technical camera designation */}
+              <span className="text-[7px] font-mono uppercase tracking-[0.15em] text-white/20">
+                ISO CAM 1
+              </span>
+            </div>
+          )}
+
           {/* Scroll indicator — animated chevron that scrolls to transaction */}
           {!countdown.isEnded && (
             <div className="absolute bottom-14 left-0 right-0 z-20 flex justify-center">

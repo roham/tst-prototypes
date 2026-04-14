@@ -1212,3 +1212,11 @@
 - "Buyer's Premium: Waived" is a subtle flex — digital means no surcharge. Adds realism while highlighting a benefit.
 - At this maturity level, the most impactful additions are ones that complete a document metaphor (catalogue, receipt) rather than add new visual layers.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 142 Learnings
+- Replay count is dual-purpose: broadcast authenticity + social proof. A ×8 replay count tells you this moment is significant enough to keep showing.
+- Capping the counter at 12 prevents absurd numbers — real broadcasts rarely show more than 10-12 replays of a single play.
+- Production credits add surprisingly deep emotional closure to the W screen — like the end of a great show.
+- Right-aligned role labels + left-aligned names is the standard credit card format.
+- "A TST Broadcast Production" is the correct industry phrasing (vs "TST Broadcast · Program Complete").
+- Next cycle: Arena (rotation).

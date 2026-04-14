@@ -1309,4 +1309,11 @@
 - The key to keeping bidding ledger "Supreme" vs "Arena" is restraint: mono font, low opacity, no emoji, no exclamation marks, formal "CLAIMED" language, timestamps. Same data, different register.
 - Tracking BidEntry objects with ids allows React to key properly for smooth entry animations.
 - The "registered bidders in viewing room" footnote ties back to the Viewing Room indicator above — institutional consistency.
-- Next cycle: Broadcast (rotation).
+
+## Cycle 155 Learnings
+- Per-moment commentator calls add a voice layer that was missing from the broadcast — visuals, data, narrative, production, and now voice. The broadcast metaphor is nearly complete.
+- Timing the call at 5.2s (after replay tag ~0.8s and telestrator ~2.2s) creates a natural replay production sequence. The sequencing matters more than any individual effect.
+- Audio waveform bars at very low opacity (6%) add texture without competing with the quote text. The sinusoidal height variation creates organic bar shapes.
+- The slam-in animation with spring overshoot at 55% (translateX goes to +3% then settles) creates the physical "slam" feel of a broadcast graphic hitting the screen.
+- Georgia italic for the attribution ("— Mike Breen, ESPN") distinguishes the meta-information from the dramatic call text in Oswald.
+- Next cycle: Arena (rotation).

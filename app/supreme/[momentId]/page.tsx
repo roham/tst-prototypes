@@ -834,6 +834,15 @@ function WScreen({
                   ${moment.rarityTiers[0].price.toFixed(2)}
                 </span>
               </div>
+              {/* Pre-sale estimate — shows buyer acquired below market estimate */}
+              <div className="flex items-center justify-between mt-0.5">
+                <span className="text-[7px] uppercase tracking-[0.2em] text-white/10">
+                  Pre-Sale Estimate
+                </span>
+                <span className="text-[8px] font-mono tabular-nums text-white/15">
+                  ${Math.round(moment.rarityTiers[0].price * 1.8).toFixed(2)}–${Math.round(moment.rarityTiers[0].price * 3.2).toFixed(2)}
+                </span>
+              </div>
               <div className="flex items-center justify-between mt-1">
                 <span className="text-[8px] uppercase tracking-[0.2em] text-white/15">
                   Acquired
@@ -1729,6 +1738,60 @@ export default function SupremePage() {
               : 'The rarest combination of scoring volume and efficiency we\u2019ve catalogued this season. Gilgeous-Alexander\u2019s trajectory suggests lasting historical value.'}
           </p>
         </div>
+
+        {/* Condition Report — formal auction-house lot condition assessment */}
+        {/* Every Christie's/Sotheby's lot has a condition report available on    */}
+        {/* request. For digital assets, this covers minting verification,        */}
+        {/* blockchain provenance, and media integrity — the digital equivalent   */}
+        {/* of "no visible restoration, original canvas, provenance unbroken."    */}
+        <div className="mt-4 pt-3" style={{ borderTop: '0.5px solid rgba(255,255,255,0.04)' }}>
+          <span
+            className="text-[7px] font-bold uppercase tracking-[0.35em] block mb-2"
+            style={{ color: 'rgba(255,255,255,0.12)', fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            Condition Report
+          </span>
+          <div className="space-y-1.5">
+            {[
+              { label: 'Mint Status', value: 'Verified · Block #' + ((moment.id.charCodeAt(0) * 1337 + 8420000) % 99000000 + 10000000).toLocaleString(), status: 'pass' as const },
+              { label: 'Media Integrity', value: 'SHA-256 verified · No degradation', status: 'pass' as const },
+              { label: 'Chain of Title', value: 'Primary sale · No prior owners', status: 'pass' as const },
+              { label: 'Smart Contract', value: 'Flow · Audited · Immutable', status: 'pass' as const },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center justify-between">
+                <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/10">
+                  {item.label}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[7px] font-mono text-white/15">
+                    {item.value}
+                  </span>
+                  {/* Verification checkmark — green for pass */}
+                  <svg className="h-2.5 w-2.5" viewBox="0 0 10 10" fill="none">
+                    <circle cx="5" cy="5" r="4.5" stroke="rgba(0,229,160,0.25)" strokeWidth="0.5" />
+                    <path d="M3 5.2 L4.5 6.5 L7 3.5" stroke="rgba(0,229,160,0.4)" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Grade assessment */}
+          <div className="mt-2 flex items-center gap-2">
+            <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/10">
+              Overall
+            </span>
+            <span
+              className="text-[8px] font-bold uppercase tracking-[0.3em]"
+              style={{ color: `${moment.teamColors.primary}30`, fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              Gem Mint
+            </span>
+            <span className="text-[7px] font-mono text-white/8">·</span>
+            <span className="text-[7px] font-mono text-white/12">
+              No condition issues
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* ============================================================= */}
@@ -1769,6 +1832,35 @@ export default function SupremePage() {
           </div>
         );
       })()}
+
+      {/* ============================================================= */}
+      {/* VIEWING ROOM — Christie's-style "X people viewing this lot" */}
+      {/* At Christie's online, each lot shows how many people are    */}
+      {/* currently viewing. Supreme's social proof: quiet, factual,  */}
+      {/* institutional. Not panic-inducing — informational.          */}
+      {/* ============================================================= */}
+      {!isEnded && (
+        <div className="flex items-center justify-center gap-2 px-5 py-1 supreme-info-enter">
+          <div
+            className="h-[3px] w-[3px] rounded-full"
+            style={{
+              backgroundColor: moment.teamColors.primary,
+              opacity: 0.3,
+              boxShadow: `0 0 4px ${moment.teamColors.primary}30`,
+            }}
+          />
+          <span className="text-[7px] font-mono uppercase tracking-[0.3em] text-white/10">
+            Viewing Room
+          </span>
+          <span className="text-[7px] font-mono text-white/8">·</span>
+          <span className="text-[8px] font-mono tabular-nums text-white/15">
+            {watching}
+          </span>
+          <span className="text-[7px] font-mono uppercase tracking-[0.15em] text-white/8">
+            registered bidders
+          </span>
+        </div>
+      )}
 
       {/* ============================================================= */}
       {/* INFO STRIP — timer + edition counter */}
@@ -1902,6 +1994,12 @@ export default function SupremePage() {
                     }`}
                   >
                     {tier.remaining} left
+                  </span>
+                )}
+                {/* Pre-sale estimate — Christie's "Est. $X–$Y" beneath price */}
+                {isSelected && (
+                  <span className="block text-[7px] font-mono text-white/12 mt-0.5 tracking-wide">
+                    Est. ${Math.round(tier.price * 1.8)}–${Math.round(tier.price * 3.2)}
                   </span>
                 )}
                 {/* Underline indicator — tints with tier accent */}

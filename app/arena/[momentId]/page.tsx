@@ -1509,6 +1509,154 @@ function CelebrationScreen({
           <span className="font-mono tabular-nums">{dateStr}</span>
         </div>
 
+        {/* Scoreboard Matchup Card — YOU vs FIELD jumbotron comparison */}
+        <div
+          className="mt-4 w-full max-w-[280px] transition-all duration-600 ease-out"
+          style={{
+            opacity: showDetails ? 1 : 0,
+            transform: showDetails ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.95)',
+            transitionDelay: '0.2s',
+          }}
+        >
+          <div
+            className="relative overflow-hidden rounded-xl border"
+            style={{
+              borderColor: `${moment.teamColors.primary}25`,
+              backgroundColor: 'rgba(255,255,255,0.02)',
+            }}
+          >
+            {/* Scoreboard header bar */}
+            <div
+              className="flex items-center justify-between px-4 py-2"
+              style={{
+                background: `linear-gradient(90deg, ${moment.teamColors.primary}18, transparent, ${moment.teamColors.secondary}12)`,
+                borderBottom: `1px solid ${moment.teamColors.primary}15`,
+              }}
+            >
+              <span
+                className="text-[8px] font-bold uppercase tracking-[0.25em] text-white/30"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                Matchup
+              </span>
+              <span
+                className="text-[7px] font-mono uppercase tracking-wider"
+                style={{ color: '#00E5A0', opacity: 0.6 }}
+              >
+                FINAL
+              </span>
+            </div>
+
+            {/* Head-to-head comparison rows */}
+            <div className="px-4 py-3">
+              {/* Column headers */}
+              <div className="flex items-center justify-between mb-2.5">
+                <span
+                  className="text-[10px] font-bold uppercase tracking-[0.15em]"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: moment.teamColors.primary,
+                    textShadow: `0 0 8px ${moment.teamColors.primary}40`,
+                  }}
+                >
+                  YOU
+                </span>
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.2em] text-white/20"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  vs
+                </span>
+                <span
+                  className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/35"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  FIELD
+                </span>
+              </div>
+
+              {/* Stat rows */}
+              {[
+                {
+                  label: 'EDITION',
+                  you: `#${editionNumber.toLocaleString()}`,
+                  field: `#${Math.round(total * 0.52).toLocaleString()}`,
+                  youWins: editionNumber < total * 0.52,
+                },
+                {
+                  label: 'SPEED',
+                  you: `${acquireTime}s`,
+                  field: `${(3.2 + Math.random() * 2).toFixed(1)}s`,
+                  youWins: parseFloat(acquireTime) < 3.5,
+                },
+                {
+                  label: 'RANK',
+                  you: `Top ${percentile}%`,
+                  field: 'Top 50%',
+                  youWins: percentile < 50,
+                },
+              ].map((row) => (
+                <div
+                  key={row.label}
+                  className="flex items-center justify-between py-1.5"
+                  style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}
+                >
+                  <span
+                    className="text-[12px] font-bold tabular-nums"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: row.youWins ? '#00E5A0' : 'rgba(255,255,255,0.5)',
+                      textShadow: row.youWins ? '0 0 6px rgba(0,229,160,0.3)' : 'none',
+                    }}
+                  >
+                    {row.you}
+                  </span>
+                  <span
+                    className="text-[7px] font-bold uppercase tracking-[0.2em] text-white/15"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {row.label}
+                  </span>
+                  <span
+                    className="text-[12px] tabular-nums text-white/25"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {row.field}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Winner bar — bottom accent */}
+            <div
+              className="flex items-center justify-center gap-2 py-2"
+              style={{
+                background: `linear-gradient(90deg, ${moment.teamColors.primary}10, rgba(0,229,160,0.08), ${moment.teamColors.primary}10)`,
+                borderTop: `1px solid ${moment.teamColors.primary}15`,
+              }}
+            >
+              <div
+                className="h-[1px] w-4"
+                style={{ backgroundColor: `${moment.teamColors.primary}30` }}
+              />
+              <span
+                className="text-[8px] font-bold uppercase tracking-[0.3em]"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: '#00E5A0',
+                  textShadow: '0 0 8px rgba(0,229,160,0.3)',
+                }}
+              >
+                Winner
+              </span>
+              <div
+                className="h-[1px] w-4"
+                style={{ backgroundColor: `${moment.teamColors.primary}30` }}
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Digital Ticket Stub — arena keepsake for screenshots */}
         <div
           className="mt-5 w-full max-w-[280px] transition-all duration-600 ease-out"

@@ -1190,4 +1190,9 @@
 - The signature draw creates a natural pause in the W screen reveal — you watch the ink flow, adding ceremony.
 - Supreme's W screen document lifecycle is now complete: card flip → W → serial + seal → provenance → sale record → signature → wax seal → share.
 - At this maturity level, the best additions complete a narrative sequence rather than add disconnected elements.
-- Next cycle: Broadcast (rotation).
+
+## Cycle 139 Learnings
+- Per-moment player quotes add enormous editorial depth with minimal code — just a ternary per moment ID.
+- Georgia serif italic is the editorial voice of Broadcast — every quote, tagline, and narrative uses it consistently.
+- The "Postgame" badge reuses the same pattern as "Up Next" and "Breaking" — consistency.
+- Next cycle: Arena (rotation).

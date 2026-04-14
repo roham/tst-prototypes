@@ -1317,3 +1317,12 @@
 - The slam-in animation with spring overshoot at 55% (translateX goes to +3% then settles) creates the physical "slam" feel of a broadcast graphic hitting the screen.
 - Georgia italic for the attribution ("— Mike Breen, ESPN") distinguishes the meta-information from the dramatic call text in Oswald.
 - Next cycle: Arena (rotation).
+
+## Cycle 156 Learnings
+- Wiring up partially-built components (ReplayReviewOverlay was defined but never rendered) is a quick win — the component was already coded, just needed integration and rgb→hex color fix.
+- The replay center overlay reframes a generic "processing" state into a basketball moment. Instead of a progress bar, the user sees "PLAY UNDER REVIEW" → "CALL CONFIRMED" — emotionally resonant with every NBA fan.
+- Using hex alpha notation (teamColor + "4D" for 30%) instead of rgba(${rgb},...) avoids needing a hex-to-rgb converter. Simpler and consistent with the rest of the codebase.
+- The Defense Stomp at 80% claimed creates urgency from a supply signal that wasn't previously visualized. The existing panic banner shows text; the stomp is a dramatic full-screen jumbotron moment.
+- One-shot overlays (firedRef pattern) are essential for dramatic full-screen effects — showing DE-FENSE every time the page re-renders would be annoying. Once is impactful; twice is noise.
+- Reusing existing keyframes (arena-timeout-in, arena-horn-ring, arena-crowd-wave) keeps globals.css lean. Most arena overlays share the same spring entrance + hold + fade lifecycle.
+- Next cycle: Supreme (rotation).

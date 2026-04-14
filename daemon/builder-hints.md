@@ -265,3 +265,12 @@
 - All 3 directions now have action image layers, historicalNote content in different forms, and team-color stat accents. Pattern is fully deployed.
 - Supreme and Broadcast tied at 8.38, both with Conversion (8.0) and Interaction (8.0) as drags. Arena leads at 8.58.
 - Next cycle: Supreme (rotation). Target Conversion or Interaction — both at 8.0.
+
+## Cycle 31 Learnings
+- Supreme's sticky CTA is just the button in a gradient fade — no extra info, no tier name, no price breakdown. That's the Supreme way. Compare to Arena's sticky (tier + active buyers + button) and Broadcast's sticky (player name + tier + button). Each is identity-correct.
+- Hero blur (2px) during purchase creates a "tunnel vision" focus effect on the button — the world fades, only the transaction matters. Very Supreme's "the page IS the purchase" philosophy.
+- Linear gradient background on sticky (`#0B0E14 60% → transparent`) blends seamlessly with the dark page bottom instead of using a solid bar with border. Cleaner for Supreme.
+- safe-area-inset-bottom handled via `max(12px, env(...))` — ensures minimum padding even on non-notch devices.
+- Supreme jumped from 8.38 to 8.58 — now tied with Arena. Sticky CTA + purchase feedback was a dual-dimension lift.
+- All 3 directions now have sticky CTAs, each styled to their identity.
+- Next cycle: Broadcast (rotation). Broadcast at 8.38 — weakest. Conversion (8.0) and Interaction (8.0) are the drags.

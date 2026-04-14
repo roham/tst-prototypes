@@ -159,3 +159,5 @@
 | Arena | 8.5 | 8.5 | 8.5 | 8.5 | 9.0 | **8.58** |
 
 **REFINEMENT round 4 complete.** All 3 got emotion lift — all Emotion scores now 8.5. Arena leads (8.58) with all non-Purity dims at 8.5. Supreme and Broadcast tied at 8.38 — both have Conversion (8.0) and Interaction (8.0) as the drag. Next round starts with Supreme (weakest, tied with Broadcast).
+
+| 31 | supreme | 8.5 | 8.5 | 8.5 | 8.5 | 9.0 | 8.58 | +0.20 | Conversion+interaction: minimal sticky CTA for overflow, hero blur during purchase |

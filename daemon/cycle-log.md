@@ -63,3 +63,5 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 ## Cycle 29 | Direction: Broadcast | Score: 8.38 (+0.10) | Built: Emotion lift — cinematic film grain hero overlay, action image depth layer behind player, "Play of the Game" editorial badge, pull quote dedup (historicalNote excerpt + context as attribution) | Time: 22:40
 
 ## Cycle 30 | Direction: Arena | Score: 8.58 (+0.10) | Built: Emotion lift — action image jumbotron depth layer, team-color stat line accent, historicalNote hype excerpt in hero | Time: 23:00
+
+## Cycle 31 | Direction: Supreme | Score: 8.58 (+0.20) | Built: Conversion+interaction lift — minimal sticky CTA for mobile overflow, hero blur during purchase for focus feedback | Time: 23:20

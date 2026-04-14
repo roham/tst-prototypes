@@ -662,3 +662,13 @@
 - 45% opacity on "X selecting" text keeps it informational without competing with price/supply.
 - This feature touches conversion AND purity: it's both a social proof urgency mechanism (conversion) and a distinctly Arena/live-auction element (purity).
 - Next cycle: Supreme (rotation). Supreme could benefit from a subtle gradient shift on the background during phase transitions — the void itself changes mood.
+
+## Cycle 75 Learnings
+- Phase transition pulses (full-page color wash on phase shift) add dramatic punctuation without any UI elements — perfectly Supreme.
+- 8% peak opacity is the sweet spot — enough to register as "something changed" without being a flash or distraction. Higher (15%+) felt like an error.
+- Using useRef to track previous phase prevents false triggers from re-renders. The pulse fires exactly once per transition.
+- The amber (OPEN→CLOSING) and red (CLOSING→CRITICAL) colors match the existing urgency color system, so they feel native, not added.
+- 600ms with ease-out gives a natural "inhale" feeling — quick peak, gentle fade. Shorter (200ms) felt like a glitch, longer (1s) felt sluggish.
+- z-36 positions the pulse above the breathing vignette (z-5) but below the CRITICAL vignette (z-40) and last-light dim (z-38) — the layers compose correctly.
+- The pulse is a state transition marker, not an ongoing effect. It fires once and disappears. This aligns with Supreme's philosophy: minimal, purposeful, no noise.
+- Next cycle: Broadcast (rotation). Broadcast could explore a "channel change" static effect between phase transitions — like switching broadcast feeds.

@@ -15,4 +15,6 @@
 | Broadcast | 6.0 | 4.5 | 5.5 | 4.0 | 7.0 | **5.35** |
 | Arena | 5.5 | 5.0 | 4.5 | 5.0 | 7.0 | **5.35** |
 
-**Weakest: Supreme (4.83)** — Interaction (3.5) and Emotion (4.0) are lowest scores across all directions.
+| 4 | supreme | 6.5 | 5.0 | 5.0 | 5.0 | 7.5 | 5.75 | +0.92 | Spring button, entrance anims, staggered W reveal, glow breathing |
+
+**Weakest: Broadcast/Arena tied (5.35)** — Supreme caught up. Broadcast next in rotation.

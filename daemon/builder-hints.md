@@ -22,6 +22,14 @@
 - Supreme needs the most work in Cycles 4-6 POLISH phase — the button micro-interactions and emotional context are lacking
 - All three directions now share Oswald for player names — maintains brand consistency while each direction styles it differently
 
+## Cycle 4 Learnings
+- Spring cubic-bezier (0.34, 1.56, 0.64, 1) on button gives excellent tactile feel on mobile
+- Staggered entrance animations (hero → info → button → social) create a natural reading flow
+- Box-shadow on the CTA button adds depth perception — makes it feel clickable
+- The W screen benefits from 2-phase reveal: flash+W first, then details 500ms later — builds drama
+- Pre-existing build errors in other directions (broadcast StatBreakdown) should be fixed immediately rather than ignored
+- `animate-glow-breathe` applied to the ambient glow behind the button makes it feel alive without being distracting
+
 ## Strategic Notes
 - Cycles 4-6 = POLISH. Focus on typography, spacing, animation timing, above-fold experience
 - Supreme is weakest → gets Cycle 4

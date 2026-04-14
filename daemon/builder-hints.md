@@ -1007,3 +1007,11 @@
 - One-shot animations (animation-fill-mode: forwards) with parent opacity fade to 0 are cleaner than self-removing via state — no JS needed, pure CSS lifecycle.
 - Supreme's entrance orchestration now has 5 timed stages: color reveal (0-2s) → vitrine power-on (1.8-3.6s) → lot/paddle fade-in → particles start → edge trace loops. Each reveals a different layer of the display case metaphor.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 115 Learnings
+- Two-layer clip-path (`inset(0 100% 0 0)` → `inset(0 0% 0 0)`) with staggered timing (140ms delay between bar and text) creates the signature ESPN data wipe effect. The bar "leads" the content, giving a door-opening feel.
+- `cubic-bezier(0.22, 1, 0.36, 1)` is the ideal easing for broadcast wipe-ins: fast initial acceleration, then a spring-like settle that avoids feeling mechanical.
+- Cascading the data wipe across multiple elements (stat line at 1.0s, context at 1.35s) creates a production sequence feel — each piece of information revealed in order, like a broadcast director calling "take" on successive graphics.
+- The team-color left accent border (2px solid) on the data wipe bar adds broadcast chrome — the thin edge highlight is a hallmark of ESPN/FOX lower-third graphics.
+- Broadcast now has a complete lower-third reveal sequence: name clip-path wipe (0.5s) → stat data wipe (1.0s) → context data wipe (1.35s). Each uses a different animation technique but they feel like one coordinated production.
+- Next cycle: Arena (rotation).

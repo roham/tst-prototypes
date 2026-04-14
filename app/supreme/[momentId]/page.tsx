@@ -432,11 +432,29 @@ export default function SupremePage() {
         ? `color-mix(in srgb, #0B0E14 96%, ${moment.teamColors.primary})`
         : '#0B0E14';
 
+  // Hero desaturation for ENDED state
+  const heroFilter =
+    isEnded ? 'grayscale(0.7) brightness(0.6)' :
+    dropPhase === 'CRITICAL' ? 'saturate(1.1) contrast(1.05)' :
+    'none';
+
   return (
     <div
       className="min-h-dvh flex flex-col relative overflow-hidden select-none transition-colors duration-1000"
       style={{ backgroundColor: bgColor }}
     >
+      {/* ============================================================= */}
+      {/* CRITICAL VIGNETTE — red-tinted edge glow */}
+      {/* ============================================================= */}
+      {dropPhase === 'CRITICAL' && (
+        <div
+          className="fixed inset-0 z-40 pointer-events-none supreme-critical-vignette"
+          style={{
+            boxShadow: 'inset 0 0 80px rgba(239,68,68,0.15), inset 0 0 200px rgba(239,68,68,0.06)',
+          }}
+        />
+      )}
+
       {/* ============================================================= */}
       {/* URGENCY BAR — full-width time depletion line */}
       {/* ============================================================= */}
@@ -474,11 +492,12 @@ export default function SupremePage() {
       >
         {/* Gradient background */}
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
           style={{
             backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
             backgroundSize: 'cover, cover',
             backgroundPosition: 'center top, center',
+            filter: heroFilter,
           }}
         />
 
@@ -533,22 +552,43 @@ export default function SupremePage() {
       {/* ============================================================= */}
       <div className="flex items-center justify-between px-5 py-3.5 supreme-info-enter">
         {/* Timer */}
-        <div className="flex items-baseline gap-2">
-          <div
-            className="font-mono text-[28px] font-bold tabular-nums transition-colors duration-300"
-            style={{ color: timerColor(dropPhase) }}
+        <div className="flex flex-col">
+          {/* Phase label — subtle state indicator */}
+          <span
+            className="text-[9px] uppercase tracking-[0.2em] font-semibold mb-1 transition-colors duration-500"
+            style={{
+              color: isEnded ? '#6B7A9960' :
+                dropPhase === 'CRITICAL' ? '#EF444490' :
+                dropPhase === 'CLOSING' ? '#F59E0B80' :
+                '#00E5A050',
+            }}
           >
-            {isEnded ? (
-              <span className="text-lg font-semibold">Ended</span>
-            ) : (
-              timerDisplay
+            {isEnded ? 'Drop closed' :
+             dropPhase === 'CRITICAL' ? 'Final seconds' :
+             dropPhase === 'CLOSING' ? 'Closing soon' :
+             'Live now'}
+          </span>
+          <div className="flex items-baseline gap-2">
+            <div
+              className={`font-mono font-bold tabular-nums transition-all duration-500 ${
+                isEnded ? 'text-lg' :
+                dropPhase === 'CRITICAL' ? 'text-[32px]' :
+                'text-[28px]'
+              }`}
+              style={{ color: timerColor(dropPhase) }}
+            >
+              {isEnded ? (
+                <span className="font-semibold">Ended</span>
+              ) : (
+                timerDisplay
+              )}
+            </div>
+            {!isEnded && (
+              <span className="text-[10px] uppercase tracking-wider text-white/20">
+                left
+              </span>
             )}
           </div>
-          {!isEnded && (
-            <span className="text-[10px] uppercase tracking-wider text-white/20">
-              left
-            </span>
-          )}
         </div>
 
         {/* Edition counter — live */}
@@ -697,9 +737,13 @@ export default function SupremePage() {
       {/* SOCIAL PROOF — claim ticker + watchers */}
       {/* ============================================================= */}
       <div className="px-5 pb-6 supreme-social-enter">
-        {/* Last claimer notification */}
+        {/* Last claimer notification / ended state */}
         <div className="h-5 flex items-center justify-center overflow-hidden">
-          {lastClaimer ? (
+          {isEnded ? (
+            <p className="text-[11px] text-white/15 tabular-nums">
+              {claimed.toLocaleString()} editions collected
+            </p>
+          ) : lastClaimer ? (
             <p
               className="text-[11px] text-white/30 tabular-nums supreme-claim-fade"
               key={lastClaimer + Date.now()}

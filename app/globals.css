@@ -204,6 +204,15 @@ body {
   animation: supreme-urgency-glow 0.8s ease-in-out infinite;
 }
 
+/* Supreme critical vignette — pulsing red edge glow */
+@keyframes supreme-critical-vignette {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+.supreme-critical-vignette {
+  animation: supreme-critical-vignette 1.5s ease-in-out infinite;
+}
+
 /* Supreme claim ticker fade */
 @keyframes supreme-claim-in {
   0% { opacity: 0; transform: translateY(4px); }

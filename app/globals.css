@@ -418,6 +418,23 @@ body {
   animation: broadcast-breaking-glow 1.2s ease-in-out infinite;
 }
 
+/* Broadcast anamorphic lens flare — horizontal light streak drifting through hero */
+@keyframes broadcast-lens-flare {
+  0%, 100% { top: -5%; opacity: 0; }
+  10% { opacity: 1; }
+  50% { top: 70%; opacity: 0.7; }
+  90% { opacity: 0; }
+}
+.broadcast-lens-flare {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  height: 2px;
+  z-index: 17;
+  pointer-events: none;
+  animation: broadcast-lens-flare 12s ease-in-out infinite;
+}
+
 /* Broadcast ESPN BottomLine — scrolling score ticker */
 @keyframes broadcast-ticker {
   0% { transform: translateX(0); }

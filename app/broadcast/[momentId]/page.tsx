@@ -504,6 +504,16 @@ export default function BroadcastPage() {
             </p>
           </div>
 
+          {/* Anamorphic lens flare — horizontal light streak, classic broadcast camera */}
+          {!countdown.isEnded && (
+            <div
+              className="broadcast-lens-flare"
+              style={{
+                background: `linear-gradient(90deg, transparent 0%, ${moment.teamColors.primary}15 20%, rgba(255,255,255,0.25) 48%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.25) 52%, ${moment.teamColors.primary}15 80%, transparent 100%)`,
+              }}
+            />
+          )}
+
           {/* Scroll indicator — animated chevron that scrolls to transaction */}
           {!countdown.isEnded && (
             <div className="absolute bottom-14 left-0 right-0 z-20 flex justify-center">

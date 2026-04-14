@@ -1271,3 +1271,11 @@
 - The card sits naturally in the editorial flow because it uses the same visual language as other broadcast elements: lower-third badge header, team-color accent, Georgia serif quotes.
 - At this stage, Broadcast's editorial section is the most complete — future improvements should focus on the transaction area or W screen rather than adding more editorial content.
 - Next cycle: Arena (rotation).
+
+## Cycle 150 Learnings
+- Completing incomplete hooks from prior cycles is higher-impact than starting new features — the timeout hook was already wired but had no visual output.
+- Emoji reaction bars (Whatnot/TikTok style) are an inexpensive way to add "live" energy. The key is phase-reactive spawn rates — faster during urgency phases makes the page feel like it's accelerating.
+- Max pool size (12 simultaneous) prevents DOM bloat while keeping the visual density feeling energetic.
+- The "timeout" concept works because every basketball fan recognizes the whistle-stop-and-refocus moment. Using sport-native metaphors for conversion nudges feels natural rather than manipulative.
+- Placing the reaction bar directly above the CTA means social proof (others reacting) is visible at the exact moment of decision. Position matters more than density.
+- Next cycle: Supreme (rotation).

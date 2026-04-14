@@ -1073,3 +1073,11 @@
 - Placing between heat map and stats bar creates a natural information hierarchy: geographic distribution → energy level → hard numbers.
 - The meter hidden on drop end keeps the ENDED state clean — no stale data.
 - Next cycle: Supreme (rotation).
+
+## Cycle 123 Learnings
+- Auction reserve status is a cheap but high-impact addition — one IIFE block, no new hooks needed.
+- 20% of edition size as reserve threshold feels right — low enough to be met early, high enough to create tension at page load.
+- Progress counter (X/Y) when reserve not yet met gives the viewer something to root for — converts passive observation into active anticipation.
+- Placing above the info strip keeps it visually separate from edition counts — reserve status is about market validation, not supply data.
+- Supreme's auction house identity is now comprehensive: LOT, PADDLE, estimate, reserve, gavel, SOLD. Each element is distinctly auction-house and no other direction would use them.
+- Next cycle: Broadcast (rotation).

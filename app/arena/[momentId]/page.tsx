@@ -37,34 +37,92 @@ interface PurchaseEvent {
   edition: number;
 }
 
-/* ─── Confetti (CSS-only falling pieces) ───────────────────────── */
+/* ─── Confetti Cannon — arena-style burst from bottom corners ──── */
+/* Real arena confetti cannons fire from the corners/edges of the    */
+/* court. Pieces launch upward in a V-pattern, arc at apex, then    */
+/* flutter down with gravity and drift. Each cannon fires a burst    */
+/* with staggered timing for natural feel.                           */
 
-function Confetti({ colors }: { colors: string[] }) {
-  const pieces = Array.from({ length: 48 }, (_, i) => {
+function ConfettiCannon({ colors, teamColor }: { colors: string[]; teamColor: string }) {
+  // 4 cannon positions: bottom-left, bottom-right, center-left, center-right
+  const cannons = [
+    { x: 5, angle: 65 },   // bottom-left, fires up-right
+    { x: 95, angle: 115 },  // bottom-right, fires up-left
+    { x: 20, angle: 75 },   // mid-left, fires up-right
+    { x: 80, angle: 105 },  // mid-right, fires up-left
+  ];
+
+  const pieces = cannons.flatMap((cannon, ci) =>
+    Array.from({ length: 16 }, (_, pi) => {
+      const idx = ci * 16 + pi;
+      const color = colors[idx % colors.length];
+      // Spread angle around cannon direction (±25°)
+      const spread = (Math.random() - 0.5) * 50;
+      const launchAngle = cannon.angle + spread;
+      // Convert to radians for trajectory
+      const rad = (launchAngle * Math.PI) / 180;
+      // Random launch power (determines arc height)
+      const power = 60 + Math.random() * 40; // vh units
+      const dx = Math.cos(rad) * power * 0.6; // horizontal distance
+      const peakY = Math.sin(rad) * power; // vertical peak
+      const size = 5 + Math.random() * 7;
+      const delay = ci * 0.15 + Math.random() * 0.4; // stagger per cannon
+      const duration = 2.2 + Math.random() * 1.5;
+      const spin = 360 + Math.random() * 720;
+      const isRibbon = Math.random() > 0.6; // some pieces are long ribbons
+
+      return (
+        <div
+          key={idx}
+          className="absolute rounded-sm"
+          style={{
+            left: `${cannon.x}%`,
+            bottom: '0%',
+            width: isRibbon ? `${size * 0.4}px` : `${size}px`,
+            height: isRibbon ? `${size * 2.5}px` : `${size * 0.6}px`,
+            backgroundColor: color,
+            opacity: 0,
+            // CSS custom properties for the keyframe
+            ['--cannon-dx' as string]: `${dx}vw`,
+            ['--cannon-peak' as string]: `${peakY}vh`,
+            ['--cannon-spin' as string]: `${spin}deg`,
+            animation: `arena-confetti-cannon ${duration}s cubic-bezier(0.2, 0.8, 0.3, 1) ${delay}s forwards`,
+          }}
+        />
+      );
+    })
+  );
+
+  // Also keep a lighter version of classic falling confetti for sustained effect
+  const falling = Array.from({ length: 20 }, (_, i) => {
     const color = colors[i % colors.length];
-    const left = Math.random() * 100;
-    const delay = Math.random() * 2;
-    const duration = 2 + Math.random() * 2;
-    const size = 6 + Math.random() * 8;
-    const rotation = Math.random() * 360;
+    const left = 10 + Math.random() * 80;
+    const delay = 1.5 + Math.random() * 2; // starts after cannons fire
+    const duration = 2.5 + Math.random() * 2;
+    const size = 5 + Math.random() * 6;
     return (
       <div
-        key={i}
+        key={`f${i}`}
         className="absolute rounded-sm"
         style={{
           left: `${left}%`,
-          top: '-5%',
+          top: '-3%',
           width: `${size}px`,
-          height: `${size * 0.6}px`,
+          height: `${size * 0.5}px`,
           backgroundColor: color,
-          opacity: 0.9,
-          transform: `rotate(${rotation}deg)`,
+          opacity: 0.7,
           animation: `confetti-fall ${duration}s ease-in ${delay}s infinite`,
         }}
       />
     );
   });
-  return <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">{pieces}</div>;
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+      {pieces}
+      {falling}
+    </div>
+  );
 }
 
 /* ─── Pyrotechnics — arena rafter mortar starbursts on W screen ── */
@@ -1486,11 +1544,12 @@ function CelebrationScreen({
         }}
       />
 
-      <Confetti
+      <ConfettiCannon
         colors={[
           '#00E5A0', '#3B82F6', '#F59E0B', '#A855F7', '#EF4444',
           moment.teamColors.primary, moment.teamColors.secondary,
         ]}
+        teamColor={moment.teamColors.primary}
       />
 
       {/* Pyrotechnic starbursts — arena rafter mortar effects */}

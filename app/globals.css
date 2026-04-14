@@ -63,6 +63,29 @@ body {
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
+/* Arena confetti cannon — parabolic arc from bottom corners */
+@keyframes arena-confetti-cannon {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    opacity: 1;
+    /* Peak of arc — high up, partially across */
+    transform: translate(calc(var(--cannon-dx) * 0.4), calc(var(--cannon-peak) * -1)) rotate(calc(var(--cannon-spin) * 0.3));
+  }
+  50% {
+    opacity: 0.9;
+    /* Past peak, starting to descend */
+    transform: translate(calc(var(--cannon-dx) * 0.7), calc(var(--cannon-peak) * -0.6)) rotate(calc(var(--cannon-spin) * 0.6));
+  }
+  100% {
+    opacity: 0;
+    /* Fallen below launch point with full horizontal drift */
+    transform: translate(var(--cannon-dx), 30vh) rotate(var(--cannon-spin));
+  }
+}
+
 /* Glow effect */
 .glow-teal { box-shadow: 0 0 20px rgba(0, 229, 160, 0.3); }
 .glow-orange { box-shadow: 0 0 20px rgba(255, 107, 53, 0.3); }

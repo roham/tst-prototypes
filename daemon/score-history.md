@@ -17,4 +17,6 @@
 
 | 4 | supreme | 6.5 | 5.0 | 5.0 | 5.0 | 7.5 | 5.75 | +0.92 | Spring button, entrance anims, staggered W reveal, glow breathing |
 
-**Weakest: Broadcast/Arena tied (5.35)** — Supreme caught up. Broadcast next in rotation.
+| 5 | broadcast | 7.0 | 5.0 | 6.0 | 4.5 | 7.5 | 6.00 | +0.65 | Drop cap, hero progress bar, tier accents, CTA hover/press, stat cards |
+
+**Weakest: Arena (5.35)** — Arena is next in rotation (Cycle 6).

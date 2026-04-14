@@ -30,6 +30,14 @@
 - Pre-existing build errors in other directions (broadcast StatBreakdown) should be fixed immediately rather than ignored
 - `animate-glow-breathe` applied to the ambient glow behind the button makes it feel alive without being distracting
 
+## Cycle 5 Learnings
+- Drop cap with Oswald font instantly makes narrative feel like a premium magazine article
+- Hero progress bar using team-color gradient (primary → secondary) adds broadcast energy
+- Tier card top-accent line (2px) on selection gives clear visual hierarchy without being heavy
+- CTA hover fill (rgba team-color) creates depth — button feels like it's activating
+- StatBreakdown cards with staggered fly-in animation are high-impact, low-effort
+- Broadcast direction benefits most from editorial/typography refinements — it's already cinematic
+
 ## Strategic Notes
 - Cycles 4-6 = POLISH. Focus on typography, spacing, animation timing, above-fold experience
 - Supreme is weakest → gets Cycle 4

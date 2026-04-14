@@ -354,6 +354,47 @@ function AuthenticationSeal({ teamColor, show }: { teamColor: string; show: bool
 }
 
 // ---------------------------------------------------------------------------
+// Provenance Step — staggered authentication line (auction house energy)
+// ---------------------------------------------------------------------------
+
+function ProvenanceStep({ label, delay, teamColor, started }: {
+  label: string; delay: number; teamColor: string; started: boolean;
+}) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    if (!started) return;
+    const t = setTimeout(() => setVisible(true), delay);
+    return () => clearTimeout(t);
+  }, [started, delay]);
+
+  return (
+    <div
+      className="flex items-center gap-2 transition-all duration-500 ease-out"
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateX(0)' : 'translateX(-8px)',
+      }}
+    >
+      {/* Checkmark dot */}
+      <svg className="h-3 w-3 shrink-0" viewBox="0 0 12 12" fill="none">
+        <circle cx="6" cy="6" r="5" stroke={teamColor} strokeWidth="0.75" opacity="0.3" />
+        <path
+          d="M3.5 6 L5.5 8 L8.5 4.5"
+          stroke={teamColor}
+          strokeWidth="1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.5"
+        />
+      </svg>
+      <span className="text-[9px] uppercase tracking-[0.2em] text-white/20">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Confirmed / "W" Screen
 // ---------------------------------------------------------------------------
 
@@ -563,6 +604,24 @@ function WScreen({
             <span>{moment.team} vs {moment.opponent}</span>
             <span className="text-white/10">·</span>
             <span className="font-mono tabular-nums">{dateStr}</span>
+          </div>
+
+          {/* Provenance chain — auction house verification steps */}
+          <div className="mt-5 flex flex-col items-center gap-1.5">
+            {[
+              { label: 'Identity verified', delay: 800 },
+              { label: 'Payment authenticated', delay: 1000 },
+              { label: 'Edition reserved', delay: 1200 },
+              { label: 'Ownership recorded', delay: 1400 },
+            ].map((step) => (
+              <ProvenanceStep
+                key={step.label}
+                label={step.label}
+                delay={step.delay}
+                teamColor={moment.teamColors.primary}
+                started={showDetails}
+              />
+            ))}
           </div>
         </div>
 

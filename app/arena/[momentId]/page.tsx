@@ -244,6 +244,33 @@ function CountUpNumber({ target }: { target: number }) {
   );
 }
 
+/* ─── Arena LED Flash — pulses team-color on each purchase ────── */
+
+function ArenaLedFlash({ events, teamColor }: { events: PurchaseEvent[]; teamColor: string }) {
+  const [flash, setFlash] = useState(false);
+  const prevLen = useRef(0);
+
+  useEffect(() => {
+    if (events.length > prevLen.current && prevLen.current > 0) {
+      setFlash(true);
+      const t = setTimeout(() => setFlash(false), 350);
+      prevLen.current = events.length;
+      return () => clearTimeout(t);
+    }
+    prevLen.current = events.length;
+  }, [events.length]);
+
+  return (
+    <div
+      className="pointer-events-none fixed inset-0 z-[20] transition-opacity duration-300"
+      style={{
+        opacity: flash ? 1 : 0,
+        boxShadow: `inset 0 0 80px ${teamColor}18, inset 0 0 160px ${teamColor}08`,
+      }}
+    />
+  );
+}
+
 /* ─── Panic Banner ─────────────────────────────────────────────── */
 
 function PanicBanner({ claimed, total, isCritical, isClosing }: {
@@ -874,6 +901,9 @@ export default function ArenaPage({
     <div className="relative flex min-h-screen flex-col bg-[#0B0E14]">
       {/* ─── Crowd Reactions — floating emoji burst on purchases ─── */}
       {!countdown.isEnded && <CrowdReactions events={feedEvents} />}
+
+      {/* ─── Arena LED flash — team-color edge pulse on each purchase ─── */}
+      {!countdown.isEnded && <ArenaLedFlash events={feedEvents} teamColor={moment.teamColors.primary} />}
 
       {/* ─── Animated background gradient pulse ─── */}
       <div

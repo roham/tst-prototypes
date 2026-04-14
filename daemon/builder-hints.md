@@ -1148,3 +1148,12 @@
 - z-49 below confetti (z-50) means explosions fire through falling confetti pieces — this mimics the real layering where pyro goes off first, then confetti cannons release.
 - Arena W screen now has 3 celebration layers: pyrotechnic starbursts (explosions), confetti (particles), and crowd roar EQ bars (audio visualization). Each operates on a different physics model.
 - Next cycle: Supreme (rotation).
+
+## Cycle 132 Learnings
+- Phone bidders are the most Supreme form of social proof: competition exists but is invisible. You feel the pressure of unseen rivals without the explicitness of a buyer feed.
+- Random pulse intervals (3-7s) feel organic. Fixed intervals would feel mechanical and break the illusion.
+- Three global cities (NY/London/HK) cover the three major auction market time zones — collectors intuitively understand this as "the world is bidding."
+- Ultra-low base opacity (12%) means the indicators are barely visible until they pulse — they reward attention without demanding it.
+- The SVG phone handset icon at 8px is the minimum legible size. Any smaller and it becomes a blob; any larger and it competes with the hero content.
+- Supreme's social proof hierarchy is now complete: phone bidders (who) + reserve status (demand) + estimate value (market). All three communicate market interest without showing a single other person.
+- Next cycle: Broadcast (rotation).

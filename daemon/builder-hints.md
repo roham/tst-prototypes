@@ -1491,3 +1491,10 @@
 - `useLiveTierRemaining` uses the existing `feedEvents` as its trigger, so no new timer/interval needed — the decrement cadence naturally matches the purchase simulation rate.
 - The hook had to be placed after `feedEvents` state declaration due to block-scoped variable ordering. TypeScript catches these before runtime.
 - Next cycle: Supreme (rotation).
+
+## Cycle 181 Learnings
+- The anti-snipe mechanism from real auction houses (Sotheby's/Christie's) is a powerful conversion pattern: when a bid arrives in the final seconds, the "Lot Extended" banner proves to every other bidder that competition is active and someone just acted. The NOTICE itself is the conversion driver — you don't need to actually change the timer.
+- Reusing existing keyframes (supreme-clerk-line-extend) for the flanking hairlines keeps CSS bloat in check while maintaining visual consistency. The extending lines are already associated with formal auction ceremony.
+- Tracking `prevLastClaimerRef` prevents duplicate fires when the same `lastClaimer` value persists across renders. The claim ticker sets `lastClaimer` and then clears it after 2800ms — the ref comparison ensures we only fire once per unique bid.
+- The CRITICAL phase urgency cascade is now a complete sequence: bid whisper (who bid) → lot extension (the auction is extending) → gallery closing (time is running out) → gavel countdown (FAIR WARNING → GOING ONCE → GOING TWICE). Each layer adds a different type of urgency: social proof → competition proof → temporal urgency → finality.
+- Next cycle: Broadcast (rotation).

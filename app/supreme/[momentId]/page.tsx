@@ -411,10 +411,11 @@ export default function SupremePage() {
     buttonTextColor = '#6B7A99';
   } else if (dropPhase === 'CRITICAL') {
     buttonBg = '#EF4444';
-    buttonText = `OWN THIS MOMENT — $${selectedTier.price}`;
+    buttonText = `LAST CHANCE — $${selectedTier.price}`;
     buttonTextColor = '#FFFFFF';
     buttonAnimation = 'animate-urgency-fast';
   } else if (dropPhase === 'CLOSING') {
+    buttonText = `CLOSING SOON — $${selectedTier.price}`;
     buttonAnimation = 'animate-urgency';
   }
 
@@ -645,7 +646,7 @@ export default function SupremePage() {
               <button
                 key={tier.tier}
                 onClick={() => setSelectedTierIdx(idx)}
-                className="relative px-3 py-2 text-center transition-all duration-200"
+                className="relative px-3 py-2 text-center transition-all duration-200 active:scale-95"
               >
                 <span
                   className={`block text-[10px] uppercase tracking-[0.15em] font-semibold transition-colors duration-200 ${
@@ -720,17 +721,24 @@ export default function SupremePage() {
         >
           {isPurchasing ? (
             <span className="inline-flex items-center gap-2.5">
-              {/* Pulsing dot instead of spinner — minimal */}
-              <span className="relative flex h-3 w-3">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#0B0E14]/40" />
-                <span className="relative inline-flex h-3 w-3 rounded-full bg-[#0B0E14]/60" />
-              </span>
+              {/* Minimal progress ring */}
+              <svg className="h-4 w-4 animate-spin" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="8" stroke="#0B0E14" strokeWidth="2" opacity="0.2" />
+                <path d="M10 2a8 8 0 0 1 8 8" stroke="#0B0E14" strokeWidth="2" strokeLinecap="round" />
+              </svg>
               Securing...
             </span>
           ) : (
             buttonText
           )}
         </button>
+
+        {/* Stored payment / instant checkout indicator */}
+        {!isEnded && !isPurchasing && (
+          <p className="mt-2.5 text-center text-[10px] uppercase tracking-[0.15em] text-white/15">
+            Instant checkout · Stored payment
+          </p>
+        )}
       </div>
 
       {/* ============================================================= */}

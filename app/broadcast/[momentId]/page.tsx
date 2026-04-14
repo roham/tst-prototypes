@@ -569,6 +569,178 @@ function StatBreakdown({ statLine, teamColor }: { statLine: string; teamColor: s
 }
 
 // ---------------------------------------------------------------------------
+// Tale of the Tape — ESPN head-to-head stat comparison (tonight vs season avg)
+// ---------------------------------------------------------------------------
+
+// Per-moment season averages for Tale of the Tape comparison
+const SEASON_AVERAGES: Record<string, { pts: number; reb: number; ast: number }> = {
+  bam: { pts: 21.5, reb: 10.4, ast: 3.9 },
+  jokic: { pts: 26.4, reb: 12.3, ast: 9.8 },
+  sga: { pts: 31.2, reb: 5.5, ast: 6.2 },
+};
+
+function TaleOfTheTape({ moment, rgb }: { moment: Moment; rgb: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); observer.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Parse tonight's stats from statLine ("30 PTS / 8 REB / 4 AST")
+  const parsed = moment.statLine.split('/').map((s) => {
+    const m = s.trim().match(/^(\d+)\s+(.+)$/);
+    return m ? { value: parseInt(m[1], 10), label: m[2].trim() } : null;
+  }).filter(Boolean) as { value: number; label: string }[];
+
+  const seasonAvg = SEASON_AVERAGES[moment.id] ?? { pts: 20, reb: 8, ast: 5 };
+  const avgMap: Record<string, number> = { PTS: seasonAvg.pts, REB: seasonAvg.reb, AST: seasonAvg.ast };
+
+  // Build comparison rows
+  const rows = parsed.map((stat) => {
+    const avg = avgMap[stat.label] ?? 10;
+    const maxVal = Math.max(stat.value, avg) * 1.25; // scale to 80% max width
+    return {
+      label: stat.label,
+      tonight: stat.value,
+      avg: avg,
+      tonightPct: Math.min(100, (stat.value / maxVal) * 100),
+      avgPct: Math.min(100, (avg / maxVal) * 100),
+      isAbove: stat.value > avg,
+    };
+  });
+
+  return (
+    <div ref={containerRef} className="mt-10 mb-2">
+      {/* Section header — broadcast graphic style */}
+      <div className="flex items-center gap-3 mb-5">
+        <div className="h-[2px] w-5" style={{ backgroundColor: moment.teamColors.primary }} />
+        <span
+          className="text-[9px] font-bold uppercase tracking-[0.35em] text-white/25"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+        >
+          Tale of the Tape
+        </span>
+        <div className="h-[1px] flex-1" style={{ backgroundColor: `rgba(${rgb},0.08)` }} />
+      </div>
+
+      {/* Comparison card */}
+      <div
+        className="rounded-lg border relative overflow-hidden"
+        style={{
+          borderColor: `rgba(${rgb},0.1)`,
+          backgroundColor: 'rgba(20,25,37,0.5)',
+        }}
+      >
+        {/* Top accent */}
+        <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ backgroundColor: `rgba(${rgb},0.25)` }} />
+
+        {/* Column headers */}
+        <div className="flex items-center justify-between px-4 pt-4 pb-2">
+          <span
+            className="text-[9px] font-bold uppercase tracking-[0.3em]"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif', color: moment.teamColors.primary }}
+          >
+            Tonight
+          </span>
+          <span className="text-[8px] uppercase tracking-[0.25em] text-white/20">
+            vs Season Avg
+          </span>
+        </div>
+
+        {/* Stat rows */}
+        <div className="px-4 pb-4 space-y-3">
+          {rows.map((row, i) => (
+            <div
+              key={row.label}
+              className="transition-all duration-700 ease-out"
+              style={{
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? 'translateX(0)' : 'translateX(-12px)',
+                transitionDelay: `${0.15 * i}s`,
+              }}
+            >
+              {/* Label + values row */}
+              <div className="flex items-baseline justify-between mb-1.5">
+                <div className="flex items-baseline gap-2">
+                  <span
+                    className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/30"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {row.label}
+                  </span>
+                  {row.isAbove && (
+                    <span
+                      className="text-[7px] font-bold uppercase tracking-[0.2em] px-1 py-px rounded-sm"
+                      style={{
+                        backgroundColor: `rgba(${rgb},0.12)`,
+                        color: moment.teamColors.primary,
+                        fontFamily: 'var(--font-oswald), sans-serif',
+                      }}
+                    >
+                      Above avg
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-baseline gap-3">
+                  <span
+                    className="text-lg font-bold tabular-nums"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: row.isAbove ? moment.teamColors.primary : '#F0F2F5',
+                    }}
+                  >
+                    {row.tonight}
+                  </span>
+                  <span className="text-[11px] tabular-nums text-white/25 font-mono">
+                    {row.avg.toFixed(1)}
+                  </span>
+                </div>
+              </div>
+              {/* Dual bar comparison */}
+              <div className="space-y-1">
+                {/* Tonight bar */}
+                <div className="h-[6px] rounded-full bg-white/[0.04] overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all ease-out"
+                    style={{
+                      width: isVisible ? `${row.tonightPct}%` : '0%',
+                      transitionDuration: '1.2s',
+                      transitionDelay: `${0.2 + 0.15 * i}s`,
+                      background: `linear-gradient(90deg, ${moment.teamColors.primary}90, ${moment.teamColors.primary})`,
+                      boxShadow: `0 0 8px ${moment.teamColors.primary}30`,
+                    }}
+                  />
+                </div>
+                {/* Season avg bar */}
+                <div className="h-[3px] rounded-full bg-white/[0.03] overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all ease-out"
+                    style={{
+                      width: isVisible ? `${row.avgPct}%` : '0%',
+                      transitionDuration: '1s',
+                      transitionDelay: `${0.3 + 0.15 * i}s`,
+                      backgroundColor: 'rgba(255,255,255,0.12)',
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Cinematic Section Reveal — line expands from center on scroll-into-view
 // ---------------------------------------------------------------------------
 
@@ -1333,6 +1505,9 @@ export default function BroadcastPage() {
 
           {/* ESPN-style stat breakdown */}
           <StatBreakdown statLine={moment.statLine} teamColor={moment.teamColors.primary} />
+
+          {/* Tale of the Tape — tonight vs season average comparison */}
+          <TaleOfTheTape moment={moment} rgb={rgb} />
 
           {/* Emotional closing beat — editorial thesis */}
           <p

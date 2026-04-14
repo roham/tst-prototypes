@@ -65,4 +65,13 @@
 - Interaction scores are the weakest across all 3 (4.5-5.5) — W screen improvements should fix this
 - Broadcast W screen (Certificate) needs the most work — currently the weakest (4.5 interaction)
 - Supreme W screen has confetti + staggered reveal, Arena has celebration + feed. Broadcast is static.
-- Arena slightly weakest overall (6.30) → gets Cycle 10
+- Arena slightly weakest overall (6.30) — but can't repeat, so Supreme gets Cycle 10
+
+## Cycle 10 Learnings
+- Confetti was anti-Supreme. Radial burst rings (expanding circle of light) are much more on-brand — clean, dramatic, one motion.
+- Action image at 10% opacity with vignette > headshot at 6% — adds visual richness without clutter.
+- "YOURS." is better than "You own this moment" for Supreme's minimal philosophy — one word, period, done.
+- Date stamp (font-mono, uppercase month) makes screenshots feel permanent — collectors want proof of when.
+- Serial number as inline `#N / 5,000` with thin underline feels more luxury than bordered card.
+- The tag v0.10 was already used — daemon must check existing tags or increment from last known.
+- W screen phase is high-impact: Emotion +1.5, Interaction +1.0. Confirms cycle-log prediction.

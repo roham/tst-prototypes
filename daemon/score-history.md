@@ -44,3 +44,5 @@
 | Arena | 6.5 | 6.5 | 6.0 | 5.5 | 7.5 | **6.30** |
 
 **All 3 have triple urgency stack.** Weakest: Arena (6.30). Lowest dimension across all: Interaction (4.5-5.5). Cycles 10-12 = W SCREEN phase.
+
+| 10 | supreme | 7.5 | 6.5 | 7.0 | 6.0 | 8.0 | 7.00 | +0.65 | W screen: radial burst, action backdrop, YOURS., date stamp, serial number |

@@ -793,9 +793,77 @@ function WScreen({
           </div>
         </div>
 
+        {/* Wax seal — embossed authentication stamp, auction house finality */}
+        <div
+          className="mt-5 flex justify-center transition-all duration-700 ease-out"
+          style={{
+            opacity: showSeal ? 1 : 0,
+            transform: showSeal ? 'scale(1)' : 'scale(0.85)',
+          }}
+        >
+          <div
+            className="relative flex items-center justify-center"
+            style={{ width: 56, height: 56 }}
+          >
+            {/* Outer emboss ring — inset shadow creates raised wax feel */}
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: `radial-gradient(circle, ${moment.teamColors.primary}12 0%, ${moment.teamColors.primary}06 60%, transparent 75%)`,
+                boxShadow: `inset 0 1px 3px ${moment.teamColors.primary}20, inset 0 -1px 2px rgba(0,0,0,0.3), 0 0 12px ${moment.teamColors.primary}08`,
+              }}
+            />
+            {/* Inner border ring */}
+            <div
+              className="absolute rounded-full"
+              style={{
+                inset: 4,
+                border: `0.75px solid ${moment.teamColors.primary}18`,
+              }}
+            />
+            {/* SVG rotating text ring — "TST · AUTHENTICATED · CERTIFIED ·" */}
+            <svg
+              className="absolute inset-0 w-full h-full supreme-holo-ring"
+              viewBox="0 0 56 56"
+              style={{ animationDuration: '30s' }}
+            >
+              <defs>
+                <path
+                  id="wax-seal-path"
+                  d="M 28,28 m -21,0 a 21,21 0 1,1 42,0 a 21,21 0 1,1 -42,0"
+                  fill="none"
+                />
+              </defs>
+              <text
+                fontSize="4"
+                fill={moment.teamColors.primary}
+                opacity="0.2"
+                letterSpacing="2.2"
+                fontFamily="var(--font-oswald), sans-serif"
+                fontWeight="500"
+              >
+                <textPath href="#wax-seal-path">
+                  TST · AUTHENTICATED · CERTIFIED ·
+                </textPath>
+              </text>
+            </svg>
+            {/* Center monogram */}
+            <div
+              className="relative text-[11px] font-bold tracking-[0.15em]"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: `${moment.teamColors.primary}25`,
+                textShadow: `0 1px 0 rgba(0,0,0,0.2), 0 -1px 0 ${moment.teamColors.primary}08`,
+              }}
+            >
+              TST
+            </div>
+          </div>
+        </div>
+
         {/* Share section — appears last */}
         <div
-          className="mt-8 transition-all duration-600 ease-out"
+          className="mt-5 transition-all duration-600 ease-out"
           style={{
             opacity: showShare ? 1 : 0,
             transform: showShare ? 'translateY(0)' : 'translateY(8px)',
@@ -1416,6 +1484,13 @@ export default function SupremePage() {
         {/* historicalNote first sentence — emotional gravity */}
         <p className="mt-2 text-[12px] leading-relaxed text-white/20 italic">
           {moment.historicalNote.split('.')[0]}.
+        </p>
+
+        {/* Catalogue description — formal Christie's/Sotheby's lot entry */}
+        <p className="mt-4 text-[8px] uppercase tracking-[0.25em] leading-[1.8] text-white/12 font-mono">
+          Lot {((moment.id.charCodeAt(0) * 37 + moment.id.charCodeAt(1) * 13) % 9000 + 1000)}.{' '}
+          Digital Collectible. {moment.player}, <span className="italic normal-case tracking-normal">{moment.playType}</span>,{' '}
+          {new Date().getFullYear()}. Edition of {moment.editionSize.toLocaleString()}. Minted on Flow.
         </p>
       </div>
 

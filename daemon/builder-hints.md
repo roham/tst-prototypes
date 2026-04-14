@@ -1525,3 +1525,11 @@
 - 0.9s animation duration for a 1s tick leaves a 100ms gap before the next number — this creates the "breathe" between slams that makes each hit feel distinct. Without the gap, numbers blur together.
 - "GOING GOING GONE" at ≤3s is a live auction crossover that works perfectly in Arena's vocabulary. It's not institutional (that's Supreme's "FAIR WARNING → GOING ONCE → GOING TWICE") — it's the raw crowd version.
 - Next cycle: Supreme (rotation).
+
+## Cycle 187 Learnings
+- The Vibration API (`navigator.vibrate()`) is widely supported on Android Chrome and works silently (no-op) on iOS Safari — safe to use without feature detection beyond a simple try/catch.
+- Haptic patterns should match the interaction's emotional weight: 6ms for tier selection (barely perceptible acknowledgment), 10ms for CTA tap (crisp confirmation), 15-50-25ms double-tap for purchase confirmation (celebratory finality). The escalation creates a satisfying arc.
+- Wrapping vibration in a static object (`HAPTIC.tap()`, `HAPTIC.gavelStrike()`) keeps the API clean and avoids passing patterns as magic numbers throughout the component.
+- Each direction should approach haptics differently if they add them: Supreme = restrained institutional pulses, Arena = aggressive buzz patterns matching crowd energy, Broadcast = probably no haptics (broadcast is observed, not participated in).
+- Sotheby's "Quick Bid" swipe-to-confirm feature (from their app) is an interesting conversion pattern worth exploring in a future cycle — it requires more commitment than a tap, reducing accidental purchases while maintaining urgency.
+- Next cycle: Broadcast (rotation).

@@ -1863,13 +1863,158 @@ function CelebrationScreen({
           </div>
         </div>
 
+        {/* Collector of the Game — post-game jumbotron MVP award card */}
+        {/* Every NBA arena announces the "Player of the Game" on the      */}
+        {/* jumbotron after the final buzzer — a spotlight moment with the  */}
+        {/* player's stats and a trophy graphic. This is the collector     */}
+        {/* equivalent: you're the MVP of this drop.                       */}
+        <div
+          className="mt-5 w-full max-w-[280px] transition-all duration-600 ease-out"
+          style={{
+            opacity: showDetails ? 1 : 0,
+            transform: showDetails ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.95)',
+            transitionDelay: '0.22s',
+          }}
+        >
+          <div
+            className="relative overflow-hidden rounded-xl border"
+            style={{
+              borderColor: `${moment.teamColors.primary}30`,
+              background: `linear-gradient(170deg, ${moment.teamColors.primary}14 0%, rgba(11,14,20,0.95) 40%, rgba(11,14,20,0.98) 100%)`,
+            }}
+          >
+            {/* Top accent — team-color gradient bar */}
+            <div
+              className="h-[3px]"
+              style={{
+                background: `linear-gradient(90deg, ${moment.teamColors.primary}, ${moment.teamColors.secondary ?? moment.teamColors.primary}, ${moment.teamColors.primary})`,
+              }}
+            />
+
+            {/* Award header */}
+            <div className="flex items-center justify-between px-4 pt-3 pb-1">
+              <div className="flex items-center gap-2">
+                {/* Trophy icon — simplified jumbotron MVP trophy */}
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  style={{ color: moment.teamColors.primary }}
+                >
+                  <path
+                    d="M6 3h8v1h3a1 1 0 011 1v2a3 3 0 01-3 3h-.29A5 5 0 0111 13.92V16h2a1 1 0 011 1v1H6v-1a1 1 0 011-1h2v-2.08A5 5 0 015.29 10H5a3 3 0 01-3-3V5a1 1 0 011-1h3V3z"
+                    fill="currentColor"
+                    opacity="0.8"
+                  />
+                  <path
+                    d="M6 3h8v1h3a1 1 0 011 1v2a3 3 0 01-3 3h-.29A5 5 0 0111 13.92V16h2a1 1 0 011 1v1H6v-1a1 1 0 011-1h2v-2.08A5 5 0 015.29 10H5a3 3 0 01-3-3V5a1 1 0 011-1h3V3z"
+                    stroke="currentColor"
+                    strokeWidth="0.5"
+                    fill="none"
+                    opacity="0.4"
+                  />
+                </svg>
+                <span
+                  className="text-[9px] font-bold uppercase tracking-[0.25em]"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: moment.teamColors.primary,
+                    textShadow: `0 0 12px ${moment.teamColors.primary}40`,
+                  }}
+                >
+                  Collector of the Game
+                </span>
+              </div>
+              <span
+                className="text-[7px] font-mono uppercase tracking-wider"
+                style={{ color: '#00E5A0', opacity: 0.5 }}
+              >
+                MVP
+              </span>
+            </div>
+
+            {/* Player + moment context */}
+            <div className="px-4 pb-2">
+              <span
+                className="text-[22px] uppercase leading-none tracking-tight text-white"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  fontWeight: 700,
+                  textShadow: `0 0 16px ${moment.teamColors.primary}30`,
+                }}
+              >
+                {moment.player}
+              </span>
+              <div className="mt-1 flex items-center gap-2">
+                <span className="text-[9px] uppercase tracking-wider text-white/25">
+                  {moment.playType}
+                </span>
+                <span className="text-white/10">·</span>
+                <span className="text-[9px] uppercase tracking-wider text-white/25">
+                  {moment.team} vs {moment.opponent}
+                </span>
+              </div>
+            </div>
+
+            {/* Stats row — jumbotron-style stat line */}
+            <div
+              className="mx-4 mb-3 grid grid-cols-3 gap-[1px] overflow-hidden rounded-lg"
+              style={{ backgroundColor: `${moment.teamColors.primary}10` }}
+            >
+              {[
+                { label: 'EDITION', value: `#${editionNumber.toLocaleString()}` },
+                { label: 'SPEED', value: `${acquireTime}s` },
+                { label: 'RANK', value: `Top ${percentile}%` },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="flex flex-col items-center bg-[#0B0E14] py-2.5"
+                >
+                  <span
+                    className="text-[7px] font-bold uppercase tracking-[0.2em] text-white/20"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {stat.label}
+                  </span>
+                  <span
+                    className="mt-0.5 text-[16px] font-bold tabular-nums"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: '#00E5A0',
+                      textShadow: '0 0 8px rgba(0,229,160,0.25)',
+                    }}
+                  >
+                    {stat.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom accent — "Presented by" like real jumbotron award sponsors */}
+            <div
+              className="flex items-center justify-center py-2"
+              style={{
+                borderTop: `1px solid ${moment.teamColors.primary}12`,
+                background: `linear-gradient(90deg, transparent, ${moment.teamColors.primary}06, transparent)`,
+              }}
+            >
+              <span
+                className="text-[7px] uppercase tracking-[0.3em] text-white/12"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                Presented by Top Shot This
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* Digital Ticket Stub — arena keepsake for screenshots */}
         <div
           className="mt-5 w-full max-w-[280px] transition-all duration-600 ease-out"
           style={{
             opacity: showDetails ? 1 : 0,
             transform: showDetails ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.95)',
-            transitionDelay: '0.25s',
+            transitionDelay: '0.28s',
           }}
         >
           <div

@@ -2877,27 +2877,83 @@ export default function BroadcastPage() {
             ))}
           </div>
 
-          {/* Countdown — centered, elegant */}
-          <div className="mt-8 flex items-center justify-center gap-2.5">
-            <div
-              className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                isUrgent ? 'animate-pulse bg-[#F59E0B]' : 'bg-white/20'
-              }`}
-            />
-            <span
-              className={`font-mono text-sm tabular-nums tracking-[0.12em] transition-colors ${
-                countdown.isEnded
-                  ? 'text-white/20'
-                  : isUrgent
-                    ? 'text-[#F59E0B]'
-                    : 'text-white/30'
-              }`}
-            >
-              {countdown.isEnded
-                ? 'DROP ENDED'
-                : `${formatCountdown(countdown.totalSeconds)} remaining`}
-            </span>
-          </div>
+          {/* Countdown — broadcast game clock escalation */}
+          {/* During CRITICAL phase, the countdown transforms into a dominant    */}
+          {/* ESPN-style game clock graphic — large digits, team-color accents,  */}
+          {/* "FINAL SECONDS" label. Every NBA broadcast makes the game clock    */}
+          {/* massive during crunch time. This does the same at the decision     */}
+          {/* point: the urgency is visual, not just textual.                    */}
+          {dropPhase === 'CRITICAL' && !countdown.isEnded && !isPurchasing ? (
+            <div className="mt-8 flex flex-col items-center gap-2">
+              {/* Game clock panel — broadcast graphic style */}
+              <div
+                className="relative overflow-hidden rounded-md px-6 py-3"
+                style={{
+                  backgroundColor: 'rgba(239,68,68,0.08)',
+                  border: '1px solid rgba(239,68,68,0.2)',
+                  boxShadow: '0 0 20px rgba(239,68,68,0.08)',
+                }}
+              >
+                {/* Red accent top bar */}
+                <div
+                  className="absolute top-0 left-0 right-0 h-[2px]"
+                  style={{ backgroundColor: '#EF4444' }}
+                />
+                {/* FINAL SECONDS label */}
+                <span
+                  className="block text-center text-[8px] font-bold uppercase tracking-[0.4em] mb-1"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: '#EF4444',
+                    opacity: 0.7,
+                  }}
+                >
+                  Final Seconds
+                </span>
+                {/* Large clock digits */}
+                <span
+                  className="block text-center text-[36px] font-bold tabular-nums leading-none font-mono tracking-tight"
+                  style={{
+                    color: '#EF4444',
+                    textShadow: '0 0 12px rgba(239,68,68,0.3), 0 0 40px rgba(239,68,68,0.1)',
+                  }}
+                >
+                  {formatCountdown(countdown.totalSeconds)}
+                </span>
+                {/* Pulsing dot — live indicator */}
+                <div className="flex items-center justify-center gap-1.5 mt-1.5">
+                  <div
+                    className="h-[5px] w-[5px] rounded-full animate-pulse"
+                    style={{ backgroundColor: '#EF4444' }}
+                  />
+                  <span className="text-[8px] font-mono uppercase tracking-[0.2em] text-[#EF4444]/50">
+                    Closing
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-8 flex items-center justify-center gap-2.5">
+              <div
+                className={`h-1.5 w-1.5 rounded-full transition-colors ${
+                  isUrgent ? 'animate-pulse bg-[#F59E0B]' : 'bg-white/20'
+                }`}
+              />
+              <span
+                className={`font-mono text-sm tabular-nums tracking-[0.12em] transition-colors ${
+                  countdown.isEnded
+                    ? 'text-white/20'
+                    : isUrgent
+                      ? 'text-[#F59E0B]'
+                      : 'text-white/30'
+                }`}
+              >
+                {countdown.isEnded
+                  ? 'DROP ENDED'
+                  : `${formatCountdown(countdown.totalSeconds)} remaining`}
+              </span>
+            </div>
+          )}
 
           {/* Live viewer count — broadcast stream audience meter */}
           {!countdown.isEnded && !isPurchasing && (

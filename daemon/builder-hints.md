@@ -83,3 +83,16 @@
 - Certificate card benefits from backdrop-blur + team-color top accent — museum-grade feel.
 - Removed QR placeholder — it was filler, not value. The date stamp + blockchain verification line is cleaner.
 - Broadcast W screen was the weakest (4.5 interaction) — now 6.5. W screen phase delivering as expected.
+
+## Cycle 12 Learnings
+- Screen shake (arena-rumble) on entry is visceral and 100% Arena. Simple CSS keyframes, huge impact.
+- Action image backdrop at 6% opacity gives jumbotron depth without competing with text.
+- "Top X% speed" competition stat creates social comparison even post-purchase — fits Arena's social urgency.
+- YOUR purchase highlighted in feed (team-color border, "YOU just claimed") connects the W to the live commerce energy.
+- Pulsing edition number glow (arena-edition-pulse) makes the number feel alive, like a jumbotron stat.
+- All 3 W screens now have 4-phase staggered reveals — this pattern delivers consistently.
+- W SCREEN phase complete. Interaction scores jumped significantly: Supreme 5.0→6.0, Broadcast 4.5→6.5, Arena 5.5→7.0.
+- Cycles 13-15 = RARITY TIERS. Supreme needs rarity display. Broadcast has tier cards. Arena has RarityCards.
+- Supreme has NO rarity tier UI at all yet — it only shows the Open tier price. Needs the most work in rarity.
+- Broadcast already has TierCard component with team-color accents. Needs refinement, not rebuild.
+- Arena already has RarityCards (premium tiers). Could add more energy/urgency to low-remaining tiers.

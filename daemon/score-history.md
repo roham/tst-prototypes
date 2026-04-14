@@ -48,3 +48,15 @@
 | 10 | supreme | 7.5 | 6.5 | 7.0 | 6.0 | 8.0 | 7.00 | +0.65 | W screen: radial burst, action backdrop, YOURS., date stamp, serial number |
 
 | 11 | broadcast | 8.0 | 6.0 | 7.5 | 6.5 | 8.0 | 7.18 | +0.65 | Cinematic W screen: hero backdrop, COLLECTED announcement, 4-phase reveal, certificate card |
+
+| 12 | arena | 7.0 | 6.5 | 7.0 | 7.0 | 8.0 | 7.03 | +0.73 | W screen: rumble shake, action backdrop, competition stats, YOUR purchase in feed, edition glow |
+
+### Full Scorecard — After Cycle 12 (W SCREEN phase complete)
+
+| Direction | Visual | Conversion | Emotion | Interaction | Purity | Weighted |
+|-----------|--------|------------|---------|-------------|--------|----------|
+| Supreme | 7.5 | 6.5 | 7.0 | 6.0 | 8.0 | **7.00** |
+| Broadcast | 8.0 | 6.0 | 7.5 | 6.5 | 8.0 | **7.18** |
+| Arena | 7.0 | 6.5 | 7.0 | 7.0 | 8.0 | **7.03** |
+
+**W SCREEN phase complete.** All 3 have theatrical confirmation screens. Biggest jump: Arena Interaction 5.5→7.0. Weakest dimension: Supreme Interaction (6.0), Broadcast Conversion (6.0). Cycles 13-15 = RARITY TIERS.

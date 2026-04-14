@@ -74,6 +74,19 @@ function useRecentCollectors() {
   return count;
 }
 
+// Teleprompter typewriter reveal — types text character-by-character like a broadcast prompter
+function useTypewriter(text: string, started: boolean, speed = 28) {
+  const [charIndex, setCharIndex] = useState(0);
+  const [done, setDone] = useState(false);
+  useEffect(() => {
+    if (!started) { setCharIndex(0); setDone(false); return; }
+    if (charIndex >= text.length) { setDone(true); return; }
+    const id = setTimeout(() => setCharIndex((prev) => prev + 1), speed);
+    return () => clearTimeout(id);
+  }, [text, started, charIndex, speed]);
+  return { displayText: text.slice(0, charIndex), done, started };
+}
+
 // Full team name for the broadcast overlay
 const TEAM_FULL: Record<string, string> = {
   MIA: 'Miami Heat',
@@ -342,6 +355,78 @@ function SectionRevealLine({ teamColor }: { teamColor: string }) {
         }}
       />
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Teleprompter Pull Quote — typewriter reveal on scroll-into-view
+// ---------------------------------------------------------------------------
+
+function TeleprompterQuote({ moment, rgb }: { moment: Moment; rgb: string }) {
+  const quoteRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const quoteText = `${moment.historicalNote.split('.')[0]}.`;
+  const { displayText, done, started } = useTypewriter(quoteText, isVisible, 28);
+
+  useEffect(() => {
+    const el = quoteRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); observer.disconnect(); } },
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <section ref={quoteRef} className="mx-auto max-w-2xl px-5 py-8 md:px-10 md:py-10">
+      <blockquote
+        className="relative pl-6 border-l-[3px]"
+        style={{ borderColor: `${moment.teamColors.primary}70` }}
+      >
+        {/* Oversized decorative quotation mark — ESPN quote graphic energy */}
+        <span
+          className="absolute -left-1 -top-4 text-[4rem] leading-none font-bold pointer-events-none select-none"
+          style={{
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            color: `${moment.teamColors.primary}20`,
+          }}
+        >
+          &ldquo;
+        </span>
+        <p
+          className="relative text-2xl leading-[1.55] text-white/60 md:text-[1.75rem] md:leading-[1.5]"
+          style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic', minHeight: '4.5em' }}
+        >
+          {started ? displayText : '\u00A0'}
+          {started && !done && (
+            <span
+              className="broadcast-teleprompter-cursor"
+              style={{ backgroundColor: moment.teamColors.primary }}
+            />
+          )}
+          {done && (
+            <span
+              className="broadcast-teleprompter-cursor-done"
+              style={{ backgroundColor: moment.teamColors.primary }}
+            />
+          )}
+        </p>
+        <footer
+          className="mt-4 flex items-center gap-2.5 transition-opacity duration-500"
+          style={{ opacity: done ? 1 : 0 }}
+        >
+          <div
+            className="h-[1px] w-6"
+            style={{ backgroundColor: `${moment.teamColors.primary}50` }}
+          />
+          <span className="text-[10px] uppercase tracking-[0.2em] text-white/25">
+            {moment.context}
+          </span>
+        </footer>
+      </blockquote>
+    </section>
   );
 }
 
@@ -790,40 +875,8 @@ export default function BroadcastPage() {
           />
         </div>
 
-        {/* ━━━ EDITORIAL PULL QUOTE — cinematic emotional hook ━━━━━━━━━ */}
-        <section className="mx-auto max-w-2xl px-5 py-8 md:px-10 md:py-10">
-          <blockquote
-            className="relative pl-6 border-l-[3px]"
-            style={{ borderColor: `${moment.teamColors.primary}70` }}
-          >
-            {/* Oversized decorative quotation mark — ESPN quote graphic energy */}
-            <span
-              className="absolute -left-1 -top-4 text-[4rem] leading-none font-bold pointer-events-none select-none"
-              style={{
-                fontFamily: "Georgia, 'Times New Roman', serif",
-                color: `${moment.teamColors.primary}20`,
-              }}
-            >
-              &ldquo;
-            </span>
-            <p
-              className="relative text-2xl leading-[1.55] text-white/60 md:text-[1.75rem] md:leading-[1.5]"
-              style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
-            >
-              {/* First sentence of historicalNote as a cinematic pull quote */}
-              {moment.historicalNote.split('.')[0]}.
-            </p>
-            <footer className="mt-4 flex items-center gap-2.5">
-              <div
-                className="h-[1px] w-6"
-                style={{ backgroundColor: `${moment.teamColors.primary}50` }}
-              />
-              <span className="text-[10px] uppercase tracking-[0.2em] text-white/25">
-                {moment.context}
-              </span>
-            </footer>
-          </blockquote>
-        </section>
+        {/* ━━━ EDITORIAL PULL QUOTE — teleprompter typewriter reveal ━━━━━ */}
+        <TeleprompterQuote moment={moment} rgb={rgb} />
 
         {/* ━━━ EDITORIAL NARRATIVE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section className="mx-auto max-w-2xl px-5 pb-10 md:px-10 md:pb-14">

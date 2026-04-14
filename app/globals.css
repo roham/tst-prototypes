@@ -642,6 +642,25 @@ body {
   mix-blend-mode: screen;
 }
 
+/* Broadcast teleprompter cursor — blinking line cursor for typewriter reveal */
+@keyframes broadcast-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.broadcast-teleprompter-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.15em;
+  vertical-align: text-bottom;
+  margin-left: 1px;
+  animation: broadcast-cursor-blink 0.8s steps(1) infinite;
+}
+.broadcast-teleprompter-cursor-done {
+  animation: broadcast-cursor-blink 0.8s steps(1) 3;
+  animation-fill-mode: forwards;
+  opacity: 0;
+}
+
 /* Arena W screen — crowd roar EQ bars (dramatic spike on reveal) */
 @keyframes arena-roar-bar {
   0% { height: 8%; }

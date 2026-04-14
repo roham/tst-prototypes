@@ -682,3 +682,13 @@
 - The 8% height band (instead of full-screen white flash) is important — it looks like a scanning interference band, not a flash. Full-screen effects feel like errors; narrow bands feel like authentic broadcast artifacts.
 - This completes the broadcast phase-transition vocabulary: urgency banner changes text, progress bar depletes, hero saturation shifts, CTA copy updates, and now a camera feed cut sweeps the screen. Multiple signals reinforcing the same event.
 - Next cycle: Arena (rotation). Arena could benefit from a "timeout huddle" overlay on phase transitions — like a basketball timeout called during critical moments.
+
+## Cycle 77 Learnings
+- All three directions now have distinct phase-transition effects: Supreme = void color wash (subtle, atmospheric), Broadcast = camera feed cut (production artifact), Arena = timeout jumbotron (in-arena event). This creates a unified design system where each direction responds to the same event in its own language.
+- "OFFICIAL TIMEOUT" and "20 SECOND TIMEOUT" are real NBA terminology that basketball fans will instantly recognize. Using authentic league language deepens the arena metaphor.
+- The text animation (scale 1.8x → 1x with letter-spacing 0.5em → 0.2em) mimics kinetic typography on real NBA arena jumbotrons — text zooms in and tightens dramatically.
+- Dark backdrop at 60% opacity is important — it creates the feeling of the arena lights dimming during a timeout, which is what actually happens in NBA games.
+- z-38 layering is carefully chosen: above the crowd wave (z-6) and critical vignette (z-35), but below the buzzer overlay (z-45-47). The buzzer is a more important event and should override the timeout visually.
+- 2s duration matches the pacing of other Arena effects (buzzer is 2.2s, LED flash is 0.35s, camera flash is 0.08s). Phase transitions are significant but not as dramatic as the final buzzer.
+- The `useArenaTimeout` hook follows the same pattern as `useArenaBuzzer` — useRef to track previous phase, fire once per transition, auto-cleanup timer. This pattern is now proven for all three directions.
+- Next cycle: Supreme (rotation). Supreme is at parity with the other two directions. Could explore: ambient audio visualizer (silent but visual), or a premium unboxing reveal on the hero image.

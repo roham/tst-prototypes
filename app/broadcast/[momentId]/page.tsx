@@ -1041,14 +1041,25 @@ export default function BroadcastPage() {
               />
             </div>
 
-            {/* Stat line — broadcast stat card style */}
-            <div className="mt-3 pl-3 flex items-center gap-3">
-              <p
-                className="text-lg font-semibold tracking-wide text-white/90 sm:text-xl md:text-2xl"
-                style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
-              >
-                {moment.statLine}
-              </p>
+            {/* Stat line — broadcast data wipe reveal (ESPN two-layer clip-path) */}
+            <div className="mt-3 pl-3 broadcast-data-wipe">
+              {/* Layer 1: team-color bar wipes in first */}
+              <div
+                className="absolute inset-y-0 left-3 right-0 broadcast-data-wipe-bar"
+                style={{
+                  backgroundColor: `rgba(${rgb},0.12)`,
+                  borderLeft: `2px solid ${moment.teamColors.primary}`,
+                }}
+              />
+              {/* Layer 2: text content revealed with slight delay */}
+              <div className="relative broadcast-data-wipe-text">
+                <p
+                  className="text-lg font-semibold tracking-wide text-white/90 sm:text-xl md:text-2xl py-1.5 px-2"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
+                >
+                  {moment.statLine}
+                </p>
+              </div>
             </div>
 
             {/* Team-color accent rule */}
@@ -1057,10 +1068,24 @@ export default function BroadcastPage() {
               style={{ backgroundColor: moment.teamColors.primary }}
             />
 
-            {/* Context line */}
-            <p className="mt-3 pl-3 text-sm tracking-wide text-white/40 md:text-base">
-              {moment.context}
-            </p>
+            {/* Context line — data wipe reveal with later timing */}
+            <div className="mt-3 pl-3 broadcast-data-wipe relative">
+              <div
+                className="absolute inset-y-0 left-3 right-0"
+                style={{
+                  backgroundColor: `rgba(${rgb},0.06)`,
+                  animation: 'broadcast-data-wipe-bar 0.24s cubic-bezier(0.22, 1, 0.36, 1) 1.35s both',
+                }}
+              />
+              <p
+                className="relative text-sm tracking-wide text-white/40 md:text-base py-1 px-2"
+                style={{
+                  animation: 'broadcast-data-wipe-text 0.28s cubic-bezier(0.22, 1, 0.36, 1) 1.48s both',
+                }}
+              >
+                {moment.context}
+              </p>
+            </div>
           </div>
 
           {/* INSTANT REPLAY — broadcast overlay tag, slides in from right */}

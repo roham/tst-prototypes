@@ -133,6 +133,25 @@ body {
   animation: lower-third-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 
+/* Broadcast data wipe — ESPN lower-third stat reveal (two-layer clip-path) */
+@keyframes broadcast-data-wipe-bar {
+  0% { clip-path: inset(0 100% 0 0); }
+  100% { clip-path: inset(0 0% 0 0); }
+}
+@keyframes broadcast-data-wipe-text {
+  0% { clip-path: inset(0 100% 0 0); }
+  100% { clip-path: inset(0 0% 0 0); }
+}
+.broadcast-data-wipe {
+  position: relative;
+}
+.broadcast-data-wipe-bar {
+  animation: broadcast-data-wipe-bar 0.28s cubic-bezier(0.22, 1, 0.36, 1) 1.0s both;
+}
+.broadcast-data-wipe-text {
+  animation: broadcast-data-wipe-text 0.32s cubic-bezier(0.22, 1, 0.36, 1) 1.14s both;
+}
+
 /* Broadcast urgency banner entrance */
 @keyframes broadcast-urgency-in {
   0% { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; }

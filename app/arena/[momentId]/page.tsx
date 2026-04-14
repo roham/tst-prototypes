@@ -89,11 +89,14 @@ function LiveFeed({ events, teamColor }: { events: PurchaseEvent[]; teamColor?: 
         className="flex gap-2 overflow-x-auto px-4 py-3"
         style={{ scrollBehavior: 'smooth', msOverflowStyle: 'none', scrollbarWidth: 'none' }}
       >
-        {events.map((ev) => (
+        {events.map((ev, i) => (
           <div
             key={ev.id}
             className="flex shrink-0 items-center gap-1.5 rounded-full bg-white/[0.06] px-3 py-1.5 text-xs backdrop-blur-sm"
-            style={{ animation: 'fadeSlideIn 0.4s ease-out' }}
+            style={{
+              animation: 'fadeSlideIn 0.4s ease-out',
+              boxShadow: i === events.length - 1 && teamColor ? `0 0 12px ${teamColor}30` : undefined,
+            }}
           >
             {teamColor && (
               <span
@@ -1099,18 +1102,33 @@ export default function ArenaPage({
               </span>
             </div>
 
-            {/* Active buyers indicator */}
-            <div className="flex items-center gap-1 shrink-0">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00E5A0] opacity-60" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#00E5A0]" />
-              </span>
-              <span className="text-[10px] tabular-nums text-white/40">{activeBuyers} buying</span>
-            </div>
+            {/* Active buyers / purchase status indicator */}
+            {proto.state === 'purchasing' ? (
+              <div className="flex items-center gap-1.5 shrink-0">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00E5A0] opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#00E5A0]" />
+                </span>
+                <span
+                  className="text-[10px] font-bold uppercase tracking-wider text-[#00E5A0]"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  {purchaseStage === 0 ? 'Reserving...' : purchaseStage === 1 ? 'Processing...' : 'Secured!'}
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 shrink-0">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00E5A0] opacity-60" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#00E5A0]" />
+                </span>
+                <span className="text-[10px] tabular-nums text-white/40">{activeBuyers} buying</span>
+              </div>
+            )}
 
-            {/* Buy button */}
+            {/* Buy button — shows progress during purchase */}
             <button
-              onClick={proto.purchase}
+              onClick={proto.state !== 'purchasing' ? proto.purchase : undefined}
               disabled={proto.state === 'purchasing'}
               className={`relative ml-auto flex-shrink-0 overflow-hidden rounded-lg px-6 py-3 font-bold text-sm uppercase tracking-wider transition-all active:scale-[0.97] ${
                 proto.state === 'purchasing'
@@ -1123,9 +1141,21 @@ export default function ArenaPage({
               }`}
               style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
             >
-              {proto.state === 'purchasing'
-                ? (purchaseStage === 0 ? 'RESERVING...' : purchaseStage === 1 ? 'PROCESSING...' : 'SECURED!')
-                : isCritical ? 'LAST CHANCE' : isClosing ? 'BUY NOW' : 'OWN IT'}
+              {/* Progress bar overlay during purchase */}
+              {proto.state === 'purchasing' && (
+                <div
+                  className="absolute inset-y-0 left-0 bg-[#00E5A0] transition-all duration-500 ease-out"
+                  style={{
+                    width: purchaseStage === 0 ? '33%' : purchaseStage === 1 ? '75%' : '100%',
+                    opacity: 0.3,
+                  }}
+                />
+              )}
+              <span className="relative z-10">
+                {proto.state === 'purchasing'
+                  ? (purchaseStage === 0 ? 'RESERVING...' : purchaseStage === 1 ? 'PROCESSING...' : 'SECURED!')
+                  : isCritical ? 'LAST CHANCE' : isClosing ? 'BUY NOW' : 'OWN IT'}
+              </span>
             </button>
           </div>
         </div>

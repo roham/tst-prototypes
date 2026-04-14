@@ -570,6 +570,13 @@ export default function SupremePage() {
   const ctaRef = useRef<HTMLButtonElement>(null);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [heroRevealed, setHeroRevealed] = useState(false);
+
+  // Hero color reveal — starts desaturated, gains color over 2s
+  useEffect(() => {
+    const t = setTimeout(() => setHeroRevealed(true), 200);
+    return () => clearTimeout(t);
+  }, []);
 
   // Derive drop phase from countdown
   const dropPhase = derivePhase(countdown.totalSeconds);
@@ -808,23 +815,30 @@ export default function SupremePage() {
         />
 
         {/* Gradient background — subtle Ken Burns zoom for cinematic depth */}
+        {/* Color reveal: starts desaturated, transitions to full color over 2s */}
         <div
-          className={`absolute inset-0 bg-cover bg-center transition-[filter] duration-1000 ${
+          className={`absolute inset-0 bg-cover bg-center ${
             !isEnded && !isPurchasing ? 'supreme-ken-burns' : ''
           }`}
           style={{
             backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
             backgroundSize: 'cover, cover',
             backgroundPosition: 'center top, center',
-            filter: heroFilter,
+            filter: isEnded ? heroFilter :
+              isPurchasing ? heroFilter :
+              heroRevealed ? 'none' :
+              'grayscale(1) brightness(0.8)',
+            transition: 'filter 2s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         />
 
-        {/* Team color ambient glow — dual-layer for richness */}
+        {/* Team color ambient glow — dual-layer for richness, fades in with color reveal */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background: `radial-gradient(ellipse 80% 60% at 50% 25%, ${moment.teamColors.primary}30 0%, transparent 65%), radial-gradient(ellipse 60% 30% at 50% 80%, ${moment.teamColors.primary}12 0%, transparent 50%)`,
+            opacity: heroRevealed ? 1 : 0,
+            transition: 'opacity 2.5s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         />
 

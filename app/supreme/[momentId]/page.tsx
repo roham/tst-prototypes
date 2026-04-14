@@ -553,11 +553,20 @@ export default function SupremePage() {
           >
             {moment.statLine}
           </p>
-          {/* Game context */}
-          <p className="mt-1 text-xs text-white/25 tracking-wide">
-            {moment.context}
-          </p>
         </div>
+      </div>
+
+      {/* ============================================================= */}
+      {/* CONTEXT — one emotional sentence, given room to breathe */}
+      {/* ============================================================= */}
+      <div className="px-5 pt-4 pb-2">
+        <div
+          className="h-[1px] w-8 mb-3"
+          style={{ backgroundColor: `${moment.teamColors.primary}50` }}
+        />
+        <p className="text-sm leading-relaxed text-white/40 tracking-wide">
+          {moment.context}
+        </p>
       </div>
 
       {/* ============================================================= */}
@@ -763,6 +772,12 @@ export default function SupremePage() {
         {!isEnded && !isPurchasing && (
           <p className="mt-2.5 text-center text-[10px] uppercase tracking-[0.15em] text-white/15">
             Instant checkout · Stored payment
+          </p>
+        )}
+        {/* Tier scarcity — minimal, just the number */}
+        {!isEnded && !isPurchasing && selectedTier.tier !== 'Open' && (
+          <p className="mt-1.5 text-center text-[10px] tabular-nums text-white/20">
+            {selectedTier.remaining} of {selectedTier.size} remaining
           </p>
         )}
       </div>

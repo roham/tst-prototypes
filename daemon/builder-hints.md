@@ -1237,3 +1237,13 @@
 - Sustained falling confetti after the cannon burst maintains celebration energy while the initial burst provides the dramatic opener.
 - Always check rotation before starting: should have been Broadcast, not Arena. Log and correct next cycle.
 - Next cycle: Broadcast (rotation correction).
+
+## Cycle 146 Learnings
+- The score bug was already there but basic — upgrading an existing component is higher-impact than adding new ones at this stage of polish.
+- Quarter-by-quarter scores at 6-7px are legible but add authentic ESPN depth. Winning quarters highlighted via opacity creates instant visual parsing.
+- useGameClock at 1/3 real-time speed (120s start → ~6 min real) creates enough drama without feeling rushed or stalling.
+- Possession arrow alternation every 6-10s (randomized) feels natural. Fixed intervals feel mechanical.
+- Team-color left accent bars (3px) are the single most impactful visual detail for score bug authenticity — it's what makes ESPN's look ESPN.
+- Opponent color map is a simple addition that completes the visual pairing. Only 3 opponents needed for current mock data.
+- The broadcast HUD is now feature-complete: score bug, network bug, ticker, SMPTE timecode, REC, ISO CAM, lower-thirds, replay tag, telestrator, urgency chyron, breaking crawl. Further broadcast improvements should focus on refining existing elements, not adding new overlay types.
+- Next cycle: Arena (rotation).

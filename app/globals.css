@@ -370,6 +370,12 @@ body {
   mix-blend-mode: overlay;
 }
 
+/* Broadcast ESPN BottomLine — scrolling score ticker */
+@keyframes broadcast-ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 @keyframes arena-reaction-float {
   0% { transform: translateY(0) scale(0.5); opacity: 0; }
   15% { transform: translateY(-20px) scale(1.1); opacity: 1; }

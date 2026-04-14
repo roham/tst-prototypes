@@ -88,6 +88,42 @@ function fullTeam(abbr: string): string {
   return TEAM_FULL[abbr] ?? abbr;
 }
 
+// ── ESPN BottomLine — scrolling score ticker for broadcast atmosphere ──────
+
+const TICKER_SCORES = [
+  { away: 'BOS', aScore: 112, home: 'NYK', hScore: 108, status: 'FINAL' },
+  { away: 'LAL', aScore: 98, home: 'GSW', hScore: 103, status: 'FINAL' },
+  { away: 'PHI', aScore: 91, home: 'MIL', hScore: 96, status: 'FINAL' },
+  { away: 'DAL', aScore: 117, home: 'PHX', hScore: 114, status: 'FINAL/OT' },
+  { away: 'MIN', aScore: 105, home: 'SAC', hScore: 99, status: 'FINAL' },
+  { away: 'CLE', aScore: 110, home: 'IND', hScore: 106, status: 'FINAL' },
+  { away: 'ATL', aScore: 88, home: 'CHI', hScore: 94, status: 'FINAL' },
+];
+
+function BroadcastTicker() {
+  return (
+    <div className="relative w-full overflow-hidden border-b border-white/[0.04] bg-[#0B0E14]/80 backdrop-blur-sm">
+      <div className="flex animate-[broadcast-ticker_30s_linear_infinite] whitespace-nowrap">
+        {[...TICKER_SCORES, ...TICKER_SCORES].map((g, i) => (
+          <div
+            key={i}
+            className="inline-flex items-center gap-3 px-5 py-1.5 border-r border-white/[0.04]"
+          >
+            <span className="text-[10px] font-bold uppercase tracking-wider text-white/25">
+              {g.status}
+            </span>
+            <span className="text-[11px] tabular-nums text-white/40">
+              <span className={g.aScore > g.hScore ? 'text-white/70 font-semibold' : ''}>{g.away} {g.aScore}</span>
+              <span className="text-white/15 mx-1.5">—</span>
+              <span className={g.hScore > g.aScore ? 'text-white/70 font-semibold' : ''}>{g.home} {g.hScore}</span>
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // ESPN-style stat breakdown — animated cards
 // ---------------------------------------------------------------------------
@@ -275,7 +311,44 @@ export default function BroadcastPage() {
         }}
       />
 
+      {/* ━━━ NETWORK BUG — ESPN/TNT corner watermark ━━━━━━━━━━━━━━━━━ */}
+      <div
+        className="fixed top-4 right-4 z-40 pointer-events-none flex items-center gap-1.5 transition-opacity duration-700 md:top-6 md:right-6"
+        style={{ opacity: countdown.isEnded ? 0 : 0.35 }}
+      >
+        <div
+          className="h-[6px] w-[6px] rounded-full"
+          style={{
+            backgroundColor: dropPhase === 'CRITICAL' ? '#EF4444' : moment.teamColors.primary,
+            animation: countdown.isEnded ? 'none' : 'pulse 2s ease-in-out infinite',
+          }}
+        />
+        <span
+          className="text-[9px] font-bold uppercase tracking-[0.3em]"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: dropPhase === 'CRITICAL' ? '#EF4444' : 'rgba(255,255,255,0.7)',
+          }}
+        >
+          TST
+        </span>
+        {!countdown.isEnded && (
+          <span
+            className="text-[8px] font-semibold uppercase tracking-[0.2em] rounded-sm px-1 py-px"
+            style={{
+              backgroundColor: dropPhase === 'CRITICAL' ? 'rgba(239,68,68,0.25)' : `rgba(${rgb},0.2)`,
+              color: dropPhase === 'CRITICAL' ? '#EF4444' : moment.teamColors.primary,
+            }}
+          >
+            Live
+          </span>
+        )}
+      </div>
+
       <div className="relative z-10">
+        {/* ━━━ ESPN BOTTOMLINE — scrolling score ticker ━━━━━━━━━━━━━━━ */}
+        {!countdown.isEnded && <BroadcastTicker />}
+
         {/* ━━━ HERO — 50vh ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section className="relative h-[50dvh] min-h-[420px] overflow-hidden broadcast-grain">
           {/* Action image — cinematic depth layer with Ken Burns drift */}

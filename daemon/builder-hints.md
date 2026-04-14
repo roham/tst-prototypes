@@ -1196,3 +1196,11 @@
 - Georgia serif italic is the editorial voice of Broadcast — every quote, tagline, and narrative uses it consistently.
 - The "Postgame" badge reuses the same pattern as "Up Next" and "Breaking" — consistency.
 - Next cycle: Arena (rotation).
+
+## Cycle 140 Learnings
+- Head-to-head comparison graphics are a natural fit for Arena's competitive energy — every sports broadcast uses them.
+- Three stat rows (edition, speed, rank) give just enough data for a "scoreboard" without overwhelming the W screen.
+- Highlighting winners in teal vs dimming losers in white/25 creates instant visual hierarchy.
+- Team-color gradient in header bar ties the scoreboard to the moment's team identity.
+- The matchup card completes Arena's W screen competitive narrative: you competed against the crowd and won.
+- Next cycle: Supreme (rotation).

@@ -105,3 +105,5 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 ## Cycle 50 | Direction: Arena | Score: 9.00 (beyond-9.0 polish) | Built: Crowd noise equalizer bars in header — 5 mini animated bars (team-color, staggered timing) next to viewer count, suggesting live arena audio atmosphere. Freezes flat + dims when drop ends. Pure CSS animation. | Time: 04:45
 
 ## Cycle 51 | Direction: Supreme | Score: 9.00 (beyond-9.0 polish) | Built: Ambient breathing vignette — team-color inset box-shadow gently pulses at edges on 6s cycle (disabled during CRITICAL/ENDED). Embossed player name — subtle team-color text glow + white highlight for premium depth. Both CSS-only, zero JS. | Time: 05:00
+
+## Cycle 52 | Direction: Broadcast | Score: 9.00 (beyond-9.0 polish) | Built: CRT scanlines on hero section — faint repeating horizontal lines (4px pitch, 6% opacity) for broadcast monitor feel, layered above film grain at z-16. BREAKING text glow on CRITICAL urgency chyron — red text-shadow pulses on 1.2s cycle, making "CLOSING NOW" feel like live breaking news. Both CSS-only. | Time: 05:15

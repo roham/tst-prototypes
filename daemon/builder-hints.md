@@ -453,3 +453,11 @@
 - Embossed text shadow uses 3 layers: dark drop shadow (depth), team-color glow (identity), white highlight (emboss). The white at 0.04 opacity is barely visible but creates a raised-letter effect on dark backgrounds.
 - Supreme now has 4 ambient hero effects: parallax (scroll), Ken Burns (20s zoom), light sweep (8s diagonal), and breathing vignette (6s edge glow). Together they create a premium living display without any single effect being obvious.
 - Next cycle: Broadcast (rotation). Broadcast could use a subtle film reel frame flicker, or animated "BREAKING" text treatment on the urgency banner.
+
+## Cycle 52 Learnings
+- CRT scanlines use `repeating-linear-gradient` (3px transparent, 1px rgba(0,0,0,0.06)) at z-16 — above film grain (z-15) but below text (z-20). The two effects stack: grain adds noise texture, scanlines add horizontal structure. Together they read as "broadcast monitor" without either being obvious.
+- `mix-blend-mode: multiply` on scanlines darkens without adding color — keeps them invisible on dark areas but subtly visible on bright hero content. This is better than `overlay` which would lighten as well.
+- BREAKING text glow uses `text-shadow` animation (not `box-shadow`) — the glow emanates from the letterforms themselves, not from a box. More dramatic, more broadcast-authentic.
+- 1.2s cycle matches the existing `urgency-pulse-fast` timing (0.5s for button pulse), but is slower — text should pulse dramatically, not frantically. The 50% peak (0.7 opacity, 24px spread) creates genuine "breaking news" energy.
+- Broadcast hero now has 3 layered atmosphere effects: Ken Burns drift (25s), film grain (0.8s noise), and CRT scanlines (static). Each adds a different dimension of "broadcast production."
+- Next cycle: Arena (rotation). Arena could use a jumbotron pixel grid effect, or a subtle camera flash on purchases.

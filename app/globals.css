@@ -865,6 +865,12 @@ body {
   animation: arena-crowd-wave 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Arena crowd chant ticker — jumbotron "LET'S GO [TEAM]" scrolling text */
+@keyframes arena-chant-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 /* Arena buzzer — red LED flash when drop ends, like NBA backboard LEDs */
 @keyframes arena-buzzer-flash {
   0% { opacity: 0; }

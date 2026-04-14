@@ -1848,8 +1848,38 @@ export default function ArenaPage({
       <div className="relative">
         <CourtLines teamColor={moment.teamColors.primary} isEnded={countdown.isEnded} />
 
+      {/* ─── Crowd Chant Ticker — jumbotron fan chant text ─── */}
+      {!countdown.isEnded && (
+        <div className="mt-3 relative z-[1] overflow-hidden" style={{ height: '18px' }}>
+          <div
+            className="flex whitespace-nowrap"
+            style={{
+              animation: 'arena-chant-scroll 12s linear infinite',
+            }}
+          >
+            {Array.from({ length: 6 }).map((_, i) => (
+              <span
+                key={i}
+                className="inline-flex items-center gap-6 px-6 text-[10px] font-bold uppercase tracking-[0.35em]"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: moment.teamColors.primary,
+                  opacity: 0.15,
+                  textShadow: `0 0 8px ${moment.teamColors.primary}30`,
+                }}
+              >
+                <span>LET&apos;S GO {moment.team}</span>
+                <span className="text-[6px]">👏</span>
+                <span>LET&apos;S GO {moment.team}</span>
+                <span className="text-[6px]">👏 👏</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* ─── Rarity Tiers — live auction selector ─── */}
-      <div className="mt-3 relative z-[1]">
+      <div className={`${countdown.isEnded ? 'mt-3' : 'mt-1'} relative z-[1]`}>
         <p className="mb-2 px-4 text-[10px] font-semibold uppercase tracking-widest text-white/30">
           Select Tier
         </p>

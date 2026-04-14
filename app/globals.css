@@ -473,6 +473,24 @@ body {
   backface-visibility: hidden;
 }
 
+/* Supreme holographic auth sticker — rotating ring + shimmer */
+@keyframes supreme-holo-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes supreme-holo-shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.supreme-holo-ring {
+  animation: supreme-holo-spin 20s linear infinite;
+}
+.supreme-holo-center {
+  animation: supreme-holo-shimmer 3s ease-in-out infinite;
+  background-size: 200% 200%;
+}
+
 /* Broadcast hero — slow cinematic Ken Burns drift for emotional tension */
 @keyframes broadcast-ken-burns {
   0% { transform: scale(1) translate(0, 0); }

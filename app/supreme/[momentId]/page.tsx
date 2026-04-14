@@ -285,6 +285,68 @@ function ShareButtons({ teamColor }: { teamColor: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// Holographic Auth Sticker — PSA/Beckett grading hologram on hero
+// ---------------------------------------------------------------------------
+
+function HolographicSticker({ teamColor }: { teamColor: string }) {
+  return (
+    <div
+      className="absolute bottom-10 right-5 z-[13] pointer-events-none"
+      style={{ width: 44, height: 44, opacity: 0.3 }}
+    >
+      {/* Outer rotating text ring */}
+      <svg
+        className="absolute inset-0 w-full h-full supreme-holo-ring"
+        viewBox="0 0 44 44"
+      >
+        <defs>
+          <path
+            id="holo-text-path"
+            d="M 22,22 m -17,0 a 17,17 0 1,1 34,0 a 17,17 0 1,1 -34,0"
+            fill="none"
+          />
+        </defs>
+        <circle cx="22" cy="22" r="20" stroke={teamColor} strokeWidth="0.5" fill="none" opacity="0.4" />
+        <circle cx="22" cy="22" r="14.5" stroke={teamColor} strokeWidth="0.3" fill="none" opacity="0.2" />
+        <text
+          fontSize="4.2"
+          fill={teamColor}
+          opacity="0.6"
+          letterSpacing="1.5"
+          fontFamily="var(--font-oswald), sans-serif"
+          fontWeight="500"
+        >
+          <textPath href="#holo-text-path">
+            TST · VERIFIED · AUTHENTIC · GRADED ·
+          </textPath>
+        </text>
+      </svg>
+      {/* Center holographic shimmer disc */}
+      <div
+        className="absolute rounded-full supreme-holo-center"
+        style={{
+          top: 10,
+          left: 10,
+          width: 24,
+          height: 24,
+          backgroundImage: `conic-gradient(from 0deg, ${teamColor}30, rgba(255,255,255,0.15), ${teamColor}20, rgba(255,255,255,0.1), ${teamColor}30)`,
+        }}
+      />
+      {/* Center check mark */}
+      <svg className="absolute" style={{ top: 14, left: 14, width: 16, height: 16 }} viewBox="0 0 16 16" fill="none">
+        <path
+          d="M4 8.5 L7 11.5 L12 5"
+          stroke="rgba(255,255,255,0.4)"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Ambient Particles — luminous dust motes drifting in a museum spotlight
 // ---------------------------------------------------------------------------
 
@@ -1149,6 +1211,11 @@ export default function SupremePage() {
             LOT {((moment.id.charCodeAt(0) * 37 + moment.id.charCodeAt(1) * 13) % 9000 + 1000)}
           </span>
         </div>
+
+        {/* Holographic authentication sticker — PSA/Beckett grading hologram */}
+        {!isEnded && !isPurchasing && (
+          <HolographicSticker teamColor={moment.teamColors.primary} />
+        )}
 
         {/* SOLD watermark — auction house finality on ended drops */}
         {isEnded && (

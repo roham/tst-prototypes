@@ -1157,3 +1157,12 @@
 - The SVG phone handset icon at 8px is the minimum legible size. Any smaller and it becomes a blob; any larger and it competes with the hero content.
 - Supreme's social proof hierarchy is now complete: phone bidders (who) + reserve status (demand) + estimate value (market). All three communicate market interest without showing a single other person.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 133 Learnings
+- Fixed-position urgency elements at the bottom of the viewport are high-impact because that's where the user's thumb/eye is on mobile when scrolling the transaction section.
+- The "BREAKING" label pinned left with scrolling text right is exactly how CNN/ESPN do it — the label stays visible so you always know the context of the crawl.
+- z-48 places it below the sticky CTA bar (z-50) and PiP (z-40) but above page content — the user sees urgency but can still interact with the purchase button.
+- 20s scroll speed is fast enough to feel urgent but slow enough to read. The BottomLine ticker (30s) is slower because it's ambient atmosphere — the breaking crawl is meant to create pressure.
+- Duplicating the crawl text content creates seamless looping — when the first copy scrolls off-left, the second copy is already visible, and translateX(-50%) resets to the beginning.
+- The crawl only fires during CRITICAL (≤2 min) and hides during purchase — it shouldn't distract from the purchase flow or appear during casual browsing.
+- Next cycle: Arena (rotation).

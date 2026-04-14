@@ -2528,6 +2528,76 @@ export default function BroadcastPage() {
             </div>
           )}
 
+          {/* ── BROADCAST EDITION GRAPHIC — ESPN on-screen stat bar ── */}
+          {/* Every ESPN broadcast overlays graphical stat bars (possession %, */}
+          {/* shooting splits) during live games. This shows edition supply as */}
+          {/* a broadcast-style horizontal stat graphic with team-color fill. */}
+          {!countdown.isEnded && !isPurchasing && (
+            <div className="mt-6 mb-6 max-w-md mx-auto w-full">
+              {/* Broadcast graphic header — team-color accent + label */}
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="h-[2px] w-3"
+                    style={{ backgroundColor: `${moment.teamColors.primary}60` }}
+                  />
+                  <span
+                    className="text-[8px] font-bold uppercase tracking-[0.3em] text-white/25"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    Editions
+                  </span>
+                </div>
+                <span className="text-[9px] font-mono tabular-nums text-white/30">
+                  {moment.editionsClaimed.toLocaleString()} / {moment.editionSize.toLocaleString()}
+                </span>
+              </div>
+              {/* Bar — team-color fill on dark track, broadcast stat bar style */}
+              <div
+                className="relative h-[6px] rounded-full overflow-hidden"
+                style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}
+              >
+                <div
+                  className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out"
+                  style={{
+                    width: `${Math.min(100, (moment.editionsClaimed / moment.editionSize) * 100)}%`,
+                    background: (moment.editionsClaimed / moment.editionSize) >= 0.8
+                      ? `linear-gradient(90deg, ${moment.teamColors.primary}, #F59E0B)`
+                      : `linear-gradient(90deg, ${moment.teamColors.primary}80, ${moment.teamColors.primary})`,
+                    boxShadow: (moment.editionsClaimed / moment.editionSize) >= 0.8
+                      ? `0 0 8px ${moment.teamColors.primary}40, 0 0 4px #F59E0B30`
+                      : `0 0 6px ${moment.teamColors.primary}30`,
+                  }}
+                />
+                {/* Tip marker — bright dot at the fill edge, like a broadcast stat highlight */}
+                <div
+                  className="absolute top-1/2 -translate-y-1/2 h-[10px] w-[10px] rounded-full border-2"
+                  style={{
+                    left: `calc(${Math.min(100, (moment.editionsClaimed / moment.editionSize) * 100)}% - 5px)`,
+                    borderColor: (moment.editionsClaimed / moment.editionSize) >= 0.8 ? '#F59E0B' : moment.teamColors.primary,
+                    backgroundColor: '#0B0E14',
+                    boxShadow: `0 0 6px ${(moment.editionsClaimed / moment.editionSize) >= 0.8 ? '#F59E0B' : moment.teamColors.primary}50`,
+                  }}
+                />
+              </div>
+              {/* Labels — left (claimed %) and right (remaining) */}
+              <div className="flex items-center justify-between mt-1.5">
+                <span
+                  className="text-[8px] font-bold tabular-nums"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: `${moment.teamColors.primary}60`,
+                  }}
+                >
+                  {Math.round((moment.editionsClaimed / moment.editionSize) * 100)}% CLAIMED
+                </span>
+                <span className="text-[8px] font-mono tabular-nums text-white/15">
+                  {(moment.editionSize - moment.editionsClaimed).toLocaleString()} remaining
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* CTA button */}
           <div className={`${!countdown.isEnded && !isPurchasing ? '' : 'mt-8'} flex flex-col items-center`}>
             <button

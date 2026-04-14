@@ -1247,3 +1247,11 @@
 - Opponent color map is a simple addition that completes the visual pairing. Only 3 opponents needed for current mock data.
 - The broadcast HUD is now feature-complete: score bug, network bug, ticker, SMPTE timecode, REC, ISO CAM, lower-thirds, replay tag, telestrator, urgency chyron, breaking crawl. Further broadcast improvements should focus on refining existing elements, not adding new overlay types.
 - Next cycle: Arena (rotation).
+
+## Cycle 147 Learnings
+- Milestone celebrations at every 25th edition provide a steady heartbeat of social proof without overwhelming the page.
+- Tiered presentation (small/medium/large) lets frequent milestones stay subtle while round-number milestones feel like events.
+- Spring bounce keyframe (overshoot → settle) gives the banner physical weight — it "lands" on screen rather than fading in.
+- Starting claimed values matter for milestone timing: SGA (1744) hits first small milestone quickly, Bam (3847) hits 3850 almost immediately. Always consider starting conditions when designing threshold-based features.
+- z-54 for milestones sits above fast break (z-53) — milestone celebrations should overlay velocity banners since they're rarer and more significant.
+- Next cycle: Supreme (rotation).

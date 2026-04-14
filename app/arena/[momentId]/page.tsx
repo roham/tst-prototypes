@@ -1584,16 +1584,31 @@ export default function ArenaPage({
               {moment.playType}
             </span>
           </div>
-          <h1
-            className="mt-2 text-4xl uppercase leading-[0.9] tracking-tight text-white sm:text-5xl"
-            style={{
-              fontFamily: 'var(--font-oswald), sans-serif',
-              fontWeight: 700,
-              textShadow: '0 2px 20px rgba(0,0,0,0.5)',
-            }}
-          >
-            {moment.player}
-          </h1>
+          {/* Player name — jumbotron LED scoreboard glow */}
+          <div className="relative mt-2 inline-block">
+            <h1
+              className="text-4xl uppercase leading-[0.9] tracking-tight text-white sm:text-5xl"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                fontWeight: 700,
+                textShadow: countdown.isEnded
+                  ? '0 2px 20px rgba(0,0,0,0.5)'
+                  : `0 0 8px ${moment.teamColors.primary}90, 0 0 24px ${moment.teamColors.primary}50, 0 0 48px ${moment.teamColors.primary}25, 0 2px 20px rgba(0,0,0,0.5)`,
+              }}
+            >
+              {moment.player}
+            </h1>
+            {/* LED board refresh scan line — single bright line sweeping through */}
+            {!countdown.isEnded && (
+              <div
+                className="pointer-events-none absolute left-0 right-0 h-[2px] z-[1] arena-led-scan"
+                style={{
+                  background: `linear-gradient(90deg, transparent 0%, ${moment.teamColors.primary}60 30%, white 50%, ${moment.teamColors.primary}60 70%, transparent 100%)`,
+                  boxShadow: `0 0 8px ${moment.teamColors.primary}40, 0 0 16px ${moment.teamColors.primary}20`,
+                }}
+              />
+            )}
+          </div>
           {/* Jumbotron stat counter — numbers roll up on page load */}
           <div className="mt-1.5">
             <JumbotronStatLine statLine={moment.statLine} teamColor={moment.teamColors.primary} />

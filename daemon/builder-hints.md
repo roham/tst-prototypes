@@ -1579,3 +1579,11 @@
 - Timing matters: 1.2s initial delay lets the gate scan animation complete first, 1.6s between lines gives the "dramatic pause" a real PA announcer uses, and 1.8s hold on the player name before fade lets it register.
 - The spotlight cone intensifying (0.4 → 1.0 opacity) when the player name appears mimics the real arena experience where the spot operator narrows the beam on the announced player.
 - Next cycle: Supreme (rotation).
+
+## Cycle 196 Learnings
+- Keying SVG to `countdown.totalSeconds` guarantees the animation re-triggers on every second change — without the key, React would reuse the same DOM element and the animation wouldn't replay.
+- Transform-origin placement matters for natural motion: the gavel head pivot point (10px, 3px) makes the strike rotate from the handle-to-head joint, not the SVG center.
+- 18° rotation is the sweet spot for a gavel strike — too little (5°) is invisible, too much (30°) looks cartoonish. Supreme demands restraint.
+- At 30% opacity and 14px size, the gavel is subliminal — you notice the tapping rhythm before you consciously identify the icon. That's the right balance for Supreme's minimal philosophy.
+- The gavel tap (visual), timer tick heartbeat (scale pulse), and timer text glow (textShadow) all fire on the same second-change event but with different timing, creating a layered per-second urgency beat.
+- Next cycle: Broadcast (rotation).

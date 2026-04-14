@@ -1065,3 +1065,11 @@
 - Season averages need to be realistic — checked against actual 2024-25 NBA stats. Bam ~21.5ppg, Jokic ~26.4ppg, SGA ~31.2ppg. Fake-looking numbers would undermine broadcast credibility.
 - Staggered bar fill animations (0.15s offset per row) create a "data loading in" broadcast graphic feel without being slow.
 - Next cycle: Arena (rotation).
+
+## Cycle 122 Learnings
+- 20 segments at flex-1 with 2px gaps creates a clean decibel gauge look without needing SVG or complex gradients.
+- Color ramp (green→yellow→orange→red) is universally understood for intensity meters — no legend needed.
+- Pulse animation on the hottest segments (≥16) adds live energy without being distracting at lower levels.
+- Placing between heat map and stats bar creates a natural information hierarchy: geographic distribution → energy level → hard numbers.
+- The meter hidden on drop end keeps the ENDED state clean — no stale data.
+- Next cycle: Supreme (rotation).

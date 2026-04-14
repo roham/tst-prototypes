@@ -1107,3 +1107,18 @@
 - Supreme now has a complete auction house lifecycle narrative with every traditional element mapped: LOT→PADDLE→ESTIMATE→RESERVE→GAVEL→PADDLE RAISE→HAMMER→SOLD. When identifying future improvements, look for real-world auction details that don't yet have digital equivalents.
 - Purchase flow has 3 visual feedback beats: paddle raise (instant, your action), progress ring (processing, system action), gavel strike (confirmation, dramatic conclusion). Good purchase UX should always have visual beats at key transitions.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 127 Learnings
+- SOLD TO lower-third on purchase confirmation bridges Broadcast's auction-house and live-TV identities — the auctioneer's hammer falls AND the broadcast director cuts to the announcement.
+- Sliding in from left is consistent with Broadcast's existing lower-third animation direction (name reveal, location tag, special report). Visual language consistency matters.
+- Next cycle: Arena (rotation).
+
+## Cycle 128 Learnings
+- CO2 fog layers at z-5 sit below lasers (z-8) and spotlight sweep (z-7) — the light cuts through the haze naturally, like real arena lighting.
+- Three layers with different speeds (11s, 14s, 18s) prevent a repeating visual loop — the fog looks organic rather than mechanical.
+- 20px blur is essential — without it, the radial gradients look like colored blobs, not atmospheric haze. Blur transforms digital gradients into believable fog.
+- Extending layers 15% beyond viewport edges (left/right: -15%) prevents hard cutoff lines at the edges — fog should feel boundless.
+- Mixed team-color + white in the radial gradient creates realistic CO2 fog (white/gray) with arena lighting coloring (team-color wash). Pure team-color would look like colored gas, not fog.
+- Opacity range (0.04-0.06) is subtle enough to be atmospheric without obscuring the hero content. Fog should be felt, not seen.
+- Arena hero now has 6 atmospheric layers: bg pulse, fog haze (z-5), crowd wave (z-6), spotlight sweep (z-7), laser beams (z-8), LED scan line. Each at a different z-index, speed, and axis — they don't compete, they compound.
+- Next cycle: Supreme (rotation).

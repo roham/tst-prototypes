@@ -668,6 +668,19 @@ export default function SupremePage() {
     return () => clearTimeout(t);
   }, []);
 
+  // Critical timer heartbeat — subtle per-second pulse on timer digits
+  const [timerTick, setTimerTick] = useState(false);
+  const prevSecondsRef = useRef(countdown.totalSeconds);
+  useEffect(() => {
+    if (dropPhase === 'CRITICAL' && countdown.totalSeconds > 0 && countdown.totalSeconds !== prevSecondsRef.current) {
+      setTimerTick(true);
+      const t = setTimeout(() => setTimerTick(false), 180);
+      prevSecondsRef.current = countdown.totalSeconds;
+      return () => clearTimeout(t);
+    }
+    prevSecondsRef.current = countdown.totalSeconds;
+  }, [countdown.totalSeconds, dropPhase]);
+
   // Tier switch breathe — brief content shift acknowledges tier change
   const [tierBreathe, setTierBreathe] = useState(false);
   const prevTierIdx = useRef(selectedTierIdx);
@@ -1093,7 +1106,18 @@ export default function SupremePage() {
                 dropPhase === 'CRITICAL' ? 'text-[32px]' :
                 'text-[28px]'
               }`}
-              style={{ color: timerColor(dropPhase) }}
+              style={{
+                color: timerColor(dropPhase),
+                ...(dropPhase === 'CRITICAL' && !isEnded ? {
+                  transform: timerTick ? 'scale(1.03)' : 'scale(1)',
+                  textShadow: timerTick
+                    ? '0 0 8px rgba(239,68,68,0.6), 0 0 20px rgba(239,68,68,0.3)'
+                    : '0 0 4px rgba(239,68,68,0.2)',
+                  transition: timerTick
+                    ? 'transform 60ms cubic-bezier(0.16, 1, 0.3, 1), text-shadow 60ms ease-out, font-size 0.5s, color 0.5s'
+                    : 'transform 120ms ease-out, text-shadow 200ms ease-out, font-size 0.5s, color 0.5s',
+                } : {}),
+              }}
             >
               {isEnded ? (
                 <span className="font-semibold">Ended</span>

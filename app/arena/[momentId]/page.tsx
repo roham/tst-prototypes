@@ -240,10 +240,25 @@ function CelebrationScreen({
         ]}
       />
 
+      {/* Team-color ambient glow */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: `radial-gradient(ellipse 60% 40% at 50% 50%, ${moment.teamColors.primary}20 0%, transparent 60%)`,
+        }}
+      />
+
       <div className="relative z-50 flex flex-col items-center px-6">
         {/* YOU'RE IN */}
         <div style={{ animation: 'bounceIn 0.6s ease-out' }}>
-          <h1 className="text-5xl font-black tracking-tight text-white sm:text-7xl">
+          <h1
+            className="text-6xl uppercase tracking-tight text-white sm:text-8xl"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              fontWeight: 700,
+              textShadow: '0 0 40px rgba(0,229,160,0.3)',
+            }}
+          >
             YOU&apos;RE IN!
           </h1>
         </div>
@@ -461,20 +476,32 @@ export default function ArenaPage({
         {/* Dark overlay for legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/40 to-transparent" />
 
-        {/* Player info */}
+        {/* Player info — jumbotron style */}
         <div className="relative z-10 px-4 pb-4">
           <div className="flex items-center gap-2">
-            <span className="rounded bg-white/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/60">
+            <span className="rounded bg-white/10 backdrop-blur-sm px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/60">
               {moment.team} vs {moment.opponent}
             </span>
-            <span className="rounded bg-white/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/60">
+            <span className="rounded bg-white/10 backdrop-blur-sm px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/60">
               {moment.playType}
             </span>
           </div>
-          <h1 className="mt-2 text-3xl font-black uppercase leading-none tracking-tight text-white sm:text-5xl">
+          <h1
+            className="mt-2 text-4xl uppercase leading-[0.9] tracking-tight text-white sm:text-5xl"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              fontWeight: 700,
+              textShadow: '0 2px 20px rgba(0,0,0,0.5)',
+            }}
+          >
             {moment.player}
           </h1>
-          <p className="mt-1 text-sm font-semibold text-white/60">{moment.statLine}</p>
+          <p
+            className="mt-1.5 text-base font-medium text-white/70"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
+          >
+            {moment.statLine}
+          </p>
         </div>
       </section>
 
@@ -515,9 +542,9 @@ export default function ArenaPage({
               SECURING YOUR MOMENT...
             </span>
           ) : isCritical ? (
-            `LAST CHANCE \u2014 $${moment.price}`
+            `LAST CHANCE — $${moment.price}`
           ) : (
-            `GET YOURS \u2014 $${moment.price}`
+            `OWN THIS MOMENT — $${moment.price}`
           )}
         </button>
 
@@ -538,29 +565,7 @@ export default function ArenaPage({
       {/* Bottom safe area */}
       <div className="h-8" />
 
-      {/* ─── Inline keyframes ─── */}
-      <style jsx global>{`
-        @keyframes fadeSlideIn {
-          from { opacity: 0; transform: translateX(20px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes bounceIn {
-          0% { opacity: 0; transform: scale(0.5); }
-          60% { opacity: 1; transform: scale(1.05); }
-          100% { transform: scale(1); }
-        }
-        @keyframes buttonShake {
-          0%, 100% { transform: translateX(0); }
-          20% { transform: translateX(-3px); }
-          40% { transform: translateX(3px); }
-          60% { transform: translateX(-2px); }
-          80% { transform: translateX(2px); }
-        }
-        @keyframes bgPulse {
-          0%, 100% { opacity: 0.07; }
-          50% { opacity: 0.12; }
-        }
-      `}</style>
+      {/* Keyframes in globals.css: fadeSlideIn, bounceIn, buttonShake, bgPulse */}
     </div>
   );
 }

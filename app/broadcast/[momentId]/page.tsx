@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { getMoment, SALE_DURATION_MS } from '@/lib/mock-data';
 import type { Moment, RarityTier } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
@@ -134,6 +134,8 @@ export default function BroadcastPage() {
 
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=authenticating, 2=acquired
+  const [showStickyBar, setShowStickyBar] = useState(false);
+  const ctaRef = useRef<HTMLButtonElement>(null);
 
   const countdown = useCountdown(SALE_DURATION_MS[params.momentId as string] ?? 12 * 60 * 1000);
   const proto = usePrototypeState(momentId);
@@ -148,6 +150,18 @@ export default function BroadcastPage() {
     const t2 = setTimeout(() => setPurchaseStage(2), 1150);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [proto.state]);
+
+  // Sticky bottom bar: show when main CTA scrolls out of viewport
+  useEffect(() => {
+    const el = ctaRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowStickyBar(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   if (!moment) {
     return (
@@ -324,6 +338,17 @@ export default function BroadcastPage() {
             </p>
           </div>
 
+          {/* Scroll indicator — subtle animated chevron */}
+          {!countdown.isEnded && (
+            <div className="absolute bottom-14 left-0 right-0 z-20 flex justify-center">
+              <div className="animate-bounce opacity-30">
+                <svg width="20" height="10" viewBox="0 0 20 10" fill="none">
+                  <path d="M2 2L10 8L18 2" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+            </div>
+          )}
+
           {/* Hero countdown progress bar — thin line at very bottom */}
           {!countdown.isEnded && (
             <div className="absolute bottom-0 left-0 right-0 z-30 h-[2px] bg-white/[0.06]">
@@ -465,6 +490,7 @@ export default function BroadcastPage() {
           {/* CTA button */}
           <div className="mt-8 flex flex-col items-center">
             <button
+              ref={ctaRef}
               onClick={proto.purchase}
               disabled={isPurchasing || countdown.isEnded}
               className={`group relative w-full max-w-md overflow-hidden rounded-lg border px-8 py-4 text-center text-base font-semibold tracking-wide transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed sm:text-lg ${
@@ -588,6 +614,52 @@ export default function BroadcastPage() {
           </div>
         </section>
       </div>
+
+      {/* ━━━ STICKY BOTTOM CTA BAR — appears when main CTA scrolls out ━━━ */}
+      {!countdown.isEnded && !isPurchasing && (
+        <div
+          className="fixed bottom-0 left-0 right-0 z-50 transition-all duration-300"
+          style={{
+            transform: showStickyBar ? 'translateY(0)' : 'translateY(100%)',
+            opacity: showStickyBar ? 1 : 0,
+          }}
+        >
+          <div
+            className="border-t px-5 py-3 backdrop-blur-xl flex items-center justify-between gap-4"
+            style={{
+              borderColor: `rgba(${rgb},0.15)`,
+              backgroundColor: 'rgba(11,14,20,0.92)',
+            }}
+          >
+            <div className="flex flex-col min-w-0">
+              <span
+                className="text-sm font-bold uppercase tracking-tight truncate"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                {moment.player}
+              </span>
+              <span className="text-[10px] text-white/30 tracking-wide">
+                {selectedTier.tier} Edition · ${selectedTier.price}
+              </span>
+            </div>
+            <button
+              onClick={proto.purchase}
+              className={`shrink-0 rounded-lg border px-6 py-2.5 text-sm font-semibold tracking-wide transition-all active:scale-[0.97] ${
+                dropPhase === 'CRITICAL' ? 'animate-urgency-fast' : ''
+              }`}
+              style={{
+                borderColor: dropPhase === 'CRITICAL' ? '#EF4444' : moment.teamColors.primary,
+                backgroundColor: dropPhase === 'CRITICAL' ? 'rgba(239,68,68,0.12)' : `rgba(${rgb},0.08)`,
+                color: dropPhase === 'CRITICAL' ? '#EF4444' : 'white',
+              }}
+            >
+              {dropPhase === 'CRITICAL' ? 'Collect Now' : 'Own This Moment'}
+            </button>
+          </div>
+          {/* Safe area spacer for notch phones */}
+          <div className="h-[env(safe-area-inset-bottom,0px)]" style={{ backgroundColor: 'rgba(11,14,20,0.92)' }} />
+        </div>
+      )}
     </div>
   );
 }

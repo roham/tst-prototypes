@@ -201,3 +201,15 @@
 | Arena | 9.0 | 9.0 | 9.0 | 9.0 | 9.0 | **9.00** |
 
 **REFINEMENT round 7 complete.** The conversion pattern (lock + card + checkmark) is now deployed across all 3 directions, each with identity-correct styling. Supreme and Arena both at perfect 9.00. Broadcast at 8.90 — Emotion (8.5) is the single remaining sub-9.0 dimension. Next cycle targets Broadcast Emotion.
+
+| 40 | broadcast | 9.0 | 9.0 | 9.0 | 9.0 | 9.0 | 9.00 | +0.10 | Emotion lift: Ken Burns hero drift, dramatic pull quote, editorial thesis |
+
+### Full Scorecard — After Cycle 40 (all directions at 9.00 — PERFECTION)
+
+| Direction | Visual | Conversion | Emotion | Interaction | Purity | Weighted |
+|-----------|--------|------------|---------|-------------|--------|----------|
+| Supreme | 9.0 | 9.0 | 9.0 | 9.0 | 9.0 | **9.00** |
+| Broadcast | 9.0 | 9.0 | 9.0 | 9.0 | 9.0 | **9.00** |
+| Arena | 9.0 | 9.0 | 9.0 | 9.0 | 9.0 | **9.00** |
+
+**ALL THREE DIRECTIONS AT 9.00.** Every dimension at 9.0 across all 3 directions. The Broadcast emotion gap (8.5) was closed with cinematic Ken Burns drift, a dramatic oversized pull quote treatment, and an editorial thesis closing line. Per the loop rules: if 3 consecutive cycles produce < 0.15 delta on any direction, try something completely unexpected. All directions are now at the ceiling — next cycles should push beyond 9.0 with bold, unexpected experiments.

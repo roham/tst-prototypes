@@ -343,3 +343,22 @@
 - Arena and Supreme both at perfect 9.00. Broadcast at 8.90 — Emotion (8.5) is the sole remaining weakness.
 - EXCEPTION RULE: Broadcast is 0.10 below the others — not >1.5, so no exception. But since rotation says Supreme next and Supreme is already at 9.0, the highest-value next cycle is Broadcast Emotion.
 - Next cycle: Should be Supreme by rotation, but Supreme is at 9.0 across all dimensions. Consider targeting Broadcast Emotion (8.5) instead — the only sub-9.0 dimension across ALL directions.
+
+## Cycle 40 Learnings
+- Oversized decorative quotation mark (4rem, team-color at 20% opacity) transforms a plain blockquote into an ESPN-style editorial pull quote. The visual weight of the mark signals "this matters" before the reader processes the text.
+- Ken Burns drift (scale + translate over 25s) on the hero action image creates subtle cinematic tension — the page feels alive, like a broadcast camera slowly panning. Different timing from Supreme's Ken Burns (20s pure zoom) — Broadcast uses a slower translate+scale combo for editorial pacing.
+- Editorial closing thesis ("This is the moment. Own it before it's history.") bridges the emotional narrative section to the transactional section below. It reframes the purchase as an act of ownership, not a transaction. Georgia italic at text-sm/white-25 — barely there but felt.
+- Pull quote border-l increased from 2px to 3px with stronger team-color opacity (60→70%) — the thicker accent makes the quote feel more authoritative, like a magazine sidebar.
+- All 3 directions now at perfect 9.00. The remaining frontier is pushing BEYOND 9.0 — which requires unexpected, bold experiments rather than incremental polish.
+- At this score level, the next improvements should be experiential: micro-interactions that surprise, animations that delight, or page states that create genuine emotional responses. The foundation is solid — now it's about magic moments.
+
+## Strategic Notes — Post 9.0 Frontier
+- All 3 directions at 9.00. Every dimension at 9.0. This is the ceiling of the current scoring model.
+- To push beyond: try something completely unexpected for each direction. Break the mold.
+- Ideas for 9.0+ experiments:
+  - Supreme: Full-screen video preview on hover/tap (the moment plays before you buy)
+  - Broadcast: Animated ESPN-style stat counter (numbers roll up on scroll)
+  - Arena: Sound toggle for ambient crowd noise (visual indicator, actual audio)
+  - All: Skeleton loading state that teases the content before reveal
+  - All: Share preview cards (OG meta tags) for when users share their W screen
+- The loop continues. "There is no done. There is only more polished."

@@ -108,3 +108,4 @@
 **REFINEMENT round 1 complete.** All 3 got conversion lift. Broadcast leads (8.00) but Arena nearly caught up (7.98). Supreme weakest (7.78) — Interaction (7.5) and Visual (8.0) are the drag. Weakest dimension: Broadcast Interaction (7.0). Next round should target weakest overall dims.
 
 | 22 | supreme | 8.0 | 7.5 | 7.5 | 8.0 | 9.0 | 7.93 | +0.15 | Interaction lift: deterministic progress ring, 3-stage purchase copy, glow intensification |
+| 23 | broadcast | 8.5 | 7.5 | 8.0 | 7.5 | 9.0 | 8.08 | +0.08 | Interaction lift: editorial 3-stage purchase, lower-third wipe, Georgia italic copy |

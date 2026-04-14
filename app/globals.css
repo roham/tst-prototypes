@@ -288,3 +288,10 @@ body {
 .arena-tier-urgent {
   animation: arena-tier-pulse 1.2s ease-in-out infinite;
 }
+
+@keyframes arena-reaction-float {
+  0% { transform: translateY(0) scale(0.5); opacity: 0; }
+  15% { transform: translateY(-20px) scale(1.1); opacity: 1; }
+  30% { transform: translateY(-50px) scale(1); opacity: 0.9; }
+  100% { transform: translateY(-180px) scale(0.7); opacity: 0; }
+}

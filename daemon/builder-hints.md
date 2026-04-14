@@ -190,3 +190,13 @@
 - Small delta (+0.15) because Supreme's purchase flow was already decent — these are refinements, not structural.
 - Purity jumped to 9.0 — the deterministic ring + "Yours." are deeply on-brand for Supreme's confident minimalism.
 - Next: Broadcast (cycle 23). Interaction (7.0) is the weakest dimension across ALL directions. The purchase flow needs work — it should feel cinematic/editorial, not generic.
+
+## Cycle 23 Learnings
+- Georgia italic for purchase stage copy ("Reserving your edition...") adds editorial gravitas — consistent with Broadcast's magazine/prestige identity.
+- Lower-third progress wipe (team-color fill left-to-right inside button, with a leading edge border) is a broadcast-native pattern. Feels like a scorebar filling.
+- "Authenticating ownership..." is prestige language (Sotheby's, Christie's) vs generic "Processing..." — small copy change, big identity lift.
+- Purity jumped to 9.0 — all 3 directions now have purchase flows that feel true to their identity.
+- Small delta (+0.08) — Interaction improved from 7.0→7.5 but Broadcast still has the weakest Interaction across all 3.
+- Broadcast Interaction needs more work: the W screen transitions could be tighter, and the browsing flow scroll experience could be smoother.
+- All 3 directions now have multi-stage purchase flows. The standardized pattern works differently in each: Supreme (deterministic ring + "Yours."), Broadcast (lower-third wipe + "Acquired."), Arena (progress bar + "SECURED!").
+- Next cycle: Arena (rotation). Then Supreme. Broadcast Interaction still needs attention in cycle 26.

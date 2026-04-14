@@ -140,6 +140,45 @@ function VelocitySparkline({ history }: { history: number[] }) {
   );
 }
 
+/* ─── Crowd Reactions (floating emoji burst on purchases) ──────── */
+
+const REACTION_EMOJIS = ['🔥', '💯', '🏀', '⚡', '🎯', '👀', '🙌', '💪'];
+
+function CrowdReactions({ events }: { events: PurchaseEvent[] }) {
+  const [reactions, setReactions] = useState<{ id: string; emoji: string; left: number; delay: number }[]>([]);
+
+  useEffect(() => {
+    if (events.length === 0) return;
+    // Spawn 4-8 reactions per purchase event
+    const count = 4 + Math.floor(Math.random() * 5);
+    const batch = Array.from({ length: count }, (_, i) => ({
+      id: `${events[events.length - 1].id}-r${i}`,
+      emoji: REACTION_EMOJIS[Math.floor(Math.random() * REACTION_EMOJIS.length)],
+      left: 10 + Math.random() * 80,
+      delay: Math.random() * 0.4,
+    }));
+    setReactions((prev) => [...prev.slice(-24), ...batch]);
+  }, [events.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[25] overflow-hidden">
+      {reactions.map((r) => (
+        <span
+          key={r.id}
+          className="absolute bottom-16 text-xl"
+          style={{
+            left: `${r.left}%`,
+            animation: `arena-reaction-float 1.8s ease-out ${r.delay}s forwards`,
+            opacity: 0,
+          }}
+        >
+          {r.emoji}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 /* ─── Panic Banner ─────────────────────────────────────────────── */
 
 function PanicBanner({ claimed, total, isCritical, isClosing }: {
@@ -706,6 +745,9 @@ export default function ArenaPage({
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0B0E14]">
+      {/* ─── Crowd Reactions — floating emoji burst on purchases ─── */}
+      {!countdown.isEnded && <CrowdReactions events={feedEvents} />}
+
       {/* ─── Animated background gradient pulse ─── */}
       <div
         className="pointer-events-none fixed inset-0 transition-opacity duration-1000"
@@ -799,7 +841,18 @@ export default function ArenaPage({
 
         {/* Player info — jumbotron style */}
         <div className="relative z-10 px-4 pb-4">
-          <div className="flex items-center gap-2">
+          {/* Trending badge — frames moment as historic */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <span
+              className="flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider"
+              style={{
+                backgroundColor: `${moment.teamColors.primary}25`,
+                color: moment.teamColors.primary,
+                border: `1px solid ${moment.teamColors.primary}35`,
+              }}
+            >
+              <span className="text-xs">🔥</span> Moment of the Night
+            </span>
             <span className="rounded bg-white/10 backdrop-blur-sm px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/60">
               {moment.team} vs {moment.opponent}
             </span>
@@ -823,9 +876,13 @@ export default function ArenaPage({
           >
             {moment.statLine}
           </p>
-          {/* Context line for emotional weight */}
-          <p className="mt-1 text-xs text-white/30 tracking-wide">
+          {/* Context line — enhanced emotional weight */}
+          <p className="mt-2 text-sm leading-relaxed text-white/50 tracking-wide">
             {moment.context}
+          </p>
+          <p className="mt-1.5 flex items-center gap-1.5 text-[11px] text-white/35">
+            <span className="inline-block h-1 w-1 rounded-full bg-[#00E5A0] animate-pulse" />
+            Trending #1 on Top Shot This
           </p>
         </div>
       </section>

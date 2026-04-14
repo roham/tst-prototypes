@@ -3522,6 +3522,103 @@ export default function BroadcastPage() {
             </div>
           )}
 
+          {/* ── MARKET SNAPSHOT — ESPN-style value comparison graphic ── */}
+          {/* Every ESPN broadcast shows comparative stat panels: "Player A    */}
+          {/* vs Player B" with side-by-side numbers. This applies the same    */}
+          {/* format to price vs. estimated secondary value — the most direct  */}
+          {/* conversion tool possible. The buyer sees "$5 → $16-40 est."     */}
+          {/* presented as broadcast data, creating instant value perception.  */}
+          {!countdown.isEnded && !isPurchasing && (
+            <div className="mt-6 mb-6 max-w-md mx-auto w-full">
+              <div
+                className="relative overflow-hidden rounded-sm"
+                style={{
+                  backgroundColor: 'rgba(20,25,37,0.5)',
+                  border: `1px solid rgba(${rgb},0.08)`,
+                }}
+              >
+                {/* Team-color top accent */}
+                <div
+                  className="h-[2px] w-full"
+                  style={{ background: `linear-gradient(to right, ${moment.teamColors.primary}60, ${moment.teamColors.primary}15)` }}
+                />
+                <div className="px-4 py-3">
+                  {/* Header */}
+                  <div className="flex items-center gap-2 mb-3">
+                    {/* Chart icon */}
+                    <svg className="h-3 w-3 shrink-0" viewBox="0 0 12 12" fill="none" style={{ color: moment.teamColors.primary, opacity: 0.5 }}>
+                      <polyline points="1,9 4,5 7,7 11,2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                      <line x1="1" y1="11" x2="11" y2="11" stroke="currentColor" strokeWidth="0.6" opacity="0.4" />
+                    </svg>
+                    <span
+                      className="text-[8px] font-bold uppercase tracking-[0.3em]"
+                      style={{ color: moment.teamColors.primary, opacity: 0.7, fontFamily: 'var(--font-oswald), sans-serif' }}
+                    >
+                      Market Snapshot
+                    </span>
+                    <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/15 ml-auto">
+                      {selectedTier.tier} Tier
+                    </span>
+                  </div>
+                  {/* Split comparison — buy price vs secondary est. */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Left: Buy Price */}
+                    <div className="text-center">
+                      <span className="block text-[7px] font-mono uppercase tracking-[0.25em] text-white/20 mb-1">
+                        Buy Price
+                      </span>
+                      <span
+                        className="block text-[22px] font-bold tabular-nums leading-none"
+                        style={{ color: '#00E5A0', fontFamily: 'var(--font-oswald), sans-serif' }}
+                      >
+                        ${selectedTier.price}
+                      </span>
+                      <span className="block text-[7px] font-mono text-white/15 mt-1">
+                        Primary Sale
+                      </span>
+                    </div>
+                    {/* Divider */}
+                    <div className="relative text-center">
+                      {/* Vertical line between columns */}
+                      <div
+                        className="absolute left-0 top-1 bottom-1 w-[1px]"
+                        style={{ backgroundColor: `rgba(${rgb},0.1)` }}
+                      />
+                      <span className="block text-[7px] font-mono uppercase tracking-[0.25em] text-white/20 mb-1">
+                        Est. Secondary
+                      </span>
+                      <span
+                        className="block text-[22px] font-bold tabular-nums leading-none text-white/70"
+                        style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                      >
+                        ${Math.round(selectedTier.price * 3.2)}
+                        <span className="text-[14px] text-white/30">+</span>
+                      </span>
+                      <span className="block text-[7px] font-mono text-white/15 mt-1">
+                        ${Math.round(selectedTier.price * 1.8)}–${Math.round(selectedTier.price * 8)} range
+                      </span>
+                    </div>
+                  </div>
+                  {/* ROI indicator — bottom bar */}
+                  <div
+                    className="mt-3 pt-2 flex items-center justify-center gap-2"
+                    style={{ borderTop: `1px solid rgba(${rgb},0.06)` }}
+                  >
+                    <svg className="h-2.5 w-2.5" viewBox="0 0 10 10" fill="none">
+                      <path d="M5 8 L5 2 M3 4 L5 2 L7 4" stroke="#00E5A0" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
+                    </svg>
+                    <span
+                      className="text-[8px] font-bold uppercase tracking-[0.2em]"
+                      style={{ color: '#00E5A080', fontFamily: 'var(--font-oswald), sans-serif' }}
+                    >
+                      {Math.round(((selectedTier.price * 3.2 - selectedTier.price) / selectedTier.price) * 100)}% est. upside
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* CTA button */}
           <div className={`${!countdown.isEnded && !isPurchasing ? '' : 'mt-8'} flex flex-col items-center`}>
             <button

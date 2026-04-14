@@ -1404,3 +1404,10 @@
 - The mic SVG icon is a small detail that immediately signals "interview" — broadcast viewers recognize the microphone graphic instantly.
 - No new CSS keyframes needed — the card uses static styling that fits the editorial pace. Not everything needs to animate; the content itself carries the weight.
 - Next cycle: Arena (rotation).
+
+## Cycle 168 Learnings
+- Arena seating section labels (UPPER DECK → FLOOR SEAT) add aspirational hierarchy that's native to the arena metaphor. The tier selection now feels like choosing your seat at the game.
+- Dynamic POPULAR badge that follows the highest bidder count creates live-commerce energy at the decision point. The ≥5 bidder threshold prevents the badge from flickering on/off.
+- Adding labels above the tier name (not below) maintains the visual hierarchy: section → tier name → price → remaining → bidders. Top-to-bottom information architecture.
+- The `Math.max(...bidderCounts)` + `indexOf` approach is simple but effective for finding the popular tier. No new state needed.
+- Next cycle: Supreme (rotation).

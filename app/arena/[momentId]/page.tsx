@@ -603,6 +603,112 @@ function ScoringRunBanner({ run, visible, teamColor }: { run: number; visible: b
   );
 }
 
+/* ─── Fast Break Banner — jumbotron velocity surge announcement ────── */
+// When purchase velocity spikes >= 17, a "FAST BREAK" jumbotron graphic
+// slides in from the right, holds briefly showing velocity + editions/min,
+// then exits left. Cooldown 20s. Every NBA broadcast shows a "FAST BREAK"
+// graphic when the pace accelerates — this is the purchase equivalent.
+
+function useVelocitySurge(velocity: number, isEnded: boolean) {
+  const [visible, setVisible] = useState(false);
+  const [peakVelocity, setPeakVelocity] = useState(0);
+  const lastShown = useRef(0);
+
+  useEffect(() => {
+    if (isEnded || velocity < 17) return;
+    const now = Date.now();
+    if (now - lastShown.current < 20_000) return;
+    lastShown.current = now;
+    setPeakVelocity(velocity);
+    setVisible(true);
+    const t = setTimeout(() => setVisible(false), 3200);
+    return () => clearTimeout(t);
+  }, [velocity, isEnded]);
+
+  return { visible, peakVelocity };
+}
+
+function FastBreakBanner({ visible, velocity, teamColor }: { visible: boolean; velocity: number; teamColor: string }) {
+  const [phase, setPhase] = useState<'in' | 'hold' | 'out' | 'done'>('done');
+
+  useEffect(() => {
+    if (visible) {
+      setPhase('in');
+      const t1 = setTimeout(() => setPhase('hold'), 500);
+      const t2 = setTimeout(() => setPhase('out'), 2400);
+      const t3 = setTimeout(() => setPhase('done'), 3200);
+      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    }
+    setPhase('done');
+  }, [visible]);
+
+  if (phase === 'done') return null;
+
+  return (
+    <div
+      className="fixed left-0 right-0 z-[53] pointer-events-none flex justify-center"
+      style={{ top: '28%' }}
+    >
+      <div
+        className="relative overflow-hidden rounded-lg px-6 py-3"
+        style={{
+          background: `linear-gradient(135deg, ${teamColor}dd, ${teamColor}99)`,
+          boxShadow: `0 0 40px ${teamColor}50, 0 0 80px ${teamColor}20, inset 0 1px 0 rgba(255,255,255,0.2)`,
+          animation: phase === 'in'
+            ? 'arena-fastbreak-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            : phase === 'out'
+              ? 'arena-fastbreak-out 0.6s cubic-bezier(0.7, 0, 0.84, 0) forwards'
+              : undefined,
+          border: '1px solid rgba(255,255,255,0.15)',
+        }}
+      >
+        {/* Light streak — sweeping highlight across the banner */}
+        <div
+          className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg"
+        >
+          <div
+            className="absolute top-0 bottom-0 w-[30%]"
+            style={{
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)',
+              animation: phase === 'hold' ? 'arena-fastbreak-streak 1.2s ease-in-out 0.2s' : undefined,
+            }}
+          />
+        </div>
+
+        <div className="relative flex items-center gap-3">
+          {/* Lightning bolt icon */}
+          <svg className="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="white">
+            <path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 01.12-.381z" />
+          </svg>
+
+          <div className="flex flex-col">
+            <span
+              className="text-sm font-bold uppercase tracking-[0.2em] text-white"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}
+            >
+              Fast Break
+            </span>
+            <span
+              className="text-[10px] font-mono tabular-nums text-white/70 tracking-wider"
+            >
+              {velocity} editions/min
+            </span>
+          </div>
+
+          {/* Pulsing dot */}
+          <span className="relative flex h-2 w-2 flex-shrink-0 ml-1">
+            <span
+              className="absolute inline-flex h-full w-full rounded-full bg-white"
+              style={{ animation: 'arena-fastbreak-pulse 0.8s ease-in-out infinite' }}
+            />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Jumbotron Noise Prompt — "MAKE SOME NOISE" crowd engagement ─── */
 // Triggers when velocity spikes >= 16, shows for 2.5s, cooldown 35s.
 // Every arena fan has seen the jumbotron tell the crowd to get louder.
@@ -1267,6 +1373,44 @@ function RarityCards({
 
 /* ─── Celebration (Confirmed) Screen ───────────────────────────── */
 
+/* ─── Crowd Decibel Meter — jumbotron noise level on W screen ── */
+// Arena jumbotrons display noise/decibel meters to hype the crowd.
+// This shows vertical EQ-style bars that spike on reveal, simulating
+// the crowd's reaction to the collection announcement.
+
+function DecibelMeter({ teamColor, show }: { teamColor: string; show: boolean }) {
+  const barCount = 16;
+  return (
+    <div
+      className="mt-4 flex items-end justify-center gap-[3px] h-8 transition-all duration-600 ease-out"
+      style={{
+        opacity: show ? 1 : 0,
+        transform: show ? 'translateY(0) scaleY(1)' : 'translateY(6px) scaleY(0.5)',
+      }}
+    >
+      {Array.from({ length: barCount }).map((_, i) => {
+        const center = barCount / 2;
+        const dist = Math.abs(i - center) / center;
+        const height = show ? (1 - dist * 0.6) * 100 : 8;
+        const isTeal = i >= Math.floor(center) - 2 && i <= Math.ceil(center) + 2;
+        return (
+          <div
+            key={i}
+            className="w-[4px] rounded-t-sm"
+            style={{
+              backgroundColor: isTeal ? '#00E5A0' : teamColor,
+              height: `${height}%`,
+              opacity: 0.3 + (1 - dist) * 0.4,
+              transition: `height 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.02}s, opacity 0.4s ease-out ${i * 0.02}s`,
+              animation: show ? `arena-roar-idle ${1.4 + (i % 5) * 0.15}s ease-in-out ${0.6 + i * 0.02}s infinite` : undefined,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
 /* ─── Arena PA Announcement — typewriter text reveal ─────────── */
 /* Every NBA arena has a PA announcer: "NOW ON THE COURT, NUMBER   */
 /* 22..." This hook types out text character-by-character like the */
@@ -1422,6 +1566,9 @@ function CelebrationScreen({
             />
           )}
         </p>
+
+        {/* Crowd Decibel Meter — arena jumbotron noise level visualization */}
+        <DecibelMeter teamColor={moment.teamColors.primary} show={showDetails} />
 
         {/* Jumbotron FAN CAM — edition card framed like arena big screen */}
         <div
@@ -2491,6 +2638,9 @@ export default function ArenaPage({
   /* ── Jumbotron noise prompt — "MAKE SOME NOISE" on velocity spike ── */
   const noisePromptVisible = useJumbotronNoise(liveVelocity, countdown.isEnded);
 
+  /* ── Fast break banner — velocity surge jumbotron announcement ── */
+  const { visible: fastBreakVisible, peakVelocity: fastBreakVelocity } = useVelocitySurge(liveVelocity, countdown.isEnded);
+
   /* ── Jumbotron instant replay entrance — fires once on mount ── */
   const [replayActive, setReplayActive] = useState(true);
   useEffect(() => {
@@ -2632,6 +2782,9 @@ export default function ArenaPage({
 
       {/* ─── Horn Shockwave — concentric rings on CRITICAL phase entry ─── */}
       <HornShockwave active={hornActive} teamColor={moment.teamColors.primary} />
+
+      {/* ─── Fast Break Banner — velocity surge jumbotron announcement ─── */}
+      <FastBreakBanner visible={fastBreakVisible} velocity={fastBreakVelocity} teamColor={moment.teamColors.primary} />
 
       {/* ─── Fixed Header Bar ─── */}
       <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between border-b border-white/[0.06] bg-[#0B0E14]/90 px-4 py-3 backdrop-blur-md">

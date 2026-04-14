@@ -190,3 +190,14 @@
 
 | 37 | supreme | 9.0 | 9.0 | 9.0 | 9.0 | 9.0 | 9.00 | +0.20 | Conversion lift: lock icon on CTA, checkmark draw on confirmation, stored card hint |
 | 38 | broadcast | 9.0 | 9.0 | 8.5 | 9.0 | 9.0 | 8.90 | +0.20 | Conversion+interaction: lock icon, checkmark draw on Acquired., card hint |
+| 39 | arena | 9.0 | 9.0 | 9.0 | 9.0 | 9.0 | 9.00 | +0.12 | Conversion: lock icon, checkmark draw on SECURED!, card hint |
+
+### Full Scorecard — After Cycle 39 (all directions touched — REFINEMENT round 7 complete)
+
+| Direction | Visual | Conversion | Emotion | Interaction | Purity | Weighted |
+|-----------|--------|------------|---------|-------------|--------|----------|
+| Supreme | 9.0 | 9.0 | 9.0 | 9.0 | 9.0 | **9.00** |
+| Broadcast | 9.0 | 9.0 | 8.5 | 9.0 | 9.0 | **8.90** |
+| Arena | 9.0 | 9.0 | 9.0 | 9.0 | 9.0 | **9.00** |
+
+**REFINEMENT round 7 complete.** The conversion pattern (lock + card + checkmark) is now deployed across all 3 directions, each with identity-correct styling. Supreme and Arena both at perfect 9.00. Broadcast at 8.90 — Emotion (8.5) is the single remaining sub-9.0 dimension. Next cycle targets Broadcast Emotion.

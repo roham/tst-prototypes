@@ -335,3 +335,11 @@
 - Broadcast Emotion (8.5) is now the single remaining sub-9.0 dimension. The narrative content is rich but could use a more dramatic pull quote or ambient treatment.
 - The conversion pattern (lock + card + checkmark) is now proven across 2 directions. Arena next.
 - Next cycle: Arena (rotation). Arena at 8.88 — Conversion (8.5) is the only sub-9.0 dimension. Apply the same pattern in live-commerce style.
+
+## Cycle 39 Learnings
+- Arena's checkmark uses the fastest, punchiest animation (0.25s with spring overshoot cubic-bezier(0.34, 1.56, 0.64, 1)) vs Broadcast's elegant 0.5s vs Supreme's clean 0.35s. Each timing matches the direction's energy level.
+- Arena's checkmark uses thicker stroke (2.5 vs 2 and 1.5) — bolder, louder, more jumbotron. Direction identity extends to stroke width.
+- The conversion pattern (lock + card + checkmark) is now fully deployed across all 3 directions. Each uses the same 3 elements but with identity-correct styling: Supreme (minimal/clean), Broadcast (editorial/elegant), Arena (punchy/loud).
+- Arena and Supreme both at perfect 9.00. Broadcast at 8.90 — Emotion (8.5) is the sole remaining weakness.
+- EXCEPTION RULE: Broadcast is 0.10 below the others — not >1.5, so no exception. But since rotation says Supreme next and Supreme is already at 9.0, the highest-value next cycle is Broadcast Emotion.
+- Next cycle: Should be Supreme by rotation, but Supreme is at 9.0 across all dimensions. Consider targeting Broadcast Emotion (8.5) instead — the only sub-9.0 dimension across ALL directions.

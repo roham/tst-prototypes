@@ -214,9 +214,9 @@ export default function BroadcastPage() {
       <div className="relative z-10">
         {/* ━━━ HERO — 50vh ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section className="relative h-[50dvh] min-h-[420px] overflow-hidden broadcast-grain">
-          {/* Action image — cinematic depth layer */}
+          {/* Action image — cinematic depth layer with Ken Burns drift */}
           <div
-            className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+            className="absolute inset-0 bg-cover bg-center transition-all duration-1000 broadcast-ken-burns"
             style={{
               backgroundImage: `url(${moment.actionImageUrl})`,
               backgroundSize: 'cover',
@@ -442,25 +442,35 @@ export default function BroadcastPage() {
           />
         </div>
 
-        {/* ━━━ EDITORIAL PULL QUOTE — emotional hook ━━━━━━━━━━━━━━━━━━━ */}
+        {/* ━━━ EDITORIAL PULL QUOTE — cinematic emotional hook ━━━━━━━━━ */}
         <section className="mx-auto max-w-2xl px-5 py-8 md:px-10 md:py-10">
           <blockquote
-            className="relative pl-5 border-l-2"
-            style={{ borderColor: `${moment.teamColors.primary}60` }}
+            className="relative pl-6 border-l-[3px]"
+            style={{ borderColor: `${moment.teamColors.primary}70` }}
           >
+            {/* Oversized decorative quotation mark — ESPN quote graphic energy */}
+            <span
+              className="absolute -left-1 -top-4 text-[4rem] leading-none font-bold pointer-events-none select-none"
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                color: `${moment.teamColors.primary}20`,
+              }}
+            >
+              &ldquo;
+            </span>
             <p
-              className="text-xl leading-[1.6] text-white/50 md:text-2xl md:leading-[1.55]"
+              className="relative text-2xl leading-[1.55] text-white/60 md:text-[1.75rem] md:leading-[1.5]"
               style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
             >
               {/* First sentence of historicalNote as a cinematic pull quote */}
               {moment.historicalNote.split('.')[0]}.
             </p>
-            <footer className="mt-3 flex items-center gap-2">
+            <footer className="mt-4 flex items-center gap-2.5">
               <div
-                className="h-[1px] w-4"
-                style={{ backgroundColor: `${moment.teamColors.primary}40` }}
+                className="h-[1px] w-6"
+                style={{ backgroundColor: `${moment.teamColors.primary}50` }}
               />
-              <span className="text-[10px] uppercase tracking-[0.2em] text-white/20">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-white/25">
                 {moment.context}
               </span>
             </footer>
@@ -496,6 +506,14 @@ export default function BroadcastPage() {
 
           {/* ESPN-style stat breakdown */}
           <StatBreakdown statLine={moment.statLine} teamColor={moment.teamColors.primary} />
+
+          {/* Emotional closing beat — editorial thesis */}
+          <p
+            className="mt-8 text-center text-sm tracking-wide text-white/25"
+            style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+          >
+            This is the moment. Own it before it&apos;s history.
+          </p>
         </section>
 
         {/* Team-color thin divider */}

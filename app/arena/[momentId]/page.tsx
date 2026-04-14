@@ -3933,6 +3933,51 @@ export default function ArenaPage({
               </span>
             </div>
           )}
+
+          {/* ── JUMBOTRON CLAIM BADGE — above-fold price + scroll-to-buy shortcut ── */}
+          {/* Research insight #5: Above the Fold Is Everything. The hero had no    */}
+          {/* price visible — users must scroll past feed/tiers to see cost.        */}
+          {/* This Whatnot-style flashing price badge surfaces the $5 entry         */}
+          {/* point and scrolls to the tier selector on tap. Arena energy: bold,    */}
+          {/* pulsing, live commerce urgency. Distinct from Broadcast's subtle      */}
+          {/* pill — Arena screams it.                                              */}
+          {!countdown.isEnded && proto.state === 'browsing' && (
+            <button
+              onClick={() => tierSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              className="mt-3 inline-flex items-center gap-2 rounded-lg px-4 py-2 cursor-pointer transition-all duration-300 active:scale-[0.96] group"
+              style={{
+                backgroundColor: 'rgba(0,229,160,0.12)',
+                border: '1px solid rgba(0,229,160,0.35)',
+                boxShadow: '0 0 16px rgba(0,229,160,0.15), 0 0 40px rgba(0,229,160,0.05)',
+                animation: isCritical
+                  ? 'arena-claim-badge-pulse 1s ease-in-out infinite'
+                  : isClosing
+                    ? 'arena-claim-badge-pulse 1.8s ease-in-out infinite'
+                    : 'none',
+              }}
+            >
+              <span
+                className="text-[11px] font-bold uppercase tracking-[0.15em]"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: isCritical ? '#EF4444' : isClosing ? '#F59E0B' : '#00E5A0',
+                }}
+              >
+                {isCritical ? 'LAST CHANCE' : isClosing ? 'GOING FAST' : 'CLAIM NOW'}
+              </span>
+              <span className="text-[14px] font-bold tabular-nums text-white"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                ${moment.rarityTiers[selectedTierIdx].price}
+              </span>
+              <svg
+                className="w-3 h-3 text-white/30 group-hover:text-white/60 transition-all group-hover:translate-y-0.5"
+                viewBox="0 0 12 12" fill="none"
+              >
+                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          )}
         </div>
       </section>
 

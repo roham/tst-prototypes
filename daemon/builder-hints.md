@@ -1548,3 +1548,11 @@
 - Per-moment curated rankings with realistic other players (Edwards, Brunson, Wembanyama, etc.) add authenticity. Generic placeholder plays would feel hollow. Each rival play should be a plausible real highlight.
 - Placement after Fan Verdict creates a trust escalation: "91% of fans agree" (democratic validation) → "#1 Play of the Night" (institutional validation) → emotional closing → buy. The user encounters increasing levels of authority endorsing the moment.
 - Next cycle: Arena (rotation).
+
+## Cycle 192 Learnings
+- Arena haptics should be aggressive and rhythmic (50-90ms hits, multi-entry patterns) to match the visceral energy of the direction. The defenseStomp pattern ([30,60,30,60,30]) literally mirrors the "DE-FENSE" chant cadence — physical rhythm matching semantic meaning.
+- The celebration pattern as a 9-entry crescendo ([25,15,35,15,50,20,70,20,90]) creates a palpable "building roar" sensation on mobile — each subsequent buzz is longer, simulating crowd energy peaking.
+- Wiring feedPulse (8ms) into every simulated purchase creates persistent ambient tactile noise — the user's phone gently buzzes every 2-5s, creating the sensation of being in a busy, alive environment. This is the Arena equivalent of ambient crowd noise.
+- Each direction now approaches haptics according to its philosophy: Supreme = institutional taps (6-15ms), Arena = crowd stomps and bass hits (50-90ms). Broadcast probably shouldn't get haptics — broadcasts are watched, not felt.
+- The countdownTick distinction (15ms normal, [25,10,25] double-tap for ≤3s) creates tactile urgency escalation that pairs with the visual crowd countdown numbers growing larger.
+- Next cycle: Supreme (rotation).

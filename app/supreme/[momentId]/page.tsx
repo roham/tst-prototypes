@@ -1198,7 +1198,27 @@ export default function SupremePage() {
             border: '1px solid rgba(255,255,255,0.04)',
             boxShadow: isEnded ? 'none' : `inset 0 0 20px rgba(255,255,255,0.01), 0 0 1px rgba(255,255,255,0.06)`,
           }}
-        />
+        >
+          {/* Vitrine power-on — conic light traces the glass edge once on page load */}
+          {!isEnded && (
+            <div
+              className="absolute inset-[-1px] rounded-sm overflow-hidden supreme-vitrine-power-on"
+              style={{ opacity: 0, pointerEvents: 'none' }}
+            >
+              <div
+                className="absolute inset-0 supreme-vitrine-conic-spin"
+                style={{
+                  background: `conic-gradient(from 0deg, transparent 0%, transparent 85%, ${moment.teamColors.primary}40 92%, rgba(255,255,255,0.25) 96%, ${moment.teamColors.primary}40 98%, transparent 100%)`,
+                  mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                  WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                  maskComposite: 'exclude',
+                  WebkitMaskComposite: 'xor',
+                  padding: '1px',
+                }}
+              />
+            </div>
+          )}
+        </div>
 
         {/* Auction catalog lot number — top-right, subtle prestige detail */}
         <div

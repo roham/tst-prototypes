@@ -374,6 +374,24 @@ body {
   animation: supreme-edge-trace 6s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
 }
 
+/* Supreme vitrine power-on — glass case illuminates once on page load */
+@keyframes supreme-vitrine-power-on {
+  0%   { opacity: 0; }
+  8%   { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+.supreme-vitrine-power-on {
+  animation: supreme-vitrine-power-on 2.2s cubic-bezier(0.16, 1, 0.3, 1) 1.8s forwards;
+}
+@keyframes supreme-vitrine-conic-spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.supreme-vitrine-conic-spin {
+  animation: supreme-vitrine-conic-spin 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
 /* Supreme hero heartbeat — subtle rhythmic scale pulse creating subconscious "alive" tension */
 @keyframes supreme-heartbeat {
   0%, 100% { transform: scale(1); }

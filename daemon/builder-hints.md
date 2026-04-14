@@ -419,3 +419,12 @@
 - Fixed positioning (top-16, centered) keeps the badge visible without competing with the header bar (top-0, z-30). Badge is at z-[30].
 - `useRef` in Next.js 16 requires explicit initial value (`useRef<T>(undefined)`) — strictNullChecks flags the omission as a type error.
 - Next cycle: Supreme (rotation). Supreme could use a subtle video preview on hero hover, or a premium engraving effect on the edition number in the W screen.
+
+## Cycle 48 Learnings
+- Diagonal light sweep is pure CSS (keyframes + linear-gradient), zero JS. The sweep element is a 60%-width div that translates from -120% to +120% on a 25deg angle.
+- 8s cycle with 85% idle time means the sweep happens roughly once every 8 seconds — infrequent enough to be surprising, frequent enough to notice. The idle period (0-85%) keeps the hero clean most of the time.
+- Team-color tinting on the sweep (8% opacity) makes it feel organic to each moment page rather than a generic white glint. The center peak is rgba(255,255,255,0.06) — barely visible but catches the eye.
+- The sweep is disabled during ENDED (hero is desaturated) and during purchasing (hero is blurred). This prevents the sweep from fighting other visual states.
+- z-[5] puts the sweep above the background layers but below the text overlay — it subtly illuminates the player image without washing out text.
+- Supreme now has 3 simultaneous ambient hero effects: parallax scroll (0.4x), Ken Burns zoom (20s cycle), and light sweep (8s cycle). Together they create a living, breathing hero that feels premium without being busy.
+- Next cycle: Broadcast (rotation). Broadcast could use a subtle film reel flicker effect, or animated typography on the editorial headline.

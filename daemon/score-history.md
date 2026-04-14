@@ -241,3 +241,7 @@
 | 47 | arena | 9.0 | 9.0 | 9.0+ | 9.0+ | 9.0 | 9.00+ | — | Beyond-9.0: purchase streak combo multiplier on rapid buys |
 
 **Cycle 47: Arena purchase streak.** Combo multiplier badge appears when purchases come in rapid succession (<4s apart). Escalates: 2x COMBO → 3x STREAK → 5x ON FIRE (with red urgency). Auto-fades after 2.5s of no rapid buys. Pure live-commerce/video-game energy — arena jumbotrons show combo counters during runs. Next: Supreme (rotation).
+
+| 48 | supreme | 9.0+ | 9.0 | 9.0 | 9.0 | 9.0 | 9.00+ | — | Beyond-9.0: diagonal light sweep on hero |
+
+**Cycle 48: Supreme light sweep.** Slow diagonal highlight passes across the hero every 8 seconds — like a premium trading card catching light when tilted. Team-color tinted gradient (teamColor 8% + white 6% at center). CSS-only animation, no JS. The sweep only appears during live/active states (hidden during ENDED and purchasing/blur). Subtle enough to be subliminal, premium enough to elevate. Next: Broadcast (rotation).

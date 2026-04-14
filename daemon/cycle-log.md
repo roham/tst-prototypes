@@ -97,3 +97,5 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 ## Cycle 46 | Direction: Broadcast | Score: 9.00 (beyond-9.0 polish) | Built: Wax-seal authentication mark on certificate card — SVG emboss with radial lines, notched circles, TST monogram, Sotheby's auction house energy | Time: 03:45
 
 ## Cycle 47 | Direction: Arena | Score: 9.00 (beyond-9.0 polish) | Built: Purchase streak combo multiplier — rapid successive buys trigger floating badge (2x COMBO → 3x STREAK → 5x ON FIRE), auto-fades after 2.5s, team-color themed with red escalation | Time: 04:00
+
+## Cycle 48 | Direction: Supreme | Score: 9.00 (beyond-9.0 polish) | Built: Diagonal light sweep across hero — slow-moving highlight passes over the hero image like a premium card catching light (8s cycle, team-color tinted, CSS-only) | Time: 04:15

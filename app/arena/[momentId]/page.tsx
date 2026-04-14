@@ -2569,6 +2569,113 @@ function ArenaShotClock({
   );
 }
 
+/* ─── Collection Milestone Flash — jumbotron attendance celebration ─ */
+// NBA arenas celebrate attendance milestones on the jumbotron — "TONIGHT'S
+// 20,000TH FAN!" This fires when liveClaimed crosses round-number thresholds,
+// showing a brief jumbotron-style banner. Frequent small milestones (every 25)
+// keep the page feeling alive; larger milestones (100, 500) get bigger banners.
+
+function useMilestoneFlash(claimed: number, startClaimed: number) {
+  const [flash, setFlash] = useState<{ value: number; tier: 'small' | 'medium' | 'large' } | null>(null);
+  const lastMilestone = useRef(startClaimed);
+
+  useEffect(() => {
+    if (claimed <= startClaimed) return;
+    // Check milestones at every 25th edition
+    const prev25 = Math.floor(lastMilestone.current / 25);
+    const curr25 = Math.floor(claimed / 25);
+    if (curr25 > prev25) {
+      const milestoneVal = curr25 * 25;
+      const tier = milestoneVal % 500 === 0 ? 'large' : milestoneVal % 100 === 0 ? 'medium' : 'small';
+      setFlash({ value: milestoneVal, tier });
+      lastMilestone.current = claimed;
+      const t = setTimeout(() => setFlash(null), tier === 'large' ? 2800 : tier === 'medium' ? 2200 : 1600);
+      return () => clearTimeout(t);
+    }
+    lastMilestone.current = claimed;
+  }, [claimed, startClaimed]);
+
+  return flash;
+}
+
+function MilestoneFlash({
+  flash,
+  teamColor,
+}: {
+  flash: { value: number; tier: 'small' | 'medium' | 'large' } | null;
+  teamColor: string;
+}) {
+  if (!flash) return null;
+
+  const isLarge = flash.tier === 'large';
+  const isMedium = flash.tier === 'medium';
+
+  return (
+    <div
+      className="fixed left-0 right-0 z-[54] flex items-center justify-center pointer-events-none"
+      style={{
+        top: isLarge ? '35%' : isMedium ? '18%' : '14%',
+        animation: `arena-milestone-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards`,
+      }}
+    >
+      <div
+        className="flex flex-col items-center gap-1 rounded-xl px-6 py-3"
+        style={{
+          background: isLarge
+            ? `linear-gradient(135deg, ${teamColor}E6, ${teamColor}99)`
+            : isMedium
+              ? `linear-gradient(135deg, ${teamColor}CC, ${teamColor}66)`
+              : `${teamColor}55`,
+          backdropFilter: 'blur(12px)',
+          boxShadow: isLarge
+            ? `0 0 40px ${teamColor}60, 0 0 80px ${teamColor}30, inset 0 1px 0 rgba(255,255,255,0.2)`
+            : isMedium
+              ? `0 0 24px ${teamColor}40, 0 0 48px ${teamColor}20`
+              : `0 0 12px ${teamColor}30`,
+          border: `1px solid ${isLarge ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)'}`,
+        }}
+      >
+        {isLarge && (
+          <span
+            className="text-[8px] font-bold uppercase tracking-[0.4em] text-white/80"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            🏀 Milestone
+          </span>
+        )}
+        <div className="flex items-baseline gap-1.5">
+          <span
+            className={`font-black tabular-nums text-white ${
+              isLarge ? 'text-3xl' : isMedium ? 'text-xl' : 'text-base'
+            }`}
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              textShadow: isLarge
+                ? '0 2px 8px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.2)'
+                : '0 1px 4px rgba(0,0,0,0.3)',
+            }}
+          >
+            {flash.value.toLocaleString()}
+          </span>
+          <span
+            className={`font-bold uppercase tracking-wider text-white/90 ${
+              isLarge ? 'text-sm' : isMedium ? 'text-xs' : 'text-[10px]'
+            }`}
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            Collected
+          </span>
+        </div>
+        {isLarge && (
+          <span className="text-[9px] text-white/60 tracking-wide">
+            Another milestone reached tonight
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
@@ -2601,6 +2708,7 @@ export default function ArenaPage({
   const [liveVelocity, setLiveVelocity] = useState(14);
   const [viewers, setViewers] = useState(847);
   const [liveClaimed, setLiveClaimed] = useState(moment?.editionsClaimed ?? 0);
+  const milestoneFlash = useMilestoneFlash(liveClaimed, moment?.editionsClaimed ?? 0);
   const [recentBuyers, setRecentBuyers] = useState(23);
   const [shaking, setShaking] = useState(false);
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=processing, 2=secured
@@ -2844,6 +2952,11 @@ export default function ArenaPage({
 
       {/* ─── Fast Break Banner — velocity surge jumbotron announcement ─── */}
       <FastBreakBanner visible={fastBreakVisible} velocity={fastBreakVelocity} teamColor={moment.teamColors.primary} />
+
+      {/* ─── Collection Milestone Flash — jumbotron attendance celebration ─── */}
+      {!countdown.isEnded && proto.state !== 'confirmed' && (
+        <MilestoneFlash flash={milestoneFlash} teamColor={moment.teamColors.primary} />
+      )}
 
       {/* ─── Fixed Header Bar ─── */}
       <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between border-b border-white/[0.06] bg-[#0B0E14]/90 px-4 py-3 backdrop-blur-md">

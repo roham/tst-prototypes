@@ -548,6 +548,104 @@ function BroadcastLocationTag({ team, teamColor, rgb }: {
 }
 
 // ---------------------------------------------------------------------------
+// Telestrator — broadcast analyst circle drawn on replay footage
+// Every ESPN/TNT broadcast analyst (Madden, Romo, Barkley) circles the key
+// player on a replay. A yellow/team-color ellipse traces itself over the
+// hero image via SVG stroke-dashoffset animation, with a small arrow.
+// Fires ~2s after page load (after replay tag), holds 2.5s, fades out.
+// ---------------------------------------------------------------------------
+
+function TelestatorCircle({ teamColor, rgb }: { teamColor: string; rgb: string }) {
+  const [phase, setPhase] = useState<'waiting' | 'drawing' | 'holding' | 'fading' | 'done'>('waiting');
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase('drawing'), 2200);
+    const t2 = setTimeout(() => setPhase('holding'), 3200);
+    const t3 = setTimeout(() => setPhase('fading'), 5200);
+    const t4 = setTimeout(() => setPhase('done'), 5800);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+  }, []);
+
+  if (phase === 'done' || phase === 'waiting') return null;
+
+  // Classic telestrator yellow with slight team-color tint
+  const strokeColor = '#FFD700';
+
+  return (
+    <div
+      className="absolute z-[18] pointer-events-none"
+      style={{
+        top: '22%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        opacity: phase === 'fading' ? 0 : phase === 'drawing' ? 0.7 : 0.55,
+        transition: 'opacity 0.6s ease',
+      }}
+    >
+      <svg
+        width="140"
+        height="100"
+        viewBox="0 0 140 100"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="overflow-visible"
+      >
+        {/* Main telestrator ellipse — hand-drawn feel with imperfect path */}
+        <ellipse
+          cx="70"
+          cy="50"
+          rx="58"
+          ry="38"
+          stroke={strokeColor}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeDasharray="300"
+          strokeDashoffset={phase === 'drawing' ? '0' : '300'}
+          style={{
+            transition: 'stroke-dashoffset 1.0s cubic-bezier(0.22, 1, 0.36, 1)',
+            filter: `drop-shadow(0 0 6px ${strokeColor}60) drop-shadow(0 0 14px ${strokeColor}30)`,
+          }}
+          transform="rotate(-5 70 50)"
+        />
+        {/* Arrow tip — small directional pointer at bottom-right of ellipse */}
+        <path
+          d="M118 68 L128 74 L120 78"
+          stroke={strokeColor}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray="40"
+          strokeDashoffset={phase === 'drawing' ? '0' : '40'}
+          style={{
+            transition: 'stroke-dashoffset 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.7s',
+            filter: `drop-shadow(0 0 4px ${strokeColor}50)`,
+          }}
+        />
+      </svg>
+      {/* "KEY PLAY" micro-label — analyst annotation text */}
+      <div
+        className="absolute -bottom-1 left-1/2 -translate-x-1/2"
+        style={{
+          opacity: phase === 'holding' || phase === 'fading' ? 0.5 : 0,
+          transition: 'opacity 0.4s ease 0.2s',
+        }}
+      >
+        <span
+          className="text-[7px] font-bold uppercase tracking-[0.35em] whitespace-nowrap"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: strokeColor,
+            textShadow: `0 0 8px ${strokeColor}40`,
+          }}
+        >
+          Key Play
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // ESPN-style stat breakdown — animated cards
 // ---------------------------------------------------------------------------
 
@@ -1546,6 +1644,11 @@ export default function BroadcastPage() {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* TELESTRATOR — analyst circle annotation drawn on replay footage */}
+          {!countdown.isEnded && (
+            <TelestatorCircle teamColor={moment.teamColors.primary} rgb={rgb} />
           )}
 
           {/* Anamorphic lens flare — horizontal light streak, classic broadcast camera */}

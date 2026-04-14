@@ -853,6 +853,30 @@ function WScreen({
                   Sold
                 </span>
               </div>
+              {/* Buyer's Premium — the surcharge every auction house adds */}
+              <div
+                className="h-[1px] mt-2 mb-1.5"
+                style={{ backgroundColor: `${moment.teamColors.primary}08` }}
+              />
+              <div className="flex items-center justify-between">
+                <span className="text-[7px] uppercase tracking-[0.2em] text-white/10">
+                  Buyer&apos;s Premium
+                </span>
+                <span className="text-[7px] font-mono tabular-nums text-white/15">
+                  Waived
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-0.5">
+                <span className="text-[7px] uppercase tracking-[0.2em] text-white/10">
+                  Total
+                </span>
+                <span
+                  className="text-[9px] font-mono tabular-nums font-bold"
+                  style={{ color: `${moment.teamColors.primary}45` }}
+                >
+                  ${moment.rarityTiers[0].price.toFixed(2)}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -1621,6 +1645,23 @@ export default function SupremePage() {
           Digital Collectible. {moment.player}, <span className="italic normal-case tracking-normal">{moment.playType}</span>,{' '}
           {new Date().getFullYear()}. Edition of {moment.editionSize.toLocaleString()}. Minted on Flow.
         </p>
+
+        {/* Specialist's Note — auction house expert assessment, institutional voice */}
+        <div className="mt-3 pl-2.5" style={{ borderLeft: `0.5px solid ${moment.teamColors.primary}15` }}>
+          <span
+            className="text-[7px] font-bold uppercase tracking-[0.35em] block mb-1"
+            style={{ color: `${moment.teamColors.primary}30`, fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            Specialist&apos;s Note
+          </span>
+          <p className="text-[10px] leading-[1.6] text-white/18 italic" style={{ fontFamily: 'Georgia, serif' }}>
+            {moment.id === 'bam'
+              ? 'A defining performance in the modern playoff era. The lot represents an inflection point in Adebayo\u2019s career trajectory \u2014 we recommend this to serious collectors.'
+              : moment.id === 'jokic'
+              ? 'Generational court vision captured at its apex. Joki\u0107 operates in a class of his own \u2014 this lot carries museum-grade significance.'
+              : 'The rarest combination of scoring volume and efficiency we\u2019ve catalogued this season. Gilgeous-Alexander\u2019s trajectory suggests lasting historical value.'}
+          </p>
+        </div>
       </div>
 
       {/* ============================================================= */}

@@ -1326,3 +1326,11 @@
 - One-shot overlays (firedRef pattern) are essential for dramatic full-screen effects — showing DE-FENSE every time the page re-renders would be annoying. Once is impactful; twice is noise.
 - Reusing existing keyframes (arena-timeout-in, arena-horn-ring, arena-crowd-wave) keeps globals.css lean. Most arena overlays share the same spring entrance + hold + fade lifecycle.
 - Next cycle: Supreme (rotation).
+
+## Cycle 156-157 Learnings
+- Wiring up partially-built components (like ReplayReviewOverlay) is a zero-risk quick win — code was already written, just needed integration.
+- The Defense Stomp at 80% claimed is a one-shot overlay that creates urgency from a supply signal. The one-shot pattern (firedRef) prevents annoying repetition.
+- Value trend sparkline is data visualization as social proof — showing "the market is moving" without showing actual people. Distinctly Supreme: no avatars, no names, just a rising line.
+- SVG polylines at 15% opacity are effectively invisible until you notice them, then they're compelling. The subliminal register is key for Supreme.
+- Seeding noise from moment.id.charCodeAt() creates per-moment visual variation without randomness that would cause hydration mismatches.
+- Next cycle: Broadcast (rotation).

@@ -1396,6 +1396,60 @@ const TIER_SECTION: Record<string, string> = {
   Ultimate: 'FLOOR SEAT',
 };
 
+/* ─── Live Tier Remaining — stock ticks down like Whatnot/TikTok Shop ── */
+/* On live commerce platforms, the available quantity visibly decrements    */
+/* in real time when someone buys. The number does a brief scale-pulse     */
+/* and the color shifts toward red as stock drops. This connects the       */
+/* social proof feed directly to the scarcity signal at the tier cards.    */
+
+function useLiveTierRemaining(
+  tiers: RarityTier[],
+  feedEvents: PurchaseEvent[],
+  isEnded: boolean,
+) {
+  // Initialize from static data
+  const [remaining, setRemaining] = useState<number[]>(() =>
+    tiers.map((t) => t.remaining),
+  );
+  const [flashIdx, setFlashIdx] = useState<number | null>(null);
+  const prevLen = useRef(0);
+
+  useEffect(() => {
+    if (isEnded || feedEvents.length === 0 || feedEvents.length === prevLen.current) return;
+    prevLen.current = feedEvents.length;
+
+    // ~60% chance to decrement a random non-Open tier (Open has huge supply)
+    // ~40% chance to decrement Open (most sales go to the cheapest tier)
+    setRemaining((prev) => {
+      const next = [...prev];
+      const roll = Math.random();
+      let targetIdx: number;
+      if (roll < 0.40 && next.length > 0) {
+        targetIdx = 0; // Open tier
+      } else {
+        // Pick a random premium tier (1+)
+        const premiumIndices = next.map((_, i) => i).filter((i) => i > 0 && next[i] > 0);
+        if (premiumIndices.length > 0) {
+          targetIdx = premiumIndices[Math.floor(Math.random() * premiumIndices.length)];
+        } else {
+          targetIdx = 0;
+        }
+      }
+      if (next[targetIdx] > 0) {
+        next[targetIdx] = next[targetIdx] - 1;
+        setFlashIdx(targetIdx);
+      }
+      return next;
+    });
+
+    // Clear flash after animation
+    const t = setTimeout(() => setFlashIdx(null), 400);
+    return () => clearTimeout(t);
+  }, [feedEvents.length, isEnded]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return { remaining, flashIdx };
+}
+
 /* ─── Live Bidder Indicators — other users "selecting" each tier ── */
 
 function useTierBidders(tierCount: number) {
@@ -1454,12 +1508,16 @@ function RarityCards({
   onSelect,
   bidderCounts,
   isEnded,
+  liveRemaining,
+  flashIdx,
 }: {
   tiers: RarityTier[];
   selectedIdx: number;
   onSelect: (idx: number) => void;
   bidderCounts: number[];
   isEnded: boolean;
+  liveRemaining?: number[];
+  flashIdx?: number | null;
 }) {
   /* Find the tier with the most bidders for the POPULAR badge */
   const maxBidders = Math.max(...bidderCounts);
@@ -1470,8 +1528,10 @@ function RarityCards({
       {tiers.map((tier, idx) => {
         const color = TIER_COLOR[tier.tier] ?? '#6B7A99';
         const isSelected = idx === selectedIdx;
-        const isLow = tier.tier !== 'Open' && tier.remaining <= 5;
-        const isUrgent = tier.tier !== 'Open' && tier.remaining <= 10;
+        const live = liveRemaining?.[idx] ?? tier.remaining;
+        const isLow = tier.tier !== 'Open' && live <= 5;
+        const isUrgent = tier.tier !== 'Open' && live <= 10;
+        const isFlashing = flashIdx === idx;
         const bidders = bidderCounts[idx] ?? 0;
         const isPopular = idx === popularIdx && !isEnded && maxBidders >= 5;
         const sectionLabel = TIER_SECTION[tier.tier] ?? '';
@@ -1548,11 +1608,20 @@ function RarityCards({
               }`}
               style={{
                 color: isLow ? '#EF4444' : isUrgent ? '#F59E0B' : 'rgba(255,255,255,0.3)',
+                transform: isFlashing ? 'scale(1.18)' : 'scale(1)',
+                transition: isFlashing
+                  ? 'transform 80ms cubic-bezier(0.16, 1, 0.3, 1), color 150ms'
+                  : 'transform 250ms ease-out, color 200ms',
+                textShadow: isFlashing && isLow
+                  ? '0 0 6px rgba(239,68,68,0.5)'
+                  : isFlashing
+                    ? '0 0 4px rgba(245,158,11,0.4)'
+                    : 'none',
               }}
             >
-              {tier.tier === 'Open' ? `${tier.remaining.toLocaleString()} left` :
-               isLow ? `${tier.remaining} LEFT!` :
-               `${tier.remaining} of ${tier.size}`}
+              {tier.tier === 'Open' ? `${live.toLocaleString()} left` :
+               isLow ? `${live} LEFT!` :
+               `${live} of ${tier.size}`}
             </span>
 
             {/* Live bidder indicator — auction energy */}
@@ -3579,6 +3648,13 @@ export default function ArenaPage({
   const [feedEvents, setFeedEvents] = useState<PurchaseEvent[]>([]);
   const editionCounter = useRef(moment?.editionsClaimed ?? 0);
 
+  /* ── Live tier remaining — stock ticks down on each feed purchase ── */
+  const { remaining: liveTierRemaining, flashIdx: tierFlashIdx } = useLiveTierRemaining(
+    moment?.rarityTiers ?? [],
+    feedEvents,
+    countdown.isEnded,
+  );
+
   /* ── Purchase streak (combo multiplier on rapid buys) ──────── */
   const { streak, visible: streakVisible } = usePurchaseStreak(feedEvents);
 
@@ -4546,6 +4622,8 @@ export default function ArenaPage({
           onSelect={setSelectedTierIdx}
           bidderCounts={tierBidders}
           isEnded={countdown.isEnded}
+          liveRemaining={liveTierRemaining}
+          flashIdx={tierFlashIdx}
         />
       </div>
 

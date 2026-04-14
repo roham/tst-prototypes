@@ -410,3 +410,12 @@
 - Positioned absolute bottom-4 right-4 (sm:bottom-6 sm:right-6) keeps it in the certificate's corner without overlapping other content.
 - The seal uses team-color strokes/fills, so it adapts per moment — Heat red seal vs Nuggets gold seal vs Thunder blue seal.
 - Next cycle: Arena (rotation). Arena could use a competition leaderboard on the W screen, or a more dramatic confetti burst.
+
+## Cycle 47 Learnings
+- Purchase streak combo counter is pure live-commerce energy — Whatnot, TikTok Live, and gaming buy-spree systems all use combo counters. Arena is the natural home for this.
+- The streak hook tracks gap between consecutive events (<4s = streak continues). Simple but effective — no complex debounce logic needed.
+- 3-tier escalation (2x COMBO → 3x STREAK → 5x ON FIRE) with color shift (team-color → red) creates genuine excitement. The user watches the combo counter climb and root for it to hit ON FIRE.
+- Auto-hide after 2.5s of no rapid buys prevents the badge from becoming permanent noise. The transience makes each appearance feel special.
+- Fixed positioning (top-16, centered) keeps the badge visible without competing with the header bar (top-0, z-30). Badge is at z-[30].
+- `useRef` in Next.js 16 requires explicit initial value (`useRef<T>(undefined)`) — strictNullChecks flags the omission as a type error.
+- Next cycle: Supreme (rotation). Supreme could use a subtle video preview on hero hover, or a premium engraving effect on the edition number in the W screen.

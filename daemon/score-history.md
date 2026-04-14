@@ -237,3 +237,7 @@
 | 46 | broadcast | 9.0 | 9.0 | 9.0+ | 9.0 | 9.0+ | 9.00+ | — | Beyond-9.0: wax-seal authentication mark on certificate |
 
 **Cycle 46: Broadcast wax seal.** SVG wax-seal emboss on the certificate card — concentric circles, 12 radial lines, TST monogram at center. Positioned bottom-right at 50% opacity. Adds Sotheby's/Christie's auction-house prestige to the certificate. Next: Arena (rotation).
+
+| 47 | arena | 9.0 | 9.0 | 9.0+ | 9.0+ | 9.0 | 9.00+ | — | Beyond-9.0: purchase streak combo multiplier on rapid buys |
+
+**Cycle 47: Arena purchase streak.** Combo multiplier badge appears when purchases come in rapid succession (<4s apart). Escalates: 2x COMBO → 3x STREAK → 5x ON FIRE (with red urgency). Auto-fades after 2.5s of no rapid buys. Pure live-commerce/video-game energy — arena jumbotrons show combo counters during runs. Next: Supreme (rotation).

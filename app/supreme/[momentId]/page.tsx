@@ -41,6 +41,90 @@ function formatTimer(totalSeconds: number): string {
 }
 
 // ---------------------------------------------------------------------------
+// Price scramble reveal — digits cycle through randoms before locking
+// ---------------------------------------------------------------------------
+
+function usePriceScramble(price: number) {
+  const [display, setDisplay] = useState(`$${price}`);
+  const [isScrambling, setIsScrambling] = useState(false);
+  const prevPrice = useRef(price);
+  const frameRef = useRef(0);
+
+  useEffect(() => {
+    // Skip initial mount — only scramble on tier change
+    if (prevPrice.current === price && !isScrambling) {
+      prevPrice.current = price;
+      return;
+    }
+    prevPrice.current = price;
+
+    const finalStr = `$${price}`;
+    const digits = finalStr.split('');
+    const duration = 500; // ms
+    const startTime = performance.now();
+    setIsScrambling(true);
+
+    function tick(now: number) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Characters settle left-to-right with easeOutExpo
+      const settled = digits.map((char, i) => {
+        if (char === '$' || char === ',' || char === '.') return char;
+        const charProgress = (progress - (i / digits.length) * 0.4) / 0.6;
+        if (charProgress >= 1) return char;
+        return String(Math.floor(Math.random() * 10));
+      }).join('');
+
+      setDisplay(settled);
+
+      if (progress < 1) {
+        frameRef.current = requestAnimationFrame(tick);
+      } else {
+        setDisplay(finalStr);
+        setIsScrambling(false);
+      }
+    }
+
+    frameRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameRef.current);
+  }, [price]);
+
+  // Initial scramble on mount
+  useEffect(() => {
+    const finalStr = `$${price}`;
+    const digits = finalStr.split('');
+    const duration = 600;
+    const startTime = performance.now();
+    setIsScrambling(true);
+
+    function tick(now: number) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const settled = digits.map((char, i) => {
+        if (char === '$' || char === ',' || char === '.') return char;
+        const charProgress = (progress - (i / digits.length) * 0.4) / 0.6;
+        if (charProgress >= 1) return char;
+        return String(Math.floor(Math.random() * 10));
+      }).join('');
+      setDisplay(settled);
+      if (progress < 1) {
+        frameRef.current = requestAnimationFrame(tick);
+      } else {
+        setDisplay(finalStr);
+        setIsScrambling(false);
+      }
+    }
+
+    frameRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return { display, isScrambling };
+}
+
+// ---------------------------------------------------------------------------
 // Social proof — fake but plausible jitter
 // ---------------------------------------------------------------------------
 
@@ -558,6 +642,7 @@ export default function SupremePage() {
   }
 
   const selectedTier = moment.rarityTiers[selectedTierIdx];
+  const { display: scrambledPrice, isScrambling: priceScrambling } = usePriceScramble(selectedTier.price);
   const progressPct = ((claimed / moment.editionSize) * 100).toFixed(1);
   const remaining = moment.editionSize - claimed;
 
@@ -583,7 +668,7 @@ export default function SupremePage() {
   const isEnded = dropPhase === 'ENDED';
 
   let buttonBg = '#00E5A0';
-  let buttonText = `OWN THIS MOMENT — $${selectedTier.price}`;
+  let buttonText = `OWN THIS MOMENT — ${scrambledPrice}`;
   let buttonTextColor = '#0B0E14';
   let buttonAnimation = '';
 
@@ -597,11 +682,11 @@ export default function SupremePage() {
     buttonTextColor = '#6B7A99';
   } else if (dropPhase === 'CRITICAL') {
     buttonBg = '#EF4444';
-    buttonText = `LAST CHANCE — $${selectedTier.price}`;
+    buttonText = `LAST CHANCE — ${scrambledPrice}`;
     buttonTextColor = '#FFFFFF';
     buttonAnimation = 'animate-urgency-fast';
   } else if (dropPhase === 'CLOSING') {
-    buttonText = `CLOSING SOON — $${selectedTier.price}`;
+    buttonText = `CLOSING SOON — ${scrambledPrice}`;
     buttonAnimation = 'animate-urgency';
   }
 

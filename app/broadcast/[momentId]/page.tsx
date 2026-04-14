@@ -469,8 +469,10 @@ export default function BroadcastPage() {
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=authenticating, 2=acquired
   const [showStickyBar, setShowStickyBar] = useState(false);
+  const [showPip, setShowPip] = useState(false);
   const ctaRef = useRef<HTMLButtonElement>(null);
   const transactionRef = useRef<HTMLElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
 
   const countdown = useCountdown(SALE_DURATION_MS[params.momentId as string] ?? 12 * 60 * 1000);
   const proto = usePrototypeState(momentId);
@@ -493,6 +495,18 @@ export default function BroadcastPage() {
     const observer = new IntersectionObserver(
       ([entry]) => setShowStickyBar(!entry.isIntersecting),
       { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // PiP — mini hero thumbnail when hero scrolls out of view (broadcast picture-in-picture)
+  useEffect(() => {
+    const el = heroRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowPip(!entry.isIntersecting),
+      { threshold: 0.15 }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -610,6 +624,7 @@ export default function BroadcastPage() {
 
         {/* ━━━ HERO — 50vh ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section
+          ref={heroRef}
           className="relative h-[50dvh] min-h-[420px] overflow-hidden broadcast-grain broadcast-scanlines"
           style={{
             transform: crashZoom ? 'scale(1.03)' : 'scale(1)',
@@ -1198,6 +1213,76 @@ export default function BroadcastPage() {
           </div>
         </section>
       </div>
+
+      {/* ━━━ PiP THUMBNAIL — broadcast picture-in-picture when hero scrolls out ━━━ */}
+      {!countdown.isEnded && (
+        <div
+          className="fixed z-40 pointer-events-none transition-all duration-500 ease-out"
+          style={{
+            bottom: showStickyBar ? '72px' : '20px',
+            right: '12px',
+            width: '110px',
+            height: '72px',
+            opacity: showPip ? 1 : 0,
+            transform: showPip ? 'translateX(0) scale(1)' : 'translateX(20px) scale(0.85)',
+          }}
+        >
+          <div
+            className="relative w-full h-full rounded-[4px] overflow-hidden"
+            style={{
+              boxShadow: `0 2px 16px rgba(0,0,0,0.6), 0 0 0 1px rgba(${rgb},0.2)`,
+            }}
+          >
+            {/* Mini hero image */}
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
+                backgroundSize: 'cover, cover',
+                backgroundPosition: 'center top, center',
+              }}
+            />
+            {/* Dark bottom gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+            {/* Team-color top accent */}
+            <div
+              className="absolute top-0 left-0 right-0 h-[2px]"
+              style={{ backgroundColor: moment.teamColors.primary }}
+            />
+            {/* Mini LIVE badge */}
+            <div className="absolute top-1.5 left-1.5 flex items-center gap-1 px-1 py-px rounded-sm"
+              style={{ backgroundColor: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(4px)' }}
+            >
+              <div
+                className="h-[4px] w-[4px] rounded-full animate-pulse"
+                style={{ backgroundColor: '#EF4444' }}
+              />
+              <span className="text-[6px] font-bold uppercase tracking-[0.2em] text-white/70"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                Live
+              </span>
+            </div>
+            {/* Player name */}
+            <div className="absolute bottom-1 left-1.5 right-1.5">
+              <p
+                className="text-[8px] font-bold uppercase tracking-wider text-white/80 truncate"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                {moment.player}
+              </p>
+            </div>
+            {/* PiP border label — broadcast PiP indicator */}
+            <div className="absolute top-1.5 right-1.5">
+              <span className="text-[5px] font-bold uppercase tracking-[0.15em] text-white/30"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                PiP
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ━━━ STICKY BOTTOM CTA BAR — appears when main CTA scrolls out ━━━ */}
       {!countdown.isEnded && (

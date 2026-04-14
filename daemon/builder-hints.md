@@ -804,3 +804,11 @@
 - Each direction now has a distinct entrance ceremony: Supreme = grayscale→color reveal (cycle 81), Broadcast = name reveal wipe (cycle 82), Arena = instant replay zoom (cycle 89). All are identity-correct one-shot animations.
 - The `replayActive` boolean pattern (true on mount → false after timeout → conditionally render) is the same pattern used for buzzer, timeout, and camera flash. Proven, simple, reliable.
 - Next cycle: Supreme (rotation). Supreme could explore a glass morphism/frosted panel effect on the info strip, or a subtle counter animation on the edition scarcity text.
+
+## Cycle 90 Learnings
+- CTA sonar invite pulse is a conversion micro-interaction — draws the eye to the purchase point exactly once. The 1.2s delay after load ensures it fires after the staggered entrance animations complete, so it's the "final" visual event.
+- `onAnimationEnd` for self-removal is cleaner than a timeout — it's frame-accurate and doesn't leave stale DOM elements.
+- Tier switch breathe (3px shift + opacity dip) is barely perceptible consciously but makes the UI feel alive subconsciously. 0.35s is the sweet spot — shorter feels jittery, longer feels sluggish.
+- Both effects use tier accent color, so they shift with the tier ambient system from cycle 87. Unified visual language.
+- Using a `prevTierIdx` ref to detect actual tier changes (not just re-renders) prevents false triggers. The pattern: compare ref to state, update ref, fire effect.
+- Next cycle: Broadcast (rotation). Broadcast could explore a "director's cut" hover state on stat cards, or a ticker tape animation on the editorial headline.

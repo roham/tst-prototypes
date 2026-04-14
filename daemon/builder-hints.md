@@ -702,3 +702,16 @@
 - The scramble integrates seamlessly with all CTA text variants: "OWN THIS MOMENT — $5", "CLOSING SOON — $5", "LAST CHANCE — $99". The static prefix text stays stable while the price portion scrambles.
 - This is Supreme's first CTA TEXT animation (all previous CTA enhancements were container-level: glow, bounce, ring, lock icon). The text itself coming alive adds a new dimension of interaction quality.
 - Next cycle: Broadcast (rotation). Broadcast could explore a dramatic editorial headline reveal animation, or a lower-third "Now Playing" tag on the hero that changes with the current phase.
+
+## Cycle 79 Learnings
+- Typewriter/teleprompter reveal on the pull quote is pure broadcast DNA — it transforms static text into a live reading moment. The quote feels like it's being voiced over by an ESPN anchor.
+- `useTypewriter` hook is minimal: useState for charIndex, setTimeout per character, done flag. No libraries needed for this effect.
+- 28ms per character is the sweet spot — fast enough to not bore, slow enough to read along. A 60-char sentence takes ~1.7s which is natural broadcast pacing.
+- IntersectionObserver at 0.4 threshold ensures the quote is well visible before typing starts — user doesn't miss the beginning.
+- `minHeight: 4.5em` on the quote paragraph prevents layout shift as characters appear. Without it, the container grows as text wraps to new lines, causing a jarring scroll jump.
+- The team-color cursor (2px wide, 1.15em tall) matches the broadcast accent language — it's a visual element, not just a functional marker.
+- `steps(1)` animation timing on the cursor blink gives a crisp on/off toggle (no fade), like a real broadcast teleprompter cursor or terminal.
+- The cursor-done class blinks 3x then sets opacity to 0 via `animation-fill-mode: forwards` — a clean exit that signals "reading complete."
+- Footer attribution fading in only after typing completes creates a two-beat reveal: dramatic quote → source. Like a broadcast graphic adding the source line after the pull quote appears.
+- Extracted as `TeleprompterQuote` component (not inline in BroadcastPage) because it has its own ref, visibility state, and typewriter state — clean separation.
+- Next cycle: Arena (rotation). Arena could explore a purchase confetti cannon effect, or animated tier badge glow when a tier is about to sell out.

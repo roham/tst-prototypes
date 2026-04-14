@@ -889,6 +889,30 @@ export default function SupremePage() {
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [viewPhase]);
 
+  // Paddle raise — bidder paddle animates when purchase starts
+  const [paddleRaised, setPaddleRaised] = useState(false);
+  const paddleKeyRef = useRef(0);
+  useEffect(() => {
+    if (viewPhase === 'purchasing') {
+      paddleKeyRef.current += 1;
+      setPaddleRaised(true);
+      const t = setTimeout(() => setPaddleRaised(false), 900);
+      return () => clearTimeout(t);
+    }
+  }, [viewPhase]);
+
+  // Gavel strike — radial shockwave when purchase confirms at "Yours." stage
+  const [gavelStrike, setGavelStrike] = useState(false);
+  const gavelStrikeKeyRef = useRef(0);
+  useEffect(() => {
+    if (viewPhase === 'purchasing' && purchaseStage === 2) {
+      gavelStrikeKeyRef.current += 1;
+      setGavelStrike(true);
+      const t = setTimeout(() => setGavelStrike(false), 700);
+      return () => clearTimeout(t);
+    }
+  }, [viewPhase, purchaseStage]);
+
   // CTA sonar invite — single ring pulse on page load, draws eye to button
   const [sonarFired, setSonarFired] = useState(false);
   useEffect(() => {
@@ -1295,10 +1319,12 @@ export default function SupremePage() {
         </div>
 
         {/* Bidder paddle number — top-left, your registered auction identity */}
+        {/* Raises on purchase like raising your paddle at auction */}
         {!isEnded && (
           <div
-            className="absolute top-4 left-4 z-[12] pointer-events-none supreme-lot-enter flex items-center gap-1.5"
-            style={{ opacity: 0.2 }}
+            key={paddleKeyRef.current}
+            className={`absolute top-4 left-4 z-[12] pointer-events-none supreme-lot-enter flex items-center gap-1.5${paddleRaised ? ' supreme-paddle-raise' : ''}`}
+            style={{ opacity: paddleRaised ? undefined : 0.2 }}
           >
             {/* Paddle icon — minimal rectangle with handle */}
             <svg width="10" height="14" viewBox="0 0 10 14" fill="none" className="text-white/40">
@@ -1765,6 +1791,31 @@ export default function SupremePage() {
           )}
         </button>
 
+        {/* Gavel strike — radial shockwave when "Yours." confirms */}
+        {gavelStrike && (
+          <div
+            key={gavelStrikeKeyRef.current}
+            className="absolute inset-0 pointer-events-none z-30 flex items-center justify-center"
+          >
+            {/* Expanding ring — auction hammer impact */}
+            <div
+              className="absolute w-[56px] h-[56px] rounded-full supreme-gavel-strike-ring"
+              style={{
+                borderStyle: 'solid',
+                borderColor: tierAccentColor,
+                boxShadow: `0 0 20px ${tierAccentColor}30`,
+              }}
+            />
+            {/* Brief flash — impact moment */}
+            <div
+              className="absolute inset-0 rounded-2xl supreme-gavel-strike-flash"
+              style={{
+                backgroundColor: tierAccentColor,
+              }}
+            />
+          </div>
+        )}
+
         {/* Claim pulse ring — expanding ring on each claimed edition */}
         {!isEnded && !isPurchasing && claimFlash && (
           <div
@@ -1825,6 +1876,49 @@ export default function SupremePage() {
           )}
         </div>
       </div>
+
+      {/* ============================================================= */}
+      {/* GALLERY LOT NAVIGATION — museum-style lot browsing strip */}
+      {/* ============================================================= */}
+      <nav className="px-5 pb-8 pt-2">
+        <div className="flex items-center justify-center gap-2">
+          <span
+            className="text-[8px] font-mono uppercase tracking-[0.25em] text-white/15 mr-2"
+          >
+            Lot {MOMENTS.findIndex(m => m.id === momentId) + 1} of {MOMENTS.length}
+          </span>
+          {MOMENTS.map((m, i) => {
+            const isCurrent = m.id === momentId;
+            return (
+              <a
+                key={m.id}
+                href={`/supreme/${m.id}`}
+                className="group relative flex flex-col items-center gap-1.5"
+                title={m.player}
+              >
+                {/* Dot indicator */}
+                <div
+                  className="h-[6px] w-[6px] rounded-full transition-all duration-500"
+                  style={{
+                    backgroundColor: isCurrent ? m.teamColors.primary : 'rgba(255,255,255,0.12)',
+                    boxShadow: isCurrent ? `0 0 8px ${m.teamColors.primary}50` : 'none',
+                    transform: isCurrent ? 'scale(1.3)' : 'scale(1)',
+                  }}
+                />
+                {/* Player initial — tiny label below dot */}
+                <span
+                  className="text-[7px] font-mono uppercase tracking-wider transition-colors duration-300"
+                  style={{
+                    color: isCurrent ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.10)',
+                  }}
+                >
+                  {m.player.split(' ').pop()?.slice(0, 3)}
+                </span>
+              </a>
+            );
+          })}
+        </div>
+      </nav>
 
       {/* ============================================================= */}
       {/* STICKY CTA — appears only when main button scrolls offscreen */}

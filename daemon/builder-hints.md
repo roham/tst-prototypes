@@ -1182,3 +1182,12 @@
 - Filter drop-shadow on SVG strokes creates glowing marker pen look.
 - Telestrator completes the replay analysis sequence: INSTANT REPLAY tag → telestrator circle → fade. Full broadcast production.
 - Next cycle: Arena (rotation).
+
+## Cycle 138 Learnings
+- SVG stroke-dashoffset animation works perfectly for signature drawing — same technique as checkmark draw but with a longer, more complex path.
+- Flowing cursive SVG path needs enough control points (8+) to feel natural, not geometric. Cubic beziers create the organic pen feel.
+- 35% final opacity keeps the signature subtle and elegant — more would compete with the wax seal below.
+- The signature draw creates a natural pause in the W screen reveal — you watch the ink flow, adding ceremony.
+- Supreme's W screen document lifecycle is now complete: card flip → W → serial + seal → provenance → sale record → signature → wax seal → share.
+- At this maturity level, the best additions complete a narrative sequence rather than add disconnected elements.
+- Next cycle: Broadcast (rotation).

@@ -242,6 +242,7 @@ function StatsBar({
   isEnded,
   velocity,
   velocityHistory,
+  teamColor,
 }: {
   claimed: number;
   total: number;
@@ -253,14 +254,20 @@ function StatsBar({
   isEnded: boolean;
   velocity: number;
   velocityHistory: number[];
+  teamColor?: string;
 }) {
   const pct = Math.min(100, (claimed / total) * 100);
   const timeStr = isEnded ? '00:00' : `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
   return (
-    <div className="grid grid-cols-3 gap-3 px-4">
+    <div className="grid grid-cols-3 gap-2 px-4">
       {/* Claimed */}
-      <div className="rounded-xl bg-white/[0.04] p-3">
+      <div className="relative rounded-xl bg-white/[0.04] p-3 overflow-hidden border border-white/[0.04]">
+        {/* Scoreboard top accent */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{ backgroundColor: isEnded ? 'rgba(255,255,255,0.1)' : (teamColor ?? '#00E5A0'), opacity: isEnded ? 1 : 0.6 }}
+        />
         <div className="text-center">
           <span className={`text-lg font-bold tabular-nums ${isEnded ? 'text-white/50' : 'text-white'}`}>
             {claimed.toLocaleString()}
@@ -281,7 +288,15 @@ function StatsBar({
       </div>
 
       {/* Countdown */}
-      <div className="rounded-xl bg-white/[0.04] p-3">
+      <div className="relative rounded-xl bg-white/[0.04] p-3 overflow-hidden border border-white/[0.04]">
+        {/* Scoreboard top accent */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{
+            backgroundColor: isEnded ? 'rgba(255,255,255,0.1)' : isCritical ? '#EF4444' : isClosing ? '#F59E0B' : (teamColor ?? '#00E5A0'),
+            opacity: isEnded ? 1 : 0.6,
+          }}
+        />
         <div className="text-center">
           <span
             className={`font-bold font-mono tabular-nums transition-all duration-500 ${
@@ -303,7 +318,12 @@ function StatsBar({
       </div>
 
       {/* Velocity */}
-      <div className="rounded-xl bg-white/[0.04] p-3">
+      <div className="relative rounded-xl bg-white/[0.04] p-3 overflow-hidden border border-white/[0.04]">
+        {/* Scoreboard top accent */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{ backgroundColor: isEnded ? 'rgba(255,255,255,0.1)' : '#00E5A0', opacity: isEnded ? 1 : 0.6 }}
+        />
         <div className="text-center">
           <span className={`text-lg font-bold tabular-nums ${isEnded ? 'text-white/25' : 'text-[#00E5A0]'}`}>
             {isEnded ? '—' : velocity}
@@ -631,6 +651,8 @@ export default function ArenaPage({
   const [shaking, setShaking] = useState(false);
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=processing, 2=secured
   const [activeBuyers, setActiveBuyers] = useState(Math.floor(Math.random() * 20) + 12);
+  const ctaRef = useRef<HTMLButtonElement>(null);
+  const [showStickyCTA, setShowStickyCTA] = useState(false);
 
   /* ── Feed simulation: add fake purchases every 2-5 seconds ── */
   useEffect(() => {
@@ -717,6 +739,18 @@ export default function ArenaPage({
     }, 5000);
     return () => clearInterval(id);
   }, [moment]);
+
+  /* ── Sticky CTA — show when main button scrolls out of view ── */
+  useEffect(() => {
+    const el = ctaRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setShowStickyCTA(!entry.isIntersecting),
+      { threshold: 0 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   /* ── Not found ──────────────────────────────────────────────── */
   if (!moment) {
@@ -841,22 +875,31 @@ export default function ArenaPage({
 
         {/* Player info — jumbotron style */}
         <div className="relative z-10 px-4 pb-4">
-          {/* Trending badge — frames moment as historic */}
-          <div className="flex items-center gap-2 flex-wrap">
+          {/* Scoreboard-style ticker badges */}
+          <div className="flex items-center gap-1.5">
             <span
-              className="flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider"
+              className="flex items-center gap-1 rounded px-2 py-1 text-[10px] font-bold uppercase tracking-wider"
               style={{
-                backgroundColor: `${moment.teamColors.primary}25`,
+                backgroundColor: `${moment.teamColors.primary}30`,
                 color: moment.teamColors.primary,
-                border: `1px solid ${moment.teamColors.primary}35`,
+                borderLeft: `2px solid ${moment.teamColors.primary}`,
               }}
             >
-              <span className="text-xs">🔥</span> Moment of the Night
+              🔥 Moment of the Night
             </span>
-            <span className="rounded bg-white/10 backdrop-blur-sm px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/60">
+            <span
+              className="rounded px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white/70 backdrop-blur-sm"
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.06)',
+                borderLeft: `2px solid ${moment.teamColors.secondary}80`,
+              }}
+            >
               {moment.team} vs {moment.opponent}
             </span>
-            <span className="rounded bg-white/10 backdrop-blur-sm px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/60">
+            <span
+              className="rounded px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white/50 backdrop-blur-sm"
+              style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}
+            >
               {moment.playType}
             </span>
           </div>
@@ -904,6 +947,7 @@ export default function ArenaPage({
         isEnded={countdown.isEnded}
         velocity={liveVelocity}
         velocityHistory={velocityHistory}
+        teamColor={moment.teamColors.primary}
       />
 
       {/* ─── Panic Banner ─── */}
@@ -942,6 +986,7 @@ export default function ArenaPage({
         )}
 
         <button
+          ref={ctaRef}
           onClick={countdown.isEnded ? undefined : proto.purchase}
           disabled={proto.state === 'purchasing' || countdown.isEnded}
           className={`relative w-full overflow-hidden rounded-xl py-4 text-base font-bold transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed ${
@@ -1011,7 +1056,59 @@ export default function ArenaPage({
       </div>
 
       {/* Bottom safe area */}
-      <div className="h-8" />
+      <div className="h-20" />
+
+      {/* ─── Sticky Bottom CTA — always-present buy pressure ─── */}
+      {showStickyCTA && !countdown.isEnded && proto.state !== 'confirmed' && (
+        <div
+          className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/[0.08] bg-[#0B0E14]/95 backdrop-blur-md"
+          style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+        >
+          <div className="flex items-center gap-3 px-4 py-3">
+            {/* Mini info: tier + price */}
+            <div className="flex flex-col min-w-0">
+              <span
+                className="text-[10px] font-bold uppercase tracking-wider"
+                style={{ color: TIER_COLOR[moment.rarityTiers[selectedTierIdx].tier] ?? '#6B7A99' }}
+              >
+                {moment.rarityTiers[selectedTierIdx].tier}
+              </span>
+              <span className="text-lg font-bold text-white tabular-nums leading-tight">
+                ${moment.rarityTiers[selectedTierIdx].price}
+              </span>
+            </div>
+
+            {/* Active buyers indicator */}
+            <div className="flex items-center gap-1 shrink-0">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00E5A0] opacity-60" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#00E5A0]" />
+              </span>
+              <span className="text-[10px] tabular-nums text-white/40">{activeBuyers} buying</span>
+            </div>
+
+            {/* Buy button */}
+            <button
+              onClick={proto.purchase}
+              disabled={proto.state === 'purchasing'}
+              className={`relative ml-auto flex-shrink-0 overflow-hidden rounded-lg px-6 py-3 font-bold text-sm uppercase tracking-wider transition-all active:scale-[0.97] ${
+                proto.state === 'purchasing'
+                  ? 'bg-[#00E5A0]/80 text-black cursor-wait'
+                  : isCritical
+                    ? 'bg-red-500 text-white animate-urgency-fast'
+                    : isClosing
+                      ? 'bg-amber-500 text-black'
+                      : 'bg-[#00E5A0] text-black'
+              }`}
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              {proto.state === 'purchasing'
+                ? (purchaseStage === 0 ? 'RESERVING...' : purchaseStage === 1 ? 'PROCESSING...' : 'SECURED!')
+                : isCritical ? 'LAST CHANCE' : isClosing ? 'BUY NOW' : 'OWN IT'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Keyframes in globals.css: fadeSlideIn, bounceIn, buttonShake, bgPulse */}
     </div>

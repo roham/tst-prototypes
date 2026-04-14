@@ -1595,3 +1595,13 @@
 - Amber (#F59E0B) for CLOSING and red (#EF4444) for CRITICAL maintains the established urgency color escalation used elsewhere in the broadcast page (countdown, edition bar, CTA).
 - The bumper text should be informational, not panicky: "Final Minutes" and "Final 2 Minutes" are broadcast language (how a commentator would announce it), not commerce language ("HURRY! TIME RUNNING OUT!"). Broadcast stays editorial.
 - Next cycle: Arena (rotation).
+
+## Cycle 198 Learnings
+- Sportsbook odds as a metaphor for tier demand creates a unique urgency mechanism — "the line is moving" is universally understood by sports fans as "someone knows something, act now."
+- Using the existing TIER_COLOR map for tier name colors maintains visual consistency with the rarity cards below — the odds board feels like a natural extension of the tier system.
+- The `useLiveOdds` hook uses both remaining stock (scarcity push) and velocity (momentum push) to shift lines, creating realistic-feeling market movement. Pure random drift would feel arbitrary; demand-correlated drift feels meaningful.
+- Heat labels (STEADY/ACTIVE/HEATING UP/HEAVY ACTION) with color ramp (gray → amber → orange → red) provide instant tier-level urgency at a glance without needing to read the actual odds numbers.
+- Showing the previous line with strikethrough creates a "before/after" comparison that makes movement tangible — the user sees the line WAS +240 and IS NOW +180, which is far more compelling than just seeing +180 alone.
+- The "Updated Xs ago" counter serves dual purpose: it signals the data is live (not static) and creates subtle micro-urgency as the counter climbs (implying the next update is imminent).
+- Placement above tier selector (after trivia, before "Select Tier") creates an information→decision flow: trivia builds engagement → odds show demand → tier cards let you act.
+- Next cycle: Supreme (rotation).

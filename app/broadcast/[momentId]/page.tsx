@@ -1893,6 +1893,28 @@ export default function BroadcastPage() {
             />
           )}
 
+          {/* "TST EXCLUSIVE" watermark — diagonal branding on exclusive footage */}
+          {/* ESPN/FOX/TNT brand their exclusive highlights with translucent on-screen */}
+          {/* watermarks. This marks the footage as proprietary broadcast content.     */}
+          {!countdown.isEnded && (
+            <div
+              className="absolute z-10 pointer-events-none"
+              style={{
+                top: '38%',
+                right: '8%',
+                transform: 'rotate(-15deg)',
+                opacity: 0.04,
+              }}
+            >
+              <span
+                className="text-[clamp(1.4rem,4vw,2.2rem)] font-bold uppercase tracking-[0.5em] text-white"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                TST Exclusive
+              </span>
+            </div>
+          )}
+
           {/* Broadcast END SLATE — SMPTE color bars + off-air card when drop concludes */}
           {countdown.isEnded && (
             <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none broadcast-end-slate">
@@ -2186,6 +2208,12 @@ export default function BroadcastPage() {
             />
             <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/30">
               Collect
+            </span>
+            {/* "Presented by" — broadcast segment sponsor tag */}
+            <span className="ml-auto text-[7px] uppercase tracking-[0.25em] text-white/10 italic"
+              style={{ fontFamily: 'Georgia, serif' }}
+            >
+              Presented by NBA Top Shot
             </span>
           </div>
 

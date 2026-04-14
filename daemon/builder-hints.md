@@ -1540,3 +1540,11 @@
 - Shot chart SVG is a high-recognition broadcast element — every basketball viewer knows this visualization
 - At beyond-9.0 territory, diminishing returns on visual effects — focus on institutional completeness, narrative closure, and small conversion touches
 - Supreme's auction house metaphor is now nearly complete from header to footer — future cycles should focus on interaction refinement or unexpected moments
+
+## Cycle 191 Learnings
+- SportsCenter Top 10 is an instantly recognizable format that requires no explanation — every NBA fan knows what "#1 Play of the Night" means. High-recognition formats convert better than novel ones because the user's brain processes them without cognitive load.
+- Staggered reveal (0.1s per row) creates the visual rhythm of a countdown — even though the list is static, the sequential appearance evokes the "10... 9... 8..." energy of the actual SC Top 10 segment.
+- The #1 row needs visual dominance: larger rank badge, team-color glow, bold text. The #2-#5 rows should be deliberately muted — their purpose is context (showing what #1 beat), not competing for attention.
+- Per-moment curated rankings with realistic other players (Edwards, Brunson, Wembanyama, etc.) add authenticity. Generic placeholder plays would feel hollow. Each rival play should be a plausible real highlight.
+- Placement after Fan Verdict creates a trust escalation: "91% of fans agree" (democratic validation) → "#1 Play of the Night" (institutional validation) → emotional closing → buy. The user encounters increasing levels of authority endorsing the moment.
+- Next cycle: Arena (rotation).

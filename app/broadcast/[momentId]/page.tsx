@@ -2838,6 +2838,58 @@ function CertificateScreen({
           </div>
         </div>
 
+        {/* ── POST-GAME PRESS CONFERENCE — player quote, broadcast editorial depth ── */}
+        <div
+          className="mt-5 w-full max-w-md mx-auto px-5 transition-all duration-700 ease-out"
+          style={{
+            opacity: phase >= 4 ? 1 : 0,
+            transform: phase >= 4 ? 'translateY(0)' : 'translateY(10px)',
+            transitionDelay: '0.3s',
+          }}
+        >
+          {/* Section label — broadcast lower-third style */}
+          <div className="flex items-center gap-2 mb-3">
+            <span
+              className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
+              style={{
+                backgroundColor: `rgba(${rgb},0.12)`,
+                color: moment.teamColors.primary,
+                fontFamily: 'var(--font-oswald), sans-serif',
+              }}
+            >
+              Postgame
+            </span>
+            <div className="h-[1px] flex-1 bg-white/[0.06]" />
+          </div>
+          {/* Quote block — editorial serif italic */}
+          <div className="relative pl-4">
+            {/* Left accent bar — broadcast pull quote */}
+            <div
+              className="absolute left-0 top-0 bottom-0 w-[2px] rounded-full"
+              style={{ backgroundColor: `rgba(${rgb},0.3)` }}
+            />
+            <p
+              className="text-[13px] leading-relaxed text-white/35"
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+            >
+              &ldquo;{
+                moment.id === 'bam'
+                  ? 'I felt like I couldn\u2019t be stopped tonight. Every time I got to the rim, I knew it was going in.'
+                  : moment.id === 'jokic'
+                    ? 'I don\u2019t think about records. I just play the game. If my teammates are open, I pass. If they\u2019re not, I score.'
+                    : 'That mid-range is my spot. I\u2019ve taken that shot a million times. Tonight it just felt different \u2014 like every one was going in.'
+              }&rdquo;
+            </p>
+            <p className="mt-2 text-[10px] uppercase tracking-[0.15em] text-white/20">
+              <span style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 600 }}>
+                {moment.player}
+              </span>
+              <span className="text-white/10"> &middot; </span>
+              Postgame Press Conference
+            </p>
+          </div>
+        </div>
+
         {/* ── UP NEXT — broadcast promo for next available moment ── */}
         {(() => {
           const others = MOMENTS.filter((m) => m.id !== moment.id);

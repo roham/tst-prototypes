@@ -613,3 +613,13 @@
 - Removing the dim during purchasing prevents obscuring the progress ring/checkmark feedback — phase-specific overlays should check purchase state.
 - Supreme's philosophy is "guide with light, not UI." The last-light dim adds zero new interface elements — it just manipulates brightness to funnel attention. That's peak Supreme.
 - Next cycle: Broadcast (rotation). Broadcast could use a "commercial break" bumper transition at phase changes, or an animated "BREAKING" chyron crawl during CRITICAL.
+
+## Cycle 70 Learnings
+- The W screen is an underexploited canvas for broadcast atmosphere. The main page has 10+ broadcast overlays, but the W screen had zero — adding flash + chyron dramatically closes that gap.
+- Photographer flash burst is a simple full-screen white div with opacity keyframes (0→85%→40%→15%→0% over 300ms). The trick is the non-linear falloff: peak brightness (85%) at 8% of duration, then slow triple-step fade. This mimics real camera flash physics (instant on, slow phosphor decay).
+- The BREAKING chyron uses a 3-state lifecycle (`hidden → in → out`) rather than a simple show/hide toggle. The slide-in (0.7s spring) and slide-out (0.5s ease-in right-exit) are different animations — the entrance is dramatic, the exit is smooth. Real broadcast chyrons behave this way.
+- Positioning the chyron at `bottom-[15%]` avoids the certificate card (centered) and share buttons (bottom). The W screen has specific content zones: top (COLLECTED banner + name), middle (certificate card), bottom (share). The chyron sits between middle and bottom.
+- The chyron content adapts to purchase context: player name + stat line (headline), tier + edition number (detail). This makes each collection feel unique — it's not a generic "BREAKING" but a specific announcement.
+- Two CSS keyframes (`broadcast-chyron-in`, `broadcast-chyron-out`) handle the lifecycle. The `chyronState` variable drives which animation is active. `hidden` removes the element entirely to prevent stale DOM.
+- The flash fires at phase 1 (50ms after mount) and the chyron at phase 2 (600ms). This creates a cinematic sequence: flash → name appears → chyron slides in → certificate rises → share buttons. Five distinct beats in 2 seconds.
+- Next cycle: Arena (rotation). Arena W screen could use a crowd roar crescendo effect (audio equalizer bars that spike) or a jumbotron-style "REPLAY" overlay during the reveal sequence.

@@ -38,9 +38,16 @@
 - StatBreakdown cards with staggered fly-in animation are high-impact, low-effort
 - Broadcast direction benefits most from editorial/typography refinements — it's already cinematic
 
+## Cycle 7 Learnings
+- Triple urgency stack = time + supply + competition. Supreme implements all 3 minimally: thin bar, live counter, name ticker
+- `useClaimTicker` hook simulates live edition claiming — reusable for other directions but should feel different in each
+- Scarcity labels ("Almost gone" / "Going fast") change based on remaining count thresholds — cheap emotional leverage
+- The urgency bar at top is only 2px but creates powerful visual tension when it glows in CRITICAL phase
+- Claim ticker key includes Date.now() to force re-render animation — needed for repeated same-name claims
+
 ## Strategic Notes
-- Cycles 4-6 = POLISH. Focus on typography, spacing, animation timing, above-fold experience
-- Supreme is weakest → gets Cycle 4
-- Broadcast has highest Emotion (5.5) — its editorial narrative is working
-- Arena has highest Interaction (5.0) — its live feed simulation is engaging
-- All three are strong on Purity (7.0) — directions remain distinct
+- Cycles 7-9 = URGENCY. Implement triple urgency stack in each direction's style
+- Supreme now 6.35 (was weakest, now strongest) — urgency stack was high-impact
+- Broadcast next (6.00) — needs editorial urgency: narrated countdown, supply narrative, exclusive framing
+- Arena (5.85) — needs social panic urgency: velocity visualization, crowd reactions, competitive claiming
+- Conversion scores still the biggest opportunity across all 3 (5.0-6.5 range)

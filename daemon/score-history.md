@@ -29,4 +29,6 @@
 | Broadcast | 7.0 | 5.0 | 6.0 | 4.5 | 7.5 | **6.00** |
 | Arena | 6.0 | 5.5 | 5.5 | 5.5 | 7.0 | **5.85** |
 
-**Weakest: Supreme (5.75)** — Supreme next in Cycle 7 (URGENCY phase). All directions improved significantly in POLISH phase.
+| 7 | supreme | 7.0 | 6.5 | 5.5 | 5.0 | 7.5 | 6.35 | +0.60 | Triple urgency: time bar, live claim ticker, edition flash, scarcity labels |
+
+**Current: Supreme 6.35, Broadcast 6.00, Arena 5.85** — Broadcast next in Cycle 8 (URGENCY phase).

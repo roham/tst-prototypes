@@ -7016,6 +7016,7 @@ export default function ArenaPage({
   const [recentBuyers, setRecentBuyers] = useState(23);
   const [shaking, setShaking] = useState(false);
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=processing, 2=secured
+  const [queuePosition, setQueuePosition] = useState<number | null>(null); // queue countdown during stage 0
   const [activeBuyers, setActiveBuyers] = useState(Math.floor(Math.random() * 20) + 12);
   const ctaRef = useRef<HTMLButtonElement>(null);
 
@@ -7187,15 +7188,35 @@ export default function ArenaPage({
   }, [moment]);
 
   /* ── Purchase stage progression (3 stages in 1.5s) ─────────── */
+  /* Queue position countdown during stage 0 — Whatnot-style rapid   */
+  /* countdown from #N to #1 before "RESERVING EDITION..." appears.  */
+  /* Creates live-auction queue energy during the purchase moment.    */
   useEffect(() => {
     if (proto.state !== 'purchasing') {
       setPurchaseStage(0);
+      setQueuePosition(null);
       return;
     }
+    // Start queue countdown from a random position (5-12)
+    const startPos = Math.floor(Math.random() * 8) + 5;
+    setQueuePosition(startPos);
     CROWD_HAPTIC.purchaseStage(0);
+    // Rapidly count down to #1 over ~400ms, then show reserving for 100ms
+    const stepMs = Math.floor(380 / startPos);
+    const qTimers: ReturnType<typeof setTimeout>[] = [];
+    for (let i = 1; i <= startPos; i++) {
+      qTimers.push(setTimeout(() => {
+        const pos = startPos - i;
+        if (pos > 0) {
+          setQueuePosition(pos);
+        } else {
+          setQueuePosition(null); // queue complete, show reserving
+        }
+      }, stepMs * i));
+    }
     const t1 = setTimeout(() => { setPurchaseStage(1); CROWD_HAPTIC.purchaseStage(1); }, 500);
     const t2 = setTimeout(() => { setPurchaseStage(2); CROWD_HAPTIC.purchaseStage(2); }, 1100);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    return () => { qTimers.forEach(clearTimeout); clearTimeout(t1); clearTimeout(t2); };
   }, [proto.state]);
 
   /* ── Active buyers jitter ─────────────────────────────────── */
@@ -9096,7 +9117,9 @@ export default function ArenaPage({
                   style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
                 >
                   {purchaseStage === 0
-                    ? 'RESERVING EDITION...'
+                    ? (queuePosition !== null
+                        ? `QUEUE POSITION #${queuePosition}`
+                        : 'RESERVING EDITION...')
                     : purchaseStage === 1
                       ? 'PROCESSING PAYMENT...'
                       : 'SECURED!'}
@@ -9296,7 +9319,7 @@ export default function ArenaPage({
                   className="text-[10px] font-bold uppercase tracking-wider text-[#00E5A0]"
                   style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
                 >
-                  {purchaseStage === 0 ? 'Reserving...' : purchaseStage === 1 ? 'Processing...' : 'Secured!'}
+                  {purchaseStage === 0 ? (queuePosition !== null ? `#${queuePosition} in queue` : 'Reserving...') : purchaseStage === 1 ? 'Processing...' : 'Secured!'}
                 </span>
               </div>
             ) : (
@@ -9362,7 +9385,7 @@ export default function ArenaPage({
                   </svg>
                 )}
                 {proto.state === 'purchasing'
-                  ? (purchaseStage === 0 ? 'RESERVING...' : purchaseStage === 1 ? 'PROCESSING...' : 'SECURED!')
+                  ? (purchaseStage === 0 ? (queuePosition !== null ? `#${queuePosition} IN QUEUE` : 'RESERVING...') : purchaseStage === 1 ? 'PROCESSING...' : 'SECURED!')
                   : isCritical ? <>{`LAST CHANCE `}<span className="font-mono tabular-nums text-[11px] opacity-80">{countdown.minutes}:{String(countdown.seconds).padStart(2, '0')}</span></> : isClosing ? 'BUY NOW' : 'OWN IT'}
               </span>
             </button>

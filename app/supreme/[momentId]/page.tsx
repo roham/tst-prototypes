@@ -2577,7 +2577,24 @@ export default function SupremePage() {
       {/* ============================================================= */}
       {/* CONTEXT — one emotional sentence, given room to breathe */}
       {/* ============================================================= */}
-      <div className="px-5 pt-1 pb-2 supreme-context-enter">
+      <div className="px-5 pt-1 pb-2 supreme-context-enter relative">
+        {/* Catalogue spine shadow — vertical gradient simulating the center   */}
+        {/* crease of an open auction catalogue. Physical catalogues always    */}
+        {/* have a subtle shadow running down the spine where pages meet the   */}
+        {/* binding. This barely-visible gradient adds tactile print-quality   */}
+        {/* depth to the content area. Positioned at left edge (gutter side). */}
+        <div
+          className="absolute top-0 bottom-0 left-0 w-[2px] pointer-events-none z-0"
+          style={{
+            background: `linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.15) 80%, transparent 100%)`,
+          }}
+        />
+        <div
+          className="absolute top-0 bottom-0 left-[2px] w-[6px] pointer-events-none z-0"
+          style={{
+            background: `linear-gradient(to right, rgba(0,0,0,0.08), transparent)`,
+          }}
+        />
         <div
           className="h-[1px] w-8 mb-3"
           style={{ backgroundColor: `${moment.teamColors.primary}50` }}
@@ -2597,8 +2614,58 @@ export default function SupremePage() {
           {new Date().getFullYear()}. Edition of {moment.editionSize.toLocaleString()}. Minted on Flow.
         </p>
 
+        {/* Catalogue watermark crest — institutional monogram behind text */}
+        {/* Every Christie's/Sotheby's printed catalogue has a faint house    */}
+        {/* crest watermarked behind the lot description. This SVG monogram   */}
+        {/* at 3% opacity creates the same subliminal institutional gravitas  */}
+        {/* — visible only to those who look closely, like real watermarks.   */}
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none z-0" style={{ opacity: 0.03 }}>
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+            {/* Outer ring — institutional border */}
+            <circle cx="40" cy="40" r="38" stroke={moment.teamColors.primary} strokeWidth="0.5" />
+            <circle cx="40" cy="40" r="35" stroke={moment.teamColors.primary} strokeWidth="0.3" />
+            {/* TST monogram — interlocking letters */}
+            <text
+              x="40" y="46"
+              textAnchor="middle"
+              fill={moment.teamColors.primary}
+              fontSize="18"
+              fontFamily="var(--font-oswald), sans-serif"
+              fontWeight="700"
+              letterSpacing="0.15em"
+            >
+              TST
+            </text>
+            {/* Year — bottom of seal */}
+            <text
+              x="40" y="58"
+              textAnchor="middle"
+              fill={moment.teamColors.primary}
+              fontSize="6"
+              fontFamily="var(--font-mono), monospace"
+              letterSpacing="0.3em"
+            >
+              {new Date().getFullYear()}
+            </text>
+            {/* Top arc text — "EVENING SALE" */}
+            <path id="supreme-seal-arc-top" d="M 12 40 A 28 28 0 0 1 68 40" fill="none" />
+            <text fontSize="4" fill={moment.teamColors.primary} letterSpacing="0.4em" fontFamily="var(--font-mono), monospace">
+              <textPath href="#supreme-seal-arc-top" startOffset="50%" textAnchor="middle">
+                EVENING SALE
+              </textPath>
+            </text>
+            {/* Bottom arc text — "NEW YORK" */}
+            <path id="supreme-seal-arc-bottom" d="M 12 40 A 28 28 0 0 0 68 40" fill="none" />
+            <text fontSize="4" fill={moment.teamColors.primary} letterSpacing="0.3em" fontFamily="var(--font-mono), monospace">
+              <textPath href="#supreme-seal-arc-bottom" startOffset="50%" textAnchor="middle">
+                NEW YORK
+              </textPath>
+            </text>
+          </svg>
+        </div>
+
         {/* Specialist's Note — auction house expert assessment, institutional voice */}
-        <div className="mt-3 pl-2.5" style={{ borderLeft: `0.5px solid ${moment.teamColors.primary}15` }}>
+        <div className="mt-3 pl-2.5 relative z-[1]" style={{ borderLeft: `0.5px solid ${moment.teamColors.primary}15` }}>
           <span
             className="text-[7px] font-bold uppercase tracking-[0.35em] block mb-1"
             style={{ color: `${moment.teamColors.primary}30`, fontFamily: 'var(--font-oswald), sans-serif' }}
@@ -2619,7 +2686,14 @@ export default function SupremePage() {
         {/* request. For digital assets, this covers minting verification,        */}
         {/* blockchain provenance, and media integrity — the digital equivalent   */}
         {/* of "no visible restoration, original canvas, provenance unbroken."    */}
-        <div className="mt-4 pt-3" style={{ borderTop: '0.5px solid rgba(255,255,255,0.04)' }}>
+        {/* Gilt divider — metallic gradient like gilt book-page edges */}
+        <div className="mt-4 pt-3 relative">
+          <div
+            className="absolute top-0 left-0 right-0 h-[0.5px]"
+            style={{
+              background: `linear-gradient(90deg, transparent 0%, ${moment.teamColors.primary}08 15%, rgba(255,255,255,0.06) 40%, ${moment.teamColors.primary}10 50%, rgba(255,255,255,0.06) 60%, ${moment.teamColors.primary}08 85%, transparent 100%)`,
+            }}
+          />
           <span
             className="text-[7px] font-bold uppercase tracking-[0.35em] block mb-2"
             style={{ color: 'rgba(255,255,255,0.12)', fontFamily: 'var(--font-oswald), sans-serif' }}
@@ -2674,7 +2748,14 @@ export default function SupremePage() {
         {/* strongest institutional signal of value — it means the house's own  */}
         {/* specialists have singled out this lot as exceptional. The ★ appears */}
         {/* in the printed catalogue and on digital lot pages.                  */}
-        <div className="mt-5 pt-4 flex flex-col items-center gap-1" style={{ borderTop: '0.5px solid rgba(255,255,255,0.04)' }}>
+        {/* Gilt divider — premium metallic gradient at star lot designation */}
+        <div className="mt-5 pt-4 flex flex-col items-center gap-1 relative">
+          <div
+            className="absolute top-0 left-0 right-0 h-[0.5px]"
+            style={{
+              background: `linear-gradient(90deg, transparent 0%, ${moment.teamColors.primary}06 20%, rgba(255,255,255,0.05) 35%, ${moment.teamColors.primary}12 50%, rgba(255,255,255,0.05) 65%, ${moment.teamColors.primary}06 80%, transparent 100%)`,
+            }}
+          />
           <span
             className="text-[10px] tracking-[0.1em]"
             style={{ color: `${moment.teamColors.primary}35` }}
@@ -2696,7 +2777,14 @@ export default function SupremePage() {
         {/* Every Christie's/Sotheby's lot page lists where the work has been */}
         {/* exhibited. For an NBA moment, exhibitions are broadcast appearances */}
         {/* and digital showcases — places where this play was "on view."      */}
-        <div className="mt-4 pt-3" style={{ borderTop: '0.5px solid rgba(255,255,255,0.04)' }}>
+        {/* Gilt divider — Exhibition History */}
+        <div className="mt-4 pt-3 relative">
+          <div
+            className="absolute top-0 left-0 right-0 h-[0.5px]"
+            style={{
+              background: `linear-gradient(90deg, transparent 0%, ${moment.teamColors.primary}08 15%, rgba(255,255,255,0.06) 40%, ${moment.teamColors.primary}10 50%, rgba(255,255,255,0.06) 60%, ${moment.teamColors.primary}08 85%, transparent 100%)`,
+            }}
+          />
           <span
             className="text-[7px] font-bold uppercase tracking-[0.35em] block mb-2"
             style={{ color: 'rgba(255,255,255,0.12)', fontFamily: 'var(--font-oswald), sans-serif' }}

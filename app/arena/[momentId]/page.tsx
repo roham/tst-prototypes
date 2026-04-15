@@ -3272,6 +3272,174 @@ function CelebrationShimmer({ teamColor }: { teamColor: string }) {
 
 /* ─── Tonight's Attendance — jumbotron PA system announcement ──────── */
 /* Every NBA arena announces the attendance figure during the 4th       */
+/* ─── Crowd Cam Grid — jumbotron 3×3 camera feed mosaic on W screen ─── */
+/* NBA arenas display a crowd cam grid on the jumbotron between plays:    */
+/* 9 camera feeds showing different sections of fans. The center feed is  */
+/* always the spotlight — "that's YOU on the big screen!" The surrounding  */
+/* 8 feeds show other fans (here: other recent buyers). Camera viewfinder */
+/* brackets frame each cell. The grid pulses with team color.             */
+
+const CROWD_CAM_LABELS = [
+  'SEC 101', 'SEC 204', 'SEC 108',
+  'SEC 315', 'YOUR CAM', 'SEC 112',
+  'SEC 220', 'SEC 306', 'SEC 118',
+];
+
+function CrowdCamGrid({
+  editionNumber,
+  feedEvents,
+  teamColor,
+  secondaryColor,
+  show,
+}: {
+  editionNumber: number;
+  feedEvents: PurchaseEvent[];
+  teamColor: string;
+  secondaryColor: string;
+  show: boolean;
+}) {
+  // Build 8 surrounding cells from recent feed events (or placeholder buyers)
+  const surroundingBuyers = Array.from({ length: 8 }, (_, i) => {
+    const ev = feedEvents[feedEvents.length - 1 - i];
+    return ev
+      ? { name: ev.name, city: ev.city, edition: ev.edition }
+      : { name: BUYER_NAMES[i % BUYER_NAMES.length], city: CITIES[i % CITIES.length], edition: Math.floor(Math.random() * 5000) + 1 };
+  });
+
+  // Interleave: positions 0-3 are before center, 4-7 are after
+  const cells = [
+    ...surroundingBuyers.slice(0, 4),
+    null, // center = YOU
+    ...surroundingBuyers.slice(4),
+  ];
+
+  return (
+    <div
+      className="mt-5 w-full max-w-[280px] transition-all duration-600 ease-out"
+      style={{
+        opacity: show ? 1 : 0,
+        transform: show ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.95)',
+        transitionDelay: '0.32s',
+      }}
+    >
+      {/* CROWD CAM badge */}
+      <div className="flex items-center justify-center gap-2 mb-2">
+        <div className="h-[1px] flex-1" style={{ backgroundColor: `${teamColor}20` }} />
+        <div className="flex items-center gap-1.5">
+          {/* Camera icon */}
+          <svg className="h-3 w-3" viewBox="0 0 16 16" fill={teamColor} opacity={0.6}>
+            <path d="M2 4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4Zm4 4a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z" />
+          </svg>
+          <span
+            className="text-[8px] font-bold uppercase tracking-[0.25em]"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: `${teamColor}90`,
+              textShadow: `0 0 8px ${teamColor}30`,
+            }}
+          >
+            Crowd Cam
+          </span>
+          {/* Live dot */}
+          <span className="relative flex h-[5px] w-[5px]">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-60" />
+            <span className="relative inline-flex h-[5px] w-[5px] rounded-full bg-red-500" />
+          </span>
+        </div>
+        <div className="h-[1px] flex-1" style={{ backgroundColor: `${teamColor}20` }} />
+      </div>
+
+      {/* 3×3 Grid */}
+      <div
+        className="grid grid-cols-3 gap-[2px] rounded-xl overflow-hidden"
+        style={{
+          border: `1px solid ${teamColor}25`,
+          backgroundColor: `${teamColor}08`,
+        }}
+      >
+        {cells.map((cell, idx) => {
+          const isCenter = idx === 4;
+          const label = CROWD_CAM_LABELS[idx];
+          return (
+            <div
+              key={idx}
+              className="relative flex flex-col items-center justify-center py-3 px-1"
+              style={{
+                backgroundColor: isCenter ? `${teamColor}15` : 'rgba(11,14,20,0.95)',
+                animation: isCenter ? undefined : `arena-crowd-cam-cell ${1.5 + (idx % 3) * 0.3}s ease-in-out ${0.4 + idx * 0.08}s both`,
+                boxShadow: isCenter ? `inset 0 0 20px ${teamColor}15` : undefined,
+              }}
+            >
+              {/* Camera viewfinder corners */}
+              <div className="absolute top-[3px] left-[3px] w-[6px] h-[6px] pointer-events-none border-t border-l" style={{ borderColor: isCenter ? `${teamColor}80` : 'rgba(255,255,255,0.08)' }} />
+              <div className="absolute top-[3px] right-[3px] w-[6px] h-[6px] pointer-events-none border-t border-r" style={{ borderColor: isCenter ? `${teamColor}80` : 'rgba(255,255,255,0.08)' }} />
+              <div className="absolute bottom-[3px] left-[3px] w-[6px] h-[6px] pointer-events-none border-b border-l" style={{ borderColor: isCenter ? `${teamColor}80` : 'rgba(255,255,255,0.08)' }} />
+              <div className="absolute bottom-[3px] right-[3px] w-[6px] h-[6px] pointer-events-none border-b border-r" style={{ borderColor: isCenter ? `${teamColor}80` : 'rgba(255,255,255,0.08)' }} />
+
+              {/* Section label — top */}
+              <span
+                className="text-[6px] font-mono uppercase tracking-[0.15em] mb-1"
+                style={{ color: isCenter ? `${teamColor}CC` : 'rgba(255,255,255,0.15)' }}
+              >
+                {label}
+              </span>
+
+              {isCenter ? (
+                <>
+                  {/* YOU — highlighted center cell */}
+                  <span
+                    className="text-[14px] font-bold uppercase tracking-wider"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: '#00E5A0',
+                      textShadow: '0 0 10px rgba(0,229,160,0.4)',
+                    }}
+                  >
+                    YOU
+                  </span>
+                  <span
+                    className="text-[10px] font-bold tabular-nums mt-0.5"
+                    style={{
+                      fontFamily: 'var(--font-mono), monospace',
+                      color: `${teamColor}`,
+                      textShadow: `0 0 6px ${teamColor}40`,
+                    }}
+                  >
+                    #{editionNumber.toLocaleString()}
+                  </span>
+                </>
+              ) : cell ? (
+                <>
+                  {/* Other buyer */}
+                  <span
+                    className="text-[9px] font-semibold text-white/50 truncate max-w-full"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {cell.name}
+                  </span>
+                  <span className="text-[7px] text-white/20 mt-0.5">
+                    {cell.city}
+                  </span>
+                </>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Bottom label */}
+      <div className="flex items-center justify-center mt-1.5">
+        <span
+          className="text-[7px] uppercase tracking-[0.2em] text-white/15"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+        >
+          Live arena cameras · {feedEvents.length}+ fans
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* quarter: "Tonight's attendance: 19,847. Thank you for coming."       */
 /* This is the collector equivalent on the W screen.                    */
 
@@ -4277,6 +4445,19 @@ function CelebrationScreen({
           total={total}
           claimed={feedEvents.length}
           teamColor={moment.teamColors.primary}
+          show={showDetails}
+        />
+
+        {/* Jumbotron Crowd Cam Grid — 3×3 grid of "camera feeds" showing you + other buyers */}
+        {/* NBA arenas display crowd cam grids on the jumbotron — 9 camera feeds showing    */}
+        {/* different sections of fans reacting. The center feed is always the spotlight.    */}
+        {/* This puts the buyer in center-cam surrounded by other recent collectors,         */}
+        {/* creating "you're part of the crowd" social proof and screenshot-worthy content.  */}
+        <CrowdCamGrid
+          editionNumber={editionNumber}
+          feedEvents={feedEvents}
+          teamColor={moment.teamColors.primary}
+          secondaryColor={moment.teamColors.secondary}
           show={showDetails}
         />
 

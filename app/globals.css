@@ -2303,3 +2303,9 @@ body {
   70% { transform: translateY(12px) scaleX(1.01); opacity: 0.5; }
   85% { opacity: 0; }
 }
+
+@keyframes arena-crowd-cam-cell {
+  0%   { opacity: 0; transform: scale(0.85); }
+  60%  { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}

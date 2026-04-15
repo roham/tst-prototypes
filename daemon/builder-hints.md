@@ -1687,3 +1687,11 @@
 - The Moment type doesn't have `points`/`assists`/`rebounds`/`date` — it uses `statLine` (e.g., "30 PTS / 8 REB / 4 AST") and `context`. Always check the type definition before referencing properties.
 - Edge fade gradients (8px linear-gradient from opaque to transparent) sell the "physical screen with edges" illusion. Without them, the ticker feels like a CSS demo; with them, it feels like hardware.
 - Next cycle: Supreme (rotation).
+
+## Cycle 210 Learnings
+- SVG `<text>` with stroke-dashoffset is the cleanest calligraphic reveal technique — pure CSS, zero JS. Set stroke-dasharray to a value >= total path length (500 is safe for short words).
+- Two-phase animation (draw stroke 0-70%, flood fill 70-100%) creates the "ink soaking in" effect. The gap between stroke completion and fill appearance makes the reveal feel physical.
+- 0.3s delay is critical — "YOURS." must start AFTER the giant W has landed. Without it, the two animations compete.
+- SVG viewBox dimensions (160×22) must be precise for Oswald at 15px with 0.5em letter-spacing. Too wide = tiny text; too narrow = clipping.
+- Supreme's W screen now has 3 calligraphic ink moments: YOURS. inscription → sale record field reveal → collector's signature flourish.
+- Next cycle: Broadcast (rotation). Ideas: broadcast booth monitor grid on W screen (4-up multi-camera layout), or a stadium flyover graphic before the editorial section.

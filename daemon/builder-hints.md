@@ -2131,3 +2131,10 @@
 - One-shot interactions (bell can't be un-set) create stronger commitment than toggles. At Sotheby's, "Register Interest" can't be undone — you've declared intent. The irreversibility amplifies the foot-in-the-door effect.
 - The background ambient shift from OPEN→CLOSING→CRITICAL was ALREADY implemented (lines 1720-1726 using color-mix). Always check existing code before planning improvements from the idea list — the page is 4900+ lines and features accumulate.
 - Current scores: Supreme 9.43 (VP 9.43, Conv 9.43, Emo 9.43, Int 9.43, Pur 9.44), Broadcast 9.45, Arena 9.45. Next cycle: Broadcast (rotation). Supreme's dimensions are now more evenly distributed — previous cycle focused on Conv/Int which were 0.02 behind.
+
+## Cycle 274 Learnings
+- Jersey numbers are one of the strongest identity markers in sports — they're iconic shorthand that fans recognize instantly. Adding them as oversized watermarks is a VP+Emotion double-hit.
+- WebkitTextStroke with transparent fill creates the ghosted outline effect that's more elegant than low-opacity solid fill — it integrates with the background rather than covering it.
+- At 9.45+ ceiling, VP and Emotion improvements need to be additive to existing composition rather than competing with it. The jersey number works because it's a background layer that enhances the player name rather than distracting from it.
+- The 7% opacity for the stroke is calibrated to be visible but not compete with the player name text. Higher opacity (10%+) made it fight with the name; lower (4%) made it invisible on mobile.
+- Current scores: Supreme 9.43, Broadcast 9.45, Arena 9.45. Supreme is the weakest at 9.43. Next cycle: Arena (rotation after Broadcast). Then Supreme after that.

@@ -8602,27 +8602,95 @@ export default function ArenaPage({
       <div className="h-20" />
       </div>{/* Close court lines wrapper */}
 
-      {/* ─── Sticky Bottom CTA — always-present buy pressure ─── */}
+      {/* ─── Sticky Bottom CTA — arena scoreboard-style persistent buy bar ─── */}
       {showStickyCTA && !countdown.isEnded && proto.state !== 'confirmed' && (
         <div
-          className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/[0.08] bg-[#0B0E14]/95 backdrop-blur-md"
-          style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+          className="fixed bottom-0 left-0 right-0 z-40 border-t bg-[#0B0E14]/95 backdrop-blur-md"
+          style={{
+            paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+            borderColor: isCritical ? 'rgba(239,68,68,0.25)' : isClosing ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.08)',
+          }}
         >
-          <div className="flex items-center gap-3 px-4 py-3">
-            {/* Mini info: tier + price */}
-            <div className="flex flex-col min-w-0">
-              <span
-                className="text-[10px] font-bold uppercase tracking-wider"
-                style={{ color: TIER_COLOR[moment.rarityTiers[selectedTierIdx].tier] ?? '#6B7A99' }}
-              >
-                {moment.rarityTiers[selectedTierIdx].tier}
-              </span>
-              <span className="text-lg font-bold text-white tabular-nums leading-tight">
-                ${moment.rarityTiers[selectedTierIdx].price}
-              </span>
+          {/* Supply depletion bar — thin scorer's table progress line at top edge */}
+          {(() => {
+            const tier = moment.rarityTiers[selectedTierIdx];
+            const remaining = liveTierRemaining[selectedTierIdx] ?? tier.remaining;
+            const pct = Math.min(100, Math.round(((tier.remaining - remaining) / Math.max(1, tier.remaining)) * 100));
+            return (
+              <div className="h-[2px] w-full" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
+                <div
+                  className="h-full transition-all duration-700 ease-out"
+                  style={{
+                    width: `${pct}%`,
+                    backgroundColor: pct >= 90 ? '#EF4444' : pct >= 70 ? '#F59E0B' : moment.teamColors.primary,
+                    boxShadow: pct >= 90
+                      ? '0 0 6px rgba(239,68,68,0.5)'
+                      : pct >= 70
+                        ? '0 0 4px rgba(245,158,11,0.3)'
+                        : `0 0 3px ${moment.teamColors.primary}40`,
+                  }}
+                />
+              </div>
+            );
+          })()}
+          <div className="flex items-center gap-3 px-4 py-2.5">
+            {/* Left: Tier badge + game clock stack */}
+            <div className="flex items-center gap-2.5 min-w-0">
+              {/* Tier + price column */}
+              <div className="flex flex-col min-w-0">
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.15em]"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: TIER_COLOR[moment.rarityTiers[selectedTierIdx].tier] ?? '#6B7A99',
+                  }}
+                >
+                  {moment.rarityTiers[selectedTierIdx].tier}
+                </span>
+                <span
+                  className="text-lg font-bold text-white tabular-nums leading-tight"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  ${moment.rarityTiers[selectedTierIdx].price}
+                </span>
+              </div>
+              {/* Divider */}
+              <div className="h-7 w-[1px]" style={{ backgroundColor: `${moment.teamColors.primary}15` }} />
+              {/* Mini game clock — scorer's table LED style */}
+              <div className="flex flex-col items-center gap-0">
+                <span
+                  className="text-[6px] font-bold uppercase tracking-[0.2em]"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: isCritical ? '#EF4444' : isClosing ? '#F59E0B' : `${moment.teamColors.primary}60`,
+                  }}
+                >
+                  {(() => {
+                    const pct = countdown.totalSeconds / ((SALE_DURATION_MS[momentId] ?? 720000) / 1000);
+                    if (pct > 0.75) return '1ST';
+                    if (pct > 0.5) return '2ND';
+                    if (pct > 0.25) return '3RD';
+                    return '4TH';
+                  })()}
+                </span>
+                <span
+                  className="text-[14px] font-bold tabular-nums leading-none"
+                  style={{
+                    fontFamily: 'var(--font-mono), monospace',
+                    color: isCritical ? '#EF4444' : isClosing ? '#F59E0B' : '#F0F2F5',
+                    textShadow: isCritical
+                      ? '0 0 6px rgba(239,68,68,0.5)'
+                      : isClosing
+                        ? '0 0 6px rgba(245,158,11,0.4)'
+                        : `0 0 4px ${moment.teamColors.primary}30`,
+                  }}
+                >
+                  {countdown.minutes}:{String(countdown.seconds).padStart(2, '0')}
+                </span>
+              </div>
             </div>
 
-            {/* Active buyers / purchase status indicator */}
+            {/* Center: Active buyers / purchase status */}
             {proto.state === 'purchasing' ? (
               <div className="flex items-center gap-1.5 shrink-0">
                 <span className="relative flex h-1.5 w-1.5">
@@ -8646,7 +8714,7 @@ export default function ArenaPage({
               </div>
             )}
 
-            {/* Buy button — shows progress during purchase */}
+            {/* Buy button — jumbotron CTA with LED scanline */}
             <button
               onClick={proto.state !== 'purchasing' ? () => { CROWD_HAPTIC.ctaSlam(); proto.purchase(); } : undefined}
               disabled={proto.state === 'purchasing'}
@@ -8661,6 +8729,15 @@ export default function ArenaPage({
               }`}
               style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
             >
+              {/* LED scanline texture — matches main CTA jumbotron feel */}
+              {proto.state !== 'purchasing' && (
+                <div
+                  className="absolute inset-0 pointer-events-none z-[1] rounded-lg"
+                  style={{
+                    background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px)',
+                  }}
+                />
+              )}
               {/* Progress bar overlay during purchase */}
               {proto.state === 'purchasing' && (
                 <div

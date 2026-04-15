@@ -1911,3 +1911,11 @@
 - The delta (+0.01) reflects that at 9.40+, even structural improvements have diminishing returns. The tier-escalation is a significant Interaction improvement but doesn't move Visual Polish or Conversion since those dimensions were already well-served.
 - The foil shimmer effect (animated background-position on background-clip:text) is a CSS-only technique that creates the holographic card effect. Works well at small text sizes.
 - Next cycle: Supreme (rotation). Supreme scores: VP=9.37, Conv=9.37, Emo=9.37, Int=9.38, Pur=9.42. All non-Purity dimensions are tied low (9.37-9.38). Ideas: Supreme could benefit from a similar tier-scaling approach for its auction ceremony (longer inscription for premium lots), or the hero image could have a more dramatic gallery lighting reveal on page load.
+
+## Cycle 240 Learnings
+- When detecting phase transitions, always use dedicated refs per effect to avoid race conditions. The existing prevPhaseRef was updated by the transition flash effect before the lot-closed effect could read it. A separate prevPhaseForClosingRef solved this cleanly.
+- The lot closed ceremony reuses the gavel curtain's visual language (horizontal line sweep, team-color flash) but with longer timing (1.8s vs 0.85s) and softer opacity — the lot closing is a quieter, more resigned moment than the decisive gavel strike on purchase.
+- Letter-spacing animation (0.8em→0.45em) on "LOT CLOSED" creates the same kinetic energy as Arena's jumbotron text, but restrained — Supreme's text condenses quietly vs Arena's text slamming in from scale.
+- The ceremony only fires when the user is browsing — if they're in purchase flow, the gavel curtain handles that transition. This prevents double ceremonies from overlapping.
+- Delta modest (+0.01) because Supreme's ENDED state was already functional, and the ceremony only fires once (users may not experience it in their first session). High craft value but low frequency impact.
+- Next cycle: Broadcast (rotation). Broadcast scores: VP=9.38, Conv=9.42, Emo=9.38, Int=9.38, Pur=9.39. Visual and Emotion are the weakest dimensions.

@@ -2159,3 +2159,11 @@
 - Staggered reveal delays (0.3s increments) create the "analyst is drawing" rhythm. Faster (0.15s) felt too mechanical; slower (0.5s) felt boring. 0.3s is the sweet spot.
 - Per-moment play data (unique analyst + unique play breakdown) is what makes this feel real vs. generic. RJ breaking down Bam's isolation, JJ dissecting Jokić's no-look — each analyst has the right expertise for the moment.
 - Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.46. Next cycle: Arena (rotation). Arena and Broadcast now tied at 9.46. Supreme is 0.02 behind.
+
+## Cycle 278 Learnings
+- Touch-responsive hero interaction is high-value for Interaction dimension — the hero section is the largest visual element but was previously passive (no response to touch beyond scrolling).
+- useCallback for spawn + handleInteraction avoids re-render cascading. Limiting to 3 concurrent ripples via `prev.slice(-2)` keeps DOM nodes minimal.
+- The arena-court-ripple keyframe uses scale(0)→scale(1) with translate(-50%,-50%) to center the ring at the touch point. The spring easing (0.16,1,0.3,1) makes the expansion feel physical, not mechanical.
+- z-9 for ripples sits between the jumbotron pixel grid (z-6) and the text overlay (z-10), so ripples appear on the "court surface" below the player info.
+- Touch events on mobile fire both onTouchStart and onClick — but since ripples auto-clean after 900ms and max 3 concurrent, double-firing is harmless (just two overlapping ripples, which actually looks cool).
+- Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Supreme (rotation). Supreme is now the weakest at 0.03 behind Arena.

@@ -583,6 +583,38 @@ body {
   100% { transform: rotate(0deg); }
 }
 
+/* Supreme heartbeat — CTA throbs with auctioneer's cadence during gavel phases */
+@keyframes supreme-heartbeat {
+  0%, 100% { transform: scale(1); }
+  12% { transform: scale(1.025); }
+  24% { transform: scale(0.99); }
+  36% { transform: scale(1.015); }
+  48% { transform: scale(1); }
+}
+.supreme-heartbeat { animation: supreme-heartbeat 1.8s ease-in-out infinite; }
+@keyframes supreme-heartbeat-fast {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.04); }
+  30% { transform: scale(0.985); }
+  45% { transform: scale(1.02); }
+  60% { transform: scale(1); }
+}
+.supreme-heartbeat-fast { animation: supreme-heartbeat-fast 0.9s ease-in-out infinite; }
+
+/* Supreme gavel icon — raised position with subtle sway, strike on final phase */
+@keyframes supreme-gavel-raised {
+  0%, 100% { transform: rotate(-8deg); }
+  50% { transform: rotate(-14deg); }
+}
+.supreme-gavel-icon-raised { animation: supreme-gavel-raised 1.6s ease-in-out infinite; }
+@keyframes supreme-gavel-strike {
+  0% { transform: rotate(-20deg); }
+  35% { transform: rotate(6deg); }
+  55% { transform: rotate(-2deg); }
+  100% { transform: rotate(0deg); }
+}
+.supreme-gavel-icon-strike { animation: supreme-gavel-strike 0.4s ease-out infinite; }
+
 /* Supreme lot provenance label — vertical museum wall label */
 @keyframes supreme-provenance-label-in {
   0% { opacity: 0; transform: translateY(8px); }

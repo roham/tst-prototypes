@@ -1414,16 +1414,19 @@ export default function SupremePage() {
       if (gavelPhase !== 3) {
         gavelKeyRef.current += 1;
         setGavelPhase(3);
+        haptic([20, 40, 20, 40, 25]); // double-tap — going twice
       }
     } else if (countdown.totalSeconds <= 10 && countdown.totalSeconds > 5) {
       if (gavelPhase !== 2) {
         gavelKeyRef.current += 1;
         setGavelPhase(2);
+        haptic([15, 30, 18]); // single strike — going once
       }
     } else if (countdown.totalSeconds <= 20 && countdown.totalSeconds > 10) {
       if (gavelPhase !== 1) {
         gavelKeyRef.current += 1;
         setGavelPhase(1);
+        haptic(12); // gentle tap — fair warning
       }
     }
   }, [countdown.totalSeconds, dropPhase, viewPhase, gavelPhase]);
@@ -1654,9 +1657,13 @@ export default function SupremePage() {
     buttonTextColor = '#6B7A99';
   } else if (dropPhase === 'CRITICAL') {
     buttonBg = '#EF4444';
-    buttonText = `LAST CHANCE — ${scrambledPrice}`;
+    // Auctioneer's cadence escalation — button text mirrors the gavel phases
+    buttonText = gavelPhase === 3 ? `GOING TWICE — ${scrambledPrice}`
+      : gavelPhase === 2 ? `GOING ONCE — ${scrambledPrice}`
+      : gavelPhase === 1 ? `FAIR WARNING — ${scrambledPrice}`
+      : `LAST CHANCE — ${scrambledPrice}`;
     buttonTextColor = '#FFFFFF';
-    buttonAnimation = 'animate-urgency-fast';
+    buttonAnimation = gavelPhase === 3 ? 'supreme-heartbeat-fast' : gavelPhase >= 1 ? 'supreme-heartbeat' : 'animate-urgency-fast';
   } else if (dropPhase === 'CLOSING') {
     buttonText = `CLOSING SOON — ${scrambledPrice}`;
     buttonAnimation = 'animate-urgency';
@@ -3345,9 +3352,15 @@ export default function SupremePage() {
             color: buttonTextColor,
             boxShadow: isPurchasing
               ? `0 4px 40px ${glowColor}50, 0 0 0 1px ${glowColor}20`
-              : !isEnded
-                ? `0 4px 24px ${glowColor}30, 0 0 0 1px ${glowColor}10`
-                : undefined,
+              : gavelPhase === 3
+                ? `0 4px 40px #EF444470, 0 0 60px #EF444430, 0 0 0 2px #EF4444`
+                : gavelPhase === 2
+                  ? `0 4px 32px #EF444450, 0 0 40px #EF444420, 0 0 0 1.5px #EF444490`
+                  : gavelPhase === 1
+                    ? `0 4px 28px ${glowColor}40, 0 0 30px ${glowColor}15, 0 0 0 1px ${glowColor}50`
+                    : !isEnded
+                      ? `0 4px 24px ${glowColor}30, 0 0 0 1px ${glowColor}10`
+                      : undefined,
             transform: !isEnded && !isPurchasing
               ? `translate(${magnetic.offset.x}px, ${magnetic.offset.y}px)`
               : undefined,
@@ -3403,12 +3416,18 @@ export default function SupremePage() {
             </span>
           ) : (
             <span className="inline-flex items-center gap-2">
-              {!isEnded && (
+              {!isEnded && gavelPhase > 0 ? (
+                /* Raised gavel icon — hammer poised to fall */
+                <svg className={`h-4 w-4 ${gavelPhase === 3 ? 'supreme-gavel-icon-strike' : 'supreme-gavel-icon-raised'}`} viewBox="0 0 20 20" fill="currentColor">
+                  <rect x="9" y="10" width="2.5" height="8" rx="0.8" transform="rotate(-15 10 14)" opacity="0.85" />
+                  <rect x="4" y="3" width="12" height="5" rx="1.5" transform="rotate(-15 10 5.5)" />
+                </svg>
+              ) : !isEnded ? (
                 /* Lock icon — instant secure checkout signal */
                 <svg className="h-3.5 w-3.5 opacity-60" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M11 7V5a3 3 0 0 0-6 0v2H4a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-1Zm-4.5-2a1.5 1.5 0 0 1 3 0v2h-3V5Z" />
                 </svg>
-              )}
+              ) : null}
               {buttonText}
             </span>
           )}

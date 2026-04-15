@@ -438,3 +438,6 @@ Scaffold deployed. 3 directions: Supreme (minimalist), Broadcast (cinematic), Ar
 
 ## Cycle 216 | Direction: Supreme | Score: 9.31 (+0.01) | Built: Gavel-fall curtain transition (horizontal line sweep + team-color room flash + "Sold" echo between lot clerk and W screen) | Time: 08:15
 
+
+## Cycle 217 | Direction: Broadcast | Score: 9.28 (+0.00) | Built: Audio Levels VU meters on W screen (5-channel broadcast control room meters: CROWD/COURT/PBP/ANLST/MIX with peak indicators and dB readings) | Time: 07:45
+

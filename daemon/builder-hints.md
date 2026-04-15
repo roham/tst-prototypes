@@ -1738,3 +1738,10 @@
 - Team-color for the line and flash creates per-moment differentiation even in the transition. Heat's curtain is red-tinted, Nuggets is navy, Thunder is blue.
 - Next cycle: Broadcast (rotation). Ideas: broadcast booth audio levels visualization on the W screen (VU meters showing "crowd noise" during the celebration), or a "Take" transition — TV director calling "TAKE 1" with a camera switch effect between purchase and W screen.
 
+
+## Cycle 217 Learnings
+- Static display additions to an already content-rich W screen produce diminishing returns. The VU meters look great but don't move scores because the W screen is already packed. Future Broadcast improvements should target the weakest dimension (Conversion: 9.2) rather than adding more W screen polish.
+- transform-origin: left must be set in the keyframe itself when using scaleX for fill animations, not just on the element — some browsers need it in both places.
+- The 5-channel structure (CROWD/COURT/PBP/ANLST/MIX) is the real ESPN audio routing architecture. Authentic labels matter for broadcast purity.
+- Next cycle: Arena (rotation). Ideas: Arena could improve Conversion on the pre-purchase page — maybe a "Section" selector that reframes tiers as arena seating sections (Floor/Lower/Upper/Nosebleed), or a crowd noise visualization (sound wave) that pulses with urgency.
+

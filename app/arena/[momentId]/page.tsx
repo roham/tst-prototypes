@@ -7070,6 +7070,49 @@ export default function ArenaPage({
     CROWD_HAPTIC.hornBlast();
   }, []);
 
+  /* ── Rally Towel Wave — fan towel-waving participation mechanic ── */
+  /* NBA playoff arenas give rally towels to every seat. Fans wave   */
+  /* them in unison during crucial moments. This tappable zone lets  */
+  /* users wave a virtual towel, building "fans waving" count. At    */
+  /* thresholds, a team-color wave sweeps the screen.                */
+  const [towelSwingKey, setTowelSwingKey] = useState(0);
+  const [fansWaving, setFansWaving] = useState(0);
+  const [towelWaveSweep, setTowelWaveSweep] = useState(0);
+  const towelDecayRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const towelSweepThreshold = useRef(0);
+
+  // Decay fans waving over time (fans stop waving if you stop)
+  useEffect(() => {
+    towelDecayRef.current = setInterval(() => {
+      setFansWaving((prev) => Math.max(0, prev - 120));
+    }, 300);
+    return () => { if (towelDecayRef.current) clearInterval(towelDecayRef.current); };
+  }, []);
+
+  const handleTowelWave = useCallback(() => {
+    setTowelSwingKey((k) => k + 1);
+    setFansWaving((prev) => {
+      const next = Math.min(18000, prev + 800 + Math.floor(Math.random() * 400));
+      // Trigger sweep at every 5000-fan threshold
+      const newThreshold = Math.floor(next / 5000);
+      if (newThreshold > towelSweepThreshold.current && next >= 5000) {
+        towelSweepThreshold.current = newThreshold;
+        setTowelWaveSweep((k) => k + 1);
+        CROWD_HAPTIC.celebration();
+      } else {
+        CROWD_HAPTIC.feedPulse();
+      }
+      return next;
+    });
+  }, []);
+
+  // Reset sweep threshold when fans drop below 5000
+  useEffect(() => {
+    if (fansWaving < 4000) {
+      towelSweepThreshold.current = 0;
+    }
+  }, [fansWaving]);
+
   /* ── CTA slam burst — dramatic ring on purchase press ──────── */
   const [ctaSlamKey, setCtaSlamKey] = useState(0);
 
@@ -8628,6 +8671,139 @@ export default function ArenaPage({
         </div>
       )}
 
+      {/* ─── RALLY TOWEL WAVE — arena towel-waving fan participation ─── */}
+      {/* Every NBA playoff seat gets a rally towel. Fans wave them in    */}
+      {/* unison during crucial moments. Tap to wave your towel and       */}
+      {/* build the "fans waving" count. At 5K+ fans, a team-color wave  */}
+      {/* sweeps the screen — the arena wave, digitized.                  */}
+      {!countdown.isEnded && proto.state === 'browsing' && (
+        <div className="mx-4 mt-1.5 mb-1 relative z-[1]">
+          {/* Wave sweep overlay — team-color bar sweeps left-to-right */}
+          {towelWaveSweep > 0 && (
+            <div
+              key={`sweep-${towelWaveSweep}`}
+              className="fixed inset-0 pointer-events-none z-[100]"
+            >
+              <div
+                className="absolute inset-y-0 w-[60px]"
+                style={{
+                  background: `linear-gradient(90deg, transparent, ${moment.teamColors.primary}50, ${moment.teamColors.primary}80, ${moment.teamColors.primary}50, transparent)`,
+                  animation: 'arena-towel-wave-sweep 0.8s ease-in-out forwards',
+                }}
+              />
+            </div>
+          )}
+          <button
+            onClick={handleTowelWave}
+            className="w-full relative overflow-hidden rounded-lg px-3.5 py-2.5 cursor-pointer transition-transform active:scale-[0.96]"
+            style={{
+              backgroundColor: fansWaving >= 15000
+                ? `${moment.teamColors.primary}15`
+                : 'rgba(255,255,255,0.02)',
+              border: `1px solid ${fansWaving >= 15000 ? `${moment.teamColors.primary}30` : 'rgba(255,255,255,0.05)'}`,
+              transition: 'background-color 0.3s, border-color 0.3s',
+            }}
+          >
+            {/* Max glow overlay */}
+            {fansWaving >= 15000 && (
+              <div
+                className="absolute inset-0 pointer-events-none rounded-lg"
+                style={{
+                  backgroundColor: `${moment.teamColors.primary}10`,
+                  animation: 'arena-towel-max-glow 1.5s ease-in-out infinite',
+                }}
+              />
+            )}
+            {/* Scanline texture */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.008) 2px, rgba(255,255,255,0.008) 4px)',
+              }}
+            />
+            <div className="relative flex items-center justify-between gap-3">
+              {/* Left: towel icon + label */}
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="shrink-0 flex items-center justify-center h-6 w-6"
+                  style={{
+                    animation: towelSwingKey > 0 ? 'arena-towel-swing 0.5s ease-out' : 'none',
+                  }}
+                  key={`towel-${towelSwingKey}`}
+                >
+                  {/* Rally towel SVG — waving flag shape */}
+                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none">
+                    {/* Pole */}
+                    <line
+                      x1="4" y1="3" x2="4" y2="18"
+                      stroke={fansWaving >= 10000 ? moment.teamColors.primary : 'rgba(255,255,255,0.25)'}
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      style={{ transition: 'stroke 0.3s' }}
+                    />
+                    {/* Towel fabric — wavy flag */}
+                    <path
+                      d="M4.5 3.5 C7 2.5 9 5 12 4 C14 3.3 16 4.5 17 3.5 L17 10 C15 11 13 9.5 11 10.5 C9 11.5 7 9 4.5 10 Z"
+                      fill={fansWaving >= 5000 ? moment.teamColors.primary : 'rgba(255,255,255,0.2)'}
+                      fillOpacity={fansWaving >= 15000 ? 0.9 : fansWaving >= 5000 ? 0.6 : 0.3}
+                      style={{ transition: 'fill 0.3s, fill-opacity 0.3s' }}
+                    />
+                  </svg>
+                </div>
+                <div className="flex flex-col">
+                  <span
+                    className="text-[8px] font-bold uppercase tracking-[0.25em]"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: fansWaving >= 15000
+                        ? moment.teamColors.primary
+                        : fansWaving >= 5000
+                          ? 'rgba(255,255,255,0.5)'
+                          : 'rgba(255,255,255,0.3)',
+                      transition: 'color 0.3s',
+                    }}
+                  >
+                    {fansWaving >= 15000 ? 'TOWEL WAVE!' : fansWaving >= 5000 ? 'KEEP WAVING!' : 'RALLY TOWEL'}
+                  </span>
+                  <span className="text-[6.5px] font-mono uppercase tracking-[0.15em] text-white/15">
+                    {fansWaving >= 5000
+                      ? `${fansWaving.toLocaleString()} fans waving`
+                      : 'Tap to wave your towel'}
+                  </span>
+                </div>
+              </div>
+              {/* Right: wave intensity bar (5 segments) */}
+              <div className="flex items-center gap-[3px]">
+                {Array.from({ length: 5 }, (_, i) => {
+                  const threshold = (i + 1) * 3600;
+                  const active = fansWaving >= threshold;
+                  const isMax = i >= 4;
+                  return (
+                    <div
+                      key={i}
+                      className="rounded-sm transition-all duration-200"
+                      style={{
+                        width: '4px',
+                        height: '14px',
+                        backgroundColor: active
+                          ? isMax
+                            ? moment.teamColors.primary
+                            : `${moment.teamColors.primary}70`
+                          : 'rgba(255,255,255,0.06)',
+                        boxShadow: active && isMax
+                          ? `0 0 6px ${moment.teamColors.primary}50`
+                          : 'none',
+                        transform: active && isMax ? 'scaleY(1.15)' : 'scaleY(1)',
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </button>
+        </div>
+      )}
+
       {/* ─── CTA Section ─── */}
       <div className="px-4 pt-1">
         {/* Active buyers badge — live commerce energy */}
@@ -8786,6 +8962,47 @@ export default function ArenaPage({
               </div>
             );
           })()
+        )}
+
+        {/* ── Crowd Demand Meter — arena attendance social proof ── */}
+        {/* In arenas, a sold-out crowd IS the ultimate social proof. The     */}
+        {/* energy of 20,000 fans creates urgency that no countdown can match. */}
+        {/* This compact meter shows live viewer count + active buyer count   */}
+        {/* like a jumbotron attendance graphic. Distinctly Arena: Supreme     */}
+        {/* shows provenance (institutional), Broadcast shows social mentions */}
+        {/* (media reach). Arena shows the crowd — who's HERE, right now.     */}
+        {!countdown.isEnded && proto.state === 'browsing' && (
+          <div className="flex items-center justify-center gap-3 mb-2 mt-1">
+            <div className="flex items-center gap-1.5">
+              <div className="relative flex items-center justify-center">
+                <div
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{ backgroundColor: moment.teamColors.primary, boxShadow: `0 0 6px ${moment.teamColors.primary}60` }}
+                />
+                <div
+                  className="absolute h-1.5 w-1.5 rounded-full animate-ping"
+                  style={{ backgroundColor: moment.teamColors.primary, opacity: 0.4 }}
+                />
+              </div>
+              <span
+                className="text-[9px] font-bold tabular-nums"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif', color: `${moment.teamColors.primary}90` }}
+              >
+                {viewers.toLocaleString()}
+              </span>
+              <span className="text-[7px] uppercase tracking-[0.15em] text-white/25">watching</span>
+            </div>
+            <span className="text-[6px] text-white/10">|</span>
+            <div className="flex items-center gap-1.5">
+              <span
+                className="text-[9px] font-bold tabular-nums"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif', color: '#00E5A090' }}
+              >
+                {activeBuyers}
+              </span>
+              <span className="text-[7px] uppercase tracking-[0.15em] text-white/25">buying now</span>
+            </div>
+          </div>
         )}
 
         {/* CTA Crowd Pulse Ring — sonar ring on each feed purchase */}

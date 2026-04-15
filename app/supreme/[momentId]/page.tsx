@@ -2196,6 +2196,22 @@ export default function SupremePage() {
             background: 'linear-gradient(to top, #0B0E14, transparent)',
           }}
         />
+        {/* Deckled edge — rough paper-edge texture at hero bottom           */}
+        {/* Premium art catalogues and handmade-paper publications have     */}
+        {/* deckled (rough, feathered) edges rather than clean machine cuts. */}
+        {/* This subtle svg mask creates a torn-paper transition between    */}
+        {/* the hero image and the content area below.                      */}
+        <div
+          className="absolute bottom-[-1px] left-0 right-0 h-[6px] pointer-events-none z-[11]"
+          style={{
+            background: '#0B0E14',
+            maskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0,3 Q5,0 10,2.5 Q15,5 20,2.8 Q25,0.5 30,3.2 Q35,5.5 40,2 Q45,0 50,3.5 Q55,5 60,1.8 Q65,0 70,3 Q75,5.5 80,2.2 Q85,0 90,3.8 Q95,5 100,2 Q105,0.5 110,3.5 Q115,5.5 120,1.5 Q125,0 130,3.2 Q135,5 140,2.5 Q145,0 150,3 Q155,5.5 160,2 Q165,0 170,3.5 Q175,5 180,1.8 Q185,0 190,3.2 Q195,5.5 200,2.5 Q205,0 210,3.8 Q215,5 220,2 Q225,0.5 230,3.5 Q235,5.5 240,1.5 Q245,0 250,3 Q255,5 260,2.2 Q265,0 270,3.5 Q275,5.5 280,2 Q285,0 290,3.2 Q295,5 300,2.5 Q305,0 310,3 Q315,5.5 320,1.8 Q325,0 330,3.5 Q335,5 340,2.5 Q345,0 350,3.2 Q355,5.5 360,2 Q365,0 370,3 Q375,5 380,2.2 Q385,0 390,3.5 Q395,5 400,2 L400,6 L0,6 Z' fill='white'/%3E%3C/svg%3E")`,
+            WebkitMaskImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0,3 Q5,0 10,2.5 Q15,5 20,2.8 Q25,0.5 30,3.2 Q35,5.5 40,2 Q45,0 50,3.5 Q55,5 60,1.8 Q65,0 70,3 Q75,5.5 80,2.2 Q85,0 90,3.8 Q95,5 100,2 Q105,0.5 110,3.5 Q115,5.5 120,1.5 Q125,0 130,3.2 Q135,5 140,2.5 Q145,0 150,3 Q155,5.5 160,2 Q165,0 170,3.5 Q175,5 180,1.8 Q185,0 190,3.2 Q195,5.5 200,2.5 Q205,0 210,3.8 Q215,5 220,2 Q225,0.5 230,3.5 Q235,5.5 240,1.5 Q245,0 250,3 Q255,5 260,2.2 Q265,0 270,3.5 Q275,5.5 280,2 Q285,0 290,3.2 Q295,5 300,2.5 Q305,0 310,3 Q315,5.5 320,1.8 Q325,0 330,3.5 Q335,5 340,2.5 Q345,0 350,3.2 Q355,5.5 360,2 Q365,0 370,3 Q375,5 380,2.2 Q385,0 390,3.5 Q395,5 400,2 L400,6 L0,6 Z' fill='white'/%3E%3C/svg%3E")`,
+            maskSize: '100% 100%',
+            WebkitMaskSize: '100% 100%',
+            opacity: 0.4,
+          }}
+        />
         </div>{/* End parallax wrapper */}
 
         {/* Edge light trace — luminous point traveling along hero bottom edge, tints with tier */}
@@ -2685,6 +2701,23 @@ export default function SupremePage() {
 
         {/* Specialist's Note — auction house expert assessment, institutional voice */}
         <div className="mt-3 pl-2.5 relative z-[1]" style={{ borderLeft: `0.5px solid ${moment.teamColors.primary}15` }}>
+          {/* Pencil marginalia — specialist's handwritten annotation */}
+          {/* At Christie's/Sotheby's previews, specialists pencil margin    */}
+          {/* notes in catalogues: checkmarks, "strong", "client interest".  */}
+          {/* These faint marks are the most intimate evidence of            */}
+          {/* institutional expertise — visible only to those who look.      */}
+          <span
+            className="absolute -left-[18px] top-[6px] select-none pointer-events-none"
+            style={{
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+              fontSize: '7px',
+              color: `${moment.teamColors.primary}08`,
+              transform: 'rotate(-3deg)',
+            }}
+          >
+            ✓
+          </span>
           <span
             className="text-[7px] font-bold uppercase tracking-[0.35em] block mb-1"
             style={{ color: `${moment.teamColors.primary}30`, fontFamily: 'var(--font-oswald), sans-serif' }}
@@ -2713,6 +2746,20 @@ export default function SupremePage() {
               background: `linear-gradient(90deg, transparent 0%, ${moment.teamColors.primary}08 15%, rgba(255,255,255,0.06) 40%, ${moment.teamColors.primary}10 50%, rgba(255,255,255,0.06) 60%, ${moment.teamColors.primary}08 85%, transparent 100%)`,
             }}
           />
+          {/* Pencil marginalia — "strong" notation beside essay header */}
+          <span
+            className="absolute -left-[14px] top-[16px] select-none pointer-events-none"
+            style={{
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+              fontSize: '6px',
+              color: `${moment.teamColors.primary}06`,
+              transform: 'rotate(-2deg)',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            strong
+          </span>
           <span
             className="text-[7px] font-bold uppercase tracking-[0.35em] block mb-3"
             style={{ color: `${moment.teamColors.primary}30`, fontFamily: 'var(--font-oswald), sans-serif' }}
@@ -2795,6 +2842,19 @@ export default function SupremePage() {
         {/* in auction UX (research: Sotheby's specialist lot video embeds).    */}
         {/* Gilt divider — The Artist's Voice */}
         <div className="mt-5 pt-4 relative">
+          {/* Pencil marginalia — bracket + "key" beside artist's voice */}
+          <span
+            className="absolute -left-[16px] top-[20px] select-none pointer-events-none"
+            style={{
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+              fontSize: '6px',
+              color: `${moment.teamColors.primary}07`,
+              transform: 'rotate(-1deg)',
+            }}
+          >
+            ⌐
+          </span>
           <div
             className="absolute top-0 left-0 right-0 h-[0.5px]"
             style={{
@@ -3029,6 +3089,56 @@ export default function SupremePage() {
             style={{ color: 'rgba(255,255,255,0.05)' }}
           >
             {((moment.id.charCodeAt(0) * 7 + moment.id.charCodeAt(1) * 3) % 90 + 10)}
+          </span>
+        </div>
+
+        {/* ============================================================= */}
+        {/* COLOPHON — printer's mark at catalogue end                     */}
+        {/* Every Christie's/Sotheby's printed catalogue ends with a      */}
+        {/* colophon: typeface credits, paper stock, printing house, and   */}
+        {/* catalogue number. This is the single most institutional       */}
+        {/* "last line" — it says "this was made by a real house."        */}
+        {/* ============================================================= */}
+        <div className="mt-6 pt-3 flex flex-col items-center gap-1.5 relative">
+          {/* Decorative rule — thin double line like a colophon separator */}
+          <div className="w-10 flex flex-col items-center gap-[2px]">
+            <div className="w-full h-[0.5px]" style={{ backgroundColor: `${moment.teamColors.primary}08` }} />
+            <div className="w-6 h-[0.5px]" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }} />
+          </div>
+          {/* Printer's device — tiny TST monogram ornament */}
+          <span
+            className="text-[5px] font-bold uppercase tracking-[0.6em] mt-1"
+            style={{ color: `${moment.teamColors.primary}10`, fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            ✦ TST ✦
+          </span>
+          {/* Typeface credits */}
+          <span
+            className="text-[5px] tracking-[0.15em] text-center leading-[1.8]"
+            style={{ color: 'rgba(255,255,255,0.04)', fontFamily: 'Georgia, serif', fontStyle: 'italic' }}
+          >
+            Set in Oswald &amp; Geist. Display numerals in tabular figures.
+          </span>
+          {/* Paper stock + print house */}
+          <span
+            className="text-[5px] font-mono uppercase tracking-[0.3em] text-center"
+            style={{ color: 'rgba(255,255,255,0.03)' }}
+          >
+            Printed on 170gsm Mohawk Superfine · TST Press, New York
+          </span>
+          {/* Catalogue number */}
+          <span
+            className="text-[5px] font-mono uppercase tracking-[0.25em] mt-0.5"
+            style={{ color: 'rgba(255,255,255,0.03)' }}
+          >
+            Cat. No. TST-{new Date().getFullYear()}-{((moment.id.charCodeAt(0) * 37 + moment.id.charCodeAt(1) * 13) % 9000 + 1000)}
+          </span>
+          {/* Copyright */}
+          <span
+            className="text-[4px] font-mono uppercase tracking-[0.2em] mt-1 mb-2"
+            style={{ color: 'rgba(255,255,255,0.025)' }}
+          >
+            © {new Date().getFullYear()} Top Shot This · All rights reserved
           </span>
         </div>
       </div>

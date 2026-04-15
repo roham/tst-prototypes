@@ -15,6 +15,38 @@ import { usePrototypeState } from '@/lib/use-prototype-state';
 // Sports Illustrated commemorative cover as a purchase page.
 // ---------------------------------------------------------------------------
 
+// ── Broadcast Haptic — TV production control room feel ──────────────────
+// Clean switcher button presses: precise, authoritative, deliberate.
+// Not stomping (Arena) or restrained taps (Supreme). These are the confident
+// clicks of a broadcast director punching between camera feeds.
+
+function broadcastHaptic(pattern: number | number[]) {
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try { navigator.vibrate(pattern); } catch { /* silent */ }
+  }
+}
+
+const BROADCAST_HAPTIC = {
+  /** CTA press — authoritative switcher punch */
+  ctaPress: () => broadcastHaptic(14),
+  /** Tier channel switch — clean channel-change click */
+  channelSwitch: () => broadcastHaptic([8, 20, 8]),
+  /** Purchase stage advance — escalating production cue */
+  purchaseStage: (stage: number) =>
+    broadcastHaptic(stage === 0 ? 12 : stage === 1 ? 20 : [18, 30, 18, 30, 25]),
+  /** Acquired confirmation — broadcast wrap double-tap */
+  acquired: () => broadcastHaptic([18, 40, 25]),
+  /** Phase transition — dramatic bumper hit */
+  phaseBumper: (to: 'CLOSING' | 'CRITICAL') =>
+    broadcastHaptic(to === 'CRITICAL' ? [25, 20, 25, 20, 30] : [15, 30, 15]),
+  /** Special Report alert — news alert double-pulse */
+  specialReport: () => broadcastHaptic([12, 25, 12]),
+  /** Countdown leader digit — production count pulse */
+  leaderDigit: () => broadcastHaptic(10),
+  /** Share button — quick production tap */
+  share: () => broadcastHaptic(6),
+} as const;
+
 // ── Helpers ──────────────────────────────────────────────────────────────
 
 function hexToRgb(hex: string): string {
@@ -127,13 +159,13 @@ function BroadcastCountdownLeader({ teamColor, rgb, onComplete }: {
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
-    // 3 → 2 → 1 → LIVE → fade out
-    const t1 = setTimeout(() => { setFlash(true); }, 380);
+    // 3 → 2 → 1 → LIVE → fade out (with production haptic on each count)
+    const t1 = setTimeout(() => { setFlash(true); BROADCAST_HAPTIC.leaderDigit(); }, 380);
     const t1b = setTimeout(() => { setFlash(false); setDigit(2); }, 480);
-    const t2 = setTimeout(() => { setFlash(true); }, 860);
+    const t2 = setTimeout(() => { setFlash(true); BROADCAST_HAPTIC.leaderDigit(); }, 860);
     const t2b = setTimeout(() => { setFlash(false); setDigit(1); }, 960);
-    const t3 = setTimeout(() => { setFlash(true); }, 1340);
-    const t3b = setTimeout(() => { setFlash(false); setDigit(null); setShowLive(true); }, 1440);
+    const t3 = setTimeout(() => { setFlash(true); BROADCAST_HAPTIC.leaderDigit(); }, 1340);
+    const t3b = setTimeout(() => { setFlash(false); setDigit(null); setShowLive(true); BROADCAST_HAPTIC.acquired(); }, 1440);
     const t4 = setTimeout(() => setFading(true), 1900);
     const t5 = setTimeout(() => onComplete(), 2300);
     return () => { clearTimeout(t1); clearTimeout(t1b); clearTimeout(t2); clearTimeout(t2b); clearTimeout(t3); clearTimeout(t3b); clearTimeout(t4); clearTimeout(t5); };
@@ -2346,6 +2378,225 @@ function AnalystDesk({ moment, rgb }: { moment: Moment; rgb: string }) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Broadcast Ratings Spike — "Peak Viewership" chart showing the moment's
+// audience spike. ESPN tracks live ratings and highlights peak moments.
+// A sparkline SVG shows viewership ramping up then spiking at the play,
+// with the peak value called out. Ratings are the broadcast industry's
+// ultimate validation — "America was watching when this happened."
+// ---------------------------------------------------------------------------
+
+const RATINGS_DATA: Record<string, { peak: string; avg: string; share: string }> = {
+  bam: { peak: '4.2M', avg: '2.8M', share: '12.4' },
+  jokic: { peak: '3.9M', avg: '2.5M', share: '11.1' },
+  sga: { peak: '5.1M', avg: '3.3M', share: '14.7' },
+};
+
+function RatingsSpike({ moment, rgb }: { moment: Moment; rgb: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.2 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const data = RATINGS_DATA[moment.id] ?? RATINGS_DATA.bam;
+
+  // Generate sparkline points: gradual rise, sharp spike at ~75%, drop-off
+  const points = useMemo(() => {
+    const pts: [number, number][] = [];
+    const w = 240;
+    const h = 48;
+    const steps = 24;
+    for (let i = 0; i <= steps; i++) {
+      const x = (i / steps) * w;
+      const t = i / steps;
+      // Base curve: gradual rise
+      let y = h - (t * 0.4 * h);
+      // Spike at 75%
+      const dist = Math.abs(t - 0.75);
+      if (dist < 0.12) {
+        const spike = 1 - dist / 0.12;
+        y = h - (0.4 * h + spike * 0.55 * h);
+      }
+      // Add slight noise
+      y += (Math.sin(i * 3.7) * 2);
+      pts.push([x, Math.max(2, Math.min(h - 2, y))]);
+    }
+    return pts;
+  }, []);
+
+  const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+  const areaD = pathD + ` L${points[points.length - 1][0].toFixed(1)},48 L0,48 Z`;
+
+  // Peak point coordinates
+  const peakPt = points.reduce((min, p) => p[1] < min[1] ? p : min, points[0]);
+
+  return (
+    <div ref={ref} className="mt-8 mb-4">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-3">
+        <span
+          className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
+          style={{
+            backgroundColor: `rgba(${rgb},0.12)`,
+            color: moment.teamColors.primary,
+            fontFamily: 'var(--font-oswald), sans-serif',
+          }}
+        >
+          Ratings
+        </span>
+        <span className="text-[8px] font-mono uppercase tracking-[0.15em] text-white/20">
+          Live Viewership
+        </span>
+        <div className="h-[1px] flex-1 bg-white/[0.06]" />
+      </div>
+
+      {/* Card */}
+      <div
+        className="relative overflow-hidden rounded-md border"
+        style={{
+          borderColor: `rgba(${rgb},0.12)`,
+          backgroundColor: 'rgba(20,25,37,0.5)',
+        }}
+      >
+        {/* Top accent */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{ backgroundColor: `${moment.teamColors.primary}40` }}
+        />
+
+        <div className="px-4 pt-3 pb-2">
+          {/* Peak viewership headline */}
+          <div className="flex items-baseline justify-between mb-2">
+            <div className="flex items-baseline gap-2">
+              <span
+                className="text-[22px] font-bold tabular-nums leading-none"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: moment.teamColors.primary,
+                  textShadow: `0 0 12px rgba(${rgb},0.2)`,
+                }}
+              >
+                {data.peak}
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-white/30"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                Peak Viewers
+              </span>
+            </div>
+            <span className="text-[9px] font-mono tabular-nums text-white/20">
+              {data.share} share
+            </span>
+          </div>
+
+          {/* Sparkline chart */}
+          <div className="relative" style={{ height: 48 }}>
+            <svg
+              width="100%"
+              height="48"
+              viewBox="0 0 240 48"
+              preserveAspectRatio="none"
+              className="overflow-visible"
+            >
+              {/* Gradient fill under the line */}
+              <defs>
+                <linearGradient id={`ratings-grad-${moment.id}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={moment.teamColors.primary} stopOpacity="0.2" />
+                  <stop offset="100%" stopColor={moment.teamColors.primary} stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              {/* Area fill */}
+              <path
+                d={areaD}
+                fill={`url(#ratings-grad-${moment.id})`}
+                className="transition-opacity duration-1000"
+                style={{ opacity: visible ? 1 : 0 }}
+              />
+              {/* Line */}
+              <path
+                d={pathD}
+                fill="none"
+                stroke={moment.teamColors.primary}
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="transition-all duration-1000"
+                style={{
+                  opacity: visible ? 0.8 : 0,
+                  strokeDasharray: visible ? 'none' : '600',
+                  strokeDashoffset: visible ? 0 : 600,
+                }}
+              />
+              {/* Peak dot */}
+              {visible && (
+                <>
+                  <circle
+                    cx={peakPt[0]}
+                    cy={peakPt[1]}
+                    r="3"
+                    fill={moment.teamColors.primary}
+                    opacity="0.9"
+                  />
+                  <circle
+                    cx={peakPt[0]}
+                    cy={peakPt[1]}
+                    r="6"
+                    fill="none"
+                    stroke={moment.teamColors.primary}
+                    strokeWidth="0.5"
+                    opacity="0.4"
+                    className="broadcast-ratings-peak-ring"
+                  />
+                </>
+              )}
+              {/* "THE PLAY" label at peak */}
+              {visible && (
+                <text
+                  x={peakPt[0]}
+                  y={peakPt[1] - 10}
+                  textAnchor="middle"
+                  fontSize="6"
+                  fill="white"
+                  opacity="0.4"
+                  fontWeight="700"
+                  letterSpacing="0.15em"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  THE PLAY
+                </text>
+              )}
+            </svg>
+          </div>
+
+          {/* Footer — avg viewership + context */}
+          <div className="flex items-center justify-between mt-1.5 pt-1.5"
+            style={{ borderTop: `1px solid rgba(${rgb},0.08)` }}
+          >
+            <span className="text-[8px] text-white/15 tracking-wide">
+              Avg: {data.avg} &middot; Most-watched moment of the night
+            </span>
+            {/* Live dot */}
+            <div className="flex items-center gap-1">
+              <div className="w-1 h-1 rounded-full bg-red-500/60 broadcast-live-dot" />
+              <span className="text-[7px] font-mono uppercase tracking-wider text-white/15">
+                Nielsen
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SportsCenterTop10({ moment, rgb }: { moment: Moment; rgb: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -2712,7 +2963,7 @@ export default function BroadcastPage() {
   useEffect(() => {
     if (!leaderDone) return;
     // Slide in 0.8s after leader completes
-    const t1 = setTimeout(() => setSpecialReport('in'), 800);
+    const t1 = setTimeout(() => { setSpecialReport('in'); BROADCAST_HAPTIC.specialReport(); }, 800);
     // Hold 3s then slide out
     const t2 = setTimeout(() => setSpecialReport('out'), 3800);
     const t3 = setTimeout(() => setSpecialReport('done'), 4400);
@@ -2727,6 +2978,7 @@ export default function BroadcastPage() {
     prevTierRef.current = idx;
     setChannelSwitch(idx + 1); // CH 1, CH 2, CH 3, CH 4
     setSelectedTierIdx(idx);
+    BROADCAST_HAPTIC.channelSwitch();
     const t = setTimeout(() => setChannelSwitch(null), 400);
     return () => clearTimeout(t);
   }, []);
@@ -2748,14 +3000,15 @@ export default function BroadcastPage() {
   const countdown = useCountdown(SALE_DURATION_MS[params.momentId as string] ?? 12 * 60 * 1000);
   const proto = usePrototypeState(momentId);
 
-  // Purchase stage progression (3 stages in 1.5s)
+  // Purchase stage progression (3 stages in 1.5s) with broadcast haptic cues
   useEffect(() => {
     if (proto.state !== 'purchasing') {
       setPurchaseStage(0);
       return;
     }
-    const t1 = setTimeout(() => setPurchaseStage(1), 500);
-    const t2 = setTimeout(() => setPurchaseStage(2), 1150);
+    BROADCAST_HAPTIC.purchaseStage(0);
+    const t1 = setTimeout(() => { setPurchaseStage(1); BROADCAST_HAPTIC.purchaseStage(1); }, 500);
+    const t2 = setTimeout(() => { setPurchaseStage(2); BROADCAST_HAPTIC.purchaseStage(2); }, 1150);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [proto.state]);
 
@@ -2873,6 +3126,7 @@ export default function BroadcastPage() {
       setFeedCut(true);
       setCrashZoom(true);
       setCamLabel(currentPhase === 'CLOSING' ? 'ISO CAM 2' : 'ISO CAM 3');
+      BROADCAST_HAPTIC.phaseBumper(currentPhase as 'CLOSING' | 'CRITICAL');
       // Quarter break bumper: in → hold → out → gone
       setQuarterBumper({ phase: currentPhase as 'CLOSING' | 'CRITICAL', state: 'in' });
       const tHold = setTimeout(() => setQuarterBumper((prev) => prev ? { ...prev, state: 'hold' } : null), 400);
@@ -3952,6 +4206,9 @@ export default function BroadcastPage() {
           {/* SportsCenter Top 10 — #1 Play of the Night ranking graphic */}
           <SportsCenterTop10 moment={moment} rgb={rgb} />
 
+          {/* Ratings Spike — "Peak Viewership" Nielsen chart (broadcast prestige) */}
+          <RatingsSpike moment={moment} rgb={rgb} />
+
           {/* Emotional closing beat — editorial thesis */}
           <p
             className="mt-8 text-center text-sm tracking-wide text-white/25"
@@ -4357,7 +4614,7 @@ export default function BroadcastPage() {
           <div className={`${!countdown.isEnded && !isPurchasing ? '' : 'mt-8'} flex flex-col items-center`}>
             <button
               ref={ctaRef}
-              onClick={proto.purchase}
+              onClick={() => { BROADCAST_HAPTIC.ctaPress(); proto.purchase(); }}
               disabled={isPurchasing || countdown.isEnded}
               className={`group relative w-full max-w-md overflow-hidden rounded-lg border px-8 py-4 text-center text-base font-semibold tracking-wide transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed sm:text-lg ${
                 dropPhase === 'CRITICAL' && !isPurchasing
@@ -4667,7 +4924,7 @@ export default function BroadcastPage() {
               </div>
             ) : (
               <button
-                onClick={proto.purchase}
+                onClick={() => { BROADCAST_HAPTIC.ctaPress(); proto.purchase(); }}
                 className={`shrink-0 rounded-lg border px-6 py-2.5 text-sm font-semibold tracking-wide transition-all active:scale-[0.97] ${
                   dropPhase === 'CRITICAL' ? 'animate-urgency-fast' : ''
                 }`}
@@ -5649,7 +5906,7 @@ function ShareButton({ label, icon, teamColor }: { label: string; icon: string; 
   return (
     <button
       className="flex items-center gap-1.5 rounded-md border border-white/[0.08] bg-white/[0.03] px-5 py-2.5 text-[11px] font-medium tracking-wide text-white/45 transition-all duration-200 hover:text-white/70"
-      onClick={(e) => e.preventDefault()}
+      onClick={(e) => { e.preventDefault(); BROADCAST_HAPTIC.share(); }}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLElement).style.borderColor = `${teamColor}40`;
         (e.currentTarget as HTMLElement).style.backgroundColor = `${teamColor}10`;

@@ -943,6 +943,24 @@ body {
   100% { top: -15%; left: -15%; }
 }
 
+/* Broadcast live dot — pulsing red indicator for live content */
+@keyframes broadcast-live-dot-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+.broadcast-live-dot {
+  animation: broadcast-live-dot-pulse 2s ease-in-out infinite;
+}
+
+/* Broadcast ratings peak ring — expanding ring at peak viewership point */
+@keyframes broadcast-ratings-peak-ring-pulse {
+  0%, 100% { r: 6; opacity: 0.4; }
+  50% { r: 9; opacity: 0.15; }
+}
+.broadcast-ratings-peak-ring {
+  animation: broadcast-ratings-peak-ring-pulse 2.5s ease-in-out infinite;
+}
+
 /* Broadcast feed cut — camera switch static band that sweeps on phase transition */
 @keyframes broadcast-feed-cut {
   0%   { top: -8%; opacity: 1; }

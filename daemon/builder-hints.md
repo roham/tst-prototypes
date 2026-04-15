@@ -1759,3 +1759,11 @@
 - Single-word status indicators (Quiet/Active/Competitive/Heated) are the most information-dense way to convey room energy in Supreme's minimal aesthetic. Any additional detail (numbers, charts, feeds) would drift toward Arena.
 - The temperature escalation thresholds (claimed% + phase + bid log length) create natural progression that maps to real auction room energy: early = quiet, mid = active, closing = competitive, critical with high claims = heated.
 - Next cycle: Broadcast (rotation). Broadcast's Conversion (9.2) is the lowest across all 3 directions — could benefit from a similar "at the decision point" conversion optimization. Ideas: a countdown leader graphic that appears above the main CTA during CLOSING/CRITICAL (ESPN-style "CLOCK" graphic), or a "Director's Call" — the TV director's voice calling "TAKE THE SHOT" as a conversion cue.
+
+## Cycle 220 Learnings
+- Placing a visual countdown timer AT the CTA is the highest-leverage conversion improvement for any direction. Supreme has temperature (one word), Arena has sparkline (data viz), Broadcast now has the shot clock (broadcast graphic). Each direction solves "urgency at the decision point" in its own visual language.
+- The sticky CTA bar was missing urgency context — adding just a countdown timer line (9px mono, phase-colored) makes the bare button meaningful when scrolled.
+- The depleting progress bar (width transitions from 100% to 0% via CSS transition-all duration-1000 ease-linear, updated every second by totalSeconds prop change) creates visual depletion that's more visceral than digits alone.
+- "FINAL 2:00" is better than "CRITICAL" as a broadcast label — it's the actual ESPN phrase used when the game enters the final 2 minutes. Authentic broadcast language > generic labels.
+- Score delta was modest (+0.02) because Broadcast already had CommentatorCall text urgency near the CTA. The shot clock adds VISUAL urgency but the text was already there. Bigger deltas come from adding urgency where none existed before.
+- Next cycle: Arena (rotation). Arena's Interaction (9.25) and Emotion (9.25) are the weakest dimensions. Ideas: arena tunnel walk-out entrance animation (dramatic player emergence), or a crowd decibel meter that responds to purchase velocity.

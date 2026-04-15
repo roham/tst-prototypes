@@ -6217,6 +6217,184 @@ function MilestoneFlash({
 /* from the bottom of the video. This is the purchase-page equivalent */
 /* creating "other people are excited" social proof near the CTA.     */
 
+// ── Arena Ticket Stub Preview — endowment effect conversion tool ────────
+// Shows a preview of what the collector's "game ticket" will look like,
+// creating ownership imagination before purchase. Tap to flip and see
+// the barcode/back. The ticket stub is THE quintessential arena keepsake.
+
+const ARENA_TICKET_DATA: Record<string, {
+  gate: string; section: string; row: string; seat: string;
+  event: string; venue: string; date: string;
+}> = {
+  bam: { gate: 'GATE 4', section: 'SEC 112', row: 'ROW G', seat: 'SEAT 7', event: 'MIA vs BOS — PLAYOFFS RD 2', venue: 'Kaseya Center, Miami FL', date: 'MAY 2025' },
+  jokic: { gate: 'GATE 2', section: 'SEC 108', row: 'ROW D', seat: 'SEAT 12', event: 'DEN vs LAL — PLAYOFFS RD 1', venue: 'Ball Arena, Denver CO', date: 'APR 2025' },
+  sga: { gate: 'GATE 7', section: 'SEC 103', row: 'ROW B', seat: 'SEAT 3', event: 'OKC vs DAL — PLAYOFFS RD 2', venue: 'Paycom Center, Oklahoma City OK', date: 'MAY 2025' },
+};
+
+function TicketStubPreview({ momentId, player, teamColor, secondaryColor, isActive }: {
+  momentId: string; player: string; teamColor: string; secondaryColor: string; isActive: boolean;
+}) {
+  const [flipped, setFlipped] = useState(false);
+  const ticket = ARENA_TICKET_DATA[momentId] ?? ARENA_TICKET_DATA.bam;
+
+  if (!isActive) return null;
+
+  return (
+    <div className="mb-3 mx-auto max-w-sm w-full">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-2">
+        {/* Ticket icon */}
+        <svg className="w-3 h-3 flex-shrink-0 text-white/20" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="0.8">
+          <rect x="1" y="3" width="10" height="6" rx="1" />
+          <line x1="4" y1="3" x2="4" y2="9" strokeDasharray="1 1" />
+          <circle cx="8" cy="6" r="1.2" />
+        </svg>
+        <span
+          className="text-[7px] font-mono uppercase tracking-[0.25em] text-white/25"
+        >
+          Your Ticket Preview
+        </span>
+        <div className="flex-1" />
+        <span className="text-[6px] font-mono uppercase tracking-wider text-white/15">
+          Tap to flip
+        </span>
+      </div>
+
+      {/* Ticket card — 3D flip container */}
+      <button
+        type="button"
+        className="relative w-full rounded-md overflow-hidden"
+        style={{
+          perspective: '600px',
+          minHeight: '110px',
+        }}
+        onClick={() => {
+          arenaVibe(10);
+          setFlipped((f) => !f);
+        }}
+      >
+        <div
+          className="relative w-full transition-transform duration-500"
+          style={{
+            transformStyle: 'preserve-3d',
+            transform: flipped ? 'rotateY(180deg)' : 'rotateY(0)',
+            minHeight: '110px',
+          }}
+        >
+          {/* FRONT — ticket face */}
+          <div
+            className="absolute inset-0 rounded-md overflow-hidden"
+            style={{
+              backfaceVisibility: 'hidden',
+              border: `1px solid rgba(255,255,255,0.08)`,
+            }}
+          >
+            {/* Team color gradient header strip */}
+            <div
+              className="h-[3px] w-full"
+              style={{ background: `linear-gradient(90deg, ${teamColor}, ${secondaryColor})` }}
+            />
+            <div className="px-3 py-2.5" style={{ backgroundColor: 'rgba(28,35,51,0.9)' }}>
+              {/* Top row: event + gate */}
+              <div className="flex items-baseline justify-between mb-1">
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.15em]"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif', color: teamColor }}
+                >
+                  {ticket.event}
+                </span>
+                <span className="text-[7px] font-mono text-white/30">{ticket.gate}</span>
+              </div>
+
+              {/* Player name — big */}
+              <div
+                className="text-[18px] font-black uppercase tracking-[0.05em] leading-none mb-1.5"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif', color: '#F0F2F5' }}
+              >
+                {player}
+              </div>
+
+              {/* Seat info row */}
+              <div className="flex gap-3 mb-1">
+                {[ticket.section, ticket.row, ticket.seat].map((val) => (
+                  <div key={val} className="flex flex-col">
+                    <span className="text-[7px] font-mono text-white/20 uppercase">{val.split(' ')[0]}</span>
+                    <span className="text-[11px] font-bold font-mono text-white/70">{val.split(' ').slice(1).join(' ')}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bottom: venue + date */}
+              <div className="flex items-end justify-between border-t border-white/[0.05] pt-1.5 mt-1">
+                <span className="text-[7px] text-white/20">{ticket.venue}</span>
+                <span className="text-[8px] font-mono font-bold text-white/30">{ticket.date}</span>
+              </div>
+            </div>
+
+            {/* Perforation line (tear-off) */}
+            <div className="absolute right-[25%] top-0 bottom-0 w-0" style={{ borderRight: '1px dashed rgba(255,255,255,0.08)' }} />
+
+            {/* LED scanline — arena jumbotron effect */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.04) 3px,rgba(0,0,0,0.04) 6px)',
+              }}
+            />
+          </div>
+
+          {/* BACK — barcode + terms */}
+          <div
+            className="absolute inset-0 rounded-md overflow-hidden"
+            style={{
+              backfaceVisibility: 'hidden',
+              transform: 'rotateY(180deg)',
+              border: `1px solid rgba(255,255,255,0.08)`,
+              backgroundColor: 'rgba(20,25,37,0.95)',
+            }}
+          >
+            <div className="px-3 py-3 flex flex-col items-center justify-center h-full gap-2">
+              {/* Barcode — SVG stripes */}
+              <svg className="w-[60%] h-8" viewBox="0 0 120 24" preserveAspectRatio="none">
+                {Array.from({ length: 40 }).map((_, i) => {
+                  const w = [1, 2, 1, 3, 1, 2, 1, 1, 2, 3][i % 10];
+                  const x = i * 3;
+                  return (
+                    <rect
+                      key={i}
+                      x={x}
+                      y={0}
+                      width={w}
+                      height={24}
+                      fill={`rgba(255,255,255,${0.4 + (i % 3) * 0.1})`}
+                    />
+                  );
+                })}
+              </svg>
+              <span className="text-[7px] font-mono tracking-[0.3em] text-white/25">
+                TST-{momentId.toUpperCase()}-{Math.floor(Math.random() * 9000 + 1000)}
+              </span>
+
+              {/* Terms text */}
+              <div className="text-[6px] leading-[1.6] text-white/15 text-center max-w-[80%]">
+                This digital ticket stub is your proof of ownership. Non-transferable admission to the Top Shot This collection. Retain for your records.
+              </div>
+
+              {/* NBA logo placeholder */}
+              <div
+                className="text-[8px] font-bold uppercase tracking-[0.3em] mt-1"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif', color: `${teamColor}40` }}
+              >
+                NBA × Top Shot
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+    </div>
+  );
+}
+
 const REACTION_EMOJIS_OPEN = ['🔥', '💰', '🏀', '👀', '💪', '🙌', '⭐'];
 const REACTION_EMOJIS_CLOSING = ['🔥', '😱', '⚡', '💰', '🏃', '⏰', '🚨'];
 const REACTION_EMOJIS_CRITICAL = ['🚨', '😱', '🔥', '⚡', '💸', '😤', '🏆'];
@@ -9223,6 +9401,19 @@ export default function ArenaPage({
             </div>
           );
         })()}
+
+        {/* ── Ticket Stub Preview — endowment effect at decision point ── */}
+        {/* Shows what your collectible ticket stub will look like before  */}
+        {/* purchasing. Tap to flip to barcode back. The ticket stub is    */}
+        {/* the quintessential arena keepsake. Targets Conv (ownership     */}
+        {/* imagination), VP (ticket visual), Int (flip), Pur (arena).    */}
+        <TicketStubPreview
+          momentId={momentId}
+          player={moment.player}
+          teamColor={moment.teamColors.primary}
+          secondaryColor={moment.teamColors.secondary}
+          isActive={!countdown.isEnded && proto.state === 'browsing'}
+        />
 
         {/* Arena Value Scoreboard — jumbotron price anchor near CTA */}
         <ArenaValueScoreboard

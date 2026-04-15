@@ -935,6 +935,31 @@ body {
   animation: arena-tier-selected-glow 2s ease-in-out infinite;
 }
 
+/* Arena tier card — "CLAIMED!" pulse ring when someone buys that tier */
+@keyframes arena-tier-claimed-ring {
+  0% { transform: scale(0.8); opacity: 0.6; }
+  60% { transform: scale(1.25); opacity: 0.2; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+@keyframes arena-tier-claimed-label {
+  0% { transform: translateY(4px) scale(0.7); opacity: 0; }
+  20% { transform: translateY(0) scale(1.05); opacity: 1; }
+  70% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-6px) scale(0.9); opacity: 0; }
+}
+@keyframes arena-tier-claimed-flash {
+  0% { opacity: 0.15; }
+  100% { opacity: 0; }
+}
+
+/* Arena gate scanner — horizontal light sweep on tier selection */
+@keyframes arena-gate-scan {
+  0% { transform: translateX(-100%); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateX(200%); opacity: 0; }
+}
+
 /* Arena crowd energy meter pulse — max velocity state */
 @keyframes arena-energy-pulse {
   0%, 100% { opacity: 1; }

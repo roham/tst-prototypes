@@ -2394,6 +2394,30 @@ function RarityCards({
   const maxBidders = Math.max(...bidderCounts);
   const popularIdx = bidderCounts.indexOf(maxBidders);
 
+  /* Gate scanner — horizontal light sweep on tier selection */
+  const prevSelectedRef = useRef(selectedIdx);
+  const [scanIdx, setScanIdx] = useState<number | null>(null);
+  const [scanKey, setScanKey] = useState(0);
+  useEffect(() => {
+    if (prevSelectedRef.current !== selectedIdx) {
+      setScanIdx(selectedIdx);
+      setScanKey((k) => k + 1);
+      prevSelectedRef.current = selectedIdx;
+    }
+  }, [selectedIdx]);
+
+  /* "CLAIMED!" label — briefly appears when flashIdx fires on a tier */
+  const [claimedIdx, setClaimedIdx] = useState<number | null>(null);
+  const [claimedKey, setClaimedKey] = useState(0);
+  useEffect(() => {
+    if (flashIdx != null) {
+      setClaimedIdx(flashIdx);
+      setClaimedKey((k) => k + 1);
+      const t = setTimeout(() => setClaimedIdx(null), 650);
+      return () => clearTimeout(t);
+    }
+  }, [flashIdx]);
+
   return (
     <div className="flex gap-2 overflow-x-auto px-4 pb-4" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
       {tiers.map((tier, idx) => {
@@ -2403,23 +2427,27 @@ function RarityCards({
         const isLow = tier.tier !== 'Open' && live <= 5;
         const isUrgent = tier.tier !== 'Open' && live <= 10;
         const isFlashing = flashIdx === idx;
+        const isClaimed = claimedIdx === idx;
         const bidders = bidderCounts[idx] ?? 0;
         const isPopular = idx === popularIdx && !isEnded && maxBidders >= 5;
         const sectionLabel = TIER_SECTION[tier.tier] ?? '';
+        const showScan = scanIdx === idx;
 
         return (
           <button
             key={tier.tier}
             onClick={() => onSelect(idx)}
-            className={`group relative flex shrink-0 flex-col items-center rounded-xl border px-4 py-3 transition-all duration-200 active:scale-[0.97] min-w-[80px] ${
+            className={`group relative flex shrink-0 flex-col items-center rounded-xl border px-4 py-3 transition-all duration-200 active:scale-[0.97] min-w-[80px] overflow-hidden ${
               isLow && isSelected ? 'arena-tier-urgent' : isSelected && !isEnded ? 'arena-tier-selected-glow' : ''
             }`}
             style={{
-              borderColor: isSelected ? color : 'rgba(255,255,255,0.06)',
+              borderColor: isSelected ? color : isFlashing ? `${color}60` : 'rgba(255,255,255,0.06)',
               backgroundColor: isSelected ? `${color}12` : 'rgba(255,255,255,0.03)',
               boxShadow: isSelected
                 ? `0 0 20px ${color}20, inset 0 0 12px ${color}08`
-                : 'none',
+                : isFlashing
+                  ? `0 0 16px ${color}25`
+                  : 'none',
               /* Player intro stagger — cards slide up one-by-one like player introductions */
               ...(revealed !== undefined ? {
                 animation: revealed
@@ -2430,6 +2458,68 @@ function RarityCards({
               } : {}),
             }}
           >
+            {/* Claimed pulse ring — expanding border ring when someone buys this tier */}
+            {isClaimed && !isEnded && (
+              <div
+                key={`claimed-ring-${claimedKey}`}
+                className="pointer-events-none absolute inset-0 rounded-xl"
+                style={{
+                  border: `2px solid ${color}`,
+                  animation: 'arena-tier-claimed-ring 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                }}
+              />
+            )}
+
+            {/* Claimed flash overlay — brief tier-color wash */}
+            {isFlashing && !isEnded && (
+              <div
+                className="pointer-events-none absolute inset-0 rounded-xl"
+                style={{
+                  backgroundColor: color,
+                  animation: 'arena-tier-claimed-flash 0.4s ease-out forwards',
+                }}
+              />
+            )}
+
+            {/* "CLAIMED!" micro-label — pops above card on purchase */}
+            {isClaimed && !isEnded && (
+              <div
+                key={`claimed-label-${claimedKey}`}
+                className="pointer-events-none absolute -top-4 left-1/2 z-10 whitespace-nowrap"
+                style={{
+                  transform: 'translateX(-50%)',
+                  animation: 'arena-tier-claimed-label 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                }}
+              >
+                <span
+                  className="text-[7px] font-bold uppercase tracking-[0.15em]"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color,
+                    textShadow: `0 0 6px ${color}60`,
+                  }}
+                >
+                  Claimed!
+                </span>
+              </div>
+            )}
+
+            {/* Gate scanner sweep — horizontal light on tier selection */}
+            {showScan && (
+              <div
+                key={`scan-${scanKey}`}
+                className="pointer-events-none absolute inset-0 z-[5] overflow-hidden rounded-xl"
+              >
+                <div
+                  className="absolute top-0 bottom-0 w-[40%]"
+                  style={{
+                    background: `linear-gradient(90deg, transparent, ${color}30, ${color}50, ${color}30, transparent)`,
+                    animation: 'arena-gate-scan 0.35s ease-out forwards',
+                  }}
+                />
+              </div>
+            )}
+
             {/* Top accent bar */}
             <div
               className="absolute top-0 left-0 right-0 h-[2px] rounded-t-xl transition-opacity duration-200"

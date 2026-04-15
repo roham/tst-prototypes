@@ -996,6 +996,81 @@ function WScreen({
           </div>
         </div>
 
+        {/* Provenance — chain of custody like Christie's lot pages */}
+        {/* At Sotheby's and Christie's, every lot page shows provenance:    */}
+        {/* the documented chain of ownership that establishes legitimacy    */}
+        {/* and adds value. This is the digital equivalent — 3 entries      */}
+        {/* showing the moment's journey from creation to your collection.  */}
+        <div
+          className="mt-5 w-full max-w-[200px] mx-auto transition-all duration-700 ease-out"
+          style={{
+            opacity: showSeal ? 1 : 0,
+            transform: showSeal ? 'translateY(0)' : 'translateY(6px)',
+          }}
+        >
+          <span
+            className="block text-[7px] font-bold uppercase tracking-[0.35em] text-white/15 mb-2"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            Provenance
+          </span>
+          <div className="relative pl-3">
+            {/* Vertical provenance line */}
+            <div
+              className="absolute left-[3px] top-1 bottom-1 w-[0.5px]"
+              style={{ backgroundColor: `${moment.teamColors.primary}15` }}
+            />
+            {[
+              {
+                date: moment.context.split(',').pop()?.trim().split(' ').pop() || '2024',
+                label: 'Minted',
+                detail: 'NBA Top Shot',
+              },
+              {
+                date: dateStr.split(' ').pop() || '2026',
+                label: 'Evening Sale',
+                detail: `Lot ${lotNumber} · Primary Market`,
+              },
+              {
+                date: dateStr,
+                label: 'Acquired',
+                detail: 'Private Collection',
+                active: true,
+              },
+            ].map((entry, idx) => (
+              <div
+                key={entry.label}
+                className="relative flex items-start gap-2.5 pb-2 last:pb-0"
+                style={{
+                  animation: showSeal ? `supreme-field-reveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${0.9 + idx * 0.15}s both` : undefined,
+                }}
+              >
+                {/* Timeline dot */}
+                <div
+                  className="absolute left-[-3px] top-[3px] w-[7px] h-[7px] rounded-full border"
+                  style={{
+                    borderColor: entry.active ? '#00E5A0' : `${moment.teamColors.primary}25`,
+                    backgroundColor: entry.active ? '#00E5A030' : 'transparent',
+                    boxShadow: entry.active ? '0 0 6px rgba(0,229,160,0.3)' : 'none',
+                  }}
+                />
+                <div className="flex flex-col ml-2">
+                  <span
+                    className="text-[8px] font-bold uppercase tracking-[0.12em]"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: entry.active ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.2)',
+                    }}
+                  >
+                    {entry.label}
+                  </span>
+                  <span className="text-[7px] text-white/12 font-mono">{entry.detail}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Inkwell signature — collector signs the acquisition ledger */}
           <div
             className="mt-4 w-full max-w-[200px] mx-auto flex flex-col items-center transition-all duration-700 ease-out"

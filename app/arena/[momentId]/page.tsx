@@ -2240,6 +2240,84 @@ function usePATypewriter(text: string, startDelay: number, charSpeed = 35) {
   return { displayed, done: displayed.length >= text.length };
 }
 
+/* ─── Replay Countdown — jumbotron 3-2-1 before instant replay ───── */
+/* NBA arenas build anticipation before replays: the jumbotron flashes */
+/* "3... 2... 1... REPLAY!" with each number slamming in. This creates */
+/* the same anticipation before revealing the collected moment's replay. */
+
+function ReplayCountdown({
+  teamColor,
+  onComplete,
+}: {
+  teamColor: string;
+  onComplete: () => void;
+}) {
+  const [step, setStep] = useState(0); // 0=hidden, 1=3, 2=2, 3=1, 4=REPLAY!, 5=done
+
+  useEffect(() => {
+    const delays = [200, 800, 1400, 2000, 2800];
+    const timers = delays.map((d, i) =>
+      setTimeout(() => {
+        setStep(i + 1);
+        if (i < 4) CROWD_HAPTIC.countdownTick(3 - i);
+      }, d)
+    );
+    const done = setTimeout(() => onComplete(), 2800);
+    return () => { timers.forEach(clearTimeout); clearTimeout(done); };
+  }, [onComplete]);
+
+  if (step === 0 || step === 5) return null;
+
+  const isNumber = step >= 1 && step <= 3;
+  const display = isNumber ? String(4 - step) : 'REPLAY!';
+
+  return (
+    <div
+      className="flex items-center justify-center w-full max-w-[300px] h-[60px] relative overflow-hidden rounded-xl mb-3"
+      style={{
+        backgroundColor: 'rgba(11,14,20,0.95)',
+        border: `1px solid ${teamColor}30`,
+      }}
+    >
+      {/* Team-color flash on each slam */}
+      <div
+        key={step}
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundColor: teamColor,
+          animation: 'arena-countdown-slam-flash 0.35s ease-out forwards',
+        }}
+      />
+      {/* Scanline overlay for jumbotron LED feel */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px)',
+        }}
+      />
+      {/* Number/text slam */}
+      <span
+        key={`text-${step}`}
+        className="relative z-10"
+        style={{
+          fontFamily: 'var(--font-oswald), sans-serif',
+          fontWeight: 800,
+          fontSize: isNumber ? '42px' : '28px',
+          letterSpacing: isNumber ? '-0.02em' : '0.12em',
+          textTransform: 'uppercase',
+          color: isNumber ? 'white' : teamColor,
+          textShadow: isNumber
+            ? `0 0 30px ${teamColor}60, 0 0 60px ${teamColor}30`
+            : `0 0 20px ${teamColor}80, 0 0 40px ${teamColor}40`,
+          animation: 'arena-countdown-slam 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards',
+        }}
+      >
+        {display}
+      </span>
+    </div>
+  );
+}
+
 /* ─── Replay Timestamp — live counting timer for jumbotron replay ── */
 /* Arena jumbotrons show a running timecode on replays. This counts    */
 /* from 0:00 up to the duration, updating every ~100ms for smooth     */
@@ -2515,6 +2593,9 @@ function CelebrationScreen({
   const [shake, setShake] = useState(true);
   const [showDetails, setShowDetails] = useState(false);
   const [showShare, setShowShare] = useState(false);
+  const [showReplay, setShowReplay] = useState(false);
+  const [replayCountdownActive, setReplayCountdownActive] = useState(false);
+  const handleReplayCountdownDone = useRef(() => setShowReplay(true)).current;
 
   // PA announcement typing — starts after headline bounce-in settles
   const paText = `NOW COLLECTING... ${moment.player.toUpperCase()} · ${moment.playType.toUpperCase()}`;
@@ -2526,7 +2607,9 @@ function CelebrationScreen({
     const t1 = setTimeout(() => setFlash(false), 400);
     const t2 = setTimeout(() => setShowDetails(true), 700);
     const t3 = setTimeout(() => setShowShare(true), 1400);
-    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    // Start replay countdown after details are visible
+    const t4 = setTimeout(() => setReplayCountdownActive(true), 900);
+    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
   }, []);
 
   return (
@@ -2650,6 +2733,24 @@ function CelebrationScreen({
         {/* Crowd Decibel Meter — arena jumbotron noise level visualization */}
         <DecibelMeter teamColor={moment.teamColors.primary} show={showDetails} />
 
+        {/* Jumbotron Replay Countdown — 3-2-1-REPLAY! before the highlight */}
+        {/* NBA arenas build anticipation before replays with a dramatic      */}
+        {/* countdown on the jumbotron. Numbers slam in, crowd gets hyped.    */}
+        {replayCountdownActive && !showReplay && (
+          <div
+            className="mt-5 transition-all duration-300 ease-out"
+            style={{
+              opacity: showDetails ? 1 : 0,
+              transform: showDetails ? 'translateY(0)' : 'translateY(12px)',
+            }}
+          >
+            <ReplayCountdown
+              teamColor={moment.teamColors.primary}
+              onComplete={handleReplayCountdownDone}
+            />
+          </div>
+        )}
+
         {/* Jumbotron Highlight Replay — the actual moment on the big screen */}
         {/* Every arena replays the highlight on the jumbotron during the     */}
         {/* post-game celebration. This shows what you collected, not just     */}
@@ -2657,9 +2758,8 @@ function CelebrationScreen({
         <div
           className="mt-5 w-full max-w-[300px] transition-all duration-600 ease-out"
           style={{
-            opacity: showDetails ? 1 : 0,
-            transform: showDetails ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.94)',
-            transitionDelay: '0.12s',
+            opacity: showReplay ? 1 : 0,
+            transform: showReplay ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.94)',
           }}
         >
           <div

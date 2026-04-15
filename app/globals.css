@@ -1508,6 +1508,18 @@ body {
   100% { opacity: 0.6; }
 }
 
+/* Arena Replay Countdown — 3-2-1-REPLAY! slam effect */
+@keyframes arena-countdown-slam {
+  0% { transform: scale(2.2); opacity: 0; }
+  40% { transform: scale(0.85); opacity: 1; }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes arena-countdown-slam-flash {
+  0% { opacity: 0.25; }
+  100% { opacity: 0; }
+}
+
 /* Arena Fan Cam — jumbotron frame on W screen */
 @keyframes arena-fancam-badge {
   0%, 85% { opacity: 1; }

@@ -2681,6 +2681,92 @@ export default function SupremePage() {
           </p>
         </div>
 
+        {/* Catalogue Essay — the emotional heart of every Christie's/Sotheby's  */}
+        {/* lot page. For important lots, the house commissions a 2-3 paragraph  */}
+        {/* essay placing the work in historical context with evocative prose.    */}
+        {/* This is the #1 emotion driver in auction catalogues — the reader     */}
+        {/* should feel the weight of what they're about to acquire.             */}
+        {/* Gilt divider — Catalogue Essay */}
+        <div className="mt-5 pt-4 relative">
+          <div
+            className="absolute top-0 left-0 right-0 h-[0.5px]"
+            style={{
+              background: `linear-gradient(90deg, transparent 0%, ${moment.teamColors.primary}08 15%, rgba(255,255,255,0.06) 40%, ${moment.teamColors.primary}10 50%, rgba(255,255,255,0.06) 60%, ${moment.teamColors.primary}08 85%, transparent 100%)`,
+            }}
+          />
+          <span
+            className="text-[7px] font-bold uppercase tracking-[0.35em] block mb-3"
+            style={{ color: `${moment.teamColors.primary}30`, fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            Catalogue Essay
+          </span>
+          <div className="space-y-3" style={{ fontFamily: 'Georgia, serif' }}>
+            {moment.id === 'bam' ? (
+              <>
+                <p className="text-[9.5px] leading-[1.75] text-white/[0.14] italic">
+                  There are performances that alter the trajectory of a franchise, and then there are those that alter
+                  the way we understand a player entirely. Bam Adebayo&apos;s thirty-point eruption at TD Garden belongs
+                  to the latter category. On a court where dynasties have been built and broken, Adebayo did not merely
+                  score — he imposed his will with the kind of force that leaves a silence in its wake, the silence
+                  of seventeen thousand witnesses realizing they are watching something new.
+                </p>
+                <p className="text-[9.5px] leading-[1.75] text-white/[0.12] italic">
+                  The dunk that punctuated the evening — a one-handed detonation over two outstretched defenders —
+                  has already entered the visual canon of the 2025 playoffs. But it is the cumulative weight of the
+                  performance that gives this lot its significance: twelve of seventeen from the field, a franchise
+                  record surpassing Dwyane Wade, and the unmistakable announcement that Miami&apos;s future has arrived
+                  in the present tense. We note that lots of comparable historical inflection — LeBron&apos;s 2016 Block,
+                  Kawhi&apos;s 2019 Bounce — have appreciated considerably in secondary markets.
+                </p>
+                <p className="text-[8px] leading-[1.6] text-white/[0.09] mt-1" style={{ fontStyle: 'normal' }}>
+                  — Catherine Ainsworth, Head of Evening Sales
+                </p>
+              </>
+            ) : moment.id === 'jokic' ? (
+              <>
+                <p className="text-[9.5px] leading-[1.75] text-white/[0.14] italic">
+                  The triple-double, in its modern inflation, has become almost commonplace. And then there is what
+                  Nikola Joki&#x107; does with it — not a statistical accumulation but a complete orchestration of basketball,
+                  conducted with the unhurried precision of someone who sees the game several seconds ahead of
+                  everyone else on the floor. His fourth consecutive playoff triple-double places him alongside
+                  Wilt Chamberlain and Oscar Robertson, names that belong not to any era but to the sport itself.
+                </p>
+                <p className="text-[9.5px] leading-[1.75] text-white/[0.12] italic">
+                  What distinguishes this particular performance is the no-look pass at the forty-seven-second mark —
+                  a play that, upon review, reveals Joki&#x107; had processed three defensive rotations before the ball
+                  left his hand. Thirty-five points, fifteen rebounds, twelve assists: the numbers are extraordinary,
+                  but they describe only the surface of something deeper. The present lot captures a player at the
+                  absolute zenith of a generational gift. Collectors of the canonical should take note.
+                </p>
+                <p className="text-[8px] leading-[1.6] text-white/[0.09] mt-1" style={{ fontStyle: 'normal' }}>
+                  — Alexei Kovalev, Senior Curator of Athletic Works
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-[9.5px] leading-[1.75] text-white/[0.14] italic">
+                  Forty-two points is a number. What Shai Gilgeous-Alexander did to the Phoenix Suns is something
+                  else entirely — a dismantling so methodical and so beautiful that it redefined what Oklahoma City
+                  basketball can look like in the modern era. His career playoff high arrived not with the chaos
+                  of a young player discovering his ceiling, but with the controlled devastation of one who has
+                  always known exactly where the ceiling is and simply chose this evening to go through it.
+                </p>
+                <p className="text-[9.5px] leading-[1.75] text-white/[0.12] italic">
+                  The franchise record he set carries a particular resonance in Oklahoma City, a market that has
+                  watched transcendent talent depart before. Gilgeous-Alexander&apos;s forty-two-point masterwork
+                  is not merely a personal milestone — it is a declaration of permanence, of a superstar choosing
+                  to build his legacy here. The six rebounds and five assists remind us this was not a volume
+                  shooter&apos;s performance but a complete one. We present this lot with the highest confidence
+                  in its lasting historical significance.
+                </p>
+                <p className="text-[8px] leading-[1.6] text-white/[0.09] mt-1" style={{ fontStyle: 'normal' }}>
+                  — James Thornton, Department Head, Contemporary Sport
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+
         {/* Condition Report — formal auction-house lot condition assessment */}
         {/* Every Christie's/Sotheby's lot has a condition report available on    */}
         {/* request. For digital assets, this covers minting verification,        */}

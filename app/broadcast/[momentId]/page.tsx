@@ -3705,6 +3705,125 @@ function SectionRevealLine({ teamColor }: { teamColor: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// Feature Package — ESPN cinematic voiceover text fragment sequence
+// The pre-game feature story is ESPN's signature emotional storytelling
+// technique: punchy, fragmented text lines that build a dramatic narrative
+// arc. Each line staggers in with a fade-slide, creating the rhythm of a
+// voiceover. "IN 2019... / A SECOND-ROUND PICK... / NOW... / HISTORY."
+// Distinctly Broadcast: Supreme has catalogue prose (quiet, institutional),
+// Arena has jumbotron tickers (loud, numeric). Broadcast has the cinematic
+// voiceover — dramatic fragments that build to a thesis.
+// ---------------------------------------------------------------------------
+
+const FEATURE_LINES: Record<string, { lines: string[]; kicker: string }> = {
+  bam: {
+    lines: [
+      'FIVE THIRTY-POINT GAMES.',
+      'A FRANCHISE RECORD THAT STOOD FOR FIFTEEN YEARS.',
+      'ONE THUNDEROUS DUNK THAT SILENCED BOSTON.',
+    ],
+    kicker: 'BAM ADEBAYO JUST REWROTE MIAMI HEAT HISTORY.',
+  },
+  jokic: {
+    lines: [
+      'FOUR CONSECUTIVE TRIPLE-DOUBLES.',
+      'A FEAT LAST ACHIEVED IN 1962.',
+      'THIRTY-FIVE, FIFTEEN, AND TWELVE.',
+    ],
+    kicker: 'NIKOLA JOKIĆ IS PLAYING A DIFFERENT SPORT.',
+  },
+  sga: {
+    lines: [
+      'FORTY-TWO POINTS.',
+      'A CAREER PLAYOFF HIGH.',
+      'A FRANCHISE RECORD IN OKLAHOMA CITY.',
+    ],
+    kicker: 'SHAI GILGEOUS-ALEXANDER HAS ARRIVED.',
+  },
+};
+
+function FeaturePackage({ moment, rgb }: { moment: Moment; rgb: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); obs.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const feature = FEATURE_LINES[moment.id] ?? FEATURE_LINES.bam;
+
+  return (
+    <div ref={containerRef} className="mx-auto max-w-2xl px-5 py-10 md:px-10 md:py-14">
+      {/* ESPN FEATURE label */}
+      <div className="flex items-center gap-2.5 mb-6">
+        <div
+          className="h-[3px] w-3 rounded-[1px]"
+          style={{ backgroundColor: moment.teamColors.primary }}
+        />
+        <span
+          className="text-[8px] font-bold uppercase tracking-[0.4em]"
+          style={{ color: `rgba(${rgb},0.35)`, fontFamily: 'var(--font-oswald), sans-serif' }}
+        >
+          Feature
+        </span>
+        <div
+          className="h-[1px] flex-1"
+          style={{ background: `linear-gradient(90deg, rgba(${rgb},0.12), transparent)` }}
+        />
+      </div>
+      {/* Staggered text lines */}
+      <div className="space-y-3">
+        {feature.lines.map((line, i) => (
+          <p
+            key={i}
+            className="text-[22px] sm:text-[28px] font-bold uppercase leading-[1.15] tracking-[0.02em]"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: 'rgba(240,242,245,0.55)',
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? 'translateY(0)' : 'translateY(12px)',
+              transition: `opacity 0.7s cubic-bezier(0.22,1,0.36,1) ${0.3 + i * 0.35}s, transform 0.7s cubic-bezier(0.22,1,0.36,1) ${0.3 + i * 0.35}s`,
+            }}
+          >
+            {line}
+          </p>
+        ))}
+        {/* Kicker — the emotional thesis, team-color accent */}
+        <p
+          className="text-[22px] sm:text-[28px] font-bold uppercase leading-[1.15] tracking-[0.02em] pt-2"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: moment.teamColors.primary,
+            textShadow: `0 0 30px rgba(${rgb},0.2)`,
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? 'translateY(0)' : 'translateY(12px)',
+            transition: `opacity 0.7s cubic-bezier(0.22,1,0.36,1) ${0.3 + feature.lines.length * 0.35}s, transform 0.7s cubic-bezier(0.22,1,0.36,1) ${0.3 + feature.lines.length * 0.35}s`,
+          }}
+        >
+          {feature.kicker}
+        </p>
+      </div>
+      {/* Bottom rule — broadcast segment closer */}
+      <div
+        className="mt-8 h-[1px]"
+        style={{
+          background: `linear-gradient(90deg, transparent, rgba(${rgb},0.15) 30%, rgba(${rgb},0.15) 70%, transparent)`,
+          opacity: isVisible ? 1 : 0,
+          transition: `opacity 0.5s ease ${0.3 + (feature.lines.length + 1) * 0.35}s`,
+        }}
+      />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Teleprompter Pull Quote — typewriter reveal on scroll-into-view
 // ---------------------------------------------------------------------------
 
@@ -5687,6 +5806,12 @@ export default function BroadcastPage() {
             }}
           />
         </div>
+
+        {/* ━━━ FEATURE PACKAGE — ESPN cinematic voiceover text fragments ━━━ */}
+        {/* ESPN's signature pre-game feature story: punchy text fragments    */}
+        {/* that build a dramatic narrative arc before the full editorial.     */}
+        {/* Staggered fade-slide entrance on scroll-into-view.                */}
+        <FeaturePackage moment={moment} rgb={rgb} />
 
         {/* ━━━ EDITORIAL PULL QUOTE — teleprompter typewriter reveal ━━━━━ */}
         <TeleprompterQuote moment={moment} rgb={rgb} />

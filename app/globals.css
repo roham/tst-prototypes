@@ -2324,3 +2324,16 @@ body {
   60%  { opacity: 1; transform: scale(1.02); }
   100% { opacity: 1; transform: scale(1); }
 }
+
+/* Arena T-shirt cannon — bounce to attract attention */
+@keyframes arena-tshirt-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+/* Arena T-shirt cannon — shirt shake before catch */
+@keyframes arena-tshirt-shake {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-8deg); }
+  75%      { transform: rotate(8deg); }
+}

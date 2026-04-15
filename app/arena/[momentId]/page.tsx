@@ -6179,6 +6179,183 @@ function CrowdWave({ active, teamColor }: { active: boolean; teamColor: string }
   );
 }
 
+/* ─── T-Shirt Cannon — tappable jumbotron catch mini-game ─────────────── */
+/* The T-shirt cannon is the single most beloved NBA arena timeout          */
+/* entertainment. Crew members fire compressed-air cannons into the crowd,  */
+/* fans leap and scramble to catch the shirt. This creates an interactive   */
+/* "catch" moment: a jumbotron pop-up appears periodically, the user taps  */
+/* to catch, and gets a fun visual reward with team-color burst. Distinctly */
+/* Arena: Supreme would never have audience participation games. Broadcast  */
+/* would show it as a cutaway segment. Arena puts you IN the crowd.        */
+
+const TSHIRT_PRIZES = [
+  { label: 'RALLY TOWEL', icon: '🏀', msg: 'Wave it for the team!' },
+  { label: 'FOAM FINGER', icon: '☝️', msg: '#1 Fan!' },
+  { label: 'TEAM HEADBAND', icon: '💪', msg: 'Game ready!' },
+  { label: 'COLLECTIBLE PIN', icon: '📌', msg: 'Limited edition!' },
+  { label: 'MINI BASKETBALL', icon: '🏀', msg: 'Signed replica!' },
+];
+
+function useTshirtCannon(isEnded: boolean, isBrowsing: boolean) {
+  const [visible, setVisible] = useState(false);
+  const [caught, setCaught] = useState(false);
+  const [prizeIdx, setPrizeIdx] = useState(0);
+  const cooldownRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    if (isEnded || !isBrowsing) return;
+
+    // Fire every 25-40s
+    function schedule() {
+      const delay = 25000 + Math.random() * 15000;
+      timerRef.current = setTimeout(() => {
+        if (cooldownRef.current) { schedule(); return; }
+        setPrizeIdx(Math.floor(Math.random() * TSHIRT_PRIZES.length));
+        setCaught(false);
+        setVisible(true);
+        cooldownRef.current = true;
+
+        // Auto-dismiss after 4s if not caught
+        setTimeout(() => {
+          setVisible(false);
+          setTimeout(() => { cooldownRef.current = false; }, 8000);
+        }, 4000);
+
+        schedule();
+      }, delay);
+    }
+    schedule();
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [isEnded, isBrowsing]);
+
+  const catchIt = useCallback(() => {
+    if (caught) return;
+    setCaught(true);
+    CROWD_HAPTIC.celebration();
+    // Keep visible for 2s to show prize
+    setTimeout(() => setVisible(false), 2000);
+  }, [caught]);
+
+  return { visible, caught, prizeIdx, catchIt };
+}
+
+function TshirtCannon({ visible, caught, prizeIdx, onCatch, teamColor }: {
+  visible: boolean;
+  caught: boolean;
+  prizeIdx: number;
+  onCatch: () => void;
+  teamColor: string;
+}) {
+  if (!visible) return null;
+  const prize = TSHIRT_PRIZES[prizeIdx];
+
+  return (
+    <div className="mx-4 mt-2 mb-1 relative z-[2]">
+      <button
+        onClick={onCatch}
+        disabled={caught}
+        className="w-full relative overflow-hidden rounded-lg cursor-pointer transition-transform active:scale-[0.96]"
+        style={{
+          backgroundColor: caught ? `${teamColor}18` : 'rgba(255,107,53,0.08)',
+          border: `1px solid ${caught ? `${teamColor}35` : 'rgba(255,107,53,0.25)'}`,
+          boxShadow: caught
+            ? `0 0 20px ${teamColor}15`
+            : '0 0 16px rgba(255,107,53,0.08)',
+          animation: caught ? 'none' : 'arena-tshirt-bounce 0.6s ease-in-out infinite',
+        }}
+      >
+        {/* Scanline texture */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px)',
+          }}
+        />
+        {/* Top accent stripe */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{
+            background: caught
+              ? `linear-gradient(90deg, ${teamColor}, ${teamColor}60, ${teamColor})`
+              : 'linear-gradient(90deg, #FF6B35, #FF6B3560, #FF6B35)',
+            opacity: 0.6,
+          }}
+        />
+
+        <div className="relative px-3.5 py-2.5">
+          {!caught ? (
+            /* Pre-catch: "T-SHIRT CANNON! TAP TO CATCH!" */
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-[16px]" style={{ animation: 'arena-tshirt-shake 0.3s ease-in-out infinite' }}>
+                  👕
+                </span>
+                <div className="flex flex-col">
+                  <span
+                    className="text-[9px] font-bold uppercase tracking-[0.2em]"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: '#FF6B35',
+                    }}
+                  >
+                    T-Shirt Cannon!
+                  </span>
+                  <span className="text-[8px] text-white/40 uppercase tracking-wider">
+                    Tap to catch!
+                  </span>
+                </div>
+              </div>
+              <div
+                className="shrink-0 flex items-center justify-center h-7 w-7 rounded-full"
+                style={{
+                  backgroundColor: 'rgba(255,107,53,0.15)',
+                  border: '1px solid rgba(255,107,53,0.3)',
+                }}
+              >
+                <svg className="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none">
+                  <path d="M7 2v10M4 5l3-3 3 3" stroke="#FF6B35" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+            </div>
+          ) : (
+            /* Post-catch: show prize */
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-[16px]">{prize.icon}</span>
+                <div className="flex flex-col">
+                  <span
+                    className="text-[9px] font-bold uppercase tracking-[0.2em]"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: teamColor,
+                    }}
+                  >
+                    Nice catch! {prize.label}
+                  </span>
+                  <span className="text-[8px] text-white/40">
+                    {prize.msg}
+                  </span>
+                </div>
+              </div>
+              <span
+                className="text-[11px] font-bold"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: teamColor,
+                  textShadow: `0 0 8px ${teamColor}40`,
+                }}
+              >
+                CAUGHT!
+              </span>
+            </div>
+          )}
+        </div>
+      </button>
+    </div>
+  );
+}
+
 /* ─── Jumbotron Trivia — "DID YOU KNOW?" player facts on the big screen ── */
 /* Every NBA arena shows trivia facts on the jumbotron during free throws,     */
 /* timeouts, and dead balls. "DID YOU KNOW? LeBron has 40,000 career points." */
@@ -6871,6 +7048,9 @@ export default function ArenaPage({
 
   /* ── Crowd wave — stadium wave sweeps across on velocity spike ── */
   const crowdWaveActive = useCrowdWave(liveVelocity, countdown.isEnded);
+
+  /* ── T-Shirt Cannon — periodic catch mini-game ── */
+  const tshirtCannon = useTshirtCannon(countdown.isEnded, proto.state === 'browsing');
 
   /* ── Live odds — sportsbook-style line movement per tier ── */
   const liveOdds = useLiveOdds(
@@ -8132,6 +8312,16 @@ export default function ArenaPage({
           </button>
         </div>
       )}
+
+      {/* ─── T-SHIRT CANNON — periodic catch mini-game ─── */}
+      {/* The most beloved arena timeout entertainment. Tap to catch! */}
+      <TshirtCannon
+        visible={tshirtCannon.visible}
+        caught={tshirtCannon.caught}
+        prizeIdx={tshirtCannon.prizeIdx}
+        onCatch={tshirtCannon.catchIt}
+        teamColor={moment.teamColors.primary}
+      />
 
       {/* ─── CROWD NOISE TAP ZONE — "MAKE SOME NOISE" fan participation ─── */}
       {/* The jumbotron "MAKE SOME NOISE" meter is the #1 fan participation  */}

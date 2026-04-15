@@ -6381,6 +6381,172 @@ function StatCardNumber({ target, teamColor, isHighlight }: { target: number; te
   );
 }
 
+/* ─── Quarter Buzzer Transition — jumbotron quarter-end graphic ── */
+/* NBA arenas fire a buzzer and show a dramatic jumbotron graphic    */
+/* at the end of each quarter. The drop timeline maps to basketball  */
+/* quarters (via the header game clock). When a quarter boundary is  */
+/* crossed, this fires a brief overlay: "END OF 1ST QTR", "HALFTIME"*/
+/* (with extra drama), or "END OF 3RD QTR". Creates pacing, drama,  */
+/* and a sense that the drop has an arc — not just a countdown.      */
+
+function getQuarter(totalSeconds: number, durationMs: number): number {
+  const pct = totalSeconds / (durationMs / 1000);
+  if (pct > 0.75) return 1;
+  if (pct > 0.5) return 2;
+  if (pct > 0.25) return 3;
+  return 4;
+}
+
+function useQuarterBuzzer(
+  totalSeconds: number,
+  durationMs: number,
+  isEnded: boolean,
+): { active: boolean; label: string; isHalftime: boolean } {
+  const quarter = getQuarter(totalSeconds, durationMs);
+  const prevQuarter = useRef(quarter);
+  const [overlay, setOverlay] = useState<{ label: string; isHalftime: boolean } | null>(null);
+
+  useEffect(() => {
+    if (isEnded) return;
+    const prev = prevQuarter.current;
+    prevQuarter.current = quarter;
+
+    // Detect quarter transition (prev was lower number → now higher)
+    if (prev < quarter && prev >= 1) {
+      let label = '';
+      let isHalftime = false;
+      if (prev === 1) { label = 'END OF 1ST QTR'; }
+      else if (prev === 2) { label = 'HALFTIME'; isHalftime = true; }
+      else if (prev === 3) { label = 'END OF 3RD QTR'; }
+
+      if (label) {
+        setOverlay({ label, isHalftime });
+        CROWD_HAPTIC.buzzer();
+        const dur = isHalftime ? 2800 : 2000;
+        const t = setTimeout(() => setOverlay(null), dur);
+        return () => clearTimeout(t);
+      }
+    }
+  }, [quarter, isEnded]);
+
+  return {
+    active: overlay !== null,
+    label: overlay?.label ?? '',
+    isHalftime: overlay?.isHalftime ?? false,
+  };
+}
+
+function QuarterBuzzerOverlay({ active, label, isHalftime, teamColor }: {
+  active: boolean;
+  label: string;
+  isHalftime: boolean;
+  teamColor: string;
+}) {
+  if (!active) return null;
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[37] flex items-center justify-center">
+      {/* Dark backdrop — house lights dim for quarter break */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(ellipse at center, ${teamColor}12 0%, rgba(11,14,20,0.80) 70%)`,
+        }}
+      />
+
+      {/* Team-color edge flash — like arena LED ribbons firing on buzzer */}
+      <div
+        className="absolute inset-0"
+        style={{
+          boxShadow: `inset 0 0 80px ${teamColor}20, inset 0 0 40px ${teamColor}10`,
+          animation: 'arena-qtr-flash 0.6s ease-out forwards',
+        }}
+      />
+
+      {/* Jumbotron graphic — centered quarter announcement */}
+      <div
+        className="relative flex flex-col items-center gap-3"
+        style={{
+          animation: 'arena-timeout-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        }}
+      >
+        {/* Buzzer icon — whistle/horn */}
+        <div
+          className="flex h-8 w-8 items-center justify-center rounded-full"
+          style={{
+            backgroundColor: `${teamColor}25`,
+            border: `1px solid ${teamColor}40`,
+            boxShadow: `0 0 16px ${teamColor}30`,
+          }}
+        >
+          <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none">
+            <path
+              d="M3 7h2l4-3v8l-4-3H3a1 1 0 01-1-1V8a1 1 0 011-1z"
+              fill={teamColor}
+              fillOpacity="0.8"
+            />
+            <path
+              d="M12 5.5c.8.8 1.2 1.8 1.2 2.5s-.4 1.7-1.2 2.5"
+              stroke={teamColor}
+              strokeWidth="1.2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+
+        {/* Quarter label — large dramatic Oswald type */}
+        <h2
+          className={`uppercase tracking-[0.15em] leading-none text-center ${
+            isHalftime ? 'text-[clamp(2rem,8vw,3.5rem)]' : 'text-[clamp(1.4rem,6vw,2.5rem)]'
+          }`}
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            fontWeight: 700,
+            color: '#F0F2F5',
+            textShadow: `0 0 30px ${teamColor}50, 0 0 60px ${teamColor}25, 0 2px 4px rgba(0,0,0,0.5)`,
+          }}
+        >
+          {label}
+        </h2>
+
+        {/* Halftime gets extra flair — a "halftime show" subtext */}
+        {isHalftime && (
+          <span
+            className="text-[9px] uppercase tracking-[0.4em]"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              fontWeight: 400,
+              color: `${teamColor}AA`,
+              textShadow: `0 0 8px ${teamColor}40`,
+            }}
+          >
+            Halftime Report
+          </span>
+        )}
+
+        {/* Accent lines — scoreboard style dividers */}
+        <div className="flex items-center gap-3">
+          <div
+            className="h-[1px] w-10"
+            style={{ backgroundColor: `${teamColor}50` }}
+          />
+          <div
+            className="h-1.5 w-1.5 rounded-full"
+            style={{
+              backgroundColor: teamColor,
+              boxShadow: `0 0 8px ${teamColor}80`,
+            }}
+          />
+          <div
+            className="h-[1px] w-10"
+            style={{ backgroundColor: `${teamColor}50` }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
@@ -6602,6 +6768,13 @@ export default function ArenaPage({
 
   /* ── Arena buzzer — fires once when drop transitions to ended ── */
   const buzzerActive = useArenaBuzzer(countdown.isEnded);
+
+  /* ── Quarter buzzer — jumbotron quarter-end transition ── */
+  const quarterBuzzer = useQuarterBuzzer(
+    countdown.totalSeconds,
+    SALE_DURATION_MS[momentId] ?? 12 * 60 * 1000,
+    countdown.isEnded,
+  );
 
   /* ── Arena timeout — jumbotron overlay on phase transitions ── */
   const { active: timeoutActive, label: timeoutLabel } = useArenaTimeout(countdown.totalSeconds);
@@ -6846,6 +7019,14 @@ export default function ArenaPage({
 
       {/* ─── Arena Buzzer — red LED flash + FINAL when drop ends ─── */}
       <BuzzerOverlay active={buzzerActive} teamColor={moment.teamColors.primary} />
+
+      {/* ─── Quarter Buzzer — jumbotron quarter-end transition graphic ─── */}
+      <QuarterBuzzerOverlay
+        active={quarterBuzzer.active}
+        label={quarterBuzzer.label}
+        isHalftime={quarterBuzzer.isHalftime}
+        teamColor={moment.teamColors.primary}
+      />
 
       {/* ─── Arena Timeout — jumbotron overlay on phase transitions ─── */}
       <TimeoutOverlay active={timeoutActive} label={timeoutLabel} teamColor={moment.teamColors.primary} />

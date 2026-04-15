@@ -1648,6 +1648,14 @@ body {
   100% { transform: translateX(-50%); }
 }
 
+/* Arena quarter buzzer — team-color edge glow on quarter transitions */
+@keyframes arena-qtr-flash {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  40% { opacity: 0.3; }
+  100% { opacity: 0; }
+}
+
 /* Arena buzzer — red LED flash when drop ends, like NBA backboard LEDs */
 @keyframes arena-buzzer-flash {
   0% { opacity: 0; }

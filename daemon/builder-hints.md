@@ -2004,3 +2004,11 @@
 - At 9.44+ ceiling, conversion improvements (+0.02 in one dimension) don't move the composite because they're divided across 5 weighted dimensions. Need multi-dimension improvements to register delta.
 - The IIFE pattern `(() => { ... })()` works well for inline components that need local variables computed from page state, avoiding a separate component when the logic is CTA-context-specific.
 - Current scores: Supreme 9.42, Broadcast 9.41, Arena 9.44. Broadcast is weakest. Next cycle: Supreme (rotation). After that, Broadcast should get priority. Supreme weakest dimensions: estimate VP (9.40), Conv (9.41).
+
+## Cycle 255 Learnings
+- At 9.40+ VP, physical print-production details (watermarks, gilt edges, spine shadows) are the right improvement class — they add tactile quality that digital-only effects can't replicate.
+- SVG watermark seals are low-effort, high-recognition institutional signals. The key is opacity: 3% is barely visible on a dark background, which is exactly right — real catalogue watermarks are only visible when you look for them.
+- Gilt section dividers (linear-gradient with metallic highlights) are more premium than plain rgba hairlines. The team-color tinting makes each moment page feel custom-printed.
+- Multiple micro-VP improvements in one cycle can still produce +0.00 composite delta because VP is only 25% weighted and each improvement is incremental. Need to bundle VP with Emotion or Conversion changes to register.
+- Current scores: Supreme 9.41, Broadcast 9.41, Arena 9.44. Supreme and Broadcast still tied. Arena leads by 0.03. Next cycle: Broadcast (rotation). Broadcast weakest dimensions: VP (9.40), Emo (9.40), Int (9.40). Multiple dimensions tied at 9.40.
+

@@ -2047,3 +2047,9 @@
 - The distinction between passive (CrowdReactionBar — auto-generated floating emojis) and active (FanReactionCam — user-initiated reactions) is important for Arena: the passive elements create "other people are here" atmosphere, while the active elements create "YOU are here" participation.
 - useRef<ReturnType<typeof setTimeout>>(undefined) is required in strict TypeScript — the 0-argument overload doesn't work. Also needed to add useMemo to Arena imports.
 - Current scores: Supreme 9.42, Broadcast 9.42, Arena 9.45. All directions within 0.03. Next cycle: Supreme (rotation). Supreme weakest dimensions: VP (9.42), Conv (9.41), Emo (9.43), Int (9.41), Pur (9.43). Conversion and Interaction tied at 9.41 as weakest.
+
+## Cycle 261 Learnings
+- "Register Interest" pre-commitment tap is a clean Conversion + Interaction improvement: one new tappable element that changes CTA language. The foot-in-the-door pattern is well-established and maps perfectly to auction house registration conventions.
+- The CTA text upgrade ("OWN THIS MOMENT" → "PLACE BID") after registration is the key conversion mechanism — it reframes the CTA from a cold purchase to a natural next step in an ongoing process. Both main CTA and sticky CTA share the same buttonText variable, so the upgrade propagates automatically.
+- Georgia serif for the registration text maintains typographic consistency with the auctioneer's bid call and catalogue essay. The pen nib icon pre-tap and checkmark post-tap create a clear visual state transition.
+- Current scores: Supreme 9.43, Broadcast 9.42, Arena 9.45. Supreme overtakes Broadcast by 0.01. Next cycle: Broadcast (rotation). Broadcast weakest dimensions: VP (9.42), Conv (9.42), Emo (9.43), Int (9.43), Pur (9.43). Visual and Conversion tied at 9.42 as weakest.

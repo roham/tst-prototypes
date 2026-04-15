@@ -2138,3 +2138,10 @@
 - At 9.45+ ceiling, VP and Emotion improvements need to be additive to existing composition rather than competing with it. The jersey number works because it's a background layer that enhances the player name rather than distracting from it.
 - The 7% opacity for the stroke is calibrated to be visible but not compete with the player name text. Higher opacity (10%+) made it fight with the name; lower (4%) made it invisible on mobile.
 - Current scores: Supreme 9.43, Broadcast 9.45, Arena 9.45. Supreme is the weakest at 9.43. Next cycle: Arena (rotation after Broadcast). Then Supreme after that.
+
+## Cycle 275 Learnings
+- SVG court markings at 3-5% opacity (08/12 hex) hit the sweet spot: visible enough to register subconsciously, too faint to interfere with content. Higher opacity (15%+) competed with the feed section; lower (04) was invisible.
+- Positioning the court SVG starting at 42vh puts the center circle near the hero/content boundary and the paint under the main feed area — this feels natural, like the content is happening on the court.
+- The three-point arc and paint are the two most recognizable court elements. The center circle serves as a visual anchor at the section transition point.
+- This is a pure VP improvement — no new interactions, no content changes, just atmospheric visual detail. At 9.46 ceiling, these small atmospheric additions are the remaining path to VP improvement.
+- Current scores: Supreme 9.43, Broadcast 9.45, Arena 9.46. Next cycle: Supreme (rotation). Supreme is still the weakest at 9.43 — 0.03 below Arena, 0.02 below Broadcast.

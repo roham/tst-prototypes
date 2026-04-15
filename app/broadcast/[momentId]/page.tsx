@@ -285,6 +285,16 @@ const TEAM_ARENA: Record<string, { arena: string; city: string }> = {
   PHX: { arena: 'Footprint Center', city: 'Phoenix, AZ' },
 };
 
+// Score Update alerts — other games' results shown during the broadcast
+// ESPN/TNT flash "SCORE UPDATE" alerts during live games with results from
+// around the league. These one-shot notifications reinforce the live broadcast
+// illusion: you're watching a real telecast with a full production team.
+const SCORE_UPDATES: Record<string, { away: string; home: string; awayScore: number; homeScore: number; status: string }> = {
+  bam:   { away: 'LAL', home: 'PHX', awayScore: 104, homeScore: 98, status: '4TH — 3:22' },
+  jokic: { away: 'MIA', home: 'BOS', awayScore: 96, homeScore: 101, status: 'FINAL' },
+  sga:   { away: 'DEN', home: 'LAL', awayScore: 112, homeScore: 108, status: '4TH — 1:45' },
+};
+
 // Plausible game scores for score bug (derived from moment context)
 // Quarter-by-quarter breakdown adds broadcast depth
 const GAME_SCORES: Record<string, {
@@ -1246,6 +1256,160 @@ function ScoreBug({ moment, isEnded, teamColor, rgb, dropPhase }: {
 
 function fullTeam(abbr: string): string {
   return TEAM_FULL[abbr] ?? abbr;
+}
+
+// ── Network Bug — persistent channel identifier (top-right corner) ─────────
+// Every live broadcast has a semi-transparent network logo in one corner.
+// ESPN, TNT, ABC — the bug is always there. It's the single most ubiquitous
+// element across all TV broadcasts. Placed opposite the ScoreBug (top-left).
+// Phase-aware: breathing animation speeds up during CRITICAL.
+function NetworkBug({ isEnded, teamColor, rgb, dropPhase }: {
+  isEnded: boolean; teamColor: string; rgb: string; dropPhase: DropPhase;
+}) {
+  return (
+    <div
+      className="fixed top-14 right-4 z-40 pointer-events-none md:top-16 md:right-6"
+      style={{
+        opacity: isEnded ? 0.1 : dropPhase === 'CRITICAL' ? 0.55 : 0.35,
+        transition: 'opacity 0.8s ease',
+      }}
+    >
+      <div className="flex flex-col items-end gap-[2px]">
+        {/* Network logo — "TST" in bold condensed, the channel identifier */}
+        <div className="flex items-center gap-1.5">
+          <span
+            className="text-[14px] font-black uppercase tracking-[0.35em] leading-none"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: 'rgba(240,242,245,0.9)',
+              textShadow: `0 0 8px rgba(${rgb},0.3)`,
+              animation: dropPhase === 'CRITICAL'
+                ? 'broadcast-network-bug-breathe 2s ease-in-out infinite'
+                : 'broadcast-network-bug-breathe 4s ease-in-out infinite',
+            }}
+          >
+            TST
+          </span>
+          {/* HD badge — small quality indicator */}
+          <span
+            className="text-[6px] font-bold uppercase tracking-[0.15em] px-[4px] py-[1px] rounded-[2px] leading-none"
+            style={{
+              backgroundColor: `rgba(${rgb},0.15)`,
+              color: `rgba(${rgb},0.7)`,
+              border: `0.5px solid rgba(${rgb},0.2)`,
+              fontFamily: 'var(--font-oswald), sans-serif',
+            }}
+          >
+            HD
+          </span>
+        </div>
+        {/* Micro line — network tag */}
+        <span
+          className="text-[5px] font-mono uppercase tracking-[0.3em]"
+          style={{ color: 'rgba(240,242,245,0.2)' }}
+        >
+          Top Shot This
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ── Graphics Package Accent Trim — ESPN-style L-frame accent lines ─────────
+// Every ESPN/FOX/TNT broadcast graphics package has consistent accent lines
+// that frame lower-thirds, stat cards, and hero graphics. These thin animated
+// lines create the "you're watching a live production" feel. Drawn via CSS
+// stroke-dashoffset on page load, phase-aware color temperature.
+function GraphicsPackageTrim({ rgb, dropPhase, isEnded }: {
+  rgb: string; dropPhase: DropPhase; isEnded: boolean;
+}) {
+  if (isEnded) return null;
+  const trimColor = dropPhase === 'CRITICAL' ? 'rgba(239,68,68,0.5)'
+    : dropPhase === 'CLOSING' ? 'rgba(245,158,11,0.4)'
+    : `rgba(${rgb},0.3)`;
+  const glowColor = dropPhase === 'CRITICAL' ? 'rgba(239,68,68,0.3)'
+    : dropPhase === 'CLOSING' ? 'rgba(245,158,11,0.2)'
+    : `rgba(${rgb},0.15)`;
+
+  return (
+    <div className="absolute inset-0 z-[11] pointer-events-none overflow-hidden">
+      {/* Left vertical accent — runs from 20% to 85% of hero height */}
+      <svg
+        className="absolute left-0 top-0 h-full w-[20px]"
+        viewBox="0 0 20 400"
+        preserveAspectRatio="none"
+        style={{ opacity: dropPhase === 'CRITICAL' ? 0.9 : 0.7 }}
+      >
+        <line
+          x1="6" y1="80" x2="6" y2="340"
+          stroke={trimColor}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          style={{
+            strokeDasharray: '260',
+            strokeDashoffset: '0',
+            animation: 'broadcast-trim-draw 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+            filter: `drop-shadow(0 0 4px ${glowColor})`,
+          }}
+        />
+        {/* Secondary thinner parallel line */}
+        <line
+          x1="10" y1="100" x2="10" y2="320"
+          stroke={trimColor}
+          strokeWidth="0.5"
+          strokeLinecap="round"
+          style={{
+            strokeDasharray: '220',
+            strokeDashoffset: '0',
+            animation: 'broadcast-trim-draw 2.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards',
+            opacity: 0.5,
+          }}
+        />
+        {/* Corner tick at top of primary line */}
+        <line
+          x1="6" y1="80" x2="16" y2="80"
+          stroke={trimColor}
+          strokeWidth="1"
+          strokeLinecap="round"
+          style={{
+            strokeDasharray: '10',
+            strokeDashoffset: '0',
+            animation: 'broadcast-trim-draw 0.6s ease-out 1.8s forwards',
+            filter: `drop-shadow(0 0 3px ${glowColor})`,
+          }}
+        />
+      </svg>
+      {/* Bottom horizontal accent — runs across bottom-left corner */}
+      <svg
+        className="absolute bottom-[12%] left-0 w-full h-[20px]"
+        viewBox="0 0 400 20"
+        preserveAspectRatio="none"
+        style={{ opacity: dropPhase === 'CRITICAL' ? 0.8 : 0.6 }}
+      >
+        <line
+          x1="6" y1="10" x2="120" y2="10"
+          stroke={trimColor}
+          strokeWidth="1"
+          strokeLinecap="round"
+          style={{
+            strokeDasharray: '114',
+            strokeDashoffset: '0',
+            animation: 'broadcast-trim-draw-h 1.4s cubic-bezier(0.4, 0, 0.2, 1) 2s forwards',
+            filter: `drop-shadow(0 0 3px ${glowColor})`,
+          }}
+        />
+        {/* Accent dot at line end */}
+        <circle
+          cx="120" cy="10" r="2"
+          fill={trimColor}
+          style={{
+            animation: 'broadcast-trim-dot-in 0.4s ease-out 3.4s both',
+            filter: `drop-shadow(0 0 4px ${glowColor})`,
+          }}
+        />
+      </svg>
+    </div>
+  );
 }
 
 // ── ESPN BottomLine — scrolling score ticker for broadcast atmosphere ──────
@@ -3832,6 +3996,18 @@ export default function BroadcastPage() {
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [leaderDone]);
 
+  // Score Update alert — "around the league" score from another game
+  const [scoreUpdatePhase, setScoreUpdatePhase] = useState<'waiting' | 'in' | 'hold' | 'out' | 'done'>('waiting');
+  useEffect(() => {
+    if (!leaderDone) return;
+    // Fire 8s after leader completes — enough time to absorb the hero
+    const t1 = setTimeout(() => setScoreUpdatePhase('in'), 8000);
+    const t2 = setTimeout(() => setScoreUpdatePhase('hold'), 8500);
+    const t3 = setTimeout(() => setScoreUpdatePhase('out'), 12500);
+    const t4 = setTimeout(() => setScoreUpdatePhase('done'), 13000);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+  }, [leaderDone]);
+
   // Channel switch static — brief TV static flash + channel number on tier change
   const [channelSwitch, setChannelSwitch] = useState<number | null>(null);
   const prevTierRef = useRef(0);
@@ -4560,8 +4736,68 @@ export default function BroadcastPage() {
         )}
       </div>
 
+      {/* ━━━ SCORE UPDATE — ESPN "around the league" alert ━━━━━━━━━━━ */}
+      {/* During live broadcasts, ESPN/TNT flash score updates from other   */}
+      {/* games. This one-shot alert fires 8s after leader completes,      */}
+      {/* slides in from right, holds 4s, slides out. Deeply broadcast.    */}
+      {(() => {
+        const update = SCORE_UPDATES[momentId] ?? SCORE_UPDATES.bam;
+        return scoreUpdatePhase !== 'waiting' && scoreUpdatePhase !== 'done' && (
+          <div
+            className="fixed top-14 right-0 z-[42] pointer-events-none md:top-16"
+            style={{
+              transform: scoreUpdatePhase === 'in' || scoreUpdatePhase === 'hold' ? 'translateX(0)' : 'translateX(105%)',
+              transition: scoreUpdatePhase === 'in'
+                ? 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
+                : 'transform 0.4s ease-in',
+            }}
+          >
+            <div className="flex items-stretch">
+              <div
+                className="flex flex-col gap-0.5 pl-3 pr-4 py-2"
+                style={{
+                  backgroundColor: 'rgba(11,14,20,0.92)',
+                  backdropFilter: 'blur(10px)',
+                  boxShadow: '-2px 0 16px rgba(0,0,0,0.3)',
+                  borderLeft: '2px solid #F59E0B',
+                }}
+              >
+                {/* "SCORE UPDATE" label */}
+                <span
+                  className="text-[7px] font-bold uppercase tracking-[0.3em] text-[#F59E0B]/70"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  Score Update
+                </span>
+                {/* Score line: AWAY 104 — HOME 98 */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-white/60" style={{ fontFamily: 'var(--font-oswald), sans-serif' }}>
+                    {update.away}
+                  </span>
+                  <span className="text-[11px] font-bold tabular-nums text-white/80" style={{ fontFamily: 'var(--font-oswald), sans-serif' }}>
+                    {update.awayScore}
+                  </span>
+                  <span className="text-[8px] text-white/20">&mdash;</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-white/60" style={{ fontFamily: 'var(--font-oswald), sans-serif' }}>
+                    {update.home}
+                  </span>
+                  <span className="text-[11px] font-bold tabular-nums text-white/80" style={{ fontFamily: 'var(--font-oswald), sans-serif' }}>
+                    {update.homeScore}
+                  </span>
+                </div>
+                {/* Game status */}
+                <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/25">
+                  {update.status}
+                </span>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* ━━━ SCORE BUG — persistent game score overlay ━━━━━━━━━━━━━━ */}
       <ScoreBug moment={moment} isEnded={countdown.isEnded} teamColor={moment.teamColors.primary} rgb={rgb} dropPhase={dropPhase} />
+      <NetworkBug isEnded={countdown.isEnded} teamColor={moment.teamColors.primary} rgb={rgb} dropPhase={dropPhase} />
 
       <div className="relative z-10">
         {/* ━━━ ESPN BOTTOMLINE — scrolling score ticker ━━━━━━━━━━━━━━━ */}
@@ -4604,6 +4840,9 @@ export default function BroadcastPage() {
           />
           {/* Dark overlay from bottom for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/70 to-transparent" />
+
+          {/* ── GRAPHICS PACKAGE ACCENT TRIM — ESPN-style L-frame accent lines ── */}
+          <GraphicsPackageTrim rgb={rgb} dropPhase={dropPhase} isEnded={countdown.isEnded} />
 
           {/* ── CINEMATIC LETTERBOX — widescreen bars for broadcast film treatment ── */}
           {/* ESPN SportsCenter Top 10 and TNT dramatic replays use letterbox bars   */}

@@ -145,6 +145,118 @@ const CROWD_HAPTIC = {
   feedPulse: () => arenaVibe(8),
 } as const;
 
+/* ─── Game Scores — jumbotron scoreboard data per moment ─────── */
+/* The scoreboard is the most-watched element in any NBA arena.   */
+/* Showing the final score in the hero creates emotional context: */
+/* the team WON, and this moment was part of that victory.        */
+
+const GAME_SCORES: Record<string, {
+  home: string; away: string; hScore: number; aScore: number;
+}> = {
+  bam:   { home: 'MIA', away: 'BOS', hScore: 108, aScore: 101 },
+  jokic: { home: 'DEN', away: 'LAL', hScore: 122, aScore: 109 },
+  sga:   { home: 'OKC', away: 'PHX', hScore: 118, aScore: 112 },
+};
+
+function JumbotronScoreboard({ momentId, teamColor }: {
+  momentId: string; teamColor: string;
+}) {
+  const game = GAME_SCORES[momentId] ?? GAME_SCORES.bam;
+  const isHomeWinner = game.hScore > game.aScore;
+
+  return (
+    <div
+      className="inline-flex items-center gap-0 rounded overflow-hidden"
+      style={{
+        border: `1px solid ${teamColor}25`,
+        backgroundColor: 'rgba(11,14,20,0.7)',
+        backdropFilter: 'blur(8px)',
+      }}
+    >
+      {/* Home team */}
+      <div
+        className="flex items-center gap-1.5 px-2 py-1"
+        style={{
+          backgroundColor: isHomeWinner ? `${teamColor}15` : 'transparent',
+        }}
+      >
+        <span
+          className="text-[10px] font-bold uppercase tracking-wider"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: isHomeWinner ? teamColor : 'rgba(255,255,255,0.35)',
+          }}
+        >
+          {game.home}
+        </span>
+        <span
+          className="text-[14px] font-bold tabular-nums leading-none"
+          style={{
+            fontFamily: 'var(--font-mono), monospace',
+            color: isHomeWinner ? '#F0F2F5' : 'rgba(255,255,255,0.4)',
+            textShadow: isHomeWinner ? `0 0 6px ${teamColor}40` : 'none',
+          }}
+        >
+          {game.hScore}
+        </span>
+      </div>
+
+      {/* Divider */}
+      <div
+        className="w-[1px] self-stretch"
+        style={{ backgroundColor: `${teamColor}20` }}
+      />
+
+      {/* Away team */}
+      <div
+        className="flex items-center gap-1.5 px-2 py-1"
+        style={{
+          backgroundColor: !isHomeWinner ? `${teamColor}15` : 'transparent',
+        }}
+      >
+        <span
+          className="text-[10px] font-bold uppercase tracking-wider"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: !isHomeWinner ? teamColor : 'rgba(255,255,255,0.35)',
+          }}
+        >
+          {game.away}
+        </span>
+        <span
+          className="text-[14px] font-bold tabular-nums leading-none"
+          style={{
+            fontFamily: 'var(--font-mono), monospace',
+            color: !isHomeWinner ? '#F0F2F5' : 'rgba(255,255,255,0.4)',
+            textShadow: !isHomeWinner ? `0 0 6px ${teamColor}40` : 'none',
+          }}
+        >
+          {game.aScore}
+        </span>
+      </div>
+
+      {/* FINAL badge */}
+      <div
+        className="px-1.5 py-1 self-stretch flex items-center"
+        style={{
+          backgroundColor: `${teamColor}12`,
+          borderLeft: `1px solid ${teamColor}20`,
+        }}
+      >
+        <span
+          className="text-[7px] font-bold uppercase tracking-[0.15em]"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: `${teamColor}70`,
+          }}
+        >
+          Final
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Constants ────────────────────────────────────────────────── */
 
 const BUYER_NAMES = [
@@ -6101,6 +6213,10 @@ export default function ArenaPage({
             >
               {moment.playType}
             </span>
+          </div>
+          {/* Jumbotron Mini Scoreboard — game result in LED style */}
+          <div className="mt-1.5">
+            <JumbotronScoreboard momentId={moment.id} teamColor={moment.teamColors.primary} />
           </div>
           {/* Player name — jumbotron LED scoreboard glow */}
           <div className="relative mt-2 inline-block">

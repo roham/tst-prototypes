@@ -3332,6 +3332,50 @@ export default function SupremePage() {
         </div>
       )}
 
+      {/* ============================================================= */}
+      {/* CONDITIONS OF SALE — institutional trust strip at decision point  */}
+      {/* At Christie's/Sotheby's, the "Conditions of Sale" are printed    */}
+      {/* in the catalogue and govern every transaction. Key terms that     */}
+      {/* real auction buyers look for: buyer's premium (typically 20-26%), */}
+      {/* settlement terms, and authenticity guarantee. Showing "No Buyer's */}
+      {/* Premium" is a major conversion signal for anyone who knows        */}
+      {/* auction houses — it means the hammer price IS the final price.    */}
+      {/* Distinctly Supreme: Arena would never mention terms (it's live    */}
+      {/* commerce chaos), Broadcast would narrate it as editorial copy.    */}
+      {/* Supreme puts it in institutional catalogue fine print.            */}
+      {/* ============================================================= */}
+      {!isEnded && !isPurchasing && (
+        <div className="flex items-center justify-center gap-3 px-5 mb-2 supreme-info-enter">
+          {[
+            { label: 'No Buyer\u2019s Premium', accent: true },
+            { label: 'Immediate Settlement', accent: false },
+            { label: 'Certificate Included', accent: false },
+          ].map((term, i) => (
+            <span key={i} className="flex items-center gap-1.5">
+              {i > 0 && (
+                <span
+                  className="text-[5px]"
+                  style={{ color: `${tierAccentColor}15` }}
+                >
+                  ·
+                </span>
+              )}
+              <span
+                className="text-[7px] uppercase tracking-[0.2em]"
+                style={{
+                  fontFamily: 'Georgia, serif',
+                  color: term.accent
+                    ? `${tierAccentColor}30`
+                    : 'rgba(255,255,255,0.08)',
+                }}
+              >
+                {term.label}
+              </span>
+            </span>
+          ))}
+        </div>
+      )}
+
       </div>{/* END catalogue page turn wrapper */}
 
       {/* ============================================================= */}

@@ -1730,3 +1730,11 @@
 - The W screen is getting very long vertically. Future Arena W screen additions should focus on improving existing elements rather than adding new cards. Consider whether the W screen needs a scroll indicator or if it should be condensed.
 - "Thank you for being here tonight" is a surprisingly emotional element — it's the PA announcer's closing line that every arena fan hears as they leave. Tapping into universal shared experiences creates more emotion than novel designs.
 - Next cycle: Supreme (rotation). Ideas: lot condition report with museum-grade paper texture, or a registration ledger page-turn entrance on the W screen.
+
+## Cycle 216 Learnings
+- Intercepting state transitions with a brief curtain creates outsized emotional impact for minimal code. The 850ms curtain is ~40 lines of TSX + 3 keyframes but transforms the most important moment in the entire flow.
+- Initial state for transition flags must be `false` to avoid flashing the curtain on page reload in confirmed state. The useEffect handles the purchasing→confirmed detection, so only the live transition triggers the curtain.
+- The "Sold" text echo during the curtain creates narrative continuity: the lot clerk's final word lingers in the darkness before the W screen appears. Small detail but bridges the two screens.
+- Team-color for the line and flash creates per-moment differentiation even in the transition. Heat's curtain is red-tinted, Nuggets is navy, Thunder is blue.
+- Next cycle: Broadcast (rotation). Ideas: broadcast booth audio levels visualization on the W screen (VU meters showing "crowd noise" during the celebration), or a "Take" transition — TV director calling "TAKE 1" with a camera switch effect between purchase and W screen.
+

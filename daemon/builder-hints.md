@@ -2174,3 +2174,10 @@
 - Composite score didn't move (+0.00) despite Conv and Emo each advancing +0.01 — the weighted average rounds down when only 2 of 5 dimensions improve and the improvements are small. Need to target multiple dimensions simultaneously for composite advancement.
 - Supreme's biggest gap vs Arena/Broadcast is Visual (9.44 vs 9.47/9.46). Next Supreme cycle should focus on a VP improvement — a new visual element rather than text-based conversion mechanics.
 - Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Broadcast (rotation). Supreme still 0.03 behind Arena, 0.02 behind Broadcast.
+
+## Cycle 280 Learnings
+- Social buzz ticker uses dynamic counts tied to countdown phase — the number grows as urgency increases, which naturally aligns social proof with conversion pressure. This is better than a static number because it rewards the user for staying on the page.
+- Positioning social proof ABOVE expert authority (AnalystVerdict) creates a priming chain: "everyone is watching" → "the experts agree" → CTA. Social validation first, then authority validation, then action.
+- Broadcast's Conv and Pur both improved +0.01 but composite still rounds to 9.46. Same issue as Supreme cycle 279 — need 3+ dimensions moving simultaneously for composite advancement at this score level.
+- Broadcast's weakest dimensions are now Conv 9.46, Int 9.45. Next Broadcast cycle should target Interaction — the direction has fewer interactive elements than Arena or Supreme.
+- Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Arena (rotation). Supreme still lagging — needs VP-focused improvement.

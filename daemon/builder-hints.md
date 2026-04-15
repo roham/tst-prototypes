@@ -1886,3 +1886,11 @@
 - The light sweep animation (arena-stat-card-sweep) uses translateX(-100%) to translateX(100%) — a simple but effective "scan" that draws the eye on entry. The 0.3s delay ensures the card is visible before the sweep fires.
 - Delta (+0.04) is good for this maturity level — the card adds a genuinely new visual element to an under-served area rather than refining an already-polished section.
 - Next cycle: Supreme (rotation). Supreme scores: VP=9.36, Conv=9.37, Emo=9.36, Int=9.35, Pur=9.42. Interaction (9.35) and Emotion/VP (9.36) are weakest. Ideas: the tier selector could have a more tactile selection interaction (page peel, catalogue spread), or the hero could have a more dramatic reveal on scroll.
+
+## Cycle 237 Learnings
+- Adding visual selection state to tier cards (border, background, glow) is a small but meaningful Interaction improvement. The cards went from pure text buttons to having physical presence when selected.
+- The "Lot N" designation adds institutional context at the smallest possible scale (5px font). It's nearly invisible but rewards careful attention — perfectly Supreme.
+- Scale(1.02) on selected tier is at the edge of perceptibility. Any larger (1.05+) would feel too "app-like" and break Supreme's stillness.
+- Delta was only +0.01 because the tier area already had strong interaction support (sliding underline, page-turn, premier lot designation, tier breathe). At 9.35+ Interaction, meaningful improvements require larger structural changes — not refinements to existing components.
+- The radial-gradient press glow is subtle enough (8% opacity) to not compete with the overall dark void aesthetic. Team-color at >10% would start to feel like a UI highlight rather than institutional atmosphere.
+- Next cycle: Broadcast (rotation). Broadcast scores: VP=9.37, Conv=9.40, Emo=9.38, Int=9.37, Pur=9.38. Visual Polish (9.37) and Interaction (9.37) are weakest. Ideas: the tier selector in Broadcast could have ESPN-style graphics (stat comparison overlays when switching tiers), or the editorial section typography could be refined (drop caps, pull quotes).

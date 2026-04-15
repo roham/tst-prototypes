@@ -2102,3 +2102,11 @@
 - Per-moment zone data should reflect the player's known style: Bam is a paint beast, Jokić is versatile from the elbow, SGA has a balanced mid-range game. This makes the data feel authentic even though it's fictional.
 - IntersectionObserver with staggered zone reveals (0.12s offset) creates the "data loading in" feel that broadcast graphics use — zones populate one by one as if powered by real-time tracking.
 - Current scores: Supreme 9.43, Broadcast 9.44, Arena 9.45. Next cycle: Arena (rotation). Arena all dimensions at 9.44-9.46 ceiling.
+
+## Cycle 269 Learnings
+- The sticky CTA is the most-viewed purchase element while scrolling — it's visible for 80%+ of the Arena page since the main CTA is far below the hero. Upgrading it with triple urgency (time+supply+competition) makes conversion pressure persistent.
+- Reusing existing state variables (liveTierRemaining, countdown, SALE_DURATION_MS) means the sticky bar stays in sync with the main page without new hooks or effects.
+- The scorer's table game clock (quarter label + timer) mirrors the fixed header clock but at the CTA decision point — users see urgency where it matters most for conversion.
+- LED scanline texture on the sticky buy button creates visual consistency with the main CTA — both buttons look like jumbotron displays.
+- At 9.45+ ceiling, the ticket stub and collector-of-the-game award already exist on the W screen (discovered during research). Must check existing features before planning improvements.
+- Current scores: Supreme 9.43, Broadcast 9.44, Arena 9.45. Next cycle: Supreme (rotation). Supreme is the weakest at 9.43 — 0.02 below Arena.

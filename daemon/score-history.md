@@ -916,3 +916,6 @@
 | 268 | broadcast | 9.44 | 9.43 | 9.44 | 9.43 | 9.45 | 9.44 | +0.01 | Shot Chart (Peacock/ESPN Player Pulse half-court zone visualization with color-coded FG%) |
 
 **Cycle 268: Broadcast — Shot Chart.** Peacock/ESPN Player Pulse-style half-court shot zone visualization. SVG half-court with 5 color-coded efficiency zones per moment (green ≥60%, amber 45-59%, red <45%). Per-zone FG% + makes/attempts. Staggered reveal on scroll. Per-moment zone data reflecting actual game performance patterns. Legend strip. The shot chart is the signature 2025 NBA broadcast data viz — Peacock Performance View and ESPN GRACE both use real-time shot zone overlays. Visual +0.01, Emotion +0.01, Purity +0.01.
+| 269 | arena | 9.45 | 9.46 | 9.45 | 9.45 | 9.46 | 9.45 | +0.00 | Scoreboard-style sticky CTA bar (game clock, supply depletion bar, LED scanline) |
+
+**Cycle 269: Arena — Scoreboard-style sticky CTA bar.** Upgraded the bottom sticky purchase bar with arena scorer's table energy: (1) Supply depletion progress bar (2px top edge, teal→amber→red thresholds), (2) Mini game clock with quarter label + LED countdown, (3) LED scanline on buy button, (4) Phase-aware border colors. The sticky CTA now carries the full triple urgency stack while scrolling. Conv +0.01 at dimension level, composite unchanged at 9.45 due to rounding.

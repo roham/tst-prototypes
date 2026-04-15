@@ -34,6 +34,95 @@ const HAPTIC = {
 } as const;
 
 // ---------------------------------------------------------------------------
+// Collector's Loupe — touch-and-hold on hero to inspect at 2× magnification
+// At Christie's/Sotheby's private viewings, specialists and collectors use a
+// jeweler's loupe to examine works at close range. Press-and-hold activates a
+// circular magnification glass with gold bezel and crosshair reticle.
+// ---------------------------------------------------------------------------
+
+function useCollectorsLoupe(heroRef: React.RefObject<HTMLDivElement | null>, imageUrl: string, disabled: boolean) {
+  const [active, setActive] = useState(false);
+  const [pos, setPos] = useState({ x: 0, y: 0 }); // px relative to hero
+  const [pctPos, setPctPos] = useState({ x: 50, y: 50 }); // % for bg-position
+  const holdTimer = useRef<ReturnType<typeof setTimeout>>(null);
+  const isActive = useRef(false);
+
+  const HOLD_DELAY = 300; // ms before loupe appears
+  const LOUPE_SIZE = 120; // px diameter
+
+  const getPos = useCallback((clientX: number, clientY: number) => {
+    const el = heroRef.current;
+    if (!el) return null;
+    const rect = el.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    const pctX = (x / rect.width) * 100;
+    const pctY = (y / rect.height) * 100;
+    return { x, y, pctX, pctY };
+  }, [heroRef]);
+
+  const startHold = useCallback((clientX: number, clientY: number) => {
+    if (disabled) return;
+    const p = getPos(clientX, clientY);
+    if (!p) return;
+    setPos({ x: p.x, y: p.y });
+    setPctPos({ x: p.pctX, y: p.pctY });
+    holdTimer.current = setTimeout(() => {
+      isActive.current = true;
+      setActive(true);
+      haptic(6);
+    }, HOLD_DELAY);
+  }, [disabled, getPos]);
+
+  const moveHold = useCallback((clientX: number, clientY: number) => {
+    const p = getPos(clientX, clientY);
+    if (!p) return;
+    setPos({ x: p.x, y: p.y });
+    setPctPos({ x: p.pctX, y: p.pctY });
+    // If finger moved before hold threshold, cancel
+    if (holdTimer.current && !isActive.current) {
+      clearTimeout(holdTimer.current);
+      holdTimer.current = null;
+    }
+  }, [getPos]);
+
+  const endHold = useCallback(() => {
+    if (holdTimer.current) {
+      clearTimeout(holdTimer.current);
+      holdTimer.current = null;
+    }
+    isActive.current = false;
+    setActive(false);
+  }, []);
+
+  const handlers = useMemo(() => ({
+    onTouchStart: (e: React.TouchEvent) => {
+      const t = e.touches[0];
+      startHold(t.clientX, t.clientY);
+    },
+    onTouchMove: (e: React.TouchEvent) => {
+      if (!isActive.current) {
+        // Cancel loupe if moving before activation
+        if (holdTimer.current) { clearTimeout(holdTimer.current); holdTimer.current = null; }
+        return;
+      }
+      e.preventDefault(); // prevent scroll while loupe active
+      const t = e.touches[0];
+      moveHold(t.clientX, t.clientY);
+    },
+    onTouchEnd: endHold,
+    onTouchCancel: endHold,
+    // Mouse support for desktop testing
+    onMouseDown: (e: React.MouseEvent) => { if (e.button === 0) startHold(e.clientX, e.clientY); },
+    onMouseMove: (e: React.MouseEvent) => { if (isActive.current) moveHold(e.clientX, e.clientY); },
+    onMouseUp: endHold,
+    onMouseLeave: endHold,
+  }), [startHold, moveHold, endHold]);
+
+  return { active, pos, pctPos, handlers, LOUPE_SIZE };
+}
+
+// ---------------------------------------------------------------------------
 // Phase derivation from countdown
 // ---------------------------------------------------------------------------
 
@@ -1290,6 +1379,7 @@ export default function SupremePage() {
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [heroRevealed, setHeroRevealed] = useState(false);
+  const heroSectionRef = useRef<HTMLDivElement>(null);
 
   // Hero color reveal — starts desaturated, gains color over 2s
   useEffect(() => {
@@ -1300,6 +1390,13 @@ export default function SupremePage() {
   // Derive drop phase from countdown
   const dropPhase = derivePhase(countdown.totalSeconds);
   const timerDisplay = formatTimer(countdown.totalSeconds);
+
+  // Collector's Loupe — press-and-hold to inspect hero at 2× magnification
+  const loupe = useCollectorsLoupe(
+    heroSectionRef,
+    moment?.playerImageUrl ?? '',
+    viewPhase === 'purchasing' || dropPhase === 'ENDED',
+  );
 
   // Phase transition pulse — the void breathes when phase shifts
   const [transitionFlash, setTransitionFlash] = useState<'amber' | 'red' | null>(null);
@@ -2180,8 +2277,10 @@ export default function SupremePage() {
       {/* HERO — fills top 52% */}
       {/* ============================================================= */}
       <div
+        ref={heroSectionRef}
         className="relative w-full flex-none overflow-hidden"
         style={{ height: '52dvh' }}
+        {...loupe.handlers}
       >
         {/* Parallax wrapper — hero moves at 0.4x scroll speed, heartbeat pulse creates alive tension */}
         <div
@@ -2603,6 +2702,64 @@ export default function SupremePage() {
                 </button>
               );
             })}
+          </div>
+        )}
+
+        {/* Collector's Loupe — jeweler's magnification glass on touch-hold    */}
+        {/* At Christie's/Sotheby's private viewings, collectors examine works  */}
+        {/* through a loupe — the gold-bezeled magnifier is the universal       */}
+        {/* symbol of connoisseurship. 2× zoom, crosshair reticle, gold ring.  */}
+        {loupe.active && moment && (
+          <div
+            className="absolute z-[20] pointer-events-none"
+            style={{
+              width: loupe.LOUPE_SIZE,
+              height: loupe.LOUPE_SIZE,
+              left: loupe.pos.x - loupe.LOUPE_SIZE / 2,
+              top: loupe.pos.y - loupe.LOUPE_SIZE / 2,
+              borderRadius: '50%',
+              overflow: 'hidden',
+              boxShadow: [
+                `0 0 0 2px ${moment.teamColors.primary}60`,
+                `0 0 0 3px rgba(0,0,0,0.5)`,
+                `0 0 20px rgba(0,0,0,0.5)`,
+                `inset 0 0 15px rgba(0,0,0,0.3)`,
+              ].join(', '),
+              animation: 'supreme-loupe-in 0.2s ease-out',
+            }}
+          >
+            {/* Magnified image — 2× zoom centered on touch point */}
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
+                backgroundSize: '200% 200%',
+                backgroundPosition: `${loupe.pctPos.x}% ${loupe.pctPos.y}%`,
+              }}
+            />
+            {/* Gold bezel inner ring */}
+            <div
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{
+                border: `1.5px solid ${moment.teamColors.primary}40`,
+                boxShadow: `inset 0 0 8px ${moment.teamColors.primary}15`,
+              }}
+            />
+            {/* Crosshair reticle */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 120 120">
+              <line x1="60" y1="50" x2="60" y2="54" stroke={`${moment.teamColors.primary}50`} strokeWidth="0.5" />
+              <line x1="60" y1="66" x2="60" y2="70" stroke={`${moment.teamColors.primary}50`} strokeWidth="0.5" />
+              <line x1="50" y1="60" x2="54" y2="60" stroke={`${moment.teamColors.primary}50`} strokeWidth="0.5" />
+              <line x1="66" y1="60" x2="70" y2="60" stroke={`${moment.teamColors.primary}50`} strokeWidth="0.5" />
+              <circle cx="60" cy="60" r="12" stroke={`${moment.teamColors.primary}20`} strokeWidth="0.5" fill="none" />
+            </svg>
+            {/* Loupe label */}
+            <span
+              className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[5px] font-mono uppercase tracking-[0.4em] whitespace-nowrap"
+              style={{ color: `${moment.teamColors.primary}60` }}
+            >
+              2× LOUPE
+            </span>
           </div>
         )}
 

@@ -1419,6 +1419,26 @@ export default function SupremePage() {
     prevReserveMet.current = reserveMet;
   }, [reserveMet]);
 
+  // Saleroom Temperature — the auctioneer's one-word read of the room's energy.
+  // At Christie's/Sotheby's, the atmosphere in the saleroom shifts from quiet
+  // viewing to heated competition. This indicator distills that energy into a
+  // single institutional word, placed near the CTA as a subtle conversion signal.
+  const saleroomTemperature = useMemo(() => {
+    const pctClaimed = claimed / (moment?.editionSize ?? 5000);
+    const inCritical = dropPhase === 'CRITICAL';
+    const inClosing = dropPhase === 'CLOSING';
+    const recentBids = bidLog.length;
+
+    if (dropPhase === 'ENDED') return null;
+    if (inCritical && pctClaimed > 0.3)
+      return { word: 'Heated', color: '#EF4444', opacity: 0.3 };
+    if (inCritical || (inClosing && pctClaimed > 0.4) || recentBids >= 4)
+      return { word: 'Competitive', color: '#F59E0B', opacity: 0.25 };
+    if (inClosing || pctClaimed > 0.2 || recentBids >= 2)
+      return { word: 'Active', color: '#00E5A0', opacity: 0.2 };
+    return { word: 'Quiet', color: '#6B7A99', opacity: 0.15 };
+  }, [claimed, moment?.editionSize, dropPhase, bidLog.length]);
+
   // Saleroom spotlight — during CRITICAL, gallery lighting narrows to a tight
   // auction spotlight on the lot. As seconds drain, the cone tightens and edges
   // darken, mimicking the saleroom moment when house lights dim and a single spot
@@ -2988,6 +3008,52 @@ export default function SupremePage() {
       )}
 
       {/* ============================================================= */}
+      {/* SALEROOM TEMPERATURE — the auctioneer's one-word read of the   */}
+      {/* room. At Christie's/Sotheby's, everyone in the saleroom senses */}
+      {/* the energy: quiet → active → competitive → heated. This single */}
+      {/* word distills that atmosphere at the decision point.             */}
+      {/* ============================================================= */}
+      {saleroomTemperature && !isPurchasing && (
+        <div className="flex items-center justify-center gap-2 px-5 mb-2">
+          <div
+            className="h-[0.5px] w-4 transition-all duration-700"
+            style={{ backgroundColor: `${saleroomTemperature.color}${Math.round(saleroomTemperature.opacity * 255).toString(16).padStart(2, '0')}` }}
+          />
+          <div className="flex items-center gap-1.5">
+            <div
+              className="h-1.5 w-1.5 rounded-full transition-all duration-700"
+              style={{
+                backgroundColor: saleroomTemperature.color,
+                opacity: saleroomTemperature.opacity * 1.5,
+                boxShadow: saleroomTemperature.word === 'Heated'
+                  ? `0 0 6px ${saleroomTemperature.color}40`
+                  : 'none',
+                animation: saleroomTemperature.word === 'Heated'
+                  ? 'supreme-temp-pulse 1.5s ease-in-out infinite'
+                  : saleroomTemperature.word === 'Competitive'
+                    ? 'supreme-temp-pulse 2.5s ease-in-out infinite'
+                    : 'none',
+              }}
+            />
+            <span
+              className="text-[8px] font-bold uppercase tracking-[0.35em] transition-all duration-700"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: saleroomTemperature.color,
+                opacity: saleroomTemperature.opacity,
+              }}
+            >
+              {saleroomTemperature.word}
+            </span>
+          </div>
+          <div
+            className="h-[0.5px] w-4 transition-all duration-700"
+            style={{ backgroundColor: `${saleroomTemperature.color}${Math.round(saleroomTemperature.opacity * 255).toString(16).padStart(2, '0')}` }}
+          />
+        </div>
+      )}
+
+      {/* ============================================================= */}
       {/* LOT CLERK NARRATION — institutional voice during purchase        */}
       {/* At Sotheby's the lot clerk audibly announces each stage of the   */}
       {/* sale process. This floating text creates the same whispered      */}
@@ -3503,6 +3569,41 @@ export default function SupremePage() {
             background: 'linear-gradient(to top, #0B0E14 60%, transparent)',
           }}
         >
+          {/* Sticky context bar — tier + timer + temperature */}
+          {!isPurchasing && (
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <span
+                className="text-[8px] font-bold uppercase tracking-[0.25em] text-white/20"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                {selectedTier.tier}
+              </span>
+              <span className="text-[6px] text-white/10">·</span>
+              {(dropPhase === 'CLOSING' || dropPhase === 'CRITICAL') && (
+                <>
+                  <span
+                    className="text-[9px] font-mono font-semibold tabular-nums tracking-wider"
+                    style={{ color: dropPhase === 'CRITICAL' ? '#EF4444' : '#F59E0B' }}
+                  >
+                    {timerDisplay}
+                  </span>
+                  <span className="text-[6px] text-white/10">·</span>
+                </>
+              )}
+              {saleroomTemperature && (
+                <span
+                  className="text-[7px] font-bold uppercase tracking-[0.3em]"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: saleroomTemperature.color,
+                    opacity: saleroomTemperature.opacity,
+                  }}
+                >
+                  {saleroomTemperature.word}
+                </span>
+              )}
+            </div>
+          )}
           <button
             onClick={isPurchasing ? undefined : () => { HAPTIC.tap(); purchase(); }}
             disabled={isPurchasing}

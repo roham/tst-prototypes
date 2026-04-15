@@ -1890,3 +1890,9 @@ body {
   60%  { opacity: 1; transform: translateY(-2px) scale(1.02); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+/* ── Supreme Saleroom Temperature — pulsing indicator dot for room energy ── */
+@keyframes supreme-temp-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.6); }
+}

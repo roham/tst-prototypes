@@ -5858,6 +5858,97 @@ function CertificateScreen({
           </div>
         </div>
 
+        {/* ── FINAL SCORE — ESPN end-of-game scoreboard graphic ─────── */}
+        {/* Every NBA broadcast ends with the final score overlay —     */}
+        {/* this contextualizes the moment within the game result.      */}
+        <div
+          className="mt-5 w-full max-w-md mx-auto px-5 transition-all duration-700 ease-out"
+          style={{
+            opacity: phase >= 3 ? 1 : 0,
+            transform: phase >= 3 ? 'translateY(0)' : 'translateY(10px)',
+            transitionDelay: '0.35s',
+          }}
+        >
+          {(() => {
+            const GAME_SCORES: Record<string, { home: string; away: string; hScore: number; aScore: number; status: string }> = {
+              bam: { away: 'BOS', home: 'MIA', aScore: 102, hScore: 118, status: 'FINAL' },
+              jokic: { away: 'LAL', home: 'DEN', aScore: 108, hScore: 126, status: 'FINAL' },
+              sga: { away: 'DAL', home: 'OKC', aScore: 104, hScore: 119, status: 'FINAL' },
+            };
+            const game = GAME_SCORES[moment.id] ?? { away: moment.opponent, home: moment.team, aScore: 98, hScore: 112, status: 'FINAL' };
+            const isHomeWinner = game.hScore > game.aScore;
+            return (
+              <div
+                className="relative overflow-hidden rounded-md"
+                style={{
+                  border: `1px solid rgba(${rgb},0.12)`,
+                  backgroundColor: 'rgba(20,25,37,0.6)',
+                  backdropFilter: 'blur(8px)',
+                }}
+              >
+                {/* Header */}
+                <div
+                  className="flex items-center justify-between px-4 py-1.5"
+                  style={{
+                    background: `linear-gradient(90deg, rgba(${rgb},0.15), rgba(${rgb},0.04))`,
+                    borderBottom: `1px solid rgba(${rgb},0.08)`,
+                  }}
+                >
+                  <span
+                    className="text-[9px] font-bold uppercase tracking-[0.3em]"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif', color: moment.teamColors.primary }}
+                  >
+                    Final Score
+                  </span>
+                  <span className="text-[8px] font-mono uppercase tracking-wider text-white/15">
+                    {game.status}
+                  </span>
+                </div>
+                {/* Score rows */}
+                {[
+                  { team: game.away, score: game.aScore, isWinner: !isHomeWinner },
+                  { team: game.home, score: game.hScore, isWinner: isHomeWinner },
+                ].map((row) => (
+                  <div
+                    key={row.team}
+                    className="flex items-center justify-between px-4 py-2"
+                    style={{ borderBottom: `1px solid rgba(${rgb},0.05)` }}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      {/* Team color dot */}
+                      <div
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{
+                          backgroundColor: row.team === moment.team ? moment.teamColors.primary : 'rgba(255,255,255,0.2)',
+                        }}
+                      />
+                      <span
+                        className="text-[13px] font-bold uppercase tracking-wide"
+                        style={{
+                          fontFamily: 'var(--font-oswald), sans-serif',
+                          color: row.isWinner ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.35)',
+                        }}
+                      >
+                        {fullTeam(row.team)}
+                      </span>
+                    </div>
+                    <span
+                      className="text-[18px] font-bold tabular-nums"
+                      style={{
+                        fontFamily: 'var(--font-oswald), sans-serif',
+                        color: row.isWinner ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)',
+                        textShadow: row.isWinner ? `0 0 12px rgba(${rgb},0.2)` : undefined,
+                      }}
+                    >
+                      {row.score}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
+
         {/* ── INSTANT REPLAY — broadcast director cuts to the replay ── */}
         <div
           className="mt-6 w-full max-w-md mx-auto px-5 transition-all duration-700 ease-out"

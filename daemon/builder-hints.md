@@ -2053,3 +2053,10 @@
 - The CTA text upgrade ("OWN THIS MOMENT" → "PLACE BID") after registration is the key conversion mechanism — it reframes the CTA from a cold purchase to a natural next step in an ongoing process. Both main CTA and sticky CTA share the same buttonText variable, so the upgrade propagates automatically.
 - Georgia serif for the registration text maintains typographic consistency with the auctioneer's bid call and catalogue essay. The pen nib icon pre-tap and checkmark post-tap create a clear visual state transition.
 - Current scores: Supreme 9.43, Broadcast 9.42, Arena 9.45. Supreme overtakes Broadcast by 0.01. Next cycle: Broadcast (rotation). Broadcast weakest dimensions: VP (9.42), Conv (9.42), Emo (9.43), Int (9.43), Pur (9.43). Visual and Conversion tied at 9.42 as weakest.
+
+## Cycle 262 Learnings
+- Broadcast segment bumpers are high-ROI Visual Polish improvements because they replace generic section headers with broadcast-authentic graphic elements. Every ESPN broadcast has these between segments — they're the visual equivalent of "we now go live to..."
+- CTA production frames (viewfinder corner brackets + source labels) add broadcast authenticity without adding clutter. The marks are subtle (1px, 25% opacity) but instantly recognizable to anyone who's seen a production monitor.
+- Both improvements together create a "production design language" for the transaction section: the bumper introduces it, the frame highlights the CTA. This coordinated approach moves VP and Conv simultaneously.
+- At 9.43 scores, these incremental broadcast-vocabulary additions still register +0.01 because they fill genuine gaps — the transaction section previously had no broadcast graphic framing at all.
+- Current scores: Supreme 9.43, Broadcast 9.43, Arena 9.45. Supreme and Broadcast now tied at 9.43. Arena still leads by 0.02. Next cycle: Arena (rotation). Arena weakest dimensions: all clustered near 9.44-9.45 ceiling.

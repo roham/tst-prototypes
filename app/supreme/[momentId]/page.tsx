@@ -1216,6 +1216,21 @@ export default function SupremePage() {
     return () => clearTimeout(t);
   }, []);
 
+  // Paddle registration — at Sotheby's/Christie's, bidders register and receive
+  // a numbered paddle before the auction starts. This brief notice on page load
+  // transforms the visitor from spectator → registered bidder psychologically.
+  const [paddleNotice, setPaddleNotice] = useState(false);
+  const paddleNumber = useMemo(
+    () => moment ? ((moment.id.charCodeAt(1) * 23 + moment.id.charCodeAt(0) * 7) % 900 + 100) : 247,
+    [moment],
+  );
+  useEffect(() => {
+    // Show paddle notice after hero reveals, hide after 4s
+    const show = setTimeout(() => setPaddleNotice(true), 1800);
+    const hide = setTimeout(() => setPaddleNotice(false), 5800);
+    return () => { clearTimeout(show); clearTimeout(hide); };
+  }, []);
+
   // Critical timer heartbeat — subtle per-second pulse on timer digits
   const [timerTick, setTimerTick] = useState(false);
   const prevSecondsRef = useRef(countdown.totalSeconds);
@@ -1455,6 +1470,46 @@ export default function SupremePage() {
       )}
 
       {/* ============================================================= */}
+      {/* PADDLE REGISTRATION — institutional arrival notice             */}
+      {/* At Christie's, you receive your paddle before the auction.     */}
+      {/* This brief notice registers the visitor as a bidder.           */}
+      {/* ============================================================= */}
+      {paddleNotice && viewPhase === 'browsing' && (
+        <div
+          className="fixed bottom-8 left-0 right-0 z-[35] pointer-events-none flex justify-center supreme-paddle-notice"
+        >
+          <div className="flex items-center gap-3 px-5 py-2.5 rounded-sm"
+            style={{
+              backgroundColor: 'rgba(11,14,20,0.8)',
+              border: `0.5px solid ${moment.teamColors.primary}18`,
+              backdropFilter: 'blur(8px)',
+            }}
+          >
+            <span
+              className="text-[9px] font-mono uppercase tracking-[0.3em] text-white/20"
+            >
+              Paddle
+            </span>
+            <span
+              className="text-[14px] font-bold tabular-nums"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: `${moment.teamColors.primary}60`,
+              }}
+            >
+              {paddleNumber}
+            </span>
+            <span
+              className="text-[8px] uppercase tracking-[0.25em] text-white/15"
+              style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}
+            >
+              Registered for Evening Sale
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================= */}
       {/* PHASE TRANSITION PULSE — void breathes on phase shift */}
       {/* ============================================================= */}
       {transitionFlash && (
@@ -1510,7 +1565,7 @@ export default function SupremePage() {
               <span
                 className="text-[9px] font-mono uppercase tracking-[0.35em] text-white/25"
               >
-                Paddle {((moment.id.charCodeAt(1) * 23 + moment.id.charCodeAt(0) * 7) % 900 + 100)}
+                Paddle {paddleNumber}
               </span>
               <span
                 className="text-[13px] uppercase tracking-[0.35em] text-white/50"

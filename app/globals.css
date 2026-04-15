@@ -548,6 +548,20 @@ body {
   animation: supreme-paddle-raise 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Supreme paddle registration — brief institutional notice on arrival */
+@keyframes supreme-paddle-notice-in {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes supreme-paddle-notice-out {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-6px); }
+}
+.supreme-paddle-notice {
+  animation: supreme-paddle-notice-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             supreme-paddle-notice-out 0.5s ease-in 3.2s forwards;
+}
+
 /* Supreme gavel strike — radial shockwave when purchase confirms ("Yours.") */
 @keyframes supreme-gavel-strike-ring {
   0% { transform: scale(0.3); opacity: 0.5; border-width: 2px; }

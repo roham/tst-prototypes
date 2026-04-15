@@ -2188,3 +2188,9 @@
 - Decay rate of 120 per 300ms (400/sec) vs. addition of ~1000 per tap means users need ~3-4 taps/sec to maintain level, which is the right tension — achievable but requires effort. Crowd noise decays faster relative to input, making it harder to sustain.
 - The sweep threshold resets at <4K (not 0), creating a hysteresis loop: reach 5K for first sweep, decay a bit, tap back up for next sweep. This prevents instant re-triggering while still rewarding continued engagement.
 - Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Supreme (rotation). Supreme is the weakest at 0.03 behind Arena. Builder hints from cycle 279 say Supreme needs a VP improvement — visual element, not text.
+
+## Cycle 282 Learnings
+- CSS ::first-letter is the simplest way to add a drop cap without modifying JSX structure. The pseudo-element works directly on the paragraph text. Key settings: float:left to wrap text around it, font-style:normal to override the parent's italic (drop caps should be upright even in italic text).
+- Using CSS custom properties (--supreme-dropcap-color) per-moment is cleaner than trying to pass team color through a class name. The style prop on the paragraph sets the variable, and CSS picks it up — keeps the stylesheet generic.
+- Supreme's VP gap was the primary target (9.44 vs Arena 9.47, Broadcast 9.46). The drop cap closes it by 0.01. Still 0.02 behind Arena. Need more VP improvements on Supreme — consider: folio page numbering in margins, plate marks (embossed impression border), or exhibition label cards.
+- Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Broadcast (rotation). Broadcast's weakest dimension is Interaction (9.45).

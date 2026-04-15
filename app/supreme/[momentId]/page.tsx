@@ -4386,6 +4386,42 @@ export default function SupremePage() {
       </div>{/* END catalogue page turn wrapper */}
 
       {/* ============================================================= */}
+      {/* PROVENANCE PREVIEW — ownership chain preview at decision point  */}
+      {/* At Christie's/Sotheby's, the catalogue always shows provenance  */}
+      {/* for each lot. This minimal 3-step chain previews what the buyer */}
+      {/* will own: Minted → Evening Sale → Your Collection. "Your        */}
+      {/* Collection" activates the endowment effect — the buyer imagines */}
+      {/* the lot already in their possession before bidding. The chain   */}
+      {/* arrow (→) creates forward momentum toward the purchase action.  */}
+      {/* Distinctly Supreme: Arena has no provenance concept (live        */}
+      {/* commerce), Broadcast would narrate it as editorial backstory.   */}
+      {/* Supreme shows the formal chain of custody.                      */}
+      {/* ============================================================= */}
+      {!isEnded && !isPurchasing && (
+        <div className="flex items-center justify-center gap-1.5 px-5 mb-2 supreme-info-enter">
+          <span className="text-[6px] font-mono uppercase tracking-[0.25em] text-white/[0.07]">Provenance</span>
+          <span className="text-[5px] text-white/[0.06]">·</span>
+          {['Minted on Flow', 'TST Evening Sale', 'Your Collection'].map((step, i) => (
+            <span key={i} className="flex items-center gap-1.5">
+              {i > 0 && (
+                <span className="text-[5px]" style={{ color: `${tierAccentColor}12` }}>→</span>
+              )}
+              <span
+                className="text-[6.5px] uppercase tracking-[0.15em]"
+                style={{
+                  fontFamily: 'Georgia, serif',
+                  color: i === 2 ? `${tierAccentColor}30` : 'rgba(255,255,255,0.08)',
+                  fontStyle: i === 2 ? 'italic' : 'normal',
+                }}
+              >
+                {step}
+              </span>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* ============================================================= */}
       {/* REGISTER INTEREST — pre-commitment action at the decision point */}
       {/* At Christie's/Sotheby's online, "Register Interest" is the      */}
       {/* strongest pre-bid signal: a single tap that transforms you from  */}

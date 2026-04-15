@@ -2557,6 +2557,113 @@ export default function SupremePage() {
             </span>
           </div>
         </div>
+
+        {/* ★ Highlight of the Evening Sale — Christie's star lot designation */}
+        {/* At Christie's and Sotheby's, the most important lots in an auction  */}
+        {/* receive a star (★) designation in the catalogue. This is the single */}
+        {/* strongest institutional signal of value — it means the house's own  */}
+        {/* specialists have singled out this lot as exceptional. The ★ appears */}
+        {/* in the printed catalogue and on digital lot pages.                  */}
+        <div className="mt-5 pt-4 flex flex-col items-center gap-1" style={{ borderTop: '0.5px solid rgba(255,255,255,0.04)' }}>
+          <span
+            className="text-[10px] tracking-[0.1em]"
+            style={{ color: `${moment.teamColors.primary}35` }}
+          >
+            ★
+          </span>
+          <span
+            className="text-[7px] font-bold uppercase tracking-[0.4em]"
+            style={{ color: `${moment.teamColors.primary}25`, fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            Highlight of the Evening Sale
+          </span>
+          <span className="text-[7px] font-mono text-white/10 mt-0.5">
+            Selected by the Department of Digital Art
+          </span>
+        </div>
+
+        {/* Exhibition History — standard auction catalogue section */}
+        {/* Every Christie's/Sotheby's lot page lists where the work has been */}
+        {/* exhibited. For an NBA moment, exhibitions are broadcast appearances */}
+        {/* and digital showcases — places where this play was "on view."      */}
+        <div className="mt-4 pt-3" style={{ borderTop: '0.5px solid rgba(255,255,255,0.04)' }}>
+          <span
+            className="text-[7px] font-bold uppercase tracking-[0.35em] block mb-2"
+            style={{ color: 'rgba(255,255,255,0.12)', fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            Exhibition History
+          </span>
+          <div className="space-y-1">
+            {(moment.id === 'bam'
+              ? [
+                  { venue: 'ESPN SportsCenter', detail: 'Top 10 Plays, No. 1', year: '2025' },
+                  { venue: 'NBA App', detail: 'Playoff Highlights, Featured', year: '2025' },
+                  { venue: 'TNT Inside the NBA', detail: 'Shaqtin\u2019 a Fool (Honorable Mention)', year: '2025' },
+                ]
+              : moment.id === 'jokic'
+              ? [
+                  { venue: 'ESPN SportsCenter', detail: 'Top 10 Plays, No. 3', year: '2025' },
+                  { venue: 'NBA League Pass', detail: 'Moment of the Night', year: '2025' },
+                  { venue: 'The Athletic', detail: 'Play of the Week, Western Conf.', year: '2025' },
+                ]
+              : [
+                  { venue: 'ESPN SportsCenter', detail: 'Top 10 Plays, No. 2', year: '2025' },
+                  { venue: 'NBA App', detail: 'Rising Stars Showcase', year: '2025' },
+                  { venue: 'Bleacher Report', detail: 'Highlight Reel, Featured', year: '2025' },
+                ]
+            ).map((ex) => (
+              <div key={ex.venue} className="flex items-baseline justify-between">
+                <span className="text-[7px] font-mono text-white/15 italic">
+                  {ex.venue}
+                </span>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-[7px] font-mono text-white/10">
+                    {ex.detail}
+                  </span>
+                  <span className="text-[6px] font-mono text-white/8">
+                    {ex.year}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Literature — standard auction catalogue section */}
+        {/* Christie's/Sotheby's list published references to the work.  */}
+        {/* For NBA moments: articles, features, statistical databases.  */}
+        <div className="mt-3 pt-3" style={{ borderTop: '0.5px solid rgba(255,255,255,0.04)' }}>
+          <span
+            className="text-[7px] font-bold uppercase tracking-[0.35em] block mb-2"
+            style={{ color: 'rgba(255,255,255,0.12)', fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            Literature
+          </span>
+          <div className="space-y-1">
+            {(moment.id === 'bam'
+              ? [
+                  'Basketball Reference, Game Log, verified',
+                  'NBA.com, Official Box Score, archived',
+                  'Miami Herald, \u201CAdebayo\u2019s defining moment,\u201D p. A1',
+                ]
+              : moment.id === 'jokic'
+              ? [
+                  'Basketball Reference, Game Log, verified',
+                  'NBA.com, Official Box Score, archived',
+                  'Denver Post, \u201CJoki\u0107 does it again,\u201D Sports p. 1',
+                ]
+              : [
+                  'Basketball Reference, Game Log, verified',
+                  'NBA.com, Official Box Score, archived',
+                  'The Oklahoman, \u201CSGA\u2019s takeover,\u201D Sports p. 1',
+                ]
+            ).map((ref, i) => (
+              <p key={i} className="text-[7px] font-mono text-white/12 italic leading-[1.5]">
+                {ref}
+              </p>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* ============================================================= */}

@@ -2233,6 +2233,198 @@ function TaleOfTheTape({ moment, rgb }: { moment: Moment; rgb: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// Shot Chart — Peacock/ESPN "Player Pulse" half-court shot zone visualization
+// Modern NBA broadcasts overlay real-time shot zone heat maps showing where a
+// player shoots best. Color-coded zones (green=hot, red=cold) with FG% labels
+// and attempt counts. This is the signature 2025 data-storytelling element.
+// ---------------------------------------------------------------------------
+
+const SHOT_ZONES: Record<string, { zones: { label: string; attempts: number; makes: number; x: number; y: number; w: number; h: number }[] }> = {
+  bam: {
+    zones: [
+      { label: 'Paint', attempts: 12, makes: 9, x: 130, y: 140, w: 80, h: 70 },
+      { label: 'Mid-Left', attempts: 3, makes: 2, x: 50, y: 80, w: 70, h: 65 },
+      { label: 'Mid-Right', attempts: 4, makes: 3, x: 220, y: 80, w: 70, h: 65 },
+      { label: 'FT Line', attempts: 5, makes: 4, x: 130, y: 65, w: 80, h: 55 },
+      { label: '3PT', attempts: 2, makes: 0, x: 30, y: 10, w: 280, h: 50 },
+    ],
+  },
+  jokic: {
+    zones: [
+      { label: 'Paint', attempts: 10, makes: 7, x: 130, y: 140, w: 80, h: 70 },
+      { label: 'Mid-Left', attempts: 4, makes: 3, x: 50, y: 80, w: 70, h: 65 },
+      { label: 'Mid-Right', attempts: 3, makes: 2, x: 220, y: 80, w: 70, h: 65 },
+      { label: 'Elbow', attempts: 6, makes: 5, x: 130, y: 65, w: 80, h: 55 },
+      { label: '3PT', attempts: 4, makes: 2, x: 30, y: 10, w: 280, h: 50 },
+    ],
+  },
+  sga: {
+    zones: [
+      { label: 'Paint', attempts: 8, makes: 6, x: 130, y: 140, w: 80, h: 70 },
+      { label: 'Mid-Left', attempts: 6, makes: 5, x: 50, y: 80, w: 70, h: 65 },
+      { label: 'Mid-Right', attempts: 5, makes: 4, x: 220, y: 80, w: 70, h: 65 },
+      { label: 'FT Line', attempts: 4, makes: 3, x: 130, y: 65, w: 80, h: 55 },
+      { label: '3PT', attempts: 7, makes: 4, x: 30, y: 10, w: 280, h: 50 },
+    ],
+  },
+};
+
+function ShotChart({ moment, rgb }: { moment: Moment; rgb: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); observer.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const data = SHOT_ZONES[moment.id] ?? SHOT_ZONES.bam;
+
+  function zoneColor(makes: number, attempts: number): string {
+    if (attempts === 0) return 'rgba(255,255,255,0.06)';
+    const pct = makes / attempts;
+    if (pct >= 0.6) return 'rgba(0,229,160,0.35)';   // hot — teal/green
+    if (pct >= 0.45) return 'rgba(245,158,11,0.3)';   // warm — amber
+    return 'rgba(239,68,68,0.25)';                     // cold — red
+  }
+
+  function zoneBorder(makes: number, attempts: number): string {
+    if (attempts === 0) return 'rgba(255,255,255,0.08)';
+    const pct = makes / attempts;
+    if (pct >= 0.6) return 'rgba(0,229,160,0.5)';
+    if (pct >= 0.45) return 'rgba(245,158,11,0.45)';
+    return 'rgba(239,68,68,0.4)';
+  }
+
+  return (
+    <div ref={containerRef} className="mt-10 mb-2">
+      {/* Section header */}
+      <div className="flex items-center gap-3 mb-5">
+        <div className="h-[2px] w-5" style={{ backgroundColor: moment.teamColors.primary }} />
+        <span
+          className="text-[9px] font-bold uppercase tracking-[0.35em] text-white/25"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+        >
+          Shot Chart
+        </span>
+        <span
+          className="text-[7px] uppercase tracking-[0.2em] text-white/15 ml-1"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+        >
+          Tonight&apos;s Game
+        </span>
+        <div className="h-[1px] flex-1" style={{ backgroundColor: `rgba(${rgb},0.08)` }} />
+      </div>
+
+      {/* Half-court SVG */}
+      <div
+        className="rounded-lg border relative overflow-hidden"
+        style={{
+          borderColor: `rgba(${rgb},0.1)`,
+          backgroundColor: 'rgba(20,25,37,0.5)',
+        }}
+      >
+        {/* Top accent */}
+        <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ backgroundColor: `rgba(${rgb},0.25)` }} />
+
+        <div className="px-4 pt-4 pb-3">
+          <svg
+            viewBox="0 0 340 230"
+            className="w-full"
+            style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.8s ease-out' }}
+          >
+            {/* Court outline */}
+            <rect x="10" y="5" width="320" height="220" rx="4" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+            {/* Three-point arc */}
+            <path d="M 50 225 L 50 100 Q 170 -20 290 100 L 290 225" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="0.8" strokeDasharray="4,3" />
+            {/* Paint / key */}
+            <rect x="120" y="135" width="100" height="90" rx="2" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="0.8" />
+            {/* Free throw circle */}
+            <circle cx="170" cy="135" r="35" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="0.8" strokeDasharray="3,3" />
+            {/* Basket */}
+            <circle cx="170" cy="210" r="5" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+            <line x1="160" y1="220" x2="180" y2="220" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+
+            {/* Shot zones with color-coded fills */}
+            {data.zones.map((zone, i) => {
+              const pct = zone.attempts > 0 ? Math.round((zone.makes / zone.attempts) * 100) : 0;
+              return (
+                <g key={zone.label}>
+                  <rect
+                    x={zone.x} y={zone.y}
+                    width={zone.w} height={zone.h}
+                    rx="4"
+                    fill={zoneColor(zone.makes, zone.attempts)}
+                    stroke={zoneBorder(zone.makes, zone.attempts)}
+                    strokeWidth="0.8"
+                    style={{
+                      opacity: isVisible ? 1 : 0,
+                      transition: `opacity 0.6s ease-out ${0.3 + i * 0.12}s`,
+                    }}
+                  />
+                  {/* FG% */}
+                  <text
+                    x={zone.x + zone.w / 2}
+                    y={zone.y + zone.h / 2 - 4}
+                    textAnchor="middle"
+                    fill="white"
+                    fontSize="11"
+                    fontWeight="700"
+                    fontFamily="var(--font-oswald), sans-serif"
+                    style={{
+                      opacity: isVisible ? 0.7 : 0,
+                      transition: `opacity 0.6s ease-out ${0.4 + i * 0.12}s`,
+                    }}
+                  >
+                    {pct}%
+                  </text>
+                  {/* Attempts label */}
+                  <text
+                    x={zone.x + zone.w / 2}
+                    y={zone.y + zone.h / 2 + 10}
+                    textAnchor="middle"
+                    fill="white"
+                    fontSize="7"
+                    fontFamily="var(--font-mono), monospace"
+                    letterSpacing="0.05em"
+                    style={{
+                      opacity: isVisible ? 0.3 : 0,
+                      transition: `opacity 0.6s ease-out ${0.5 + i * 0.12}s`,
+                    }}
+                  >
+                    {zone.makes}/{zone.attempts} FGM
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+
+          {/* Legend */}
+          <div className="flex items-center justify-center gap-4 mt-3">
+            {[
+              { label: 'Hot (60%+)', color: 'rgba(0,229,160,0.5)' },
+              { label: 'Warm (45-59%)', color: 'rgba(245,158,11,0.45)' },
+              { label: 'Cold (<45%)', color: 'rgba(239,68,68,0.4)' },
+            ].map((leg) => (
+              <div key={leg.label} className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-sm" style={{ backgroundColor: leg.color }} />
+                <span className="text-[7px] font-mono text-white/20 tracking-wide">{leg.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Fan Verdict — ESPN-style live poll graphic
 // Every ESPN/TNT broadcast runs on-screen fan polls: "Is this the dunk of the
 // playoffs?" with a percentage bar that fills live. This transforms editorial
@@ -6087,6 +6279,9 @@ export default function BroadcastPage() {
 
           {/* Tale of the Tape — tonight vs season average comparison */}
           <TaleOfTheTape moment={moment} rgb={rgb} />
+
+          {/* Shot Chart — Peacock/ESPN Player Pulse half-court zone visualization */}
+          <ShotChart moment={moment} rgb={rgb} />
 
           {/* Fan Verdict — ESPN live poll (social proof as broadcast data) */}
           <FanVerdict moment={moment} rgb={rgb} />

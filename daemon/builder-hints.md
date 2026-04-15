@@ -1635,3 +1635,10 @@
 - The Georgia italic "Registered for Evening Sale" paired with Oswald bold number creates the same typographic duality Supreme uses throughout: institutional serif for description, bold condensed for data. Consistency reinforces the auction-house brand.
 - The 1.8s delay (after hero reveal at 200ms and sonar at 1200ms) ensures the paddle notice arrives when the user has already absorbed the hero image and is beginning to explore — the perfect moment to contextualize them as a participant.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 203 Learnings
+- Haptic parity across all 3 directions is now complete: Supreme (cycle 187, restrained 6-15ms), Arena (cycle 192, aggressive 50-90ms), Broadcast (cycle 203, authoritative 8-25ms). Each direction's haptic patterns match its personality.
+- Haptic-only changes produce small score deltas (~+0.02) because they only improve Interaction and only on mobile devices with Vibration API support. Pair haptic additions with visual changes for better ROI.
+- The `broadcastHaptic` helper pattern (try/catch, typeof check) is identical across all 3 directions — could be extracted to a shared utility, but keeping it inline preserves direction independence.
+- Wiring haptics into existing interaction points (CTA, tier select, purchase stages, phase transitions) is clean because those hooks/handlers already exist. The changes are surgical additions, not structural refactors.
+- Next cycle: Arena (rotation).

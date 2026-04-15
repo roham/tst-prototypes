@@ -681,6 +681,18 @@ body {
   background-size: 256px 256px;
 }
 
+/* Supreme W screen ink-stroke "YOURS." — pen inscribes, then ink fills */
+@keyframes supreme-ink-draw {
+  0% { stroke-dashoffset: 500; fill: transparent; }
+  70% { stroke-dashoffset: 0; fill: transparent; }
+  100% { stroke-dashoffset: 0; fill: rgba(255,255,255,0.5); }
+}
+.supreme-ink-stroke {
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  animation: supreme-ink-draw 2s cubic-bezier(0.22, 0.61, 0.36, 1) 0.3s forwards;
+}
+
 /* Supreme W screen card flip — 3D trading card reveal */
 @keyframes supreme-card-flip {
   0% { transform: perspective(1200px) rotateY(180deg) scale(0.88); opacity: 0; }

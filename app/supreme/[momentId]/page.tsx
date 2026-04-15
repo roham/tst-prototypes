@@ -802,12 +802,32 @@ function WScreen({
           W
         </div>
 
-        <p
-          className="-mt-2 text-[13px] font-bold uppercase tracking-[0.5em] text-white/50"
-          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+        {/* Ink-stroke "YOURS." — SVG text draws in via stroke-dashoffset,
+             then fill floods in like ink soaking into parchment.
+             The auctioneer's pen inscribes the final word on the sale record. */}
+        <svg
+          className="-mt-2"
+          viewBox="0 0 160 22"
+          width="160"
+          height="22"
+          aria-label="YOURS."
         >
-          YOURS.
-        </p>
+          <text
+            x="80"
+            y="17"
+            textAnchor="middle"
+            fontFamily="var(--font-oswald), sans-serif"
+            fontWeight="700"
+            fontSize="15"
+            letterSpacing="0.5em"
+            className="supreme-ink-stroke"
+            fill="none"
+            stroke="rgba(255,255,255,0.5)"
+            strokeWidth="0.6"
+          >
+            YOURS.
+          </text>
+        </svg>
 
         {/* Staggered details */}
         <div

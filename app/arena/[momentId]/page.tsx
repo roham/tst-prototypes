@@ -5650,6 +5650,193 @@ function JumbotronTrivia({ momentId, teamColor, isVisible }: {
   );
 }
 
+/* ─── Jumbotron Player Stat Card — arena intro-style big stat display ────── */
+/* NBA arenas display player stat cards on the jumbotron during intros and   */
+/* highlights. Large LED-style numbers, team-color accents, light sweep,     */
+/* and scanline texture. Placed between hero and feed to bridge emotional    */
+/* context into the transaction area — cold arrivals see big numbers first.  */
+
+const PLAYER_STAT_HIGHLIGHTS: Record<string, { stats: { value: number; label: string; highlight?: string }[]; line: string }> = {
+  bam: {
+    stats: [
+      { value: 30, label: 'PTS', highlight: 'FRANCHISE RECORD' },
+      { value: 8, label: 'REB' },
+      { value: 4, label: 'AST' },
+    ],
+    line: '12-17 FG · 5-6 FT · 1 BLK',
+  },
+  jokic: {
+    stats: [
+      { value: 35, label: 'PTS' },
+      { value: 15, label: 'REB', highlight: 'TRIPLE-DOUBLE' },
+      { value: 12, label: 'AST' },
+    ],
+    line: '14-22 FG · 6-7 FT · 2 STL',
+  },
+  sga: {
+    stats: [
+      { value: 38, label: 'PTS', highlight: 'OKC RECORD' },
+      { value: 6, label: 'REB' },
+      { value: 8, label: 'AST' },
+    ],
+    line: '13-21 FG · 11-12 FT · 2 STL',
+  },
+};
+
+function JumbotronPlayerStatCard({ momentId, player, teamColor, secondaryColor, isActive }: {
+  momentId: string;
+  player: string;
+  teamColor: string;
+  secondaryColor: string;
+  isActive: boolean;
+}) {
+  const data = PLAYER_STAT_HIGHLIGHTS[momentId] ?? PLAYER_STAT_HIGHLIGHTS.bam;
+
+  if (!isActive) return null;
+
+  return (
+    <div
+      className="mx-4 mt-3 relative overflow-hidden rounded-lg"
+      style={{
+        backgroundColor: 'rgba(0,0,0,0.75)',
+        border: `1px solid ${teamColor}25`,
+        clipPath: 'polygon(0 0, 100% 6px, 100% 100%, 0 100%)',
+      }}
+    >
+      {/* Scanline texture overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[2]"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px)',
+          mixBlendMode: 'multiply',
+        }}
+      />
+      {/* Light sweep entry animation */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[3]"
+        style={{
+          background: `linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%)`,
+          animation: 'arena-stat-card-sweep 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards',
+          opacity: 0,
+        }}
+      />
+      {/* Team-color top accent bar */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[2px] z-[4]"
+        style={{
+          background: `linear-gradient(90deg, ${teamColor}, ${secondaryColor ?? teamColor})`,
+        }}
+      />
+      {/* Team-color diagonal sweep background */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: `linear-gradient(135deg, ${teamColor}10 0%, transparent 40%, ${secondaryColor ?? teamColor}08 100%)`,
+        }}
+      />
+
+      {/* Header — player name + TONIGHT label */}
+      <div className="relative z-[5] flex items-center justify-between px-4 pt-3 pb-1">
+        <div className="flex items-center gap-2">
+          {/* Team-color vertical stripe */}
+          <div
+            className="h-[20px] w-[3px] rounded-full"
+            style={{ backgroundColor: teamColor }}
+          />
+          <span
+            className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/80"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            {player}
+          </span>
+        </div>
+        <span
+          className="text-[8px] font-bold uppercase tracking-[0.3em]"
+          style={{
+            color: teamColor,
+            fontFamily: 'var(--font-oswald), sans-serif',
+          }}
+        >
+          Tonight&apos;s Line
+        </span>
+      </div>
+
+      {/* Stat blocks — 3 columns */}
+      <div className="relative z-[5] grid grid-cols-3 gap-[1px] px-3 pb-2 pt-1">
+        {data.stats.map((stat) => (
+          <div key={stat.label} className="flex flex-col items-center py-2 relative">
+            {/* Stat number — large LED-style */}
+            <StatCardNumber target={stat.value} teamColor={teamColor} isHighlight={!!stat.highlight} />
+            {/* Label */}
+            <span
+              className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.2em]"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: stat.highlight ? teamColor : 'rgba(255,255,255,0.35)',
+              }}
+            >
+              {stat.label}
+            </span>
+            {/* Highlight badge */}
+            {stat.highlight && (
+              <span
+                className="mt-1 text-[6px] font-bold uppercase tracking-[0.15em] px-1.5 py-0.5 rounded-sm"
+                style={{
+                  backgroundColor: `${teamColor}18`,
+                  color: teamColor,
+                  border: `1px solid ${teamColor}30`,
+                  animation: 'arena-stat-highlight-pulse 2.5s ease-in-out infinite',
+                }}
+              >
+                {stat.highlight}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Secondary stat line — shooting splits */}
+      <div
+        className="relative z-[5] flex items-center justify-center gap-1 px-4 pb-3 pt-0"
+      >
+        <span
+          className="text-[8px] font-mono uppercase tracking-[0.15em] text-white/20"
+        >
+          {data.line}
+        </span>
+      </div>
+
+      {/* Bottom accent line */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-[1px]"
+        style={{
+          background: `linear-gradient(90deg, transparent 5%, ${teamColor}30 50%, transparent 95%)`,
+        }}
+      />
+    </div>
+  );
+}
+
+function StatCardNumber({ target, teamColor, isHighlight }: { target: number; teamColor: string; isHighlight: boolean }) {
+  const displayValue = useCountUp(target, 1600);
+
+  return (
+    <span
+      className="text-3xl font-bold tabular-nums leading-none"
+      style={{
+        fontFamily: 'var(--font-oswald), sans-serif',
+        fontWeight: 700,
+        color: isHighlight ? '#F0F2F5' : 'rgba(240,242,245,0.75)',
+        textShadow: isHighlight
+          ? `0 0 20px ${teamColor}60, 0 0 40px ${teamColor}30`
+          : `0 0 8px rgba(255,255,255,0.08)`,
+      }}
+    >
+      {displayValue}
+    </span>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════════ */
@@ -6607,6 +6794,15 @@ export default function ArenaPage({
           }}
         />
       </div>
+
+      {/* ─── Jumbotron Player Stat Card — arena intro-style big stats ─── */}
+      <JumbotronPlayerStatCard
+        momentId={momentId}
+        player={moment.player}
+        teamColor={moment.teamColors.primary}
+        secondaryColor={moment.teamColors.secondary}
+        isActive={!countdown.isEnded}
+      />
 
       {/* ─── Live Activity Feed / Post-Game Box Score ─── */}
       {countdown.isEnded ? (

@@ -1985,3 +1985,9 @@
 - Decay mechanics create micro-urgency within a single interaction — "keep tapping or lose progress" is a proven gamification loop (DDR/Guitar Hero energy meters). This keeps users engaged on the page.
 - The celebration burst at max level creates a genuine peak moment — users feel rewarded for their participation, which primes them emotionally for the adjacent purchase CTA.
 - Current scores: Supreme 9.41, Broadcast 9.41, Arena 9.44. Arena extended its lead. Supreme and Broadcast need attention. Next cycle: Supreme (rotation). Supreme weakest dimensions: Conv (9.41), VP (9.40), Emo (9.40), Int (9.41). Visual Polish and Emotion tied at 9.40 as weakest.
+
+## Cycle 252 Learnings
+- International currency equivalents are a near-zero-effort institutional detail with outsized prestige signaling. One line of mono text transforms the page from "US-only sale" to "global auction house."
+- Placing financial details at the evaluation zone (between comparables and bid call) adds density without clutter — the eye scans past it but registers "this is serious."
+- W screen Sale Record benefits from completeness over minimalism — every real auction receipt has currency equivalents. Adding fields to the staggered reveal doesn't slow the ceremony because each entry is only 0.12s apart.
+- At 9.42, Supreme is converging with Broadcast (9.41). Arena leads at 9.44. Next cycle: Broadcast (rotation). Broadcast weakest dimensions: VP (9.40), Emo (9.40), Int (9.40). Multiple dimensions tied at 9.40 — Visual and Interaction are best targets.

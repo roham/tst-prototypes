@@ -1684,6 +1684,16 @@ body {
   100% { transform: translateX(-50%); }
 }
 
+/* Arena LED Frame — running dots traveling along hero border edges */
+@keyframes arena-led-frame-h {
+  0%   { background-position: 0% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes arena-led-frame-v {
+  0%   { background-position: 0 0%; }
+  100% { background-position: 0 200%; }
+}
+
 /* Arena play-by-play step — slide up and fade through */
 @keyframes arena-pbp-step {
   0%   { opacity: 0; transform: translateY(8px); }

@@ -4953,6 +4953,120 @@ function ArenaLEDRibbon({ moment, isActive }: { moment: Moment; isActive: boolea
   );
 }
 
+/* ─── Jumbotron LED Frame — animated pixel border around hero ─────────── */
+/* Every NBA arena jumbotron has a visible LED bezel — a thin border of     */
+/* running pixel lights that frames the screen. This creates that effect    */
+/* around the hero section using animated SVG dots traveling clockwise.     */
+/* Phase-aware: team-color in OPEN, amber in CLOSING, red in CRITICAL.     */
+/* The frame makes the hero literally look like a jumbotron screen.         */
+
+function JumbotronLEDFrame({
+  teamColor,
+  isClosing,
+  isCritical,
+  isActive,
+}: {
+  teamColor: string;
+  isClosing: boolean;
+  isCritical: boolean;
+  isActive: boolean;
+}) {
+  if (!isActive) return null;
+
+  const frameColor = isCritical ? '#EF4444' : isClosing ? '#F59E0B' : teamColor;
+  const dotCount = 24; // dots traveling around the perimeter
+  const speed = isCritical ? 4 : isClosing ? 6 : 8; // seconds per full loop
+
+  return (
+    <div className="pointer-events-none absolute inset-0 z-[6] overflow-hidden">
+      {/* Corner accents — bright LED clusters at each corner */}
+      {[
+        { top: 0, left: 0 },
+        { top: 0, right: 0 },
+        { bottom: 0, left: 0 },
+        { bottom: 0, right: 0 },
+      ].map((pos, i) => (
+        <div
+          key={i}
+          className="absolute"
+          style={{
+            ...pos as React.CSSProperties,
+            width: '6px',
+            height: '6px',
+            backgroundColor: frameColor,
+            boxShadow: `0 0 6px ${frameColor}80, 0 0 12px ${frameColor}40`,
+            opacity: isCritical ? 0.9 : 0.5,
+          }}
+        />
+      ))}
+
+      {/* Top edge — running dots left to right */}
+      <div className="absolute top-0 left-0 right-0 h-[2px]">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `repeating-linear-gradient(90deg, ${frameColor}00 0px, ${frameColor}60 4px, ${frameColor}00 8px)`,
+            backgroundSize: `${100 / (dotCount / 4)}% 100%`,
+            animation: `arena-led-frame-h ${speed}s linear infinite`,
+          }}
+        />
+        {/* Scanline texture */}
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: `repeating-linear-gradient(90deg, transparent 0px, transparent 1px, ${frameColor}15 1px, ${frameColor}15 2px)`,
+            backgroundSize: '2px 100%',
+          }}
+        />
+      </div>
+
+      {/* Bottom edge — running dots right to left */}
+      <div className="absolute bottom-0 left-0 right-0 h-[2px]">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `repeating-linear-gradient(90deg, ${frameColor}00 0px, ${frameColor}60 4px, ${frameColor}00 8px)`,
+            backgroundSize: `${100 / (dotCount / 4)}% 100%`,
+            animation: `arena-led-frame-h ${speed}s linear infinite reverse`,
+          }}
+        />
+      </div>
+
+      {/* Left edge — running dots top to bottom */}
+      <div className="absolute top-0 bottom-0 left-0 w-[2px]">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `repeating-linear-gradient(180deg, ${frameColor}00 0px, ${frameColor}60 4px, ${frameColor}00 8px)`,
+            backgroundSize: `100% ${100 / (dotCount / 4)}%`,
+            animation: `arena-led-frame-v ${speed}s linear infinite`,
+          }}
+        />
+      </div>
+
+      {/* Right edge — running dots bottom to top */}
+      <div className="absolute top-0 bottom-0 right-0 w-[2px]">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `repeating-linear-gradient(180deg, ${frameColor}00 0px, ${frameColor}60 4px, ${frameColor}00 8px)`,
+            backgroundSize: `100% ${100 / (dotCount / 4)}%`,
+            animation: `arena-led-frame-v ${speed}s linear infinite reverse`,
+          }}
+        />
+      </div>
+
+      {/* Outer glow — subtle halo on the hero edges */}
+      <div
+        className="absolute inset-0"
+        style={{
+          boxShadow: `inset 0 0 15px ${frameColor}08, inset 0 0 3px ${frameColor}12`,
+        }}
+      />
+    </div>
+  );
+}
+
 /* ─── Arena CO2 Fog — low-lying atmospheric haze like NBA player intros ── */
 /* Every NBA arena fires CO2 fog machines during player introductions —     */
 /* thick low-lying clouds that hug the court. Three staggered fog layers    */
@@ -6773,6 +6887,14 @@ export default function ArenaPage({
 
         {/* Arena CO2 fog — low-lying atmospheric haze like NBA player intro fog machines */}
         <ArenaCO2Fog teamColor={moment.teamColors.primary} isActive={!countdown.isEnded} />
+
+        {/* Jumbotron LED frame — animated pixel border making hero look like a jumbotron screen */}
+        <JumbotronLEDFrame
+          teamColor={moment.teamColors.primary}
+          isClosing={isClosing}
+          isCritical={isCritical}
+          isActive={!countdown.isEnded}
+        />
 
         {/* Dark overlay for legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/40 to-transparent" />

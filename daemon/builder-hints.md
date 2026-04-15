@@ -1679,3 +1679,11 @@
 - TypeScript type definitions can fall out of sync with usage when parameters are added incrementally across cycles. The `totalSeconds` parameter was used in the function body but missing from the type — Turbopack only caught this when compilation was triggered fresh. Always verify types match usage when touching existing components.
 - Placing the verdict between Market Snapshot (data) and Commentator's Call (urgency narration) creates a decision funnel: data → authority → urgency → CTA. Information architecture at the conversion zone matters more than elsewhere on the page.
 - Next cycle: Arena (rotation).
+
+## Cycle 209 Learnings
+- Persistent atmospheric elements (LED ribbon, always-scrolling) provide outsized visual impact relative to code complexity. The ribbon is ~60 lines but immediately changes the "feel" of the page. Look for more ambient elements that run continuously.
+- Dot-matrix texture with radial-gradient (tiny circles at small spacing, very low opacity) creates a convincing LED screen look with zero performance cost. This technique could be applied to other "screen within the page" elements.
+- Infinite scroll with duplicated content and translateX(-50%) is the cleanest seamless loop technique. Ensure content is long enough that the seam isn't visible on wide screens.
+- The Moment type doesn't have `points`/`assists`/`rebounds`/`date` — it uses `statLine` (e.g., "30 PTS / 8 REB / 4 AST") and `context`. Always check the type definition before referencing properties.
+- Edge fade gradients (8px linear-gradient from opaque to transparent) sell the "physical screen with edges" illusion. Without them, the ticker feels like a CSS demo; with them, it feels like hardware.
+- Next cycle: Supreme (rotation).

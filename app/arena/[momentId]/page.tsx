@@ -7260,6 +7260,93 @@ export default function ArenaPage({
         </div>
       )}
 
+      {/* ─── SEAT UPGRADE — arena upsell nudge for lower tiers ─── */}
+      {/* At NBA arenas, staff walk sections offering seat upgrades:          */}
+      {/* "Move up to courtside for just $40 more!" This jumbotron-style     */}
+      {/* prompt fires when Open or Rare is selected, showing the next tier  */}
+      {/* up with the price delta. Tapping "UPGRADE" switches the tier.      */}
+      {/* Targets Conversion: nudges users toward higher-value tiers.        */}
+      {!countdown.isEnded && proto.state === 'browsing' && selectedTierIdx < moment.rarityTiers.length - 1 && selectedTierIdx <= 1 && (
+        <div className="mx-4 mt-2 mb-1 relative z-[1]">
+          <button
+            onClick={() => {
+              setSelectedTierIdx(selectedTierIdx + 1);
+              CROWD_HAPTIC.tierSwitch();
+            }}
+            className="w-full relative overflow-hidden rounded-lg px-3.5 py-2.5 text-left cursor-pointer transition-transform active:scale-[0.98]"
+            style={{
+              backgroundColor: `${moment.teamColors.primary}0F`,
+              border: `1px solid ${moment.teamColors.primary}25`,
+              boxShadow: `0 0 16px ${moment.teamColors.primary}0A`,
+            }}
+          >
+            {/* Top accent — team-color sweep */}
+            <div
+              className="absolute top-0 left-0 right-0 h-[2px]"
+              style={{
+                background: `linear-gradient(90deg, ${moment.teamColors.primary}60, ${moment.teamColors.primary}20, transparent)`,
+              }}
+            />
+            {/* Scanline texture for LED jumbotron feel */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px)',
+              }}
+            />
+            <div className="relative flex items-center justify-between gap-3">
+              {/* Left: upgrade message */}
+              <div className="flex items-center gap-2 min-w-0">
+                {/* Up arrow icon */}
+                <div
+                  className="shrink-0 flex items-center justify-center h-5 w-5 rounded"
+                  style={{
+                    backgroundColor: `${moment.teamColors.primary}20`,
+                  }}
+                >
+                  <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none">
+                    <path d="M6 9V3M6 3L3.5 5.5M6 3L8.5 5.5" stroke={moment.teamColors.primary} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span
+                    className="text-[8px] font-bold uppercase tracking-[0.25em] text-white/30"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    Upgrade Your Seat
+                  </span>
+                  <span
+                    className="text-[11px] font-semibold tracking-wide text-white/70 truncate"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {moment.rarityTiers[selectedTierIdx + 1].tier} Edition
+                  </span>
+                </div>
+              </div>
+              {/* Right: price delta + upgrade badge */}
+              <div className="flex items-center gap-2 shrink-0">
+                <span
+                  className="text-[10px] font-mono tabular-nums text-white/40"
+                >
+                  +${moment.rarityTiers[selectedTierIdx + 1].price - moment.rarityTiers[selectedTierIdx].price}
+                </span>
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.15em] px-2 py-1 rounded-sm"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    backgroundColor: `${moment.teamColors.primary}25`,
+                    color: moment.teamColors.primary,
+                    border: `1px solid ${moment.teamColors.primary}35`,
+                  }}
+                >
+                  Upgrade
+                </span>
+              </div>
+            </div>
+          </button>
+        </div>
+      )}
+
       {/* ─── CTA Section ─── */}
       <div className="px-4 pt-1">
         {/* Active buyers badge — live commerce energy */}

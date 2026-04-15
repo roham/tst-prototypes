@@ -4029,6 +4029,20 @@ export default function BroadcastPage() {
     return () => clearInterval(id);
   }, []);
 
+  // Replay angle graphic — camera angle label that fires on each replay increment
+  const REPLAY_ANGLES = ['REVERSE ANGLE', 'BASELINE CAM', 'SKY CAM', 'ISO PLAYER', 'CORNER CAM', 'WIDE SHOT', 'CLOSE-UP', 'PRESS ROW'];
+  const [replayAngle, setReplayAngle] = useState<string | null>(null);
+  const prevReplayCount = useRef(replayCount);
+  useEffect(() => {
+    if (replayCount !== prevReplayCount.current) {
+      prevReplayCount.current = replayCount;
+      const angle = REPLAY_ANGLES[(replayCount - 1) % REPLAY_ANGLES.length];
+      setReplayAngle(angle);
+      const t = setTimeout(() => setReplayAngle(null), 2400);
+      return () => clearTimeout(t);
+    }
+  }, [replayCount]);
+
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [showPip, setShowPip] = useState(false);
   const ctaRef = useRef<HTMLButtonElement>(null);
@@ -5186,6 +5200,40 @@ export default function BroadcastPage() {
                     style={{ color: `${moment.teamColors.primary}90` }}
                   >
                     ×{replayCount}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* REPLAY ANGLE GRAPHIC — camera angle label on each replay increment */}
+          {/* ESPN always shows the camera angle when cutting to a replay:       */}
+          {/* "REVERSE ANGLE", "BASELINE CAM", "SKY CAM". This fires briefly    */}
+          {/* each time the replay counter increments (every 8-12s), reinforcing */}
+          {/* the live production illusion with a deeply broadcast-specific cue. */}
+          {replayAngle && !countdown.isEnded && (
+            <div
+              className="absolute top-[44%] right-0 z-20 pointer-events-none broadcast-replay-angle-tag"
+              key={`angle-${replayCount}`}
+            >
+              <div className="flex items-center gap-0">
+                <div
+                  className="h-[22px] w-[2px] flex-shrink-0"
+                  style={{ backgroundColor: `${moment.teamColors.primary}80` }}
+                />
+                <div
+                  className="flex items-center gap-2 px-3 py-1"
+                  style={{ backgroundColor: 'rgba(11,14,20,0.75)', backdropFilter: 'blur(6px)' }}
+                >
+                  <svg width="10" height="10" viewBox="0 0 16 16" fill="none" className="opacity-50">
+                    <rect x="1" y="4" width="10" height="8" rx="1" stroke="white" strokeWidth="1.2" />
+                    <path d="M11 6.5L15 4.5V11.5L11 9.5" stroke="white" strokeWidth="1.2" strokeLinejoin="round" />
+                  </svg>
+                  <span
+                    className="text-[8px] font-bold uppercase tracking-[0.35em] text-white/50"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {replayAngle}
                   </span>
                 </div>
               </div>

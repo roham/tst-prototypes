@@ -1175,6 +1175,17 @@ body {
   animation: broadcast-replay-in 4s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
 }
 
+/* Broadcast replay angle tag — brief camera angle label on replay cuts */
+@keyframes broadcast-replay-angle-in {
+  0% { transform: translateX(110%); opacity: 0; }
+  10% { transform: translateX(0); opacity: 1; }
+  75% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(110%); opacity: 0; }
+}
+.broadcast-replay-angle-tag {
+  animation: broadcast-replay-angle-in 2.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 /* Broadcast replay line-draw — the accent bar that extends left */
 @keyframes broadcast-replay-line {
   0% { width: 0; }

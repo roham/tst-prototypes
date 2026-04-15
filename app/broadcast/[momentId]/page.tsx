@@ -146,6 +146,50 @@ function useSmpteTimecode(isEnded: boolean) {
   return tc;
 }
 
+// Broadcast Closed Captions — FCC-mandated CC overlay with cycling commentary
+// Every US broadcast is required to carry closed captions. The CC text appears
+// in a semi-transparent black box at the bottom of the screen. This cycles
+// through commentator-style lines that narrate the drop in broadcast cadence.
+const CC_LINES: Record<string, string[]> = {
+  bam: [
+    '>> AND BAM ADEBAYO WITH THE MONSTER DUNK.',
+    '>> THAT IS HIS FIFTH THIRTY-POINT GAME THIS PLAYOFF RUN.',
+    '>> A FRANCHISE RECORD, SURPASSING DWYANE WADE.',
+    '>> THE CROWD HERE AT TD GARDEN IS STUNNED.',
+    '>> COLLECTORS ARE ALREADY MOVING ON THIS ONE.',
+  ],
+  jokic: [
+    '>> JOKIC WITH THE NO-LOOK PASS TO MURRAY.',
+    '>> THAT IS HIS TRIPLE-DOUBLE TONIGHT.',
+    '>> JOINING CHAMBERLAIN AND ROBERTSON IN RARE COMPANY.',
+    '>> THE JOKER JUST SEES THE FLOOR DIFFERENTLY.',
+    '>> THIS MOMENT IS NOW AVAILABLE ON TOP SHOT.',
+  ],
+  sga: [
+    '>> GILGEOUS-ALEXANDER PULLS UP FROM DEEP.',
+    '>> FORTY-TWO POINTS. HE CANNOT BE STOPPED.',
+    '>> OKC HAS THEIR FRANCHISE CORNERSTONE.',
+    '>> THE EFFICIENCY IS JUST RIDICULOUS TONIGHT.',
+    '>> A SIGNATURE PERFORMANCE FROM SGA.',
+  ],
+};
+
+function useClosedCaptions(momentId: string, isEnded: boolean) {
+  const [lineIdx, setLineIdx] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const lines = CC_LINES[momentId] ?? CC_LINES.bam;
+  useEffect(() => {
+    if (isEnded) return;
+    // Show first caption after 6s, then cycle every 5s
+    const showTimeout = setTimeout(() => setVisible(true), 6000);
+    const interval = setInterval(() => {
+      setLineIdx((prev) => (prev + 1) % lines.length);
+    }, 5000);
+    return () => { clearTimeout(showTimeout); clearInterval(interval); };
+  }, [isEnded, lines.length]);
+  return { ccText: lines[lineIdx], ccVisible: visible && !isEnded };
+}
+
 // Master Clock — every broadcast control room has a wall clock showing
 // current time. ESPN/TNT studios have multiple (ET, PT, UTC). This is the
 // digital master clock with blinking colon, updated every second.
@@ -3151,6 +3195,46 @@ const ANALYST_VERDICT: Record<string, {
   },
 };
 
+// ---------------------------------------------------------------------------
+// Commentator Live Read — broadcast's highest-trust ad format.
+// In sports TV, the "live read" is when the play-by-play or color analyst
+// personally endorses a product mid-broadcast. It's the most persuasive
+// format because the endorsement comes from a voice the viewer already
+// trusts. This creates a progressive commitment: tap to hear the analyst's
+// personal recommendation, which upgrades the CTA language from editorial
+// ("Own This Piece of History") to action ("Collect Now").
+// ---------------------------------------------------------------------------
+
+const COMMENTATOR_LIVE_READ: Record<string, {
+  analyst: string;
+  role: string;
+  initials: string;
+  endorsement: string;
+  kicker: string;
+}> = {
+  bam: {
+    analyst: 'Richard Jefferson',
+    role: 'Studio Analyst',
+    initials: 'RJ',
+    endorsement: 'I\u2019m telling you right now — at five dollars, this is the easiest collect of the year. Career-high poster dunk in an elimination game? You\u2019re going to wish you pulled the trigger.',
+    kicker: 'RJ says collect.',
+  },
+  jokic: {
+    analyst: 'JJ Redick',
+    role: 'Studio Analyst',
+    initials: 'JJ',
+    endorsement: 'If you\u2019re on the fence, get off it. This is Joki\u0107 doing what nobody else on the planet can do. Five dollars for a triple-double no-look assist? That\u2019s not a purchase, that\u2019s a gift.',
+    kicker: 'JJ says collect.',
+  },
+  sga: {
+    analyst: 'Chiney Ogwumike',
+    role: 'Studio Analyst',
+    initials: 'CO',
+    endorsement: 'Listen — this kid is going to be a top-five player for the next decade. A 42-point moment at this price? When he\u2019s winning MVPs, this is the one you\u2019ll talk about owning.',
+    kicker: 'Chiney says collect.',
+  },
+};
+
 function AnalystVerdict({ moment, tier, rgb, phase }: {
   moment: Moment;
   tier: RarityTier;
@@ -4531,6 +4615,7 @@ export default function BroadcastPage() {
 
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=authenticating, 2=acquired
+  const [liveReadOpen, setLiveReadOpen] = useState(false); // Commentator Live Read progressive commitment
   const [leaderDone, setLeaderDone] = useState(false);
   const handleLeaderComplete = useCallback(() => setLeaderDone(true), []);
 
@@ -4732,11 +4817,16 @@ export default function BroadcastPage() {
   const [crashZoom, setCrashZoom] = useState(false);
 
   // ── Camera Angle Switcher — broadcast director's feed selector ──
+  // Camera angles with color temperature — each camera has a slightly different
+  // white balance, simulating real broadcast camera color science. WIDE is
+  // neutral (arena master), TIGHT is slightly warm (skin tones), ISO is cooler
+  // (side camera, different lighting angle), SLO-MO is slightly desaturated
+  // and warm (high-speed cameras produce a distinctly filmic look).
   const CAMERA_ANGLES = useMemo(() => [
-    { id: 'wide', label: 'WIDE', pos: 'center top', scale: 1, filter: '' },
-    { id: 'tight', label: 'TIGHT', pos: 'center 20%', scale: 1.25, filter: '' },
-    { id: 'iso', label: 'ISO', pos: '55% 15%', scale: 1.45, filter: 'contrast(1.08)' },
-    { id: 'slomo', label: 'SLO-MO', pos: 'center 30%', scale: 1.15, filter: 'saturate(0.7) contrast(1.12)' },
+    { id: 'wide', label: 'WIDE', pos: 'center top', scale: 1, filter: '', colorTemp: 'none' },
+    { id: 'tight', label: 'TIGHT', pos: 'center 20%', scale: 1.25, filter: '', colorTemp: 'sepia(0.04) brightness(1.02)' },
+    { id: 'iso', label: 'ISO', pos: '55% 15%', scale: 1.45, filter: 'contrast(1.08)', colorTemp: 'hue-rotate(-5deg) brightness(0.98)' },
+    { id: 'slomo', label: 'SLO-MO', pos: 'center 30%', scale: 1.15, filter: 'saturate(0.7) contrast(1.12)', colorTemp: 'sepia(0.06) brightness(1.01)' },
   ] as const, []);
   const [cameraAngleIdx, setCameraAngleIdx] = useState(0);
   const [cameraFlash, setCameraFlash] = useState(false);
@@ -4807,6 +4897,7 @@ export default function BroadcastPage() {
   const urgencyCopy = editorialUrgencyCopy(dropPhase, countdown.totalSeconds);
   const recentCollectors = useRecentCollectors();
   const smpteTimecode = useSmpteTimecode(countdown.isEnded);
+  const { ccText, ccVisible } = useClosedCaptions(momentId, countdown.isEnded);
   const masterClock = useMasterClock();
   const acquisitionEvent = useAcquisitionFeed(moment?.editionsClaimed ?? 0, countdown.isEnded);
   const tierClaimFlash = useTierClaimFlash(acquisitionEvent, moment.rarityTiers.length);
@@ -5887,6 +5978,47 @@ export default function BroadcastPage() {
             />
           )}
 
+          {/* ── CLOSED CAPTIONS — FCC-mandated CC overlay ────────────────── */}
+          {/* Every US television broadcast carries closed captions. The CC  */}
+          {/* text appears in a semi-transparent black box at screen bottom. */}
+          {/* This cycles through commentator-style narration lines.         */}
+          {/* Deeply Broadcast: no other direction has CC text. Supreme has  */}
+          {/* catalogue prose, Arena has PA announcements.                   */}
+          {ccVisible && (
+            <div className="absolute bottom-[52px] left-3 z-[22] pointer-events-none max-w-[85%]">
+              <div
+                className="inline-block px-2 py-1 rounded-[2px]"
+                style={{
+                  backgroundColor: 'rgba(0,0,0,0.75)',
+                  transition: 'opacity 0.4s ease',
+                }}
+              >
+                <span
+                  className="text-[10px] leading-[1.4] text-white/90 font-mono uppercase tracking-[0.02em] block"
+                  style={{ fontFamily: 'var(--font-mono, monospace)' }}
+                >
+                  {ccText}
+                </span>
+              </div>
+              {/* CC badge — small identifier */}
+              <div className="flex items-center gap-1 mt-0.5 ml-0.5">
+                <span
+                  className="text-[6px] font-bold uppercase tracking-[0.15em] px-1 py-[1px] rounded-[1px]"
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,0.12)',
+                    color: 'rgba(255,255,255,0.5)',
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                  }}
+                >
+                  CC
+                </span>
+                <span className="text-[5px] font-mono uppercase tracking-[0.1em] text-white/20">
+                  ENG
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* Production markers — broadcast control room details (bottom-right of hero) */}
           {!countdown.isEnded && (
             <div className="absolute bottom-16 right-5 z-20 flex flex-col items-end gap-1 pointer-events-none md:bottom-20 md:right-10"
@@ -6881,6 +7013,139 @@ export default function BroadcastPage() {
               </div>
             </div>
           )}
+
+          {/* ── Commentator Live Read — broadcast progressive commitment ── */}
+          {/* The "live read" is ESPN's highest-trust ad format: the analyst     */}
+          {/* personally endorses a product during the broadcast. Tapping to     */}
+          {/* hear the endorsement is a micro-commitment (foot-in-the-door)     */}
+          {/* that upgrades CTA language from editorial to action. Distinctly   */}
+          {/* broadcast: Supreme has "Register Interest," Arena has social      */}
+          {/* pressure. Broadcast has the analyst's personal endorsement.       */}
+          {!countdown.isEnded && !isPurchasing && (() => {
+            const read = COMMENTATOR_LIVE_READ[moment.id] ?? COMMENTATOR_LIVE_READ.bam;
+            return (
+              <div className="max-w-md mx-auto w-full mb-4">
+                <button
+                  onClick={() => { setLiveReadOpen((p) => !p); BROADCAST_HAPTIC.share(); }}
+                  className="w-full text-left transition-all duration-300"
+                >
+                  {/* Collapsed: teaser bar */}
+                  <div
+                    className="flex items-center gap-2.5 px-4 py-2 rounded-md transition-all duration-300"
+                    style={{
+                      backgroundColor: liveReadOpen ? `rgba(${rgb},0.08)` : 'rgba(20,25,37,0.5)',
+                      border: `1px solid ${liveReadOpen ? `rgba(${rgb},0.2)` : 'rgba(255,255,255,0.06)'}`,
+                    }}
+                  >
+                    {/* Analyst avatar circle */}
+                    <div
+                      className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-bold uppercase tracking-wide"
+                      style={{
+                        backgroundColor: liveReadOpen ? `rgba(${rgb},0.2)` : 'rgba(255,255,255,0.06)',
+                        color: liveReadOpen ? moment.teamColors.primary : 'rgba(255,255,255,0.3)',
+                        fontFamily: 'var(--font-oswald), sans-serif',
+                        border: `1px solid ${liveReadOpen ? `rgba(${rgb},0.3)` : 'rgba(255,255,255,0.08)'}`,
+                        transition: 'all 0.3s ease-out',
+                      }}
+                    >
+                      {read.initials}
+                    </div>
+
+                    {/* Label */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        {/* Mic icon — live read indicator */}
+                        <svg className="w-2.5 h-2.5 flex-shrink-0" viewBox="0 0 12 12" fill="none"
+                          stroke={liveReadOpen ? moment.teamColors.primary : 'rgba(255,255,255,0.25)'}
+                          strokeWidth="1.2" strokeLinecap="round"
+                          style={{ transition: 'stroke 0.3s ease-out' }}
+                        >
+                          <rect x="4" y="1" width="4" height="6" rx="2" />
+                          <path d="M2 6a4 4 0 0 0 8 0" />
+                          <line x1="6" y1="10" x2="6" y2="11.5" />
+                        </svg>
+                        <span
+                          className="text-[10px] font-bold uppercase tracking-[0.2em] truncate"
+                          style={{
+                            fontFamily: 'var(--font-oswald), sans-serif',
+                            color: liveReadOpen ? moment.teamColors.primary : 'rgba(255,255,255,0.3)',
+                            transition: 'color 0.3s ease-out',
+                          }}
+                        >
+                          {liveReadOpen ? `${read.analyst} — Live Read` : 'Analyst Recommendation'}
+                        </span>
+                      </div>
+                      {!liveReadOpen && (
+                        <p className="text-[9px] text-white/15 mt-0.5 tracking-wide" style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}>
+                          Tap to hear {read.analyst.split(' ')[0]}&apos;s take
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Chevron */}
+                    <svg
+                      className="w-3 h-3 flex-shrink-0 transition-transform duration-300"
+                      style={{
+                        transform: liveReadOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        color: liveReadOpen ? moment.teamColors.primary : 'rgba(255,255,255,0.15)',
+                      }}
+                      viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
+                    >
+                      <path d="M3 4.5 L6 7.5 L9 4.5" />
+                    </svg>
+                  </div>
+                </button>
+
+                {/* Expanded: full endorsement lower-third */}
+                <div
+                  className="overflow-hidden transition-all duration-400 ease-out"
+                  style={{
+                    maxHeight: liveReadOpen ? '200px' : '0px',
+                    opacity: liveReadOpen ? 1 : 0,
+                  }}
+                >
+                  <div
+                    className="px-4 pt-3 pb-3 rounded-b-md -mt-[1px]"
+                    style={{
+                      backgroundColor: 'rgba(20,25,37,0.6)',
+                      borderLeft: `1px solid rgba(${rgb},0.15)`,
+                      borderRight: `1px solid rgba(${rgb},0.15)`,
+                      borderBottom: `1px solid rgba(${rgb},0.15)`,
+                    }}
+                  >
+                    {/* Team-color accent bar — lower-third style */}
+                    <div className="flex items-start gap-3">
+                      <div
+                        className="w-[2px] flex-shrink-0 rounded-full self-stretch"
+                        style={{ backgroundColor: `rgba(${rgb},0.4)` }}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p
+                          className="text-[12px] leading-relaxed text-white/45"
+                          style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+                        >
+                          &ldquo;{read.endorsement}&rdquo;
+                        </p>
+                        <div className="mt-2 flex items-center gap-2">
+                          <span
+                            className="text-[8px] font-bold uppercase tracking-[0.2em]"
+                            style={{ fontFamily: 'var(--font-oswald), sans-serif', color: moment.teamColors.primary }}
+                          >
+                            {read.kicker}
+                          </span>
+                          <div className="h-[1px] flex-1" style={{ backgroundColor: `rgba(${rgb},0.12)` }} />
+                          <span className="text-[7px] uppercase tracking-[0.15em] text-white/15 font-mono">
+                            Live Read
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* CTA button */}
           <div className={`${!countdown.isEnded && !isPurchasing ? '' : 'mt-8'} flex flex-col items-center`}>
             <button
@@ -6986,7 +7251,9 @@ export default function BroadcastPage() {
                     ? 'Collect Now'
                     : dropPhase === 'CLOSING'
                       ? 'Closing Soon — Collect Now'
-                      : 'Own This Piece of History'}
+                      : liveReadOpen
+                        ? 'Collect This Moment'
+                        : 'Own This Piece of History'}
                   <span className={dropPhase === 'CRITICAL' ? 'text-white/60' : 'text-white/40'}>
                     &mdash; ${selectedTier.price}
                   </span>
@@ -7221,7 +7488,7 @@ export default function BroadcastPage() {
                   color: dropPhase === 'CRITICAL' ? '#EF4444' : 'white',
                 }}
               >
-                {dropPhase === 'CRITICAL' ? 'Collect Now' : 'Own This Moment'}
+                {dropPhase === 'CRITICAL' ? 'Collect Now' : liveReadOpen ? 'Collect Now' : 'Own This Moment'}
               </button>
             )}
           </div>

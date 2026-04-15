@@ -2006,6 +2006,7 @@ const FAN_POLLS: Record<string, { question: string; yesLabel: string; noLabel: s
 function FanVerdict({ moment, rgb }: { moment: Moment; rgb: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [voted, setVoted] = useState<'yes' | 'no' | null>(null);
   const [fillPct, setFillPct] = useState(0);
   const [voteCount, setVoteCount] = useState(0);
 
@@ -2022,26 +2023,28 @@ function FanVerdict({ moment, rgb }: { moment: Moment; rgb: string }) {
     return () => observer.disconnect();
   }, []);
 
-  // Animate the percentage bar and vote count when visible
+  // Animate the percentage bar and vote count AFTER user votes
   useEffect(() => {
-    if (!isVisible) return;
-    const target = poll.yesPercent;
-    const targetVotes = poll.totalVotes;
+    if (!voted) return;
+    const target = voted === 'yes' ? poll.yesPercent : 100 - poll.yesPercent;
+    // Show the YES bar percentage regardless (it's the primary bar)
+    const yesTarget = voted === 'yes' ? poll.yesPercent + 1 : poll.yesPercent;
+    const clampedYes = Math.min(99, yesTarget);
+    const targetVotes = poll.totalVotes + 1;
     const duration = 1200;
     const start = performance.now();
     let raf = 0;
     function tick() {
       const elapsed = performance.now() - start;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease-out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
-      setFillPct(Math.round(eased * target));
+      setFillPct(Math.round(eased * clampedYes));
       setVoteCount(Math.round(eased * targetVotes));
       if (progress < 1) raf = requestAnimationFrame(tick);
     }
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [isVisible, poll.yesPercent, poll.totalVotes]);
+  }, [voted, poll.yesPercent, poll.totalVotes]);
 
   return (
     <div ref={containerRef} className="mt-8 mb-2">
@@ -2093,82 +2096,133 @@ function FanVerdict({ moment, rgb }: { moment: Moment; rgb: string }) {
             {poll.question}
           </p>
 
-          {/* YES bar */}
-          <div className="mb-2">
-            <div className="flex items-center justify-between mb-1.5">
-              <span
-                className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/50"
-                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
-              >
-                {poll.yesLabel}
-              </span>
-              <span
-                className="text-[16px] font-bold tabular-nums"
-                style={{
-                  fontFamily: 'var(--font-oswald), sans-serif',
-                  color: moment.teamColors.primary,
-                  textShadow: isVisible && fillPct >= poll.yesPercent - 1
-                    ? `0 0 8px rgba(${rgb},0.3)`
-                    : 'none',
-                  transition: 'text-shadow 0.3s ease',
-                }}
-              >
-                {fillPct}%
-              </span>
+          {/* PRE-VOTE: tappable YES / NO options */}
+          {!voted && (
+            <div className="flex gap-3 mb-3">
+              {[
+                { key: 'yes' as const, label: poll.yesLabel },
+                { key: 'no' as const, label: poll.noLabel },
+              ].map((option) => (
+                <button
+                  key={option.key}
+                  onClick={() => { setVoted(option.key); BROADCAST_HAPTIC.ctaPress(); }}
+                  className="flex-1 py-3 rounded-sm text-center cursor-pointer transition-all duration-200 active:scale-[0.97]"
+                  style={{
+                    backgroundColor: option.key === 'yes'
+                      ? `rgba(${rgb},0.08)`
+                      : 'rgba(255,255,255,0.04)',
+                    border: option.key === 'yes'
+                      ? `1px solid rgba(${rgb},0.2)`
+                      : '1px solid rgba(255,255,255,0.08)',
+                  }}
+                >
+                  <span
+                    className="text-[13px] font-bold uppercase tracking-[0.15em]"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: option.key === 'yes' ? moment.teamColors.primary : 'rgba(255,255,255,0.4)',
+                    }}
+                  >
+                    {option.label}
+                  </span>
+                </button>
+              ))}
             </div>
-            {/* Bar track */}
-            <div
-              className="relative h-[6px] rounded-full overflow-hidden"
-              style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
-            >
-              <div
-                className="absolute inset-y-0 left-0 rounded-full"
-                style={{
-                  width: `${fillPct}%`,
-                  background: `linear-gradient(to right, ${moment.teamColors.primary}CC, ${moment.teamColors.primary})`,
-                  boxShadow: fillPct >= poll.yesPercent - 1
-                    ? `0 0 8px rgba(${rgb},0.4), 0 0 2px rgba(${rgb},0.6)`
-                    : 'none',
-                  transition: 'box-shadow 0.3s ease',
-                }}
-              />
-            </div>
-          </div>
+          )}
 
-          {/* NO bar */}
-          <div className="mb-3">
-            <div className="flex items-center justify-between mb-1.5">
-              <span
-                className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/30"
-                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
-              >
-                {poll.noLabel}
-              </span>
-              <span
-                className="text-[14px] font-bold tabular-nums text-white/25"
-                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
-              >
-                {isVisible ? 100 - fillPct : 0}%
-              </span>
-            </div>
-            <div
-              className="relative h-[6px] rounded-full overflow-hidden"
-              style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
-            >
-              <div
-                className="absolute inset-y-0 left-0 rounded-full"
-                style={{
-                  width: `${isVisible ? 100 - fillPct : 0}%`,
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                }}
-              />
-            </div>
-          </div>
+          {/* POST-VOTE: animated result bars */}
+          {voted && (
+            <>
+              {/* Your vote indicator */}
+              <div className="flex items-center gap-1.5 mb-3">
+                <svg className="h-2.5 w-2.5 shrink-0" viewBox="0 0 10 10" fill="none">
+                  <path d="M2.5 5.5L4.5 7.5L7.5 3" stroke={moment.teamColors.primary} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.25em]"
+                  style={{ color: `rgba(${rgb},0.5)`, fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  You voted: {voted === 'yes' ? poll.yesLabel : poll.noLabel}
+                </span>
+              </div>
+
+              {/* YES bar */}
+              <div className="mb-2">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span
+                    className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/50"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {poll.yesLabel}
+                  </span>
+                  <span
+                    className="text-[16px] font-bold tabular-nums"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: moment.teamColors.primary,
+                      textShadow: fillPct >= poll.yesPercent - 1
+                        ? `0 0 8px rgba(${rgb},0.3)`
+                        : 'none',
+                      transition: 'text-shadow 0.3s ease',
+                    }}
+                  >
+                    {fillPct}%
+                  </span>
+                </div>
+                <div
+                  className="relative h-[6px] rounded-full overflow-hidden"
+                  style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+                >
+                  <div
+                    className="absolute inset-y-0 left-0 rounded-full"
+                    style={{
+                      width: `${fillPct}%`,
+                      background: `linear-gradient(to right, ${moment.teamColors.primary}CC, ${moment.teamColors.primary})`,
+                      boxShadow: fillPct >= poll.yesPercent - 1
+                        ? `0 0 8px rgba(${rgb},0.4), 0 0 2px rgba(${rgb},0.6)`
+                        : 'none',
+                      transition: 'box-shadow 0.3s ease',
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* NO bar */}
+              <div className="mb-3">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span
+                    className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/30"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {poll.noLabel}
+                  </span>
+                  <span
+                    className="text-[14px] font-bold tabular-nums text-white/25"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {100 - fillPct}%
+                  </span>
+                </div>
+                <div
+                  className="relative h-[6px] rounded-full overflow-hidden"
+                  style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+                >
+                  <div
+                    className="absolute inset-y-0 left-0 rounded-full"
+                    style={{
+                      width: `${100 - fillPct}%`,
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                    }}
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Vote count + live indicator */}
           <div className="flex items-center justify-between">
             <span className="text-[9px] font-mono tabular-nums text-white/20">
-              {voteCount.toLocaleString()} votes
+              {voted ? voteCount.toLocaleString() : poll.totalVotes.toLocaleString()} votes
             </span>
             <div className="flex items-center gap-1.5">
               <div

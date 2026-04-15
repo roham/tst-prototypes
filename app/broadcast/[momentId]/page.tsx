@@ -6021,6 +6021,161 @@ function CertificateScreen({
           </div>
         </div>
 
+        {/* ── DIRECTOR'S MONITOR WALL — broadcast control room 2×2 grid ── */}
+        {/* ESPN's control room has a 56-monitor North Wall. The director    */}
+        {/* watches all camera feeds simultaneously then "punches" the one   */}
+        {/* that goes to air. This 2×2 grid simulates that control room     */}
+        {/* view — different angles of the same moment, with tally lights   */}
+        {/* showing which feed is "live." Distinctly broadcast: the viewer  */}
+        {/* sees the production infrastructure behind the highlight.        */}
+        <div
+          className="mt-6 w-full max-w-md mx-auto px-5 transition-all duration-700 ease-out"
+          style={{
+            opacity: phase >= 3 ? 1 : 0,
+            transform: phase >= 3 ? 'translateY(0)' : 'translateY(14px)',
+            transitionDelay: '0.55s',
+          }}
+        >
+          {/* Section label */}
+          <div className="flex items-center gap-2 mb-2.5">
+            <span
+              className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
+              style={{
+                backgroundColor: 'rgba(239,68,68,0.12)',
+                color: '#EF4444',
+                fontFamily: 'var(--font-oswald), sans-serif',
+              }}
+            >
+              Control Room
+            </span>
+            <div className="h-[1px] flex-1 bg-white/[0.06]" />
+            <span className="text-[7px] uppercase tracking-[0.15em] text-white/15 font-mono">
+              4 feeds
+            </span>
+          </div>
+
+          {/* 2×2 monitor grid */}
+          <div className="grid grid-cols-2 gap-1.5">
+            {[
+              { label: 'CAM 1', sub: 'Wide', live: true, crop: 'center 30%', filter: 'saturate(0.7) contrast(1.2) brightness(0.85)', img: moment.actionImageUrl },
+              { label: 'CAM 2', sub: 'Tight', live: false, crop: 'center 40%', filter: 'saturate(0.5) contrast(1.3) brightness(0.75)', img: moment.playerImageUrl },
+              { label: 'ISO', sub: moment.player.split(' ').pop(), live: false, crop: 'center 25%', filter: 'saturate(0.6) contrast(1.25) brightness(0.8) sepia(0.1)', img: moment.actionImageUrl },
+              { label: 'REPLAY', sub: 'SLO-MO', live: false, crop: 'center 50%', filter: 'saturate(0.4) contrast(1.1) brightness(0.7)', img: moment.actionImageUrl },
+            ].map((cam, i) => (
+              <div
+                key={cam.label}
+                className="relative overflow-hidden rounded-sm"
+                style={{
+                  aspectRatio: '16/10',
+                  border: cam.live
+                    ? '1px solid rgba(239,68,68,0.4)'
+                    : '1px solid rgba(255,255,255,0.06)',
+                  animation: cam.live ? undefined : undefined,
+                }}
+              >
+                {/* Camera feed image */}
+                <div
+                  className="absolute inset-0 bg-cover"
+                  style={{
+                    backgroundImage: `url(${cam.img})`,
+                    backgroundPosition: cam.crop,
+                    filter: cam.filter,
+                    transform: i === 2 ? 'scale(1.4)' : i === 3 ? 'scale(1.15) translateX(-5%)' : undefined,
+                  }}
+                />
+                {/* Scanline overlay — CRT monitor texture */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px)',
+                  }}
+                />
+                {/* Dark vignette */}
+                <div
+                  className="absolute inset-0"
+                  style={{ background: 'radial-gradient(ellipse 90% 90% at 50% 50%, transparent 40%, rgba(0,0,0,0.6) 100%)' }}
+                />
+                {/* Camera label — top-left */}
+                <div className="absolute top-1 left-1.5 flex items-center gap-1">
+                  {/* Tally light — red dot for live feed */}
+                  {cam.live && (
+                    <div
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{
+                        backgroundColor: '#EF4444',
+                        boxShadow: '0 0 4px rgba(239,68,68,0.6), 0 0 8px rgba(239,68,68,0.3)',
+                        animation: 'pulse 2s ease-in-out infinite',
+                      }}
+                    />
+                  )}
+                  <span
+                    className="text-[7px] font-bold uppercase tracking-[0.1em]"
+                    style={{
+                      fontFamily: 'var(--font-mono), monospace',
+                      color: cam.live ? '#EF4444' : 'rgba(255,255,255,0.35)',
+                      textShadow: cam.live ? '0 0 6px rgba(239,68,68,0.4)' : undefined,
+                    }}
+                  >
+                    {cam.label}
+                  </span>
+                </div>
+                {/* Sub-label — bottom-left */}
+                <div className="absolute bottom-1 left-1.5">
+                  <span
+                    className="text-[6px] uppercase tracking-[0.15em]"
+                    style={{
+                      fontFamily: 'var(--font-mono), monospace',
+                      color: 'rgba(255,255,255,0.2)',
+                    }}
+                  >
+                    {cam.sub}
+                  </span>
+                </div>
+                {/* Timecode — bottom-right */}
+                <div className="absolute bottom-1 right-1.5">
+                  <span
+                    className="text-[6px] tabular-nums"
+                    style={{
+                      fontFamily: 'var(--font-mono), monospace',
+                      color: cam.live ? 'rgba(239,68,68,0.35)' : 'rgba(255,255,255,0.12)',
+                    }}
+                  >
+                    {`00:${String(4 - i).padStart(2, '0')}:${String(17 + i * 3).padStart(2, '0')}:${String(i * 7 + 12).padStart(2, '0')}`}
+                  </span>
+                </div>
+                {/* LIVE badge on active feed */}
+                {cam.live && (
+                  <div className="absolute top-1 right-1.5">
+                    <span
+                      className="text-[6px] font-bold uppercase tracking-[0.15em] px-1 py-px rounded-sm"
+                      style={{
+                        backgroundColor: 'rgba(239,68,68,0.2)',
+                        color: '#EF4444',
+                        fontFamily: 'var(--font-oswald), sans-serif',
+                        border: '0.5px solid rgba(239,68,68,0.3)',
+                      }}
+                    >
+                      Live
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Production footer bar */}
+          <div
+            className="mt-1.5 flex items-center justify-between px-1"
+          >
+            <span className="text-[6px] uppercase tracking-[0.2em] text-white/10 font-mono">
+              PGM OUT: CAM 1
+            </span>
+            <span className="text-[6px] uppercase tracking-[0.2em] text-white/10 font-mono">
+              REC ● 00:04:17
+            </span>
+          </div>
+        </div>
+
         {/* ── PLAYER OF THE GAME — ESPN-style award graphic ──────────── */}
         {/* Every ESPN/TNT broadcast ends with a "Player of the Game"   */}
         {/* graphic: the highest individual honor in a broadcast recap.  */}

@@ -2074,3 +2074,10 @@
 - Named specialist assignment (R. Park / A. Kovalev / J. Thornton) reuses existing Condition Report specialist data, maintaining institutional coherence. The same specialist who wrote the condition report will call you — that's how real auction houses work.
 - CTA language escalation ("OWN THIS MOMENT" → "PLACE BID" → "CONFIRM BID") moves from emotional (ownership) to procedural (bid) to decisive (confirm). Each upgrade makes the click feel more like a natural next step in an ongoing process, not a cold purchase.
 - Current scores: Supreme 9.43, Broadcast 9.43, Arena 9.45. Supreme and Broadcast tied at 9.43. Next cycle: Broadcast (rotation). Broadcast weakest dimensions: VP (9.42), Conv (9.43), Emo (9.43), Int (9.43), Pur (9.44). Visual Polish (9.42) is the weakest dimension.
+
+## Cycle 265 Learnings
+- Structural navigation elements (rundown strips, segment guides) are VP improvements because they add visual structure without adding content — they frame existing content more professionally.
+- The sentinel element pattern (h-0 div + IntersectionObserver with rootMargin '-1px 0px 0px 0px') is cleaner than scroll event listeners for sticky detection. No performance overhead from scroll events.
+- Priority logic for scrollspy (deepest visible section wins) prevents flickering when multiple sections are simultaneously visible — important when sections are short.
+- HTMLDivElement vs HTMLElement typing matters for refs on div elements — Next.js 16 strict mode rejects HTMLElement refs on div tags.
+- Current scores: Supreme 9.43, Broadcast 9.43, Arena 9.45. All three within 0.02. Next cycle: Arena (rotation). Arena scores all clustered at 9.44-9.45 ceiling.

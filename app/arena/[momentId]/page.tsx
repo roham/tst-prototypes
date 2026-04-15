@@ -2267,6 +2267,7 @@ function RarityCards({
   isEnded,
   liveRemaining,
   flashIdx,
+  revealed,
 }: {
   tiers: RarityTier[];
   selectedIdx: number;
@@ -2275,6 +2276,7 @@ function RarityCards({
   isEnded: boolean;
   liveRemaining?: number[];
   flashIdx?: number | null;
+  revealed?: boolean;
 }) {
   /* Find the tier with the most bidders for the POPULAR badge */
   const maxBidders = Math.max(...bidderCounts);
@@ -2306,6 +2308,14 @@ function RarityCards({
               boxShadow: isSelected
                 ? `0 0 20px ${color}20, inset 0 0 12px ${color}08`
                 : 'none',
+              /* Player intro stagger — cards slide up one-by-one like player introductions */
+              ...(revealed !== undefined ? {
+                animation: revealed
+                  ? `arena-tier-intro 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 0.08}s both`
+                  : 'none',
+                opacity: revealed ? undefined : 0,
+                transform: revealed ? undefined : 'translateY(20px)',
+              } : {}),
             }}
           >
             {/* Top accent bar */}
@@ -4184,6 +4194,143 @@ function CrowdCountdown({ num, teamColor }: { num: number; teamColor: string }) 
   );
 }
 
+/* ─── Purchase Ceremony — jumbotron 3-2-1-YOURS! crowd countdown ── */
+/* When the user hits buy, the arena erupts into a coordinated chant. */
+/* 3 beats matched to the 3 purchase stages: the crowd counts you in */
+/* like counting down a buzzer-beater. EQ bars build from rumble to  */
+/* eruption. Each number slams in jumbotron-style.                   */
+
+function PurchaseCeremony({
+  stage,
+  teamColor,
+}: {
+  stage: number; // 0=reserving(3!), 1=processing(2!..1!), 2=secured(YOURS!)
+  teamColor: string;
+}) {
+  /* Track sub-beats within stage 1: show "2" then "1" */
+  const [subBeat, setSubBeat] = useState(0);
+  useEffect(() => {
+    if (stage === 1) {
+      setSubBeat(0);
+      const t = setTimeout(() => setSubBeat(1), 300);
+      return () => clearTimeout(t);
+    }
+    setSubBeat(0);
+  }, [stage]);
+
+  /* Haptic tick per beat */
+  useEffect(() => {
+    CROWD_HAPTIC.countdownTick(stage === 0 ? 3 : stage === 1 ? (subBeat === 0 ? 2 : 1) : 0);
+  }, [stage, subBeat]);
+
+  const displayText =
+    stage === 0 ? '3' : stage === 1 ? (subBeat === 0 ? '2' : '1') : 'YOURS!';
+  const isFinale = stage === 2;
+  const beatKey = stage === 1 ? `1-${subBeat}` : `${stage}`;
+
+  /* EQ bar heights escalate: stage 0 = low rumble, 1 = building, 2 = eruption */
+  const barCount = 12;
+  const barHeights = Array.from({ length: barCount }, (_, i) => {
+    const base =
+      stage === 0 ? 15 + Math.sin(i * 0.8) * 10
+        : stage === 1 ? 30 + Math.sin(i * 1.2 + subBeat * 2) * 20
+          : 60 + Math.sin(i * 0.6) * 30;
+    return Math.min(100, Math.max(8, base + (isFinale ? Math.random() * 20 : 0)));
+  });
+
+  return (
+    <div
+      className="pointer-events-none fixed inset-0 z-[46] flex flex-col items-center justify-center"
+    >
+      {/* Dark backdrop */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundColor: isFinale ? `rgba(11,14,20,0.85)` : `rgba(11,14,20,0.7)`,
+          transition: 'background-color 0.3s ease',
+        }}
+      />
+
+      {/* EQ bars — crowd energy crescendo behind the number */}
+      <div className="absolute flex items-end justify-center gap-[3px]" style={{ bottom: 'calc(50% - 60px)' }}>
+        {barHeights.map((h, i) => (
+          <div
+            key={i}
+            className="rounded-t-sm transition-all duration-300 ease-out"
+            style={{
+              width: '4px',
+              height: `${h}px`,
+              backgroundColor: isFinale
+                ? i % 2 === 0 ? teamColor : '#00E5A0'
+                : `${teamColor}${Math.round((0.3 + (h / 100) * 0.5) * 255).toString(16).padStart(2, '0')}`,
+              boxShadow: isFinale ? `0 0 6px ${teamColor}60` : 'none',
+              animation: isFinale ? `arena-ceremony-bar 0.4s ease-out ${i * 0.03}s both` : 'none',
+            }}
+          />
+        ))}
+      </div>
+
+      {/* The countdown number / YOURS! text */}
+      <span
+        key={beatKey}
+        className="relative arena-ceremony-slam"
+        style={{
+          fontFamily: 'var(--font-oswald), sans-serif',
+          fontWeight: 800,
+          fontSize: isFinale ? '52px' : '100px',
+          lineHeight: 1,
+          color: isFinale ? '#00E5A0' : '#F0F2F5',
+          textShadow: isFinale
+            ? `0 0 40px rgba(0,229,160,0.6), 0 0 80px rgba(0,229,160,0.3)`
+            : `0 0 30px ${teamColor}50, 0 0 60px ${teamColor}25`,
+          letterSpacing: isFinale ? '0.08em' : '-0.02em',
+        }}
+      >
+        {displayText}
+      </span>
+
+      {/* Pulse ring on each beat */}
+      <div
+        key={`ring-${beatKey}`}
+        className="absolute arena-ceremony-ring"
+        style={{
+          width: '160px',
+          height: '160px',
+          borderRadius: '50%',
+          border: `2px solid ${isFinale ? '#00E5A0' : teamColor}`,
+        }}
+      />
+
+      {/* Label */}
+      <div
+        className="absolute"
+        style={{ top: 'calc(50% + 60px)' }}
+      >
+        <span
+          className="text-[9px] font-bold uppercase tracking-[0.3em]"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: isFinale ? 'rgba(0,229,160,0.7)' : `${teamColor}80`,
+          }}
+        >
+          {isFinale ? 'THE CROWD GOES WILD' : 'THE ARENA COUNTS YOU IN'}
+        </span>
+      </div>
+
+      {/* Team-color flash on finale */}
+      {isFinale && (
+        <div
+          className="absolute inset-0 arena-ceremony-flash"
+          style={{
+            backgroundColor: teamColor,
+            opacity: 0,
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
 /* ─── Arena Court Lines — basketball half-court SVG background ───── */
 
 function CourtLines({ teamColor, isEnded }: { teamColor: string; isEnded: boolean }) {
@@ -5190,6 +5337,9 @@ export default function ArenaPage({
   }, [proto.state]);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
 
+  /* ── CTA slam burst — dramatic ring on purchase press ──────── */
+  const [ctaSlamKey, setCtaSlamKey] = useState(0);
+
   /* ── CTA crowd pulse — sonar ring on each feed purchase ──────── */
   const [ctaPulseKey, setCtaPulseKey] = useState(0);
   const ctaPulsePrevLen = useRef(0);
@@ -5357,6 +5507,12 @@ export default function ArenaPage({
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+  /* ── Tier card entrance — one-shot "player intro" stagger when first visible ── */
+  const [tierRevealed, setTierRevealed] = useState(false);
+  useEffect(() => {
+    if (tierVisible && !tierRevealed) setTierRevealed(true);
+  }, [tierVisible, tierRevealed]);
+
   const shotClock = useShotClock(
     tierVisible && !countdown.isEnded && proto.state === 'browsing',
     countdown.isEnded,
@@ -5533,6 +5689,11 @@ export default function ArenaPage({
       {/* ─── Arena Crowd Countdown — final 10s jumbotron number blast ─── */}
       {crowdCountdownNum !== null && proto.state !== 'purchasing' && proto.state !== 'confirmed' && (
         <CrowdCountdown num={crowdCountdownNum} teamColor={moment.teamColors.primary} />
+      )}
+
+      {/* ─── Purchase Ceremony — 3-2-1-YOURS! crowd countdown on buy ─── */}
+      {proto.state === 'purchasing' && (
+        <PurchaseCeremony stage={purchaseStage} teamColor={moment.teamColors.primary} />
       )}
 
       {/* ─── Arena Buzzer — red LED flash + FINAL when drop ends ─── */}
@@ -6286,6 +6447,7 @@ export default function ArenaPage({
           isEnded={countdown.isEnded}
           liveRemaining={liveTierRemaining}
           flashIdx={tierFlashIdx}
+          revealed={tierRevealed}
         />
       </div>
 
@@ -6434,9 +6596,22 @@ export default function ArenaPage({
             />
           )}
 
+        {/* CTA Slam Burst — team-color ring explosion on purchase press */}
+        {ctaSlamKey > 0 && (
+          <div
+            key={`slam-${ctaSlamKey}`}
+            className="pointer-events-none absolute inset-[-8px] z-0 rounded-2xl"
+            style={{
+              border: `3px solid ${moment.teamColors.primary}`,
+              animation: 'arena-cta-slam-burst 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              opacity: 0,
+            }}
+          />
+        )}
+
         <button
           ref={ctaRef}
-          onClick={countdown.isEnded ? undefined : () => { CROWD_HAPTIC.ctaSlam(); proto.purchase(); }}
+          onClick={countdown.isEnded ? undefined : () => { CROWD_HAPTIC.ctaSlam(); setCtaSlamKey((k) => k + 1); proto.purchase(); }}
           disabled={proto.state === 'purchasing' || countdown.isEnded}
           className={`relative w-full overflow-hidden rounded-xl py-4 text-base font-bold transition-all duration-300 active:scale-[0.98] disabled:cursor-not-allowed ${
             countdown.isEnded

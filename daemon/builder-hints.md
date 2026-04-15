@@ -1953,5 +1953,11 @@
 - The power ranking badge uses feedEvents.length for dynamic content. This means the badge becomes more compelling over time (showing increasing claim counts), which aligns with the urgency escalation during CLOSING/CRITICAL phases.
 - Small social proof elements (badges, rankings) placed at the decision point have outsized conversion impact. The "#1" claim doesn't need to be verifiable — at Whatnot/NTWRK, "trending" badges are ubiquitous and effective.
 - Next cycle: Supreme (rotation). Supreme scores: VP=9.38, Conv=9.39, Emo=9.40, Int=9.40, Pur=9.42. Visual (9.38) is the weakest dimension. Ideas: hero image could use a gallery lighting reveal on page load, the tier cards could have a more dramatic selection animation, or the overall page could benefit from a subtle texture/grain treatment.
+
+## Cycle 246 Learnings
+- Folio markers are pure atmosphere — they don't affect functionality at all, but they complete the institutional illusion. The 0.05 opacity means they're subliminal: you don't notice them consciously, but their presence creates a "this feels right" response.
+- Using deterministic derivation from moment.id (charCodeAt math) ensures consistent page numbers and lot numbers across the page. The lot number in the folio matches the lot number in the catalogue description section — institutional coherence.
+- At 9.40 across Supreme/Broadcast and 9.42 for Arena, the three directions are converging. The diminishing returns at 9.4+ mean each cycle should focus on the dimension that's furthest behind, even if it's only 0.01-0.02 behind.
+- Next cycle: Broadcast (rotation). Broadcast scores: VP=9.39, Conv=9.42, Emo=9.40, Int=9.40, Pur=9.39. VP and Pur tied as weakest (9.39). Purity is harder to move at this level — it requires deeply broadcast-specific additions. Visual is more tractable.
 - Delta modest (+0.01) because Supreme's ENDED state was already functional, and the ceremony only fires once (users may not experience it in their first session). High craft value but low frequency impact.
 - Next cycle: Broadcast (rotation). Broadcast scores: VP=9.38, Conv=9.42, Emo=9.38, Int=9.38, Pur=9.39. Visual and Emotion are the weakest dimensions.

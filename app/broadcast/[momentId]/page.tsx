@@ -7227,6 +7227,53 @@ export default function BroadcastPage() {
             </div>
           )}
 
+          {/* ── Social Buzz Ticker — ESPN-style trending metric ── */}
+          {/* Every ESPN broadcast shows social engagement: "Trending on X,"    */}
+          {/* hashtag mention counts, live poll results. This ticker displays   */}
+          {/* simulated social buzz above the CTA as social proof. The count   */}
+          {/* ticks upward in real-time, mimicking a live trending counter.    */}
+          {/* Distinctly Broadcast: Supreme would never reference social media  */}
+          {/* (auction houses are above that), Arena would show in-venue crowd */}
+          {/* metrics. Broadcast uses media/social reach as authority signal.  */}
+          {!isPurchasing && !countdown.isEnded && (() => {
+            const baseMentions = 8400 + (moment.player.length * 137);
+            const urgencyBoost = dropPhase === 'CRITICAL' ? 4200 : dropPhase === 'CLOSING' ? 1800 : 0;
+            const timeDrift = Math.floor((600 - countdown.totalSeconds) * 7.3);
+            const mentions = baseMentions + urgencyBoost + Math.max(0, timeDrift);
+            const formatted = mentions >= 10000
+              ? `${(mentions / 1000).toFixed(1)}K`
+              : mentions.toLocaleString();
+            return (
+              <div className="flex items-center justify-center gap-2 mb-2 broadcast-element-enter">
+                <div
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-sm"
+                  style={{ backgroundColor: `rgba(${rgb},0.04)`, border: `1px solid rgba(${rgb},0.08)` }}
+                >
+                  <svg className="h-2.5 w-2.5 opacity-50" viewBox="0 0 24 24" fill="currentColor" style={{ color: `rgba(${rgb},0.7)` }}>
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                  <span
+                    className="text-[8px] font-bold uppercase tracking-[0.15em] text-white/30"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    Trending
+                  </span>
+                  <span className="text-[6px] text-white/10">·</span>
+                  <span
+                    className="text-[9px] font-bold tabular-nums"
+                    style={{ color: `rgba(${rgb},0.55)`, fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {formatted}
+                  </span>
+                  <span className="text-[7px] text-white/20">mentions</span>
+                  <svg className="h-2 w-2" viewBox="0 0 10 10" fill="none">
+                    <path d="M5 7 L5 3 M3.5 4.5 L5 3 L6.5 4.5" stroke="#00E5A0" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
+                  </svg>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* ── Analyst Verdict — editorial consensus recommendation ── */}
           {/* ESPN's pre-game shows end with each analyst giving their "LOCK" —  */}
           {/* the pick they're most confident in. This card synthesizes the full */}

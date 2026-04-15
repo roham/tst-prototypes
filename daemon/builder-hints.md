@@ -1722,3 +1722,11 @@
 - Tally lights (red dot with glow + pulse) are the universal visual language for "this camera is live." Even non-broadcast viewers intuitively understand the red dot = active. Strong conversion from real-world signifier to digital UI.
 - Timecodes in the corners add professional authenticity. Format: `HH:MM:SS:FF` (hours:minutes:seconds:frames). Even fake timecodes sell the "real production" feel.
 - Next cycle: Arena (rotation). Ideas: arena tunnel walk-out entrance animation on page load (player emerging from the tunnel with dramatic lighting), or a shot clock overlay that counts down in the corner.
+
+## Cycle 215 Learnings
+- CSS-only particle systems are cheap and effective — 18 divs with varied animation delays/durations create believable confetti rain without any JS overhead.
+- The easeOutExpo counter pattern (fast start, slow settle) is now used in 3 places across Arena (stat counters, edition reveal, attendance). Consistent motion language.
+- Pre-existing type errors can lurk in code that previously compiled — SALE_DURATION_MS changed from `number` to `Record<string, number>` at some point, and the game clock calculation wasn't updated. Always fix these when found.
+- The W screen is getting very long vertically. Future Arena W screen additions should focus on improving existing elements rather than adding new cards. Consider whether the W screen needs a scroll indicator or if it should be condensed.
+- "Thank you for being here tonight" is a surprisingly emotional element — it's the PA announcer's closing line that every arena fan hears as they leave. Tapping into universal shared experiences creates more emotion than novel designs.
+- Next cycle: Supreme (rotation). Ideas: lot condition report with museum-grade paper texture, or a registration ledger page-turn entrance on the W screen.

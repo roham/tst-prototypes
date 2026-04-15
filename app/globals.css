@@ -649,6 +649,36 @@ body {
   animation: supreme-clerk-confirmed 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Supreme gavel-fall curtain — transition between "Sold" and W screen */
+@keyframes supreme-gavel-curtain-line {
+  0% { transform: scaleX(0); opacity: 0; }
+  25% { opacity: 1; }
+  55% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+@keyframes supreme-gavel-curtain-flash {
+  0% { opacity: 0; }
+  45% { opacity: 0; }
+  60% { opacity: 0.12; }
+  100% { opacity: 0; }
+}
+@keyframes supreme-gavel-curtain-sold {
+  0% { opacity: 0; transform: scale(0.96); }
+  30% { opacity: 0.6; transform: scale(1); }
+  70% { opacity: 0.3; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.02); }
+}
+.supreme-gavel-curtain-line {
+  animation: supreme-gavel-curtain-line 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: center;
+}
+.supreme-gavel-curtain-flash {
+  animation: supreme-gavel-curtain-flash 0.8s ease-out forwards;
+}
+.supreme-gavel-curtain-sold {
+  animation: supreme-gavel-curtain-sold 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
 /* Supreme CTA sonar invite — single expanding ring on page load */
 @keyframes supreme-sonar-invite {
   0% { transform: scale(1); opacity: 0.4; }

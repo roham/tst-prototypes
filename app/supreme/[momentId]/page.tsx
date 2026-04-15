@@ -1479,8 +1479,59 @@ export default function SupremePage() {
     return '#00E5A0'; // teal default for Open
   }, [selectedTier.tier, moment.teamColors.primary]);
 
+  // Gavel-fall curtain — the decisive moment between "Sold" and the W screen.
+  // At Christie's, the gavel strikes the sound block with a single crack. The room
+  // holds its breath. Then the applause. This transition IS that breath.
+  const [gavelCurtain, setGavelCurtain] = useState(false);
+  const gavelCurtainPrev = useRef(viewPhase);
+  useEffect(() => {
+    const prev = gavelCurtainPrev.current;
+    gavelCurtainPrev.current = viewPhase;
+    if (prev === 'purchasing' && viewPhase === 'confirmed') {
+      setGavelCurtain(true);
+      HAPTIC.gavelStrike();
+      const t = setTimeout(() => setGavelCurtain(false), 850);
+      return () => clearTimeout(t);
+    }
+    if (viewPhase === 'confirmed' || viewPhase === 'sharing') {
+      // Direct load into confirmed state — no curtain
+      setGavelCurtain(false);
+    }
+  }, [viewPhase]);
+
   // ---- CONFIRMED state ----
   if (viewPhase === 'confirmed' || viewPhase === 'sharing') {
+    if (gavelCurtain) {
+      // Gavel-fall curtain: horizontal strike line + room flash + fade
+      return (
+        <div className="fixed inset-0 z-50 bg-[#0B0E14] flex items-center justify-center overflow-hidden">
+          {/* Horizontal gavel-strike line — sweeps from center outward */}
+          <div
+            className="absolute w-full h-[1px] supreme-gavel-curtain-line"
+            style={{
+              backgroundColor: moment.teamColors.primary,
+              boxShadow: `0 0 12px ${moment.teamColors.primary}60, 0 0 30px ${moment.teamColors.primary}30`,
+            }}
+          />
+          {/* Team-color room flash — the crack reverberates through the saleroom */}
+          <div
+            className="absolute inset-0 supreme-gavel-curtain-flash"
+            style={{ backgroundColor: moment.teamColors.primary }}
+          />
+          {/* "SOLD" echo — lingers from the lot clerk as the room reacts */}
+          <span
+            className="absolute text-[11px] uppercase tracking-[0.4em] supreme-gavel-curtain-sold"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              fontWeight: 600,
+              color: `${moment.teamColors.primary}60`,
+            }}
+          >
+            Sold
+          </span>
+        </div>
+      );
+    }
     return (
       <WScreen
         moment={moment}

@@ -2201,3 +2201,10 @@
 - Two VP-only improvements in one cycle still didn't move the composite (+0.00). Supreme needs multi-dimensional improvements to advance — targeting VP + one other dimension simultaneously.
 - Supreme's weakest dimension remains Interaction (9.43). The lighting mode toggle (cycle 276) was the last interaction improvement. Next Supreme cycle should target an Interaction improvement that also advances another dimension.
 - Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Broadcast (rotation). Supreme still 0.03 behind Arena.
+
+## Cycle 286 Learnings
+- Making an existing passive visual element tappable is high-value for Interaction with minimal risk — the visual is already proven, you're just adding interactivity. Less risky than building a new element from scratch.
+- The camera cut flash reuses the existing broadcast-flash-burst animation — no new CSS keyframe needed. Reusing existing animations keeps the CSS lean.
+- Syncing the replay image to the monitor selection creates a satisfying cause-and-effect: "I tapped this feed → I see that angle." The 0.4s transition timing feels like a real broadcast cut (not instant but crisp).
+- Single Int +0.01 doesn't move composite at 9.46 ceiling. Same pattern as Supreme cycle 285. Need multi-dimensional improvements.
+- Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Arena (rotation). Arena's Int is already 9.48 (highest) — target Conv or VP instead.

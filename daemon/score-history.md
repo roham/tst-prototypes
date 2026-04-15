@@ -966,3 +966,7 @@
 | 285 | supreme | 9.45 | 9.44 | 9.44 | 9.43 | 9.45 | 9.44 | +0.00 | Intaglio plate mark + registration crosshairs |
 
 **Cycle 285: Supreme — Intaglio plate mark + registration crosshairs.** Embossed rectangular depression (inset 7px/9px) with asymmetric directional shadows (heavier bottom-right simulating press roller direction). Light catch on top-left edge (0.5px white at 3.5%). Four corner registration crosshairs (8×8 SVG: hairline cross + circle) at 8% opacity. Both are physical intaglio printmaking authentication markers. VP +0.01 (two new authentic visual layers), composite +0.00 at rounding.
+
+| 286 | broadcast | 9.46 | 9.46 | 9.46 | 9.46 | 9.48 | 9.46 | +0.00 | Tappable director's monitor wall with live camera switching |
+
+**Cycle 286: Broadcast — Tappable Director's Monitor Wall.** W screen 2×2 camera grid now interactive: tap feed to cut, tally light + LIVE badge follows, replay image syncs (crop/filter/scale with 0.4s transitions), cut flash on switch, PGM OUT footer updates, replay badge shows angle name. Int +0.01 (new 4-feed tappable control), composite +0.00 at rounding.

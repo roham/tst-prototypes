@@ -2003,6 +2003,118 @@ function BuyerHeatMap({ events, teamColor, isEnded }: { events: PurchaseEvent[];
   );
 }
 
+/* ─── Arena Value Scoreboard — jumbotron price anchor ──────────── */
+/* NBA jumbotron screens show sponsored promotions and deals during  */
+/* timeouts: "TONIGHT'S DEALS" with merch + food prices. This       */
+/* leverages the same jumbotron visual language for price anchoring: */
+/* comparing the $5 moment against real arena merchandise prices     */
+/* ($130 jersey, $35 cap, $14 beer) makes the purchase feel like    */
+/* an incredible deal. Price anchoring is a top-3 conversion        */
+/* technique — seeing expensive comparisons first reframes the $5   */
+/* price as trivially cheap. Distinctly Arena: jumbotron promos are */
+/* exclusively an in-arena ad format.                               */
+
+const ARENA_PRICE_ANCHORS = [
+  { item: 'TEAM JERSEY', price: 130, icon: '🏀' },
+  { item: 'ARENA BEER', price: 14, icon: '🍺' },
+  { item: 'PARKING', price: 45, icon: '🅿️' },
+];
+
+function ArenaValueScoreboard({ momentPrice, teamColor, isActive }: {
+  momentPrice: number;
+  teamColor: string;
+  isActive: boolean;
+}) {
+  if (!isActive) return null;
+
+  return (
+    <div
+      className="mb-2 rounded-lg overflow-hidden"
+      style={{
+        backgroundColor: 'rgba(255,255,255,0.02)',
+        border: '1px solid rgba(255,255,255,0.05)',
+      }}
+    >
+      {/* Jumbotron header bar */}
+      <div
+        className="flex items-center justify-center gap-2 py-1 px-3"
+        style={{
+          background: `linear-gradient(90deg, ${teamColor}12, transparent, ${teamColor}12)`,
+          borderBottom: '1px solid rgba(255,255,255,0.04)',
+        }}
+      >
+        <div
+          className="h-[3px] w-[3px] rounded-full"
+          style={{ backgroundColor: teamColor, boxShadow: `0 0 4px ${teamColor}60` }}
+        />
+        <span
+          className="text-[8px] font-bold uppercase tracking-[0.25em]"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: 'rgba(255,255,255,0.3)',
+          }}
+        >
+          Tonight&apos;s Deal
+        </span>
+        <div
+          className="h-[3px] w-[3px] rounded-full"
+          style={{ backgroundColor: teamColor, boxShadow: `0 0 4px ${teamColor}60` }}
+        />
+      </div>
+
+      {/* Price comparison row */}
+      <div className="flex items-center justify-between px-3 py-1.5">
+        {ARENA_PRICE_ANCHORS.map((anchor) => (
+          <div key={anchor.item} className="flex flex-col items-center gap-0.5">
+            <span className="text-[10px]">{anchor.icon}</span>
+            <span
+              className="text-[9px] font-mono tabular-nums line-through"
+              style={{ color: 'rgba(255,255,255,0.2)' }}
+            >
+              ${anchor.price}
+            </span>
+            <span
+              className="text-[6px] uppercase tracking-[0.1em]"
+              style={{ color: 'rgba(255,255,255,0.15)', fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              {anchor.item}
+            </span>
+          </div>
+        ))}
+
+        {/* Moment price — the deal */}
+        <div className="flex flex-col items-center gap-0.5">
+          <span className="text-[10px]">🏆</span>
+          <span
+            className="text-[13px] font-bold tabular-nums"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: '#00E5A0',
+              textShadow: '0 0 8px rgba(0,229,160,0.3)',
+            }}
+          >
+            ${momentPrice}
+          </span>
+          <span
+            className="text-[6px] uppercase tracking-[0.1em] font-bold"
+            style={{ color: '#00E5A0', fontFamily: 'var(--font-oswald), sans-serif', opacity: 0.7 }}
+          >
+            THIS MOMENT
+          </span>
+        </div>
+      </div>
+
+      {/* LED scanline texture */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[1] rounded-lg"
+        style={{
+          background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px)',
+        }}
+      />
+    </div>
+  );
+}
+
 /* ─── Panic Banner ─────────────────────────────────────────────── */
 
 function PanicBanner({ claimed, total, isCritical, isClosing }: {
@@ -9025,6 +9137,13 @@ export default function ArenaPage({
             </div>
           </div>
         )}
+
+        {/* Arena Value Scoreboard — jumbotron price anchor near CTA */}
+        <ArenaValueScoreboard
+          momentPrice={moment.rarityTiers[selectedTierIdx].price}
+          teamColor={moment.teamColors.primary}
+          isActive={!countdown.isEnded && proto.state === 'browsing'}
+        />
 
         {/* CTA Crowd Pulse Ring — sonar ring on each feed purchase */}
         <div className="relative">

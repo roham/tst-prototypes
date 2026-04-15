@@ -1396,6 +1396,15 @@ export default function SupremePage() {
   // Register Interest → Arrange Telephone Bid → Confirm Bid
   const [telephoneBidArranged, setTelephoneBidArranged] = useState(false);
 
+  // Private Viewing Lighting — at Christie's/Sotheby's private viewings,
+  // condition specialists examine works under multiple lighting conditions:
+  // gallery (standard track lighting), raking (low-angle directional to reveal
+  // texture and surface imperfections), and UV (ultraviolet to verify materials
+  // and detect restoration). This tappable control lets the user examine the
+  // moment like a collector at a private viewing appointment.
+  const [lightingMode, setLightingMode] = useState<'gallery' | 'raking' | 'uv'>('gallery');
+  const lightingModes = useMemo(() => ['gallery', 'raking', 'uv'] as const, []);
+
   // CTA sonar invite — single ring pulse on page load, draws eye to button
   const [sonarFired, setSonarFired] = useState(false);
   useEffect(() => {
@@ -2206,9 +2215,14 @@ export default function SupremePage() {
             backgroundPosition: 'center top, center',
             filter: isEnded ? heroFilter :
               isPurchasing ? heroFilter :
-              heroRevealed ? 'none' :
-              'grayscale(1) brightness(0.8)',
-            transition: 'filter 2s cubic-bezier(0.16, 1, 0.3, 1)',
+              heroRevealed
+                ? lightingMode === 'raking'
+                  ? 'contrast(1.25) brightness(0.85) saturate(0.7)'
+                  : lightingMode === 'uv'
+                    ? 'brightness(0.6) saturate(0.3) contrast(1.1) hue-rotate(240deg)'
+                    : 'none'
+                : 'grayscale(1) brightness(0.8)',
+            transition: 'filter 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         />
 
@@ -2219,6 +2233,41 @@ export default function SupremePage() {
             background: `radial-gradient(ellipse 80% 60% at 50% 25%, ${moment.teamColors.primary}30 0%, transparent 65%), radial-gradient(ellipse 60% 30% at 50% 80%, ${moment.teamColors.primary}12 0%, transparent 50%)`,
             opacity: heroRevealed ? 1 : 0,
             transition: 'opacity 2.5s cubic-bezier(0.16, 1, 0.3, 1)',
+          }}
+        />
+
+        {/* Private Viewing — Raking Light overlay: directional low-angle light from left */}
+        {/* At private viewings, raking light is cast at a steep angle to reveal surface */}
+        {/* texture, brushwork, and impasto. The shadow side (right) darkens dramatically. */}
+        <div
+          className="absolute inset-0 pointer-events-none z-[3]"
+          style={{
+            background: 'linear-gradient(95deg, rgba(255,248,235,0.08) 0%, transparent 30%, rgba(0,0,0,0.25) 85%, rgba(0,0,0,0.4) 100%)',
+            opacity: lightingMode === 'raking' ? 1 : 0,
+            transition: 'opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
+            pointerEvents: 'none',
+          }}
+        />
+        {/* Private Viewing — UV Light overlay: ultraviolet verification lamp */}
+        {/* UV light causes certain materials to fluoresce — team-color highlights */}
+        {/* glow against the deep violet wash, revealing "authenticity markers." */}
+        <div
+          className="absolute inset-0 pointer-events-none z-[3]"
+          style={{
+            background: `radial-gradient(ellipse 70% 80% at 50% 40%, rgba(100,50,200,0.15) 0%, rgba(40,20,120,0.2) 50%, rgba(20,10,60,0.25) 100%)`,
+            opacity: lightingMode === 'uv' ? 1 : 0,
+            transition: 'opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
+            pointerEvents: 'none',
+          }}
+        />
+        {/* UV fluorescence — team-color hotspots that "glow" under UV */}
+        <div
+          className="absolute inset-0 pointer-events-none z-[3]"
+          style={{
+            background: `radial-gradient(ellipse 40% 30% at 45% 35%, ${moment.teamColors.primary}20 0%, transparent 60%), radial-gradient(ellipse 25% 20% at 65% 60%, ${moment.teamColors.primary}15 0%, transparent 50%)`,
+            opacity: lightingMode === 'uv' ? 1 : 0,
+            transition: 'opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
+            pointerEvents: 'none',
           }}
         />
 
@@ -2431,6 +2480,80 @@ export default function SupremePage() {
         {/* Phone bidders — Sotheby's staff relaying bids from remote buyers */}
         {!isEnded && !isPurchasing && (
           <PhoneBidders teamColor={moment.teamColors.primary} />
+        )}
+
+        {/* Private Viewing Lighting Control — 3-mode lighting toggle          */}
+        {/* At Christie's/Sotheby's private viewings, condition specialists    */}
+        {/* examine works under gallery (track), raking (low-angle), and UV    */}
+        {/* (ultraviolet) lighting to assess condition and authenticity. This   */}
+        {/* tappable control gives the collector that specialist experience.    */}
+        {!isEnded && !isPurchasing && (
+          <div
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-[14] flex flex-col items-center gap-0"
+            style={{ opacity: 0.35, transition: 'opacity 0.5s ease' }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.opacity = '0.7'; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.opacity = '0.35'; }}
+          >
+            {/* Label */}
+            <span
+              className="text-[5px] font-mono uppercase tracking-[0.4em] text-white/30 mb-1.5"
+              style={{ writingMode: 'horizontal-tb' }}
+            >
+              Lighting
+            </span>
+            {/* Mode buttons — vertical stack */}
+            {lightingModes.map((mode) => {
+              const isActive = lightingMode === mode;
+              const labels: Record<string, string> = { gallery: 'GAL', raking: 'RAK', uv: 'UV' };
+              const icons: Record<string, { d: string }> = {
+                gallery: { d: 'M8 2 L8 4 M14 8 L12 8 M8 14 L8 12 M2 8 L4 8 M12.5 3.5 L11 5 M12.5 12.5 L11 11 M3.5 12.5 L5 11 M3.5 3.5 L5 5' }, // sun rays
+                raking: { d: 'M2 12 L14 4 M2 14 L14 6 M2 10 L14 2' }, // directional lines
+                uv: { d: 'M8 3 C5 3 3 5.5 3 8 C3 10.5 5 13 8 13 C11 13 13 10.5 13 8 C13 5.5 11 3 8 3 M6 7 L8 5 L10 7' }, // UV lamp
+              };
+              return (
+                <button
+                  key={mode}
+                  onClick={() => { setLightingMode(mode); HAPTIC.tierSelect(); }}
+                  className="flex flex-col items-center gap-0.5 py-1.5 px-1 rounded-sm transition-all duration-500"
+                  style={{
+                    backgroundColor: isActive ? 'rgba(255,255,255,0.04)' : 'transparent',
+                    border: isActive ? `0.5px solid ${moment.teamColors.primary}20` : '0.5px solid transparent',
+                  }}
+                >
+                  <svg
+                    width="12" height="12" viewBox="0 0 16 16" fill="none"
+                    style={{
+                      transition: 'all 0.5s ease',
+                      opacity: isActive ? 0.8 : 0.3,
+                    }}
+                  >
+                    <path
+                      d={icons[mode].d}
+                      stroke={isActive ? (mode === 'uv' ? '#8B5CF6' : mode === 'raking' ? '#F59E0B' : '#F0F2F5') : '#F0F2F5'}
+                      strokeWidth="1"
+                      strokeLinecap="round"
+                      fill="none"
+                    />
+                    {/* Gallery mode: center sun circle */}
+                    {mode === 'gallery' && (
+                      <circle cx="8" cy="8" r="2.5" stroke={isActive ? '#F0F2F5' : '#F0F2F5'} strokeWidth="1" fill="none" style={{ opacity: isActive ? 0.8 : 0.3, transition: 'opacity 0.5s ease' }} />
+                    )}
+                  </svg>
+                  <span
+                    className="text-[5px] font-mono uppercase tracking-[0.3em]"
+                    style={{
+                      color: isActive
+                        ? mode === 'uv' ? '#8B5CF6' : mode === 'raking' ? '#F59E0B' : 'rgba(255,255,255,0.6)'
+                        : 'rgba(255,255,255,0.2)',
+                      transition: 'color 0.5s ease',
+                    }}
+                  >
+                    {labels[mode]}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         )}
 
         {/* Lot provenance wall label — museum gallery plaque on left edge */}

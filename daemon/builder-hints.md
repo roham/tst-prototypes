@@ -1830,3 +1830,11 @@
 - Haptic escalation across phases (12ms→[15,30,18]→[20,40,20,40,25]) creates tactile urgency. The double-tap at phase 3 mimics the sound of a gavel striking twice.
 - The delta was modest (+0.01) because the CTA already had phase-based text changes and urgency animation. The improvement is in granularity — 4 distinct states instead of 1 static "LAST CHANCE" text during CRITICAL. Higher deltas at this maturity level require larger structural changes rather than refinements.
 - Next cycle: Broadcast (rotation). Broadcast scores: VP=9.35, Conv=9.35, Emo=9.32, Int=9.33, Pur=9.35. Emotion (9.32) and Interaction (9.33) are the weakest. Ideas: the purchase ceremony (BreakingNewsCutIn) could have more editorial theater — like a "BREAKING: [PLAYER] COLLECTED" ticker scroll during purchasing, or a stat comparison graphic that justifies the purchase mid-ceremony.
+
+## Cycle 229 Learnings
+- The BottomLine ticker is the highest-value production element for the Broadcast purchase ceremony — it fills the "dead time" during processing with contextual information and continuous motion. Users read the ticker instead of watching a loading state.
+- Duplicated content nodes (two identical spans) with translateX(-50%) on the parent creates seamless infinite scroll. The 18s duration at 9px font size creates readable but continuous motion.
+- The fixed left "LIVE"/"DONE" badge creates an anchor point that the scrolling content passes behind — exactly how the real ESPN BottomLine works (the "ESPN" logo stays fixed while content scrolls).
+- Phase-aware color transitions on both the badge and the background create a satisfying "resolution" moment when the purchase confirms — red→teal shift is visible at the bottom edge of the screen.
+- Type error: RarityTier uses `size` not `editions` — always check the type definition before using properties.
+- Next cycle: Arena (rotation). Arena scores: VP=9.37, Conv=9.35, Emo=9.38, Int=9.35, Pur=9.42. Conversion and Interaction tied at 9.35 as weakest. Ideas: the tier selector could be more interactive (LED glow on hover/press, section-based naming like "Floor/Lower/Upper"), or the hero section entrance could be more dramatic (tunnel walk-out, smoke effect).

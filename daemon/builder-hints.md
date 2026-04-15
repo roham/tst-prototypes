@@ -1967,3 +1967,9 @@
 - Phase-aware animation speed (not just color) is an underutilized urgency channel. Running dots at 4s/loop vs 8s/loop creates a visceral "things are speeding up" feeling without any explicit urgency text.
 - At the 9.42+ ceiling, improvements that touch multiple dimensions (Visual + Emotion + Purity = 3 of 5) are the only way to move the composite. Single-dimension improvements round to +0.00.
 - Current direction scores after cycle 248: Supreme 9.40, Broadcast 9.40, Arena 9.43. Arena still leads. Next cycle: Supreme (rotation). Supreme scores: VP=9.40, Conv=9.39, Emo=9.40, Int=9.40, Pur=9.42. Conversion (9.39) remains the weakest dimension.
+
+## Cycle 249 Learnings
+- Tap-to-reveal (drawer/accordion) elements are a strong Interaction improvement with minimal code — the expand/collapse + haptic creates a satisfying micro-interaction. The effort heuristic (revealed info feels more trustworthy) is a bonus psychological effect.
+- Named specialists with initials avatars create authority bias even when fictional — the specificity (name + title + department) triggers the same trust response as real credentials. Per-moment specialist names add institutional coherence.
+- The condition report is conversion-focused but non-intrusive: at 10% opacity by default, it only reveals itself to users who are actively looking for reassurance. This matches Supreme's philosophy — information for the discerning, not the casual browser.
+- At 9.41 composite, Supreme has closed the gap with Broadcast (9.40). Arena still leads at 9.43. Next cycle: Broadcast (rotation). Broadcast scores: VP=9.39, Conv=9.42, Emo=9.40, Int=9.40, Pur=9.39. Visual Polish (9.39) and Purity (9.39) are tied as weakest. A broadcast-specific visual element would target both.

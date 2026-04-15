@@ -1371,6 +1371,12 @@ export default function SupremePage() {
   // Condition Report drawer — specialist assessment resolves purchase doubt
   const [conditionReportOpen, setConditionReportOpen] = useState(false);
 
+  // Register Interest — at Christie's/Sotheby's online, the "Register Interest"
+  // action is the strongest pre-bid commitment signal. Once registered, you've
+  // self-identified as an active participant — not a browser. The foot-in-the-door
+  // effect means you're far more likely to follow through with a bid.
+  const [interestRegistered, setInterestRegistered] = useState(false);
+
   // CTA sonar invite — single ring pulse on page load, draws eye to button
   const [sonarFired, setSonarFired] = useState(false);
   useEffect(() => {
@@ -1664,7 +1670,11 @@ export default function SupremePage() {
   const isEnded = dropPhase === 'ENDED';
 
   let buttonBg = '#00E5A0';
-  let buttonText = `OWN THIS MOMENT — ${scrambledPrice}`;
+  // CTA upgrades from "OWN THIS MOMENT" to "PLACE BID" after interest registration
+  // — the language shift mirrors the auction journey: browsing → committed bidder
+  let buttonText = interestRegistered
+    ? `PLACE BID — ${scrambledPrice}`
+    : `OWN THIS MOMENT — ${scrambledPrice}`;
   let buttonTextColor = '#0B0E14';
   let buttonAnimation = '';
 
@@ -3925,6 +3935,90 @@ export default function SupremePage() {
       )}
 
       </div>{/* END catalogue page turn wrapper */}
+
+      {/* ============================================================= */}
+      {/* REGISTER INTEREST — pre-commitment action at the decision point */}
+      {/* At Christie's/Sotheby's online, "Register Interest" is the      */}
+      {/* strongest pre-bid signal: a single tap that transforms you from  */}
+      {/* browser → committed bidder. The foot-in-the-door effect means    */}
+      {/* registered bidders are dramatically more likely to bid. Once     */}
+      {/* registered, CTA upgrades from "OWN THIS MOMENT" to "PLACE BID"  */}
+      {/* — more committed auction language. The tap also updates the      */}
+      {/* interested parties count for social proof.                       */}
+      {/* Distinctly Supreme: Arena would never have quiet registration    */}
+      {/* (it's live chaos), Broadcast would frame it as a viewer poll.    */}
+      {/* Supreme has the institutional registration protocol.             */}
+      {/* ============================================================= */}
+      {!isEnded && !isPurchasing && (
+        <div className="flex items-center justify-center px-5 mb-2 supreme-info-enter">
+          <button
+            onClick={() => {
+              if (!interestRegistered) {
+                setInterestRegistered(true);
+                HAPTIC.tierSelect();
+              }
+            }}
+            className="flex items-center gap-2 py-1.5 transition-all duration-500"
+            style={{ opacity: interestRegistered ? 1 : 0.6 }}
+          >
+            {interestRegistered ? (
+              <>
+                {/* Checkmark */}
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                  <circle cx="5" cy="5" r="4.5" stroke={tierAccentColor} strokeWidth="0.5" opacity="0.4" />
+                  <path
+                    d="M3 5.2 L4.5 6.7 L7.2 3.8"
+                    stroke={tierAccentColor}
+                    strokeWidth="0.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    opacity="0.6"
+                  />
+                </svg>
+                <span
+                  className="text-[8px] uppercase tracking-[0.25em]"
+                  style={{
+                    fontFamily: 'Georgia, serif',
+                    color: `${tierAccentColor}50`,
+                  }}
+                >
+                  Interest Registered
+                </span>
+                <span className="text-[7px] font-mono text-white/10">·</span>
+                <span
+                  className="text-[7px] font-mono uppercase tracking-[0.2em]"
+                  style={{ color: `${tierAccentColor}25` }}
+                >
+                  Paddle {paddleNumber}
+                </span>
+              </>
+            ) : (
+              <>
+                {/* Pen nib icon — registrar's pen */}
+                <svg width="9" height="9" viewBox="0 0 9 9" fill="none" style={{ opacity: 0.25 }}>
+                  <path
+                    d="M7.5 1.5L3.5 5.5L2.5 6.5L2 7L3 6.5L7.5 1.5Z"
+                    stroke="white"
+                    strokeWidth="0.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path d="M2 7L2.3 5.8" stroke="white" strokeWidth="0.4" />
+                </svg>
+                <span
+                  className="text-[8px] uppercase tracking-[0.25em]"
+                  style={{
+                    fontFamily: 'Georgia, serif',
+                    color: 'rgba(255,255,255,0.14)',
+                  }}
+                >
+                  Register Interest in This Lot
+                </span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* ============================================================= */}
       {/* LOT CLERK NARRATION — institutional voice during purchase        */}

@@ -889,3 +889,6 @@
 | 259 | broadcast | 9.42 | 9.42 | 9.43 | 9.43 | 9.43 | 9.42 | +0.02 | Feature Package (ESPN cinematic voiceover text fragments) |
 
 **Cycle 259: Broadcast Feature Package.** ESPN cinematic voiceover text fragment sequence between hero and editorial. Per-moment dramatic lines with staggered fade-slide entrance on scroll (IntersectionObserver, 0.7s per line, 0.35s offset). Kicker line in team-color with glow. "FEATURE" label. Targets Emotion (9.40→9.43: voiceover rhythm builds dramatic tension) and Visual (9.40→9.42: large Oswald typography + team-color accent). Purity (9.42→9.43: fragmented voiceover is exclusively broadcast).
+| 260 | arena | 9.45 | 9.45 | 9.46 | 9.46 | 9.46 | 9.45 | +0.01 | Fan Reaction Cam (tappable jumbotron reaction buttons with cam frame popup) |
+
+**Cycle 260: Arena Fan Reaction Cam.** 5 tappable reaction buttons (FIRE/FLEX/HYPED/WILD/MVP) with jumbotron frame popup showing reaction + section/row. Haptic + visual popup + personalization. 1 new CSS keyframe. Targets Interaction (9.44→9.46: new tappable mechanic), Emotion (9.45→9.46: personal participation), Purity (9.45→9.46: Fan Cam is arena-only).

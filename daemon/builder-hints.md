@@ -2041,3 +2041,9 @@
 - The kicker line in team-color creates a natural visual punctuation mark — the build lines in muted white (55%) create restraint, then the team-color kicker (100%) delivers the payoff. This mirrors broadcast pacing: setup → setup → setup → punchline.
 - Per-moment text specificity matters for emotional impact: "A FRANCHISE RECORD THAT STOOD FOR FIFTEEN YEARS" (Bam), "A FEAT LAST ACHIEVED IN 1962" (Jokić), "A FRANCHISE RECORD IN OKLAHOMA CITY" (SGA). Historical context in the fragment text creates weight.
 - Current scores: Supreme 9.42, Broadcast 9.42, Arena 9.45. Supreme and Broadcast now tied at 9.42. Arena still leads by 0.03. Next cycle: Arena (rotation). Arena scores: VP=9.45, Conv=9.45, Emo=9.45, Int=9.44, Pur=9.45. Interaction (9.44) is the weakest dimension.
+
+## Cycle 260 Learnings
+- Fan Reaction Cam (tappable reactions with jumbotron frame popup) is an effective Interaction improvement because it combines multiple feedback channels: haptic touch, visual popup with personal details (section/row), and emoji display. Each channel reinforces the others.
+- The distinction between passive (CrowdReactionBar — auto-generated floating emojis) and active (FanReactionCam — user-initiated reactions) is important for Arena: the passive elements create "other people are here" atmosphere, while the active elements create "YOU are here" participation.
+- useRef<ReturnType<typeof setTimeout>>(undefined) is required in strict TypeScript — the 0-argument overload doesn't work. Also needed to add useMemo to Arena imports.
+- Current scores: Supreme 9.42, Broadcast 9.42, Arena 9.45. All directions within 0.03. Next cycle: Supreme (rotation). Supreme weakest dimensions: VP (9.42), Conv (9.41), Emo (9.43), Int (9.41), Pur (9.43). Conversion and Interaction tied at 9.41 as weakest.

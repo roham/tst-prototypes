@@ -2208,3 +2208,10 @@
 - Syncing the replay image to the monitor selection creates a satisfying cause-and-effect: "I tapped this feed → I see that angle." The 0.4s transition timing feels like a real broadcast cut (not instant but crisp).
 - Single Int +0.01 doesn't move composite at 9.46 ceiling. Same pattern as Supreme cycle 285. Need multi-dimensional improvements.
 - Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Arena (rotation). Arena's Int is already 9.48 (highest) — target Conv or VP instead.
+
+## Cycle 287 Learnings
+- Price anchoring near the CTA is high-conviction for conversion — it's one of the most validated techniques in ecommerce UX. The key is showing expensive items FIRST (struck-through) before revealing the low price, creating contrast.
+- The jumbotron "TONIGHT'S DEAL" framing keeps the price anchor on-brand for Arena. A generic "compare prices" section would feel like a shopping site. The arena timeout promotion format legitimizes the price comparison as entertainment.
+- LED scanline overlay on the scoreboard maintains visual consistency with the CTA button's scanline. Reusing the same texture across jumbotron-styled elements creates a cohesive display language.
+- Three dimensions moved (+0.01 each: VP, Conv, Purity), which was enough to advance the composite from 9.47 to 9.48. Confirms the pattern: need 3+ dimensions improving simultaneously at this score level to move the needle.
+- Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.48. Next cycle: Supreme (rotation). Supreme is 0.04 behind Arena and 0.02 behind Broadcast — it's the weakest direction and needs multi-dimensional improvement.

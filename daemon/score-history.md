@@ -970,3 +970,6 @@
 | 286 | broadcast | 9.46 | 9.46 | 9.46 | 9.46 | 9.48 | 9.46 | +0.00 | Tappable director's monitor wall with live camera switching |
 
 **Cycle 286: Broadcast — Tappable Director's Monitor Wall.** W screen 2×2 camera grid now interactive: tap feed to cut, tally light + LIVE badge follows, replay image syncs (crop/filter/scale with 0.4s transitions), cut flash on switch, PGM OUT footer updates, replay badge shows angle name. Int +0.01 (new 4-feed tappable control), composite +0.00 at rounding.
+| 287 | arena | 9.48 | 9.48 | 9.47 | 9.48 | 9.48 | 9.48 | +0.01 | Arena Value Scoreboard (jumbotron price anchor: $130 jersey / $45 parking / $14 beer vs $5 moment) |
+
+**Cycle 287: Arena — Arena Value Scoreboard.** Jumbotron-style price anchor at CTA showing "TONIGHT'S DEAL" with real NBA arena costs struck-through ($130 jersey, $45 parking, $14 beer) vs. $5 moment highlighted in teal with glow. Price anchoring is a top-3 conversion technique — expensive comparisons reframe $5 as trivially cheap. LED scanline overlay, team-color accents in header. Positioned just before the CTA button. VP +0.01 (new jumbotron visual element), Conv +0.01 (price anchoring at decision point), Purity +0.01 (jumbotron timeout promotions are exclusively in-arena). Distinctly Arena: Supreme has specialist valuations, Broadcast has social buzz. Arena has jumbotron deal promos.

@@ -123,6 +123,68 @@ function useCollectorsLoupe(heroRef: React.RefObject<HTMLDivElement | null>, ima
 }
 
 // ---------------------------------------------------------------------------
+// Catalogue Plates — swipeable hero views like turning plates in an auction
+// catalogue. At Christie's/Sotheby's, lots are photographed from multiple
+// angles and presented as numbered plates (Plate I, Plate II, etc.).
+// Horizontal swipe changes the view; coexists with the loupe (hold gesture).
+// ---------------------------------------------------------------------------
+
+type CataloguePlate = { label: string; roman: string };
+const CATALOGUE_PLATES: CataloguePlate[] = [
+  { label: 'The Moment', roman: 'I' },
+  { label: 'The Action', roman: 'II' },
+  { label: 'The Detail', roman: 'III' },
+];
+
+function useCataloguePlates(disabled: boolean) {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [transitioning, setTransitioning] = useState(false);
+  const touchRef = useRef<{ startX: number; startY: number; startTime: number } | null>(null);
+
+  const SWIPE_THRESHOLD = 50; // px
+  const SWIPE_MAX_Y = 60; // max vertical distance to count as horizontal swipe
+  const SWIPE_MAX_TIME = 400; // ms
+
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    if (disabled) return;
+    const t = e.touches[0];
+    touchRef.current = { startX: t.clientX, startY: t.clientY, startTime: Date.now() };
+  }, [disabled]);
+
+  const onTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (disabled || !touchRef.current) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchRef.current.startX;
+    const dy = Math.abs(t.clientY - touchRef.current.startY);
+    const dt = Date.now() - touchRef.current.startTime;
+    touchRef.current = null;
+
+    if (Math.abs(dx) > SWIPE_THRESHOLD && dy < SWIPE_MAX_Y && dt < SWIPE_MAX_TIME) {
+      setTransitioning(true);
+      if (dx < 0) {
+        // Swipe left → next plate
+        setActiveIdx(prev => Math.min(prev + 1, CATALOGUE_PLATES.length - 1));
+      } else {
+        // Swipe right → previous plate
+        setActiveIdx(prev => Math.max(prev - 1, 0));
+      }
+      HAPTIC.tierSelect();
+      setTimeout(() => setTransitioning(false), 800);
+    }
+  }, [disabled]);
+
+  const goToPlate = useCallback((idx: number) => {
+    if (disabled || idx === activeIdx) return;
+    setTransitioning(true);
+    setActiveIdx(idx);
+    HAPTIC.tierSelect();
+    setTimeout(() => setTransitioning(false), 800);
+  }, [disabled, activeIdx]);
+
+  return { activeIdx, transitioning, onTouchStart, onTouchEnd, goToPlate, plates: CATALOGUE_PLATES };
+}
+
+// ---------------------------------------------------------------------------
 // Phase derivation from countdown
 // ---------------------------------------------------------------------------
 
@@ -1552,6 +1614,11 @@ export default function SupremePage() {
     viewPhase === 'purchasing' || dropPhase === 'ENDED',
   );
 
+  // Catalogue Plates — swipeable hero views (Plate I: headshot, II: action, III: detail)
+  const cataloguePlates = useCataloguePlates(
+    viewPhase === 'purchasing' || dropPhase === 'ENDED',
+  );
+
   // Phase transition pulse — the void breathes when phase shifts
   const [transitionFlash, setTransitionFlash] = useState<'amber' | 'red' | null>(null);
   const prevPhaseRef = useRef(dropPhase);
@@ -1621,6 +1688,9 @@ export default function SupremePage() {
 
   // Condition Report drawer — specialist assessment resolves purchase doubt
   const [conditionReportOpen, setConditionReportOpen] = useState(false);
+
+  // Interactive condition verification — collector examines each point
+  const [conditionChecks, setConditionChecks] = useState([false, false, false, false]);
 
   // Specialist's Estimate Note — tappable auction estimate reveals valuation
   // justification. At Christie's, the specialist's written assessment of value
@@ -2434,7 +2504,14 @@ export default function SupremePage() {
         ref={heroSectionRef}
         className="relative w-full flex-none overflow-hidden"
         style={{ height: '52dvh' }}
-        {...loupe.handlers}
+        onTouchStart={(e: React.TouchEvent<HTMLDivElement>) => { loupe.handlers.onTouchStart(e); cataloguePlates.onTouchStart(e); }}
+        onTouchMove={loupe.handlers.onTouchMove}
+        onTouchEnd={(e: React.TouchEvent<HTMLDivElement>) => { loupe.handlers.onTouchEnd(); cataloguePlates.onTouchEnd(e); }}
+        onTouchCancel={loupe.handlers.onTouchCancel}
+        onMouseDown={loupe.handlers.onMouseDown}
+        onMouseMove={loupe.handlers.onMouseMove}
+        onMouseUp={loupe.handlers.onMouseUp}
+        onMouseLeave={loupe.handlers.onMouseLeave}
       >
         {/* Parallax wrapper — hero moves at 0.4x scroll speed, heartbeat pulse creates alive tension */}
         <div
@@ -2445,27 +2522,25 @@ export default function SupremePage() {
           }`}
           style={{ transform: `translateY(${scrollY * 0.4}px)` }}
         >
-        {/* Action image — cinematic depth layer behind player */}
-        <div
-          className="absolute inset-0 bg-cover bg-center pointer-events-none transition-opacity duration-1000"
-          style={{
-            backgroundImage: `url(${moment.actionImageUrl})`,
-            backgroundPosition: 'center 30%',
-            opacity: isEnded ? 0.02 : 0.05,
-            filter: 'grayscale(0.5) contrast(1.2)',
-          }}
-        />
+        {/* ============================================================= */}
+        {/* CATALOGUE PLATES — three swipeable views of the lot            */}
+        {/* Plate I: The Moment (headshot), Plate II: The Action (action   */}
+        {/* shot at full brightness), Plate III: The Detail (zoomed crop). */}
+        {/* At Christie's/Sotheby's, lots have numbered photographic       */}
+        {/* plates showing different angles and details.                   */}
+        {/* ============================================================= */}
 
-        {/* Gradient background — subtle Ken Burns zoom for cinematic depth */}
-        {/* Color reveal: starts desaturated, transitions to full color over 2s */}
+        {/* Plate I: The Moment — player headshot (original/default view) */}
         <div
-          className={`absolute inset-0 bg-cover bg-center ${
-            !isEnded && !isPurchasing ? 'supreme-ken-burns' : ''
+          className={`absolute inset-0 bg-cover bg-center pointer-events-none ${
+            !isEnded && !isPurchasing && cataloguePlates.activeIdx === 0 ? 'supreme-ken-burns' : ''
           }`}
           style={{
             backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
             backgroundSize: 'cover, cover',
             backgroundPosition: 'center top, center',
+            opacity: cataloguePlates.activeIdx === 0 ? 1 : 0,
+            transition: 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
             filter: isEnded ? heroFilter :
               isPurchasing ? heroFilter :
               heroRevealed
@@ -2475,7 +2550,49 @@ export default function SupremePage() {
                     ? 'brightness(0.6) saturate(0.3) contrast(1.1) hue-rotate(240deg)'
                     : 'none'
                 : 'grayscale(1) brightness(0.8)',
-            transition: 'filter 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
+          }}
+        />
+
+        {/* Plate II: The Action — full-brightness action shot */}
+        <div
+          className="absolute inset-0 bg-cover pointer-events-none"
+          style={{
+            backgroundImage: `url(${moment.actionImageUrl}), ${moment.thumbnailGradient}`,
+            backgroundSize: 'cover, cover',
+            backgroundPosition: 'center 30%, center',
+            opacity: cataloguePlates.activeIdx === 1 ? 1 : 0,
+            transition: 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
+            filter: isEnded ? heroFilter :
+              isPurchasing ? heroFilter :
+              heroRevealed
+                ? lightingMode === 'raking'
+                  ? 'contrast(1.25) brightness(0.85) saturate(0.7)'
+                  : lightingMode === 'uv'
+                    ? 'brightness(0.6) saturate(0.3) contrast(1.1) hue-rotate(240deg)'
+                    : 'saturate(1.15) contrast(1.05)'
+                : 'grayscale(1) brightness(0.8)',
+          }}
+        />
+
+        {/* Plate III: The Detail — zoomed crop revealing texture */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
+            backgroundSize: '180%, cover',
+            backgroundPosition: 'center 20%, center',
+            backgroundRepeat: 'no-repeat, no-repeat',
+            opacity: cataloguePlates.activeIdx === 2 ? 1 : 0,
+            transition: 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
+            filter: isEnded ? heroFilter :
+              isPurchasing ? heroFilter :
+              heroRevealed
+                ? lightingMode === 'raking'
+                  ? 'contrast(1.3) brightness(0.8) saturate(0.6)'
+                  : lightingMode === 'uv'
+                    ? 'brightness(0.6) saturate(0.3) contrast(1.1) hue-rotate(240deg)'
+                    : 'saturate(1.1) contrast(1.08)'
+                : 'grayscale(1) brightness(0.8)',
           }}
         />
 
@@ -2882,12 +2999,14 @@ export default function SupremePage() {
               animation: 'supreme-loupe-in 0.2s ease-out',
             }}
           >
-            {/* Magnified image — 2× zoom centered on touch point */}
+            {/* Magnified image — 2× zoom centered on touch point, follows active plate */}
             <div
               className="absolute inset-0"
               style={{
-                backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
-                backgroundSize: '200% 200%',
+                backgroundImage: cataloguePlates.activeIdx === 1
+                  ? `url(${moment.actionImageUrl}), ${moment.thumbnailGradient}`
+                  : `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
+                backgroundSize: cataloguePlates.activeIdx === 2 ? '360% 360%' : '200% 200%',
                 backgroundPosition: `${loupe.pctPos.x}% ${loupe.pctPos.y}%`,
               }}
             />
@@ -2963,6 +3082,57 @@ export default function SupremePage() {
             >
               SOLD
             </span>
+          </div>
+        )}
+
+        {/* Catalogue Plate Indicators — bottom center of hero                */}
+        {/* At Christie's/Sotheby's, catalogue plates are numbered with         */}
+        {/* Roman numerals. These indicators show which plate is active and      */}
+        {/* allow direct tapping to switch views.                               */}
+        {!isEnded && !isPurchasing && (
+          <div className="absolute bottom-14 left-0 right-0 z-[15] pointer-events-none flex justify-center supreme-lot-enter">
+            <div className="flex items-center gap-0 pointer-events-auto">
+              {/* Plate label */}
+              <span
+                className="text-[6px] font-mono uppercase tracking-[0.35em] text-white/20 mr-2.5"
+              >
+                Plate
+              </span>
+              {/* Roman numeral tabs */}
+              {cataloguePlates.plates.map((plate, i) => {
+                const isActive = cataloguePlates.activeIdx === i;
+                return (
+                  <button
+                    key={plate.roman}
+                    onClick={() => cataloguePlates.goToPlate(i)}
+                    className="flex flex-col items-center gap-0.5 px-2 py-1 transition-all duration-500"
+                    style={{
+                      opacity: isActive ? 0.7 : 0.2,
+                    }}
+                  >
+                    <span
+                      className="text-[10px] font-bold tabular-nums"
+                      style={{
+                        fontFamily: 'Georgia, serif',
+                        color: isActive ? moment.teamColors.primary : '#F0F2F5',
+                        textShadow: isActive ? `0 0 8px ${moment.teamColors.primary}30` : 'none',
+                        transition: 'color 0.5s ease, text-shadow 0.5s ease',
+                      }}
+                    >
+                      {plate.roman}
+                    </span>
+                    {/* Active indicator line */}
+                    <div
+                      className="h-[0.5px] rounded-full transition-all duration-500"
+                      style={{
+                        width: isActive ? '12px' : '0px',
+                        backgroundColor: isActive ? `${moment.teamColors.primary}50` : 'transparent',
+                      }}
+                    />
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -3460,31 +3630,74 @@ export default function SupremePage() {
           >
             Condition Report
           </span>
+          {/* Interactive condition verification — tap each row to verify */}
+          {/* At private viewings, the collector examines each condition    */}
+          {/* point and signs off. Checking all 4 reveals a "Verified"     */}
+          {/* seal — progressive commitment toward the purchase.           */}
           <div className="space-y-1.5">
-            {[
-              { label: 'Mint Status', value: 'Verified · Block #' + ((moment.id.charCodeAt(0) * 1337 + 8420000) % 99000000 + 10000000).toLocaleString(), status: 'pass' as const },
-              { label: 'Media Integrity', value: 'SHA-256 verified · No degradation', status: 'pass' as const },
-              { label: 'Chain of Title', value: 'Primary sale · No prior owners', status: 'pass' as const },
-              { label: 'Smart Contract', value: 'Flow · Audited · Immutable', status: 'pass' as const },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center justify-between">
-                <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/10">
-                  {item.label}
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[7px] font-mono text-white/15">
-                    {item.value}
-                  </span>
-                  {/* Verification checkmark — green for pass */}
-                  <svg className="h-2.5 w-2.5" viewBox="0 0 10 10" fill="none">
-                    <circle cx="5" cy="5" r="4.5" stroke="rgba(0,229,160,0.25)" strokeWidth="0.5" />
-                    <path d="M3 5.2 L4.5 6.5 L7 3.5" stroke="rgba(0,229,160,0.4)" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-              </div>
-            ))}
+            {(() => {
+              const conditions = [
+                { label: 'Mint Status', value: 'Verified · Block #' + ((moment.id.charCodeAt(0) * 1337 + 8420000) % 99000000 + 10000000).toLocaleString() },
+                { label: 'Media Integrity', value: 'SHA-256 verified · No degradation' },
+                { label: 'Chain of Title', value: 'Primary sale · No prior owners' },
+                { label: 'Smart Contract', value: 'Flow · Audited · Immutable' },
+              ];
+              return conditions.map((item, idx) => {
+                const isChecked = conditionChecks[idx];
+                return (
+                  <button
+                    type="button"
+                    key={item.label}
+                    className="flex items-center justify-between w-full text-left group"
+                    onClick={() => {
+                      if (!isChecked) {
+                        HAPTIC.tierSelect();
+                        setConditionChecks(prev => { const next = [...prev]; next[idx] = true; return next; });
+                      }
+                    }}
+                  >
+                    <span
+                      className="text-[7px] font-mono uppercase tracking-[0.2em] transition-colors duration-500"
+                      style={{ color: isChecked ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.10)' }}
+                    >
+                      {item.label}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className="text-[7px] font-mono transition-colors duration-500"
+                        style={{ color: isChecked ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.12)' }}
+                      >
+                        {item.value}
+                      </span>
+                      {/* Verification checkmark — animates on tap */}
+                      <svg className="h-2.5 w-2.5 transition-all duration-500" viewBox="0 0 10 10" fill="none">
+                        <circle
+                          cx="5" cy="5" r="4.5"
+                          stroke={isChecked ? 'rgba(0,229,160,0.45)' : 'rgba(255,255,255,0.08)'}
+                          strokeWidth="0.5"
+                          className="transition-all duration-500"
+                        />
+                        <path
+                          d="M3 5.2 L4.5 6.5 L7 3.5"
+                          stroke={isChecked ? 'rgba(0,229,160,0.7)' : 'rgba(255,255,255,0.06)'}
+                          strokeWidth="0.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="transition-all duration-500"
+                          style={{
+                            transform: isChecked ? 'scale(1)' : 'scale(0.5)',
+                            transformOrigin: 'center',
+                            opacity: isChecked ? 1 : 0.3,
+                          }}
+                        />
+                      </svg>
+                    </div>
+                  </button>
+                );
+              });
+            })()}
           </div>
-          {/* Grade assessment */}
+          {/* Grade assessment + Verified seal */}
           <div className="mt-2 flex items-center gap-2">
             <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/10">
               Overall
@@ -3500,6 +3713,28 @@ export default function SupremePage() {
               No condition issues
             </span>
           </div>
+          {/* Collector verification seal — appears when all 4 conditions are checked */}
+          {conditionChecks.every(Boolean) && (
+            <div
+              className="mt-3 flex items-center justify-center gap-2 py-2 rounded-sm"
+              style={{
+                backgroundColor: `rgba(0,229,160,0.04)`,
+                border: '1px solid rgba(0,229,160,0.12)',
+                animation: 'supreme-fade-in 0.6s ease-out',
+              }}
+            >
+              <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none">
+                <circle cx="6" cy="6" r="5" stroke="rgba(0,229,160,0.5)" strokeWidth="0.6" />
+                <path d="M3.5 6.2 L5.2 7.8 L8.5 4.2" stroke="rgba(0,229,160,0.7)" strokeWidth="0.9" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span
+                className="text-[7px] font-bold uppercase tracking-[0.35em]"
+                style={{ color: 'rgba(0,229,160,0.5)', fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                Verified by Collector
+              </span>
+            </div>
+          )}
         </div>
 
         {/* ★ Highlight of the Evening Sale — Christie's star lot designation */}

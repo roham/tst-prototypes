@@ -8181,6 +8181,19 @@ export default function ArenaPage({
           } ${isCritical && !countdown.isEnded && proto.state !== 'purchasing' ? 'animate-urgency-fast' : ''}`}
           style={shaking && proto.state === 'browsing' && !countdown.isEnded ? { animation: 'buttonShake 0.3s ease-in-out' } : undefined}
         >
+          {/* LED scanline texture — jumbotron pixel grid on button surface */}
+          {/* NBA jumbotron displays have visible LED pixel grids. This subtle  */}
+          {/* scanline overlay makes the CTA feel like it's rendered on a       */}
+          {/* jumbotron display rather than a flat button. Deeply Arena.        */}
+          {!countdown.isEnded && proto.state !== 'purchasing' && (
+            <div
+              className="absolute inset-0 pointer-events-none z-[1] rounded-xl"
+              style={{
+                background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px)',
+              }}
+            />
+          )}
+
           {/* Multi-stage progress bar inside button during purchase */}
           {proto.state === 'purchasing' && (
             <div
@@ -8222,16 +8235,29 @@ export default function ArenaPage({
                 </span>
               </span>
             ) : (
-              <span className="flex items-center justify-center gap-2">
-                {/* Lock — instant secure purchase */}
-                <svg className="h-4 w-4 opacity-50" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M11 7V5a3 3 0 0 0-6 0v2H4a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-1Zm-4.5-2a1.5 1.5 0 0 1 3 0v2h-3V5Z" />
-                </svg>
-                {isCritical
-                  ? <>LAST CHANCE — ${moment.rarityTiers[selectedTierIdx].price} <span className="inline-flex items-center ml-1 font-mono tabular-nums text-[13px] opacity-80 border-l border-white/20 pl-2">{countdown.minutes}:{String(countdown.seconds).padStart(2, '0')}</span></>
-                  : isClosing
-                    ? `GOING FAST — $${moment.rarityTiers[selectedTierIdx].price}`
-                    : `OWN THIS MOMENT — $${moment.rarityTiers[selectedTierIdx].price}`}
+              <span className="flex flex-col items-center gap-1">
+                <span className="flex items-center justify-center gap-2">
+                  {/* Lock — instant secure purchase */}
+                  <svg className="h-4 w-4 opacity-50" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M11 7V5a3 3 0 0 0-6 0v2H4a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-1Zm-4.5-2a1.5 1.5 0 0 1 3 0v2h-3V5Z" />
+                  </svg>
+                  {isCritical
+                    ? <>LAST CHANCE — ${moment.rarityTiers[selectedTierIdx].price} <span className="inline-flex items-center ml-1 font-mono tabular-nums text-[13px] opacity-80 border-l border-white/20 pl-2">{countdown.minutes}:{String(countdown.seconds).padStart(2, '0')}</span></>
+                    : isClosing
+                      ? `GOING FAST — $${moment.rarityTiers[selectedTierIdx].price}`
+                      : `OWN THIS MOMENT — $${moment.rarityTiers[selectedTierIdx].price}`}
+                </span>
+                {/* Active buyers — live social proof inside the CTA */}
+                {/* At Whatnot/TikTok Shop, the "X people buying" count is       */}
+                {/* right on the purchase button. Deepest possible social proof.  */}
+                <span
+                  className="text-[9px] font-mono tabular-nums tracking-wide"
+                  style={{
+                    opacity: isCritical ? 0.7 : 0.45,
+                  }}
+                >
+                  {activeBuyers} buying right now
+                </span>
               </span>
             )}
           </span>

@@ -5398,6 +5398,110 @@ function ArenaLaserShow({ teamColor, isActive }: { teamColor: string; isActive: 
   );
 }
 
+/* ─── Arena Hardwood Court Lines — faint basketball court markings ──── */
+/* Every NBA arena has distinctive maple hardwood with painted court      */
+/* markings: center circle, free throw lanes, three-point arcs, sidelines. */
+/* These markings are the most iconic visual element of any basketball     */
+/* floor. At very low opacity behind content sections, they ground the     */
+/* page in the arena floor — you're standing courtside, not browsing a    */
+/* website. The lines are positioned to show a half-court view with the   */
+/* paint area centered under the main content zone.                       */
+
+function ArenaCourtLines({ teamColor, isActive }: { teamColor: string; isActive: boolean }) {
+  if (!isActive) return null;
+
+  // Court line color: team-color at very low opacity for subtle atmosphere
+  const lineColor = `${teamColor}08`;
+  const lineColorBright = `${teamColor}12`;
+
+  return (
+    <div className="absolute inset-0 z-[0] pointer-events-none overflow-hidden" aria-hidden>
+      <svg
+        viewBox="0 0 400 700"
+        className="absolute left-1/2 -translate-x-1/2 w-[120%] max-w-[500px]"
+        style={{ top: '42vh', height: '600px', opacity: 0.7 }}
+        fill="none"
+        preserveAspectRatio="xMidYMin slice"
+      >
+        {/* Sidelines — outer court boundary */}
+        <rect
+          x="30" y="0" width="340" height="600"
+          stroke={lineColor}
+          strokeWidth="1.5"
+          rx="0"
+        />
+
+        {/* Center circle */}
+        <circle
+          cx="200" cy="60"
+          r="50"
+          stroke={lineColorBright}
+          strokeWidth="1"
+        />
+        {/* Center circle inner dot */}
+        <circle
+          cx="200" cy="60"
+          r="3"
+          fill={lineColor}
+        />
+        {/* Half-court line */}
+        <line
+          x1="30" y1="60" x2="370" y2="60"
+          stroke={lineColor}
+          strokeWidth="1"
+        />
+
+        {/* Paint / Free throw lane */}
+        <rect
+          x="140" y="440" width="120" height="160"
+          stroke={lineColorBright}
+          strokeWidth="1.2"
+        />
+        {/* Free throw circle (top half — the solid half) */}
+        <path
+          d="M 140 440 A 60 60 0 0 1 260 440"
+          stroke={lineColor}
+          strokeWidth="1"
+        />
+        {/* Free throw circle (bottom half — the dashed half) */}
+        <path
+          d="M 140 440 A 60 60 0 0 0 260 440"
+          stroke={lineColor}
+          strokeWidth="0.8"
+          strokeDasharray="6 4"
+        />
+
+        {/* Restricted area arc — small semicircle at the basket */}
+        <path
+          d="M 175 600 A 28 28 0 0 1 225 600"
+          stroke={lineColor}
+          strokeWidth="0.8"
+        />
+
+        {/* Three-point arc */}
+        <path
+          d="M 30 520 L 30 540 Q 30 600 200 600 Q 370 600 370 540 L 370 520"
+          stroke={lineColorBright}
+          strokeWidth="1"
+          fill="none"
+        />
+
+        {/* Lane hash marks — small lines on the sides of the paint */}
+        {[460, 480, 500, 520].map((y) => (
+          <g key={y}>
+            <line x1="130" y1={y} x2="140" y2={y} stroke={lineColor} strokeWidth="0.8" />
+            <line x1="260" y1={y} x2="270" y2={y} stroke={lineColor} strokeWidth="0.8" />
+          </g>
+        ))}
+
+        {/* Backboard + rim at bottom baseline */}
+        <line x1="182" y1="588" x2="218" y2="588" stroke={lineColor} strokeWidth="1.5" />
+        <circle cx="200" cy="594" r="6" stroke={lineColor} strokeWidth="0.8" />
+      </svg>
+    </div>
+  );
+}
+
 /* ─── Arena Gate Scan — ticket scan entrance overlay ────────────── */
 
 function ArenaGateScan({ teamColor, seatLabel }: { teamColor: string; seatLabel: string }) {
@@ -7198,6 +7302,9 @@ export default function ArenaPage({
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0B0E14]">
+      {/* ─── Arena Hardwood Court Lines — faint court markings behind content ─── */}
+      <ArenaCourtLines teamColor={moment.teamColors.primary} isActive={!countdown.isEnded} />
+
       {/* ─── Arena Gate Scan — ticket scan entrance overlay ─── */}
       <ArenaGateScan
         teamColor={moment.teamColors.primary}
@@ -7676,6 +7783,23 @@ export default function ArenaPage({
           isClosing={isClosing}
           isCritical={isCritical}
           isActive={!countdown.isEnded}
+        />
+
+        {/* ── JUMBOTRON PIXEL GRID — LED screen dot pattern over hero image ── */}
+        {/* Real jumbotron displays are composed of discrete LED pixels visible  */}
+        {/* at close range. This fine repeating dot grid makes the hero image    */}
+        {/* look like it's rendered on an actual LED screen — the defining       */}
+        {/* visual signature of arena jumbotrons. Finer than the LED ribbon's    */}
+        {/* dot-matrix (2px vs 3px) because the jumbotron has higher pixel       */}
+        {/* density. Distinctly Arena: Supreme has gallery print texture,        */}
+        {/* Broadcast has film grain + scanlines.                                */}
+        <div
+          className="absolute inset-0 z-[6] pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.08) 0.4px, transparent 0.4px)',
+            backgroundSize: '2px 2px',
+            mixBlendMode: 'overlay',
+          }}
         />
 
         {/* Dark overlay for legibility */}

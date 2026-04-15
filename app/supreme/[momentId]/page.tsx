@@ -677,8 +677,8 @@ function WScreen({
     requestAnimationFrame(() => setShow(true));
     const t1 = setTimeout(() => setFlash(false), 400);
     const t2 = setTimeout(() => setShowDetails(true), 700);
-    const t3 = setTimeout(() => setShowSeal(true), 1600); // after edition counter locks (700+800+100)
-    const t4 = setTimeout(() => setShowShare(true), 1400);
+    const t3 = setTimeout(() => setShowSeal(true), 1400); // seal before share — authority first
+    const t4 = setTimeout(() => setShowShare(true), 1800);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
   }, []);
 
@@ -913,50 +913,44 @@ function WScreen({
                 className="h-[1px] mb-2"
                 style={{ backgroundColor: `${moment.teamColors.primary}10` }}
               />
-              <div className="flex items-center justify-between">
-                <span className="text-[8px] uppercase tracking-[0.2em] text-white/15">
-                  Hammer Price
-                </span>
-                <span
-                  className="text-[11px] font-mono tabular-nums font-bold text-white/40"
+              {/* Sale Record fields — staggered reveal like an auction clerk filling in the ledger */}
+              {[
+                { label: 'Hammer Price', value: `$${tierPrice.toFixed(2)}`, bold: true, large: true },
+                { label: 'Pre-Sale Estimate', value: `$${Math.round(tierPrice * 1.8).toFixed(2)}–$${Math.round(tierPrice * 3.2).toFixed(2)}`, bold: false, large: false },
+                { label: 'Acquired', value: dateStr, bold: false, large: false },
+                { label: 'Status', value: 'Sold', bold: true, large: false, teal: true },
+              ].map((field, idx) => (
+                <div
+                  key={field.label}
+                  className="flex items-center justify-between"
+                  style={{
+                    marginTop: idx === 0 ? 0 : idx === 1 ? 2 : 4,
+                    animation: showSeal ? `supreme-field-reveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${0.15 + idx * 0.12}s both` : undefined,
+                  }}
                 >
-                  ${tierPrice.toFixed(2)}
-                </span>
-              </div>
-              {/* Pre-sale estimate — shows buyer acquired below market estimate */}
-              <div className="flex items-center justify-between mt-0.5">
-                <span className="text-[7px] uppercase tracking-[0.2em] text-white/10">
-                  Pre-Sale Estimate
-                </span>
-                <span className="text-[8px] font-mono tabular-nums text-white/15">
-                  ${Math.round(tierPrice * 1.8).toFixed(2)}–${Math.round(tierPrice * 3.2).toFixed(2)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between mt-1">
-                <span className="text-[8px] uppercase tracking-[0.2em] text-white/15">
-                  Acquired
-                </span>
-                <span className="text-[8px] font-mono tabular-nums text-white/25">
-                  {dateStr}
-                </span>
-              </div>
-              <div className="flex items-center justify-between mt-1">
-                <span className="text-[8px] uppercase tracking-[0.2em] text-white/15">
-                  Status
-                </span>
-                <span
-                  className="text-[8px] font-bold uppercase tracking-[0.2em]"
-                  style={{ color: '#00E5A0' }}
-                >
-                  Sold
-                </span>
-              </div>
+                  <span className={`text-[${field.large ? '8' : '7'}px] uppercase tracking-[0.2em] text-white/${field.large ? '15' : '10'}`}>
+                    {field.label}
+                  </span>
+                  <span
+                    className={`text-[${field.large ? '11' : '8'}px] font-mono tabular-nums ${field.bold ? 'font-bold' : ''}`}
+                    style={{ color: field.teal ? '#00E5A0' : `rgba(255,255,255,${field.large ? 0.4 : field.bold ? 0.4 : 0.15})` }}
+                  >
+                    {field.value}
+                  </span>
+                </div>
+              ))}
               {/* Buyer's Premium — the surcharge every auction house adds */}
               <div
                 className="h-[1px] mt-2 mb-1.5"
-                style={{ backgroundColor: `${moment.teamColors.primary}08` }}
+                style={{
+                  backgroundColor: `${moment.teamColors.primary}08`,
+                  animation: showSeal ? 'supreme-field-reveal 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.65s both' : undefined,
+                }}
               />
-              <div className="flex items-center justify-between">
+              <div
+                className="flex items-center justify-between"
+                style={{ animation: showSeal ? 'supreme-field-reveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.72s both' : undefined }}
+              >
                 <span className="text-[7px] uppercase tracking-[0.2em] text-white/10">
                   Buyer&apos;s Premium
                 </span>
@@ -964,7 +958,10 @@ function WScreen({
                   Waived
                 </span>
               </div>
-              <div className="flex items-center justify-between mt-0.5">
+              <div
+                className="flex items-center justify-between mt-0.5"
+                style={{ animation: showSeal ? 'supreme-field-reveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.82s both' : undefined }}
+              >
                 <span className="text-[7px] uppercase tracking-[0.2em] text-white/10">
                   Total
                 </span>

@@ -346,6 +346,12 @@ body {
   100% { transform: scale(2.8); opacity: 0; border-width: 0.5px; }
 }
 
+/* Supreme sale record field reveal — each row fades in like a clerk filling the ledger */
+@keyframes supreme-field-reveal {
+  0% { opacity: 0; transform: translateX(6px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
 /* Supreme authentication seal — ring draws in around edition number on W screen */
 @keyframes supreme-seal-draw {
   0% { stroke-dashoffset: 301.6; opacity: 0; }

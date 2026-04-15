@@ -2088,3 +2088,10 @@
 - At 9.45 ceiling, structural/pacing improvements can register +0.01 in Emotion and Purity simultaneously because they change how the drop *feels* rather than how it looks. But composite still rounds to 9.45 due to 5-dimension averaging.
 - Halftime (50% mark) gets extra treatment (2.8s vs 2s, "Halftime Report" subtext, larger text) because it's the most dramatic pause in any NBA game — the crowd expects something special.
 - Current scores: Supreme 9.43, Broadcast 9.43, Arena 9.45. Supreme next (rotation). Supreme weakest dimensions: need to check current state. Arena Emotion and Purity each at 9.46 now.
+
+## Cycle 267 Learnings
+- The "person speaking directly to the viewer" is the highest-converting trust signal in auction UX — Sotheby's and Phillips use specialist lot videos for premium lots. In our text-only context, the player's own words (artist's voice) create the same intimacy.
+- Placing the player quote BETWEEN the institutional prose (Catalogue Essay by a specialist) and the clinical data (Condition Report) creates an emotional sandwich: authority → intimacy → verification. The reader moves from the house's perspective → the player's perspective → the facts.
+- Per-moment quote content should reveal character, not just recap the play. Bam's "Miami's not done" shows franchise loyalty. Jokić's "the trust" shows selflessness. SGA's "first brick of something permanent" shows commitment to OKC. These character moments convert better than stats.
+- Georgia serif italic at 18% white opacity with team-color accents fits seamlessly into the existing catalogue typographic hierarchy. The large opening quotation mark (28px) at 15% team-color opacity provides visual landmark without disrupting Supreme's minimal aesthetic.
+- Current scores: Supreme 9.43, Broadcast 9.43, Arena 9.45. Next cycle: Broadcast (rotation). Broadcast weakest dimensions remain VP and Conv at 9.43.

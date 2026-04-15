@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState, useEffect, useRef } from 'react';
+import { use, useState, useEffect, useRef, useCallback } from 'react';
 import { getMoment, SALE_DURATION_MS, type Moment, type RarityTier } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
 import { usePrototypeState } from '@/lib/use-prototype-state';
@@ -6155,6 +6155,35 @@ export default function ArenaPage({
   }, [proto.state]);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
 
+  /* ── Crowd Noise Tap Zone — fan participation mechanic ──────── */
+  /* At NBA arenas, the jumbotron shows "MAKE SOME NOISE" and fans   */
+  /* tap/stomp/clap to fill a decibel meter. This tappable zone     */
+  /* lets users participate in the same mechanic on the page.        */
+  const [crowdNoiseLevel, setCrowdNoiseLevel] = useState(0);
+  const crowdNoiseDecayRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const crowdNoiseRoarRef = useRef(false);
+
+  // Decay noise level over time
+  useEffect(() => {
+    crowdNoiseDecayRef.current = setInterval(() => {
+      setCrowdNoiseLevel((prev) => Math.max(0, prev - 0.8));
+    }, 200);
+    return () => { if (crowdNoiseDecayRef.current) clearInterval(crowdNoiseDecayRef.current); };
+  }, []);
+
+  const handleNoiseTap = useCallback(() => {
+    setCrowdNoiseLevel((prev) => {
+      const next = Math.min(10, prev + 1.5);
+      if (next >= 9.5 && !crowdNoiseRoarRef.current) {
+        crowdNoiseRoarRef.current = true;
+        CROWD_HAPTIC.celebration();
+        setTimeout(() => { crowdNoiseRoarRef.current = false; }, 3000);
+      }
+      return next;
+    });
+    CROWD_HAPTIC.hornBlast();
+  }, []);
+
   /* ── CTA slam burst — dramatic ring on purchase press ──────── */
   const [ctaSlamKey, setCtaSlamKey] = useState(0);
 
@@ -7516,6 +7545,123 @@ export default function ArenaPage({
                 >
                   Upgrade
                 </span>
+              </div>
+            </div>
+          </button>
+        </div>
+      )}
+
+      {/* ─── CROWD NOISE TAP ZONE — "MAKE SOME NOISE" fan participation ─── */}
+      {/* The jumbotron "MAKE SOME NOISE" meter is the #1 fan participation  */}
+      {/* mechanic at every NBA arena. Fans tap/stomp to fill a decibel     */}
+      {/* meter. At max level (≥9.5), triggers a celebration haptic burst.  */}
+      {/* Noise decays over time, so fans must keep tapping to maintain it. */}
+      {!countdown.isEnded && proto.state === 'browsing' && (
+        <div className="mx-4 mt-2 mb-1 relative z-[1]">
+          <button
+            onClick={handleNoiseTap}
+            className="w-full relative overflow-hidden rounded-lg px-3.5 py-3 cursor-pointer transition-transform active:scale-[0.96]"
+            style={{
+              backgroundColor: crowdNoiseLevel >= 9.5
+                ? `${moment.teamColors.primary}20`
+                : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${crowdNoiseLevel >= 9.5 ? `${moment.teamColors.primary}40` : 'rgba(255,255,255,0.06)'}`,
+              transition: 'background-color 0.3s, border-color 0.3s',
+            }}
+          >
+            {/* Scanline texture */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px)',
+              }}
+            />
+            {/* Roar flash overlay */}
+            {crowdNoiseRoarRef.current && crowdNoiseLevel >= 9.5 && (
+              <div
+                className="absolute inset-0 pointer-events-none rounded-lg"
+                style={{
+                  backgroundColor: `${moment.teamColors.primary}15`,
+                  animation: 'arena-cta-pulse-ring 0.8s ease-out forwards',
+                }}
+              />
+            )}
+            <div className="relative flex items-center justify-between gap-3">
+              {/* Left: label + icon */}
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="shrink-0 flex items-center justify-center h-6 w-6 rounded-full"
+                  style={{
+                    backgroundColor: crowdNoiseLevel >= 9.5
+                      ? `${moment.teamColors.primary}30`
+                      : 'rgba(255,255,255,0.06)',
+                    transition: 'background-color 0.3s',
+                  }}
+                >
+                  {/* Megaphone icon */}
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M3 7h2l4-3v8l-4-3H3a1 1 0 01-1-1V8a1 1 0 011-1z"
+                      fill={crowdNoiseLevel >= 5 ? moment.teamColors.primary : 'rgba(255,255,255,0.3)'}
+                      style={{ transition: 'fill 0.3s' }}
+                    />
+                    <path
+                      d="M12 5.5c.8.8 1.2 1.8 1.2 2.5s-.4 1.7-1.2 2.5"
+                      stroke={crowdNoiseLevel >= 7.5 ? moment.teamColors.primary : 'rgba(255,255,255,0.15)'}
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                      style={{ transition: 'stroke 0.3s' }}
+                    />
+                    <path
+                      d="M10.5 6.8c.4.4.7.9.7 1.2s-.3.8-.7 1.2"
+                      stroke={crowdNoiseLevel >= 3 ? `${moment.teamColors.primary}80` : 'rgba(255,255,255,0.1)'}
+                      strokeWidth="1"
+                      strokeLinecap="round"
+                      style={{ transition: 'stroke 0.3s' }}
+                    />
+                  </svg>
+                </div>
+                <div className="flex flex-col">
+                  <span
+                    className="text-[8px] font-bold uppercase tracking-[0.3em]"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: crowdNoiseLevel >= 9.5 ? moment.teamColors.primary : 'rgba(255,255,255,0.35)',
+                      transition: 'color 0.3s',
+                    }}
+                  >
+                    {crowdNoiseLevel >= 9.5 ? 'CROWD GOES WILD!' : crowdNoiseLevel >= 5 ? 'LOUDER!' : 'MAKE SOME NOISE'}
+                  </span>
+                  <span className="text-[6.5px] font-mono uppercase tracking-[0.15em] text-white/15">
+                    Tap to fill the meter
+                  </span>
+                </div>
+              </div>
+              {/* Right: decibel meter (8 bars) */}
+              <div className="flex items-end gap-[2px] h-5">
+                {Array.from({ length: 8 }, (_, i) => {
+                  const threshold = (i + 1) * 1.25;
+                  const active = crowdNoiseLevel >= threshold;
+                  const isHot = i >= 6;
+                  return (
+                    <div
+                      key={i}
+                      className="rounded-[1px] transition-all duration-150"
+                      style={{
+                        width: '3px',
+                        height: `${8 + i * 1.5}px`,
+                        backgroundColor: active
+                          ? isHot
+                            ? moment.teamColors.primary
+                            : `${moment.teamColors.primary}80`
+                          : 'rgba(255,255,255,0.06)',
+                        boxShadow: active && isHot
+                          ? `0 0 6px ${moment.teamColors.primary}40`
+                          : 'none',
+                      }}
+                    />
+                  );
+                })}
               </div>
             </div>
           </button>

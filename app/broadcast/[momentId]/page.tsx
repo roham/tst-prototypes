@@ -588,6 +588,99 @@ function BreakingNewsCutIn({ moment, tier, purchaseStage, rgb }: {
 }
 
 // ---------------------------------------------------------------------------
+// Broadcast Bumper — ESPN production transition between purchase and W screen
+// In real TV production, segments transition through a "bumper" — a brief
+// animated slate with the show's branding, team graphics, and a swoosh wipe.
+// This plays when purchasing→confirmed, creating the beat that Supreme fills
+// with the gavel-fall curtain and Arena fills with the blackout blast.
+// ---------------------------------------------------------------------------
+
+function BroadcastBumper({ teamColor, rgb, playerName }: {
+  teamColor: string; rgb: string; playerName: string;
+}) {
+  const [phase, setPhase] = useState<'swoosh' | 'slate' | 'done'>('swoosh');
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase('slate'), 350);
+    const t2 = setTimeout(() => setPhase('done'), 950);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+
+  if (phase === 'done') return null;
+
+  return (
+    <div className="fixed inset-0 z-[60] pointer-events-none overflow-hidden">
+      {/* Dark backdrop */}
+      <div
+        className="absolute inset-0"
+        style={{ backgroundColor: 'rgba(11,14,20,0.95)' }}
+      />
+
+      {/* Swoosh wipe — diagonal team-color band sweeps across screen */}
+      {phase === 'swoosh' && (
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(105deg, transparent 0%, transparent 35%, ${teamColor} 48%, rgba(${rgb},0.6) 52%, transparent 65%, transparent 100%)`,
+            animation: 'broadcast-bumper-swoosh 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          }}
+        />
+      )}
+
+      {/* Production slate — "COLLECTED" centered text */}
+      {phase === 'slate' && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+          {/* Horizontal accent line — top */}
+          <div
+            className="h-[1px] w-[120px]"
+            style={{
+              background: `linear-gradient(90deg, transparent, ${teamColor}60, transparent)`,
+              animation: 'broadcast-bumper-line 0.4s ease-out forwards',
+            }}
+          />
+          {/* COLLECTED text */}
+          <span
+            className="text-[28px] font-bold uppercase tracking-[0.25em]"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: '#00E5A0',
+              textShadow: '0 0 30px rgba(0,229,160,0.3)',
+              animation: 'broadcast-bumper-text 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            }}
+          >
+            Collected
+          </span>
+          {/* Player name subtitle */}
+          <span
+            className="text-[11px] uppercase tracking-[0.2em] text-white/30"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              animation: 'broadcast-bumper-text 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both',
+            }}
+          >
+            {playerName}
+          </span>
+          {/* Horizontal accent line — bottom */}
+          <div
+            className="h-[1px] w-[120px]"
+            style={{
+              background: `linear-gradient(90deg, transparent, ${teamColor}60, transparent)`,
+              animation: 'broadcast-bumper-line 0.4s ease-out forwards',
+            }}
+          />
+          {/* Production label */}
+          <span
+            className="text-[7px] font-mono uppercase tracking-[0.3em] text-white/10 mt-2"
+          >
+            TST Broadcast &middot; Special Report
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Commentator Call Banner — iconic play-by-play announcer call on replay
 // ESPN/TNT replays always overlay the announcer's call as a dramatic text
 // treatment. "BANG!" "ARE YOU KIDDING ME?!" "THROWS IT DOWN!" — the voice
@@ -3580,6 +3673,20 @@ export default function BroadcastPage() {
     }
   }, [proto.state, purchaseStage]);
 
+  // Broadcast bumper — production transition between purchasing and W screen
+  // Intercepts the purchasing→confirmed transition with a swoosh wipe + "COLLECTED" slate
+  const [bumperActive, setBumperActive] = useState(false);
+  const prevProtoState = useRef(proto.state);
+  useEffect(() => {
+    const prev = prevProtoState.current;
+    prevProtoState.current = proto.state;
+    if (prev === 'purchasing' && proto.state === 'confirmed') {
+      setBumperActive(true);
+      const t = setTimeout(() => setBumperActive(false), 950);
+      return () => clearTimeout(t);
+    }
+  }, [proto.state]);
+
   // Sticky bottom bar: show when main CTA scrolls out of viewport
   useEffect(() => {
     const el = ctaRef.current;
@@ -3715,6 +3822,17 @@ export default function BroadcastPage() {
 
   // ── Confirmed: Certificate of Ownership ────────────────────────────────
   if (proto.state === 'confirmed') {
+    if (bumperActive) {
+      return (
+        <div className="fixed inset-0 z-50 bg-[#0B0E14]">
+          <BroadcastBumper
+            teamColor={moment.teamColors.primary}
+            rgb={rgb}
+            playerName={moment.player}
+          />
+        </div>
+      );
+    }
     return (
       <CertificateScreen
         moment={moment}

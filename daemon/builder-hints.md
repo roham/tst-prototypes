@@ -2081,3 +2081,10 @@
 - Priority logic for scrollspy (deepest visible section wins) prevents flickering when multiple sections are simultaneously visible — important when sections are short.
 - HTMLDivElement vs HTMLElement typing matters for refs on div elements — Next.js 16 strict mode rejects HTMLElement refs on div tags.
 - Current scores: Supreme 9.43, Broadcast 9.43, Arena 9.45. All three within 0.02. Next cycle: Arena (rotation). Arena scores all clustered at 9.44-9.45 ceiling.
+
+## Cycle 266 Learnings
+- Quarter buzzer transitions add narrative pacing to the drop timeline — it no longer feels like a continuous countdown, but like a game with acts. This is the first "structural" addition (vs content/visual additions) in recent cycles.
+- The useQuarterBuzzer hook pattern (track previous value via useRef, detect transitions, fire effect + timeout) is reusable for any state-change-driven overlay.
+- At 9.45 ceiling, structural/pacing improvements can register +0.01 in Emotion and Purity simultaneously because they change how the drop *feels* rather than how it looks. But composite still rounds to 9.45 due to 5-dimension averaging.
+- Halftime (50% mark) gets extra treatment (2.8s vs 2s, "Halftime Report" subtext, larger text) because it's the most dramatic pause in any NBA game — the crowd expects something special.
+- Current scores: Supreme 9.43, Broadcast 9.43, Arena 9.45. Supreme next (rotation). Supreme weakest dimensions: need to check current state. Arena Emotion and Purity each at 9.46 now.

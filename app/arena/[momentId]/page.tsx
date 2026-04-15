@@ -5598,6 +5598,61 @@ function ArenaGateScan({ teamColor, seatLabel }: { teamColor: string; seatLabel:
 }
 
 // ---------------------------------------------------------------------------
+// Arena LED Court Ripple — touch-responsive ripple on hero section.
+// Modern NBA All-Star Tech Summit and practice facilities use LED-embedded
+// court panels that light up on contact. Tapping the hero fires a team-color
+// expanding ring from the touch point, making the hero feel alive and
+// interactive like an arena LED court. Max 3 concurrent ripples for perf.
+// ---------------------------------------------------------------------------
+
+interface CourtRipple { id: number; x: number; y: number }
+
+function useHeroRipple() {
+  const [ripples, setRipples] = useState<CourtRipple[]>([]);
+  const nextId = useRef(0);
+
+  const spawn = useCallback((x: number, y: number) => {
+    const id = nextId.current++;
+    setRipples((prev) => [...prev.slice(-2), { id, x, y }]);
+    setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 900);
+  }, []);
+
+  const handleInteraction = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
+    const x = ((clientX - rect.left) / rect.width) * 100;
+    const y = ((clientY - rect.top) / rect.height) * 100;
+    spawn(x, y);
+  }, [spawn]);
+
+  return { ripples, handleInteraction };
+}
+
+function HeroCourtRipples({ ripples, teamColor }: { ripples: CourtRipple[]; teamColor: string }) {
+  if (ripples.length === 0) return null;
+  return (
+    <div className="pointer-events-none absolute inset-0 z-[9] overflow-hidden">
+      {ripples.map((r) => (
+        <div
+          key={r.id}
+          className="absolute rounded-full"
+          style={{
+            left: `${r.x}%`,
+            top: `${r.y}%`,
+            width: '200px',
+            height: '200px',
+            border: `2px solid ${teamColor}`,
+            boxShadow: `0 0 12px ${teamColor}50, inset 0 0 8px ${teamColor}20`,
+            animation: 'arena-court-ripple 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Arena Shot Clock — 24-second basketball shot clock for purchase decisions.
 // Every NBA possession has 24 seconds. When the user enters the tier
 // selection zone, the shot clock starts ticking. If it expires, a brief
@@ -7153,6 +7208,9 @@ export default function ArenaPage({
   /* ── Crowd wave — stadium wave sweeps across on velocity spike ── */
   const crowdWaveActive = useCrowdWave(liveVelocity, countdown.isEnded);
 
+  /* ── LED court ripple — touch-responsive hero ripple ── */
+  const heroRipple = useHeroRipple();
+
   /* ── T-Shirt Cannon — periodic catch mini-game ── */
   const tshirtCannon = useTshirtCannon(countdown.isEnded, proto.state === 'browsing');
 
@@ -7705,7 +7763,13 @@ export default function ArenaPage({
       )}
 
       {/* ─── Moment Hero Section (40vh) ─── */}
-      <section className="relative flex h-[40vh] min-h-[260px] flex-col justify-end overflow-hidden">
+      <section
+        className="relative flex h-[40vh] min-h-[260px] flex-col justify-end overflow-hidden"
+        onClick={!countdown.isEnded ? heroRipple.handleInteraction : undefined}
+        onTouchStart={!countdown.isEnded ? heroRipple.handleInteraction : undefined}
+      >
+        {/* LED Court Ripple — touch-responsive team-color rings on tap */}
+        <HeroCourtRipples ripples={heroRipple.ripples} teamColor={moment.teamColors.primary} />
         {/* Action image — jumbotron replay layer */}
         <div
           className={`absolute inset-0 bg-cover bg-center transition-all duration-1000${replayActive ? ' arena-replay-hero' : ''}`}

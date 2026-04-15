@@ -1720,6 +1720,13 @@ body {
   animation: arena-led-scan 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Arena LED Court Ripple — touch-responsive ripple on hero like LED-embedded court panels */
+@keyframes arena-court-ripple {
+  0%   { transform: translate(-50%, -50%) scale(0); opacity: 0.6; }
+  40%  { opacity: 0.35; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
 /* Arena LED Ribbon — continuous horizontal scroll like jumbotron ring ticker */
 @keyframes arena-led-ribbon {
   0%   { transform: translateX(0); }

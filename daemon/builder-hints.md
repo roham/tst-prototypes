@@ -2060,3 +2060,10 @@
 - Both improvements together create a "production design language" for the transaction section: the bumper introduces it, the frame highlights the CTA. This coordinated approach moves VP and Conv simultaneously.
 - At 9.43 scores, these incremental broadcast-vocabulary additions still register +0.01 because they fill genuine gaps — the transaction section previously had no broadcast graphic framing at all.
 - Current scores: Supreme 9.43, Broadcast 9.43, Arena 9.45. Supreme and Broadcast now tied at 9.43. Arena still leads by 0.02. Next cycle: Arena (rotation). Arena weakest dimensions: all clustered near 9.44-9.45 ceiling.
+
+## Cycle 263 Learnings
+- At 9.45 ceiling, single-dimension +0.01 improvements get absorbed by composite rounding. Need multi-dimension improvements to register delta.
+- Social proof INSIDE the CTA button (not just near it) is the deepest possible placement. "X buying right now" directly in the button creates urgency at the exact conversion point.
+- LED scanline textures (repeating-linear-gradient 2px) are now used consistently across Arena's interactive cards (Seat Upgrade, Crowd Noise, CTA). This establishes a "jumbotron display" design language.
+- Reusing existing state variables (activeBuyers was maintained but underutilized) is more efficient than creating new state — no new hooks or effects needed.
+- Current scores: Supreme 9.43, Broadcast 9.43, Arena 9.45. Supreme next (rotation). Supreme and Broadcast tied at 9.43, both 0.02 below Arena. Supreme weakest dimensions: VP (9.42), Conv (9.41), Int (9.41). Conversion and Interaction tied at 9.41 as weakest.

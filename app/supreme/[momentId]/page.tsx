@@ -1377,6 +1377,12 @@ export default function SupremePage() {
   // effect means you're far more likely to follow through with a bid.
   const [interestRegistered, setInterestRegistered] = useState(false);
 
+  // Telephone Bid — at Christie's/Sotheby's, arranging a telephone bid is the
+  // strongest pre-auction commitment: a named specialist will call you before
+  // the lot opens. This is the second step in the commitment ladder:
+  // Register Interest → Arrange Telephone Bid → Confirm Bid
+  const [telephoneBidArranged, setTelephoneBidArranged] = useState(false);
+
   // CTA sonar invite — single ring pulse on page load, draws eye to button
   const [sonarFired, setSonarFired] = useState(false);
   useEffect(() => {
@@ -1670,11 +1676,14 @@ export default function SupremePage() {
   const isEnded = dropPhase === 'ENDED';
 
   let buttonBg = '#00E5A0';
-  // CTA upgrades from "OWN THIS MOMENT" to "PLACE BID" after interest registration
-  // — the language shift mirrors the auction journey: browsing → committed bidder
-  let buttonText = interestRegistered
-    ? `PLACE BID — ${scrambledPrice}`
-    : `OWN THIS MOMENT — ${scrambledPrice}`;
+  // CTA upgrades through 3-step commitment ladder:
+  // "OWN THIS MOMENT" → "PLACE BID" (after Register Interest) → "CONFIRM BID" (after Telephone Bid)
+  // Each upgrade reflects deepening auction commitment: browser → registered → telephone bidder
+  let buttonText = telephoneBidArranged
+    ? `CONFIRM BID — ${scrambledPrice}`
+    : interestRegistered
+      ? `PLACE BID — ${scrambledPrice}`
+      : `OWN THIS MOMENT — ${scrambledPrice}`;
   let buttonTextColor = '#0B0E14';
   let buttonAnimation = '';
 
@@ -4017,6 +4026,85 @@ export default function SupremePage() {
               </>
             )}
           </button>
+        </div>
+      )}
+
+      {/* ============================================================= */}
+      {/* TELEPHONE BID — second commitment step in the auction ladder    */}
+      {/* At Christie's/Sotheby's, arranging a telephone bid means a     */}
+      {/* specialist will call you before the lot opens. It's the         */}
+      {/* strongest pre-auction commitment: you've given your number,     */}
+      {/* a named person is assigned to you, the house expects your bid.  */}
+      {/* Unlocks after Register Interest — progressive disclosure.       */}
+      {/* Completing both upgrades CTA from "PLACE BID" → "CONFIRM BID"  */}
+      {/* — the most decisive auction language.                           */}
+      {/* Distinctly Supreme: Arena would never have telephone bids       */}
+      {/* (live commerce chaos), Broadcast would use a call-in number.    */}
+      {/* Supreme has the private specialist telephone line.              */}
+      {/* ============================================================= */}
+      {!isEnded && !isPurchasing && interestRegistered && !telephoneBidArranged && (
+        <div className="flex items-center justify-center px-5 mb-1 supreme-info-enter">
+          <button
+            onClick={() => {
+              setTelephoneBidArranged(true);
+              HAPTIC.tierSelect();
+            }}
+            className="flex items-center gap-2 py-1 transition-all duration-500 active:scale-[0.97]"
+            style={{ opacity: 0.5 }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.7'; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.5'; }}
+          >
+            {/* Telephone icon — minimal handset */}
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="none" style={{ opacity: 0.3 }}>
+              <path
+                d="M1.5 0.5C1.5 0.5 2.5 0.5 3 1.5C3.5 2.5 2 3.5 2 3.5C2 3.5 3 5.5 4.5 6C6 6.5 6 5.5 6 5.5C7 5 7.5 6 7.5 6C7.5 6 7.5 7.5 6 7.5C4.5 7.5 1 5.5 0.5 3C0 0.5 1.5 0.5 1.5 0.5Z"
+                fill="white"
+              />
+            </svg>
+            <span
+              className="text-[7.5px] uppercase tracking-[0.2em]"
+              style={{
+                fontFamily: 'Georgia, serif',
+                color: 'rgba(255,255,255,0.14)',
+              }}
+            >
+              Arrange Telephone Bid
+            </span>
+          </button>
+        </div>
+      )}
+      {/* Telephone bid confirmation — specialist assigned */}
+      {!isEnded && !isPurchasing && telephoneBidArranged && (
+        <div className="flex items-center justify-center px-5 mb-1 supreme-info-enter">
+          <div className="flex items-center gap-2 py-1">
+            {/* Filled telephone icon — confirmed */}
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="none" style={{ opacity: 0.25 }}>
+              <path
+                d="M1.5 0.5C1.5 0.5 2.5 0.5 3 1.5C3.5 2.5 2 3.5 2 3.5C2 3.5 3 5.5 4.5 6C6 6.5 6 5.5 6 5.5C7 5 7.5 6 7.5 6C7.5 6 7.5 7.5 6 7.5C4.5 7.5 1 5.5 0.5 3C0 0.5 1.5 0.5 1.5 0.5Z"
+                fill={tierAccentColor}
+              />
+            </svg>
+            <span
+              className="text-[7.5px] uppercase tracking-[0.2em]"
+              style={{
+                fontFamily: 'Georgia, serif',
+                color: `${tierAccentColor}40`,
+              }}
+            >
+              Telephone Bid Arranged
+            </span>
+            <span className="text-[6px] font-mono text-white/8">·</span>
+            <span
+              className="text-[7px] font-mono tracking-[0.1em]"
+              style={{
+                fontFamily: 'Georgia, serif',
+                fontStyle: 'italic',
+                color: 'rgba(255,255,255,0.1)',
+              }}
+            >
+              {moment.team === 'MIA' ? 'R. Park' : moment.team === 'DEN' ? 'A. Kovalev' : 'J. Thornton'} will call
+            </span>
+          </div>
         </div>
       )}
 

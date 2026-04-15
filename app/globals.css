@@ -890,6 +890,22 @@ body {
   animation: broadcast-shimmer 4s ease-in-out infinite;
 }
 
+/* Broadcast tier claim wash — team-color sweep on purchase events */
+@keyframes broadcast-tier-claim-wash {
+  0% { opacity: 0.8; transform: translateX(-100%); }
+  15% { opacity: 1; transform: translateX(0); }
+  70% { opacity: 0.6; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(0); }
+}
+
+/* Broadcast tier claim label — "JUST COLLECTED" micro-label slide-in */
+@keyframes broadcast-tier-claim-label {
+  0% { opacity: 0; transform: translateX(-8px); }
+  10% { opacity: 1; transform: translateX(0); }
+  75% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(0); }
+}
+
 /* Broadcast low-stock pulse — amber urgency for scarce tiers */
 @keyframes broadcast-low-stock {
   0%, 100% { opacity: 1; }

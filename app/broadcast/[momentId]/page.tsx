@@ -3477,6 +3477,27 @@ function useAcquisitionFeed(baseClaimed: number, isEnded: boolean) {
   return latest;
 }
 
+// Tier claim flash — picks a random tier to "flash" when an acquisition fires.
+// Broadcast-style: a brief editorial reaction on the card, not Arena-style
+// pulse rings. The card gets a team-color bottom wipe with "NEW" label.
+function useTierClaimFlash(event: AcquisitionEvent | null, tierCount: number) {
+  const [flashIdx, setFlashIdx] = useState<number | null>(null);
+  const [flashKey, setFlashKey] = useState(0);
+  const prevEventId = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!event || event.id === prevEventId.current) return;
+    prevEventId.current = event.id;
+    const idx = Math.floor(Math.random() * tierCount);
+    setFlashIdx(idx);
+    setFlashKey((k) => k + 1);
+    const t = setTimeout(() => setFlashIdx(null), 2200);
+    return () => clearTimeout(t);
+  }, [event, tierCount]);
+
+  return { flashIdx, flashKey };
+}
+
 function AcquisitionLowerThird({ event, teamColor, rgb }: {
   event: AcquisitionEvent;
   teamColor: string;
@@ -3881,6 +3902,7 @@ export default function BroadcastPage() {
   const recentCollectors = useRecentCollectors();
   const smpteTimecode = useSmpteTimecode(countdown.isEnded);
   const acquisitionEvent = useAcquisitionFeed(moment?.editionsClaimed ?? 0, countdown.isEnded);
+  const tierClaimFlash = useTierClaimFlash(acquisitionEvent, moment.rarityTiers.length);
 
   // ── Confirmed: Certificate of Ownership ────────────────────────────────
   if (proto.state === 'confirmed') {
@@ -5120,6 +5142,50 @@ export default function BroadcastPage() {
             </span>
           </div>
 
+          {/* ── ACQUISITION TICKER — live "THIS JUST IN" crawl at the decision point ── */}
+          {/* The floating AcquisitionLowerThird is at viewport bottom — easy to miss. */}
+          {/* This compact ticker puts social proof AT the tier selector, right where  */}
+          {/* the user is deciding which edition to buy. Broadcast-style: news crawl,  */}
+          {/* not a raw feed. Appears only when an acquisition event is active.        */}
+          {acquisitionEvent && !isPurchasing && !countdown.isEnded && (
+            <div
+              key={acquisitionEvent.id}
+              className="mb-3 overflow-hidden rounded-sm"
+              style={{
+                backgroundColor: `rgba(${rgb},0.05)`,
+                border: `1px solid rgba(${rgb},0.08)`,
+                animation: 'broadcast-tier-claim-label 3s ease-out forwards',
+              }}
+            >
+              <div className="flex items-center gap-2.5 px-3 py-1.5">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <div
+                    className="h-[4px] w-[4px] rounded-full"
+                    style={{
+                      backgroundColor: '#EF4444',
+                      boxShadow: '0 0 4px rgba(239,68,68,0.5)',
+                      animation: 'pulse 1.5s ease-in-out infinite',
+                    }}
+                  />
+                  <span
+                    className="text-[7px] font-bold uppercase tracking-[0.3em]"
+                    style={{
+                      color: moment.teamColors.primary,
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                    }}
+                  >
+                    This Just In
+                  </span>
+                </div>
+                <div className="h-3 w-[1px] bg-white/8 shrink-0" />
+                <span className="text-[9px] text-white/40 tracking-wide truncate">
+                  <span className="font-semibold text-white/55">{acquisitionEvent.name}</span>
+                  {' '}collected edition #{acquisitionEvent.edition.toLocaleString()}
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* Rarity tier selector — horizontal row */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4">
             {moment.rarityTiers.map((tier, idx) => (
@@ -5130,6 +5196,8 @@ export default function BroadcastPage() {
                 teamColor={moment.teamColors.primary}
                 rgb={rgb}
                 onSelect={() => handleTierSelect(idx)}
+                isFlashing={tierClaimFlash.flashIdx === idx}
+                flashKey={tierClaimFlash.flashKey}
               />
             ))}
           </div>
@@ -5822,12 +5890,16 @@ function TierCard({
   teamColor,
   rgb,
   onSelect,
+  isFlashing,
+  flashKey,
 }: {
   tier: RarityTier;
   isSelected: boolean;
   teamColor: string;
   rgb: string;
   onSelect: () => void;
+  isFlashing?: boolean;
+  flashKey?: number;
 }) {
   const isPremium = tier.tier === 'Legendary' || tier.tier === 'Ultimate';
   const isLowStock = tier.remaining <= 5;
@@ -5840,17 +5912,21 @@ function TierCard({
         isPremium && isSelected ? 'broadcast-tier-shimmer' : ''
       }`}
       style={{
-        borderColor: isSelected
-          ? isLowStock ? '#F59E0B' : teamColor
-          : 'rgba(255,255,255,0.06)',
+        borderColor: isFlashing
+          ? teamColor
+          : isSelected
+            ? isLowStock ? '#F59E0B' : teamColor
+            : 'rgba(255,255,255,0.06)',
         backgroundColor: isSelected
           ? 'rgba(255,255,255,0.035)'
           : 'rgba(255,255,255,0.015)',
-        boxShadow: isSelected
-          ? isLowStock
-            ? `inset 0 1px 0 rgba(255,255,255,0.05), 0 0 20px rgba(245,158,11,0.12)`
-            : `inset 0 1px 0 rgba(255,255,255,0.05), 0 0 16px rgba(${rgb},0.10)`
-          : 'none',
+        boxShadow: isFlashing
+          ? `inset 0 1px 0 rgba(255,255,255,0.05), 0 0 16px rgba(${rgb},0.15)`
+          : isSelected
+            ? isLowStock
+              ? `inset 0 1px 0 rgba(255,255,255,0.05), 0 0 20px rgba(245,158,11,0.12)`
+              : `inset 0 1px 0 rgba(255,255,255,0.05), 0 0 16px rgba(${rgb},0.10)`
+            : 'none',
       }}
     >
       {/* Team-color top accent when selected */}
@@ -5858,9 +5934,48 @@ function TierCard({
         className="absolute top-0 left-0 right-0 h-[2px] transition-opacity duration-300"
         style={{
           backgroundColor: isLowStock && isSelected ? '#F59E0B' : teamColor,
-          opacity: isSelected ? 1 : 0,
+          opacity: isSelected || isFlashing ? 1 : 0,
         }}
       />
+
+      {/* ── Claim flash — broadcast-style bottom wipe + "JUST COLLECTED" ── */}
+      {isFlashing && (
+        <div key={flashKey} className="absolute inset-0 pointer-events-none z-10">
+          {/* Team-color wash sweeping from left */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(90deg, rgba(${rgb},0.12) 0%, rgba(${rgb},0.04) 60%, transparent 100%)`,
+              animation: 'broadcast-tier-claim-wash 2s ease-out forwards',
+            }}
+          />
+          {/* "JUST COLLECTED" micro-label — slides in from left */}
+          <div
+            className="absolute bottom-2 left-3 right-3 flex items-center gap-1.5"
+            style={{
+              animation: 'broadcast-tier-claim-label 2s ease-out forwards',
+            }}
+          >
+            <div
+              className="h-[4px] w-[4px] rounded-full shrink-0"
+              style={{
+                backgroundColor: teamColor,
+                boxShadow: `0 0 4px ${teamColor}60`,
+              }}
+            />
+            <span
+              className="text-[7px] font-bold uppercase tracking-[0.2em]"
+              style={{
+                color: teamColor,
+                fontFamily: 'var(--font-oswald), sans-serif',
+                opacity: 0.8,
+              }}
+            >
+              Just Collected
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Tier name + diamonds */}
       <div className="flex items-center gap-1.5">

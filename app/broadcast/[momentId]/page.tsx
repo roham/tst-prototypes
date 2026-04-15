@@ -954,6 +954,80 @@ function SidelineReportInsert({ momentId, teamColor, rgb }: {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Camera Flash Sparkles — press cameras firing in the crowd.
+// Every iconic NBA moment has thousands of camera flashes popping in the
+// stands. This overlays the hero with random brief flash bursts that create
+// the feeling of a packed arena reacting to the play. Density increases
+// during CLOSING/CRITICAL phases (crowd excitement). Flashes appear mostly
+// in the upper portion of the hero (where the crowd sits).
+// Distinctly Broadcast: Supreme has dust motes (gallery), Arena has confetti.
+// Broadcast has press cameras — literal broadcast production equipment.
+// ---------------------------------------------------------------------------
+
+function CameraFlashSparkles({ phase, rgb }: { phase: DropPhase; rgb: string }) {
+  const [flashes, setFlashes] = useState<Array<{ id: number; x: number; y: number; size: number; delay: number }>>([]);
+  const counterRef = useRef(0);
+
+  useEffect(() => {
+    if (phase === 'ENDED') return;
+    // Base interval: OPEN=2.2s, CLOSING=1.4s, CRITICAL=0.8s (more excitement)
+    const baseInterval = phase === 'CRITICAL' ? 800 : phase === 'CLOSING' ? 1400 : 2200;
+    // Spawn 1-3 flashes per burst
+    const spawnBurst = () => {
+      const count = phase === 'CRITICAL' ? 2 + Math.floor(Math.random() * 2) : 1 + Math.floor(Math.random() * 2);
+      const burst: typeof flashes = [];
+      for (let i = 0; i < count; i++) {
+        counterRef.current += 1;
+        burst.push({
+          id: counterRef.current,
+          x: 8 + Math.random() * 84,         // 8-92% horizontal spread
+          y: 5 + Math.random() * 40,          // 5-45% vertical (upper crowd area)
+          size: 2 + Math.random() * 4,        // 2-6px flash radius
+          delay: Math.random() * 200,         // stagger within burst
+        });
+      }
+      setFlashes(prev => [...prev.slice(-12), ...burst]); // keep max 15 active
+    };
+
+    spawnBurst(); // initial burst
+    const id = setInterval(spawnBurst, baseInterval + Math.random() * 400);
+    return () => clearInterval(id);
+  }, [phase]);
+
+  // Clean up expired flashes
+  useEffect(() => {
+    if (flashes.length === 0) return;
+    const id = setTimeout(() => {
+      setFlashes(prev => prev.slice(Math.max(0, prev.length - 10)));
+    }, 800);
+    return () => clearTimeout(id);
+  }, [flashes.length]);
+
+  if (phase === 'ENDED') return null;
+
+  return (
+    <div className="absolute inset-0 z-[7] pointer-events-none overflow-hidden">
+      {flashes.map(f => (
+        <div
+          key={f.id}
+          className="absolute rounded-full"
+          style={{
+            left: `${f.x}%`,
+            top: `${f.y}%`,
+            width: `${f.size}px`,
+            height: `${f.size}px`,
+            backgroundColor: 'rgba(255,255,255,0.9)',
+            boxShadow: `0 0 ${f.size * 3}px ${f.size}px rgba(255,255,255,0.6), 0 0 ${f.size * 6}px ${f.size * 2}px rgba(${rgb},0.2)`,
+            animation: `broadcast-camera-flash 600ms ease-out ${f.delay}ms forwards`,
+            opacity: 0,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 // Live game clock — ticks down through Q4 while the drop is active
 function useGameClock(isEnded: boolean) {
   // Start at ~2:00 remaining in Q4 and tick down
@@ -4379,6 +4453,46 @@ export default function BroadcastPage() {
           {/* Dark overlay from bottom for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/70 to-transparent" />
 
+          {/* ── CINEMATIC LETTERBOX — widescreen bars for broadcast film treatment ── */}
+          {/* ESPN SportsCenter Top 10 and TNT dramatic replays use letterbox bars   */}
+          {/* (2.39:1 ratio) to signal "this is cinema-quality content." The bars    */}
+          {/* are subtle (5% hero height each) but immediately create a widescreen   */}
+          {/* production feel. Small aspect ratio badge in the top bar for broadcast  */}
+          {/* authenticity. Distinctly Broadcast: Supreme has gallery silence, Arena  */}
+          {/* has LED bezels. Broadcast has film language — the letterbox.            */}
+          <div
+            className="absolute top-0 left-0 right-0 z-[12] pointer-events-none"
+            style={{
+              height: '5%',
+              background: 'linear-gradient(180deg, #0B0E14 60%, transparent 100%)',
+            }}
+          >
+            {/* Aspect ratio badge — top-right of letterbox */}
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+              <span
+                className="text-[6px] font-mono uppercase tracking-[0.2em]"
+                style={{
+                  color: 'rgba(240,242,245,0.12)',
+                }}
+              >
+                2.39:1
+              </span>
+              <div
+                className="h-[4px] w-[10px] rounded-[0.5px]"
+                style={{
+                  border: '0.5px solid rgba(240,242,245,0.08)',
+                }}
+              />
+            </div>
+          </div>
+          <div
+            className="absolute bottom-0 left-0 right-0 z-[12] pointer-events-none"
+            style={{
+              height: '5%',
+              background: 'linear-gradient(0deg, #0B0E14 60%, transparent 100%)',
+            }}
+          />
+
           {/* ── GHOST TEXT WATERMARK — ESPN premium graphic word behind lower-third ── */}
           {/* Large semi-transparent editorial word that frames the moment emotionally. */}
           {/* Like when ESPN overlays "PLAYOFF RECORD" in huge ghosted type behind a   */}
@@ -4433,6 +4547,11 @@ export default function BroadcastPage() {
                 animation: `broadcast-vignette-pulse ${dropPhase === 'CRITICAL' ? '2s' : '3.5s'} ease-in-out infinite`,
               }}
             />
+          )}
+
+          {/* ── CAMERA FLASH SPARKLES — press cameras in the crowd ── */}
+          {!countdown.isEnded && leaderDone && (
+            <CameraFlashSparkles phase={dropPhase} rgb={rgb} />
           )}
 
           {/* Top bar: editorial label + status badge + countdown */}

@@ -2273,6 +2273,228 @@ function ReplayTimestamp({ durationSec, startDelay }: { durationSec: number; sta
   );
 }
 
+// ---------------------------------------------------------------------------
+// Victory Horn — interactive post-win ritual button on the W screen
+// Inspired by Spurs victory drum, Rockets liftoff button. Every NBA arena has
+// a post-win ritual. This gives the user something to physically DO.
+// Each slam: haptic horn blast, visual pulse ring, hit counter climbs.
+// After 5 hits: massive crowd roar crescendo + screen shake + confetti burst.
+// ---------------------------------------------------------------------------
+
+function VictoryHorn({ teamColor, secondaryColor, show }: {
+  teamColor: string;
+  secondaryColor: string;
+  show: boolean;
+}) {
+  const [hits, setHits] = useState(0);
+  const [pulseKey, setPulseKey] = useState(0);
+  const [shaking, setShaking] = useState(false);
+  const [roarTriggered, setRoarTriggered] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleSlam = () => {
+    const next = hits + 1;
+    setHits(next);
+    setPulseKey(prev => prev + 1);
+
+    // Haptic: escalating horn blasts
+    if (next >= 5 && !roarTriggered) {
+      // Crowd roar crescendo on 5th hit
+      CROWD_HAPTIC.celebration();
+      setRoarTriggered(true);
+      setShaking(true);
+      setTimeout(() => setShaking(false), 600);
+    } else {
+      CROWD_HAPTIC.hornBlast();
+    }
+  };
+
+  // Crowd energy label based on hits
+  const energyLabel = hits === 0 ? 'TAP TO CELEBRATE'
+    : hits < 3 ? 'LOUDER!'
+    : hits < 5 ? 'KEEP GOING!'
+    : roarTriggered ? '🔊 CROWD GOES WILD!' : 'LOUDER!';
+
+  // Glow intensity scales with hits
+  const glowIntensity = Math.min(1, hits * 0.2);
+
+  return (
+    <div
+      ref={containerRef}
+      className="mt-6 flex flex-col items-center transition-all duration-600 ease-out"
+      style={{
+        opacity: show ? 1 : 0,
+        transform: show
+          ? shaking ? 'translateY(0) scale(1.02)' : 'translateY(0) scale(1)'
+          : 'translateY(16px) scale(0.92)',
+        transitionDelay: '0.35s',
+        animation: shaking ? 'arena-rumble 0.6s ease-out' : undefined,
+      }}
+    >
+      {/* Section label */}
+      <span
+        className="text-[8px] font-bold uppercase tracking-[0.3em] text-white/20 mb-3"
+        style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+      >
+        Victory Horn
+      </span>
+
+      {/* Horn button — big, interactive, tappable */}
+      <div className="relative">
+        {/* Pulse rings — expand outward on each hit */}
+        {pulseKey > 0 && (
+          <div
+            key={`ring-${pulseKey}`}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          >
+            <div
+              className="absolute rounded-full"
+              style={{
+                width: '80px',
+                height: '80px',
+                border: `2px solid ${teamColor}`,
+                animation: 'arena-horn-ring 0.8s cubic-bezier(0.2, 0.6, 0.3, 1) forwards',
+                opacity: 0,
+              }}
+            />
+            {hits >= 3 && (
+              <div
+                className="absolute rounded-full"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  border: `2px solid ${secondaryColor ?? teamColor}`,
+                  animation: 'arena-horn-ring 0.8s cubic-bezier(0.2, 0.6, 0.3, 1) 0.1s forwards',
+                  opacity: 0,
+                }}
+              />
+            )}
+          </div>
+        )}
+
+        {/* The horn button itself */}
+        <button
+          onClick={handleSlam}
+          className="relative flex items-center justify-center rounded-full transition-all duration-150 active:scale-90"
+          style={{
+            width: '80px',
+            height: '80px',
+            background: `radial-gradient(circle at 40% 35%, ${teamColor}40, ${teamColor}18 60%, rgba(11,14,20,0.9) 100%)`,
+            border: `2px solid ${teamColor}${Math.round(30 + glowIntensity * 40).toString(16)}`,
+            boxShadow: `0 0 ${12 + glowIntensity * 30}px ${teamColor}${Math.round(15 + glowIntensity * 35).toString(16)}, inset 0 1px 0 rgba(255,255,255,0.06)`,
+            animation: roarTriggered ? 'arena-horn-glow-max 1.5s ease-in-out infinite' : undefined,
+          }}
+        >
+          {/* Horn SVG icon */}
+          <svg
+            className="h-8 w-8"
+            viewBox="0 0 32 32"
+            fill="none"
+            style={{
+              color: teamColor,
+              filter: `drop-shadow(0 0 ${4 + glowIntensity * 8}px ${teamColor}60)`,
+              transform: `scale(${1 + glowIntensity * 0.15})`,
+              transition: 'transform 0.15s ease-out, filter 0.15s ease-out',
+            }}
+          >
+            {/* Megaphone / air horn shape */}
+            <path
+              d="M8 13v6h3l7 5V8l-7 5H8z"
+              fill="currentColor"
+              opacity="0.9"
+            />
+            <path
+              d="M8 13v6h3l7 5V8l-7 5H8z"
+              stroke="currentColor"
+              strokeWidth="1"
+              fill="none"
+              opacity="0.4"
+            />
+            {/* Sound waves — more visible with more hits */}
+            <path
+              d="M22 11.5c1.5 1.2 2.5 3 2.5 4.5s-1 3.3-2.5 4.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              fill="none"
+              opacity={Math.min(0.8, 0.3 + hits * 0.1)}
+            />
+            <path
+              d="M25 9c2 1.8 3.5 4.3 3.5 7s-1.5 5.2-3.5 7"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              fill="none"
+              opacity={Math.min(0.6, hits * 0.12)}
+            />
+          </svg>
+        </button>
+
+        {/* Hit counter badge — appears after first slam */}
+        {hits > 0 && (
+          <div
+            key={`count-${hits}`}
+            className="absolute -top-1 -right-1 flex items-center justify-center rounded-full"
+            style={{
+              width: '22px',
+              height: '22px',
+              backgroundColor: roarTriggered ? '#00E5A0' : teamColor,
+              boxShadow: `0 0 8px ${roarTriggered ? 'rgba(0,229,160,0.5)' : teamColor + '60'}`,
+              animation: 'arena-stat-pop 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards',
+            }}
+          >
+            <span
+              className="text-[10px] font-bold tabular-nums text-black"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              {hits}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Energy label — escalates with hits */}
+      <span
+        key={`label-${roarTriggered ? 'wild' : hits < 3 ? 'low' : 'high'}`}
+        className="mt-2.5 text-[10px] font-bold uppercase tracking-[0.2em]"
+        style={{
+          fontFamily: 'var(--font-oswald), sans-serif',
+          color: roarTriggered ? '#00E5A0'
+            : hits >= 3 ? teamColor
+            : 'rgba(255,255,255,0.3)',
+          textShadow: roarTriggered ? '0 0 12px rgba(0,229,160,0.4)'
+            : hits >= 3 ? `0 0 8px ${teamColor}40`
+            : 'none',
+          animation: hits > 0 && !roarTriggered ? 'arena-stat-pop 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards' : undefined,
+          transition: 'color 0.2s ease-out',
+        }}
+      >
+        {energyLabel}
+      </span>
+
+      {/* Decibel bar — visual crowd noise level rising with hits */}
+      <div className="mt-2 flex items-end gap-[2px] h-3" style={{ width: '60px' }}>
+        {Array.from({ length: 8 }).map((_, i) => {
+          const filled = i < Math.min(8, hits + (roarTriggered ? 8 : 0));
+          const barColor = i >= 6 ? '#EF4444' : i >= 4 ? '#F59E0B' : '#00E5A0';
+          return (
+            <div
+              key={i}
+              className="flex-1 rounded-t-sm transition-all duration-200"
+              style={{
+                height: filled ? `${40 + i * 8}%` : '15%',
+                backgroundColor: filled ? barColor : 'rgba(255,255,255,0.06)',
+                boxShadow: filled ? `0 0 4px ${barColor}40` : 'none',
+                transitionDelay: `${i * 0.03}s`,
+              }}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function CelebrationScreen({
   editionNumber,
   total,
@@ -3077,6 +3299,16 @@ function CelebrationScreen({
           </div>
         </div>
 
+        {/* Victory Horn — interactive post-win ritual like Spurs drum / Rockets liftoff */}
+        {/* In every NBA arena, the post-win moment has a ritual: a drum bang, a horn     */}
+        {/* blast, a button press. This gives the user something to DO on the W screen    */}
+        {/* — slam the horn to celebrate. Each hit triggers haptic + visual feedback.     */}
+        <VictoryHorn
+          teamColor={moment.teamColors.primary}
+          secondaryColor={moment.teamColors.secondary}
+          show={showDetails}
+        />
+
         {/* Share section */}
         <div
           className="mt-7 flex flex-col items-center transition-all duration-500 ease-out"
@@ -3086,7 +3318,10 @@ function CelebrationScreen({
           }}
         >
           {/* Primary share CTA */}
-          <button className="rounded-full bg-[#00E5A0] px-8 py-3 text-sm font-bold uppercase tracking-wider text-black transition-all hover:brightness-110 active:scale-95">
+          <button
+            className="rounded-full bg-[#00E5A0] px-8 py-3 text-sm font-bold uppercase tracking-wider text-black transition-all hover:brightness-110 active:scale-95"
+            onClick={() => CROWD_HAPTIC.ctaSlam()}
+          >
             Flex Your W
           </button>
 
@@ -3099,6 +3334,7 @@ function CelebrationScreen({
               <button
                 key={label}
                 className="flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.04] px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-white/50 transition-all duration-200 hover:text-white/70"
+                onClick={() => CROWD_HAPTIC.fanCam()}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLElement).style.borderColor = `${moment.teamColors.primary}40`;
                   (e.currentTarget as HTMLElement).style.backgroundColor = `${moment.teamColors.primary}15`;

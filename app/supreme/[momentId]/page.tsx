@@ -1431,6 +1431,23 @@ export default function SupremePage() {
     }
   }, [countdown.totalSeconds, dropPhase, viewPhase, gavelPhase]);
 
+  // Lot closed ceremony — when the auction ends (CRITICAL→ENDED), the saleroom
+  // has its closing moment: horizontal gavel-fall line, "LOT CLOSED" text, room
+  // flash. The gavel curtain (cycle 216) fires on purchase confirmation; this fires
+  // when the lot expires without the user buying. Every auction has a closing ceremony.
+  const [lotClosedCeremony, setLotClosedCeremony] = useState(false);
+  const prevPhaseForClosingRef = useRef(dropPhase);
+  useEffect(() => {
+    const prev = prevPhaseForClosingRef.current;
+    prevPhaseForClosingRef.current = dropPhase;
+    if (prev === 'CRITICAL' && dropPhase === 'ENDED' && viewPhase !== 'purchasing' && viewPhase !== 'confirmed' && viewPhase !== 'sharing') {
+      setLotClosedCeremony(true);
+      HAPTIC.gavelStrike();
+      const t = setTimeout(() => setLotClosedCeremony(false), 1800);
+      return () => clearTimeout(t);
+    }
+  }, [dropPhase, viewPhase]);
+
   // Anti-snipe lot extension — at Sotheby's/Christie's online, when a bid
   // arrives in the final seconds the lot timer resets. The banner "Lot Extended"
   // appears, telling everyone that competition forced extra time. This is the
@@ -1760,6 +1777,73 @@ export default function SupremePage() {
             backgroundColor: transitionFlash === 'red' ? '#EF4444' : '#F59E0B',
           }}
         />
+      )}
+
+      {/* ============================================================= */}
+      {/* LOT CLOSED CEREMONY — the hammer falls, the lot ends           */}
+      {/* At Christie's/Sotheby's, when the gavel falls for the last     */}
+      {/* time, the saleroom exhales. The lot is done. Lights begin to   */}
+      {/* dim for the next lot. This 1.8s overlay marks that moment:     */}
+      {/* a horizontal line (the hammer striking), "LOT CLOSED" text     */}
+      {/* (the clerk's announcement), and a brief team-color flash.      */}
+      {/* ============================================================= */}
+      {lotClosedCeremony && (
+        <div className="fixed inset-0 z-[43] pointer-events-none flex items-center justify-center overflow-hidden">
+          {/* Room flash — the saleroom reacts to the final gavel strike */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: moment.teamColors.primary,
+              animation: 'supreme-lot-closed-flash 1.8s ease-out forwards',
+            }}
+          />
+          {/* Dark scrim — the house lights begin to dim */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: '#0B0E14',
+              animation: 'supreme-lot-closed-flash 1.8s ease-out forwards',
+              animationDelay: '0.3s',
+              opacity: 0,
+            }}
+          />
+          {/* Horizontal gavel-fall line — the crack of the hammer on the sound block */}
+          <div
+            className="absolute w-full h-[1px]"
+            style={{
+              backgroundColor: moment.teamColors.primary,
+              boxShadow: `0 0 16px ${moment.teamColors.primary}50, 0 0 40px ${moment.teamColors.primary}25`,
+              transformOrigin: 'center',
+              animation: 'supreme-lot-closed-line 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            }}
+          />
+          {/* "LOT CLOSED" — the clerk's formal announcement */}
+          <span
+            className="absolute uppercase select-none"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              fontWeight: 600,
+              fontSize: '16px',
+              color: `${moment.teamColors.primary}`,
+              animation: 'supreme-lot-closed-text 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards',
+            }}
+          >
+            Lot Closed
+          </span>
+          {/* Lot number — institutional specificity */}
+          <span
+            className="absolute uppercase select-none font-mono tabular-nums"
+            style={{
+              fontSize: '8px',
+              letterSpacing: '0.3em',
+              color: 'rgba(255,255,255,0.15)',
+              marginTop: '36px',
+              animation: 'supreme-lot-closed-sub 1.8s ease-out forwards',
+            }}
+          >
+            Lot {((moment.id.charCodeAt(0) * 37 + moment.id.charCodeAt(1) * 13) % 9000 + 1000)} · {moment.player}
+          </span>
+        </div>
       )}
 
       {/* ============================================================= */}

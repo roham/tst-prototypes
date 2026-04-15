@@ -778,6 +778,32 @@ body {
   animation: supreme-gavel-curtain-sold 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
 }
 
+/* Supreme lot-closed ceremony — when the hammer falls and the lot ends */
+@keyframes supreme-lot-closed-line {
+  0% { transform: scaleX(0); opacity: 0; }
+  20% { opacity: 0.8; }
+  50% { transform: scaleX(1); opacity: 0.8; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+@keyframes supreme-lot-closed-flash {
+  0% { opacity: 0; }
+  15% { opacity: 0.08; }
+  100% { opacity: 0; }
+}
+@keyframes supreme-lot-closed-text {
+  0% { opacity: 0; letter-spacing: 0.8em; }
+  25% { opacity: 0.4; letter-spacing: 0.45em; }
+  65% { opacity: 0.3; letter-spacing: 0.45em; }
+  100% { opacity: 0; letter-spacing: 0.5em; }
+}
+@keyframes supreme-lot-closed-sub {
+  0% { opacity: 0; transform: translateY(6px); }
+  30% { opacity: 0; transform: translateY(6px); }
+  50% { opacity: 0.15; transform: translateY(0); }
+  75% { opacity: 0.12; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-2px); }
+}
+
 /* Supreme CTA sonar invite — single expanding ring on page load */
 @keyframes supreme-sonar-invite {
   0% { transform: scale(1); opacity: 0.4; }

@@ -1715,3 +1715,10 @@
 - Reusing existing keyframes (supreme-field-reveal) for new components maintains visual consistency. The provenance entries animate identically to the sale record fields — same clerk, same ledger, same rhythm.
 - "Private Collection" as auction language for anonymous living collectors is powerful — it transforms the user from "buyer" to "collector" through institutional naming convention.
 - Next cycle: Broadcast (rotation). Ideas: broadcast booth monitor grid on W screen (multi-camera layout), or an "Up Next" promo card showing the next moment in the drop queue.
+
+## Cycle 214 Learnings
+- The 2×2 grid with different crop/filter treatments on the same source images effectively simulates multiple camera angles without needing additional assets. Different `backgroundPosition`, `transform: scale()`, and filter combinations (varying saturate/contrast/brightness/sepia) create visual diversity from 2 source images.
+- CRT scanline overlay with `repeating-linear-gradient(0deg, transparent 2px, rgba(0,0,0,0.08) 2px, 4px)` at 2px intervals is subtle but sells the "monitor screen" fiction. Could be reused for any in-page screen element.
+- Tally lights (red dot with glow + pulse) are the universal visual language for "this camera is live." Even non-broadcast viewers intuitively understand the red dot = active. Strong conversion from real-world signifier to digital UI.
+- Timecodes in the corners add professional authenticity. Format: `HH:MM:SS:FF` (hours:minutes:seconds:frames). Even fake timecodes sell the "real production" feel.
+- Next cycle: Arena (rotation). Ideas: arena tunnel walk-out entrance animation on page load (player emerging from the tunnel with dramatic lighting), or a shot clock overlay that counts down in the corner.

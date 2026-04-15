@@ -2577,6 +2577,127 @@ function AnalystVerdict({ moment, tier, rgb, phase }: {
 }
 
 // ---------------------------------------------------------------------------
+// Broadcast Shot Clock — ESPN-style countdown graphic at the decision point.
+// Every sports broadcast has the clock visible at crunch time. During the
+// final minutes, ESPN shows a prominent game clock overlay — the entire
+// broadcast centers around it. This compact graphic places a broadcast-style
+// countdown directly above the CTA during CLOSING/CRITICAL phases, making
+// urgency VISUAL at the exact purchase decision point. Previously, Broadcast
+// relied on CommentatorCall text and the global countdown — but neither is
+// visually prominent AT the CTA. Supreme has saleroom temperature, Arena has
+// the purchase sparkline. Broadcast now has the shot clock.
+// ---------------------------------------------------------------------------
+
+function BroadcastShotClock({ totalSeconds, phase, rgb, teamColor, remaining }: {
+  totalSeconds: number;
+  phase: DropPhase;
+  rgb: string;
+  teamColor: string;
+  remaining: number;
+}) {
+  // Progress: fraction of time remaining within the phase window
+  // CLOSING: 600→120s, CRITICAL: 120→0s
+  const maxSeconds = phase === 'CRITICAL' ? 120 : 600;
+  const progress = Math.min(1, totalSeconds / maxSeconds);
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  const timeStr = `${m}:${s.toString().padStart(2, '0')}`;
+  const isCritical = phase === 'CRITICAL';
+  const phaseLabel = isCritical ? 'FINAL 2:00' : 'CLOSING';
+
+  return (
+    <div className="w-full max-w-md mx-auto mb-4">
+      <div
+        className="relative overflow-hidden rounded-sm"
+        style={{
+          backgroundColor: 'rgba(11,14,20,0.95)',
+          border: `1px solid ${isCritical ? 'rgba(239,68,68,0.25)' : `rgba(${rgb},0.15)`}`,
+          boxShadow: isCritical
+            ? '0 0 20px rgba(239,68,68,0.08), inset 0 0 20px rgba(239,68,68,0.03)'
+            : `0 0 12px rgba(${rgb},0.06)`,
+        }}
+      >
+        {/* Top accent bar — depleting progress indicator */}
+        <div className="relative h-[2px] w-full" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
+          <div
+            className="absolute inset-y-0 left-0 transition-all duration-1000 ease-linear"
+            style={{
+              width: `${progress * 100}%`,
+              background: isCritical
+                ? 'linear-gradient(to right, #EF4444, #F59E0B)'
+                : `linear-gradient(to right, ${teamColor}, rgba(${rgb},0.4))`,
+            }}
+          />
+        </div>
+
+        <div className="px-4 py-2.5 flex items-center justify-between">
+          {/* Left: phase label + LIVE dot */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <div
+                className="w-1.5 h-1.5 rounded-full"
+                style={{
+                  backgroundColor: isCritical ? '#EF4444' : '#F59E0B',
+                  animation: 'broadcast-live-dot-pulse 1.5s ease-in-out infinite',
+                  boxShadow: isCritical
+                    ? '0 0 6px rgba(239,68,68,0.5)'
+                    : '0 0 4px rgba(245,158,11,0.4)',
+                }}
+              />
+              <span
+                className="text-[8px] font-bold uppercase tracking-[0.25em]"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  color: isCritical ? '#EF4444' : '#F59E0B',
+                }}
+              >
+                {phaseLabel}
+              </span>
+            </div>
+            {/* Edition count — scarcity at a glance */}
+            <span className="text-[9px] text-white/25 font-mono tracking-wide">
+              {remaining <= 5
+                ? `${remaining} LEFT`
+                : `${remaining.toLocaleString()} EDITIONS`}
+            </span>
+          </div>
+
+          {/* Right: prominent countdown timer */}
+          <div className="flex items-baseline gap-1">
+            <span
+              className={`text-[22px] font-bold tabular-nums tracking-tight leading-none ${
+                isCritical && totalSeconds <= 30 ? 'broadcast-timer-pulse' : ''
+              }`}
+              style={{
+                fontFamily: 'var(--font-oswald), monospace',
+                color: isCritical
+                  ? totalSeconds <= 30 ? '#EF4444' : '#F59E0B'
+                  : 'white',
+                textShadow: isCritical
+                  ? `0 0 12px ${totalSeconds <= 30 ? 'rgba(239,68,68,0.3)' : 'rgba(245,158,11,0.2)'}`
+                  : 'none',
+              }}
+            >
+              {timeStr}
+            </span>
+          </div>
+        </div>
+
+        {/* Bottom production strip */}
+        <div
+          className="px-4 py-0.5 flex items-center"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.03)', backgroundColor: 'rgba(255,255,255,0.01)' }}
+        >
+          <span className="text-[6px] font-mono uppercase tracking-[0.2em] text-white/8">
+            {isCritical ? 'GAME CLOCK · CRITICAL' : 'GAME CLOCK · LIVE'}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Broadcast Ratings Spike — "Peak Viewership" chart showing the moment's
 // audience spike. ESPN tracks live ratings and highlights peak moments.
 // A sparkline SVG shows viewership ramping up then spiking at the play,
@@ -4936,6 +5057,20 @@ export default function BroadcastPage() {
             <AnalystVerdict moment={moment} tier={selectedTier} rgb={rgb} phase={dropPhase} />
           )}
 
+          {/* Broadcast Shot Clock — ESPN-style countdown graphic at decision point */}
+          {/* Supreme has saleroom temperature, Arena has the sparkline. Broadcast */}
+          {/* has the shot clock: a visual countdown timer in broadcast graphics   */}
+          {/* language, placed right above the CTA during CLOSING/CRITICAL.       */}
+          {(dropPhase === 'CLOSING' || dropPhase === 'CRITICAL') && !isPurchasing && !countdown.isEnded && (
+            <BroadcastShotClock
+              totalSeconds={countdown.totalSeconds}
+              phase={dropPhase}
+              rgb={rgb}
+              teamColor={moment.teamColors.primary}
+              remaining={selectedTier.remaining}
+            />
+          )}
+
           {/* Commentator's Call — play-by-play urgency line above CTA */}
           {/* In every close game, the announcer's voice creates the urgency.    */}
           {/* "Clock winding down..." This is the broadcaster narrating the      */}
@@ -5212,6 +5347,22 @@ export default function BroadcastPage() {
                   ? `${selectedTier.tier} Edition · Acquiring...`
                   : `${selectedTier.tier} Edition · $${selectedTier.price}`}
               </span>
+              {/* Sticky bar countdown — timer at the decision point when scrolled */}
+              {!isPurchasing && (dropPhase === 'CLOSING' || dropPhase === 'CRITICAL') && (
+                <span
+                  className={`text-[9px] font-mono tracking-wide mt-0.5 tabular-nums ${
+                    dropPhase === 'CRITICAL' ? 'text-[#EF4444]' : 'text-[#F59E0B]'
+                  }`}
+                  style={{
+                    textShadow: dropPhase === 'CRITICAL'
+                      ? '0 0 6px rgba(239,68,68,0.3)'
+                      : 'none',
+                  }}
+                >
+                  {dropPhase === 'CRITICAL' ? 'FINAL ' : ''}
+                  {Math.floor(countdown.totalSeconds / 60)}:{(countdown.totalSeconds % 60).toString().padStart(2, '0')} remaining
+                </span>
+              )}
               {!isPurchasing && selectedTier.remaining <= 20 && (
                 <span className={`text-[9px] tracking-wide mt-0.5 ${
                   selectedTier.remaining <= 5 ? 'text-[#F59E0B]' : 'text-white/20'

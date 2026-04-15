@@ -1093,6 +1093,15 @@ body {
   animation: broadcast-live-dot-pulse 2s ease-in-out infinite;
 }
 
+/* Broadcast shot clock timer pulse — heartbeat on final 30s */
+@keyframes broadcast-timer-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.04); }
+}
+.broadcast-timer-pulse {
+  animation: broadcast-timer-pulse 1s ease-in-out infinite;
+}
+
 /* Broadcast ratings peak ring — expanding ring at peak viewership point */
 @keyframes broadcast-ratings-peak-ring-pulse {
   0%, 100% { r: 6; opacity: 0.4; }

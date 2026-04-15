@@ -1894,3 +1894,12 @@
 - Delta was only +0.01 because the tier area already had strong interaction support (sliding underline, page-turn, premier lot designation, tier breathe). At 9.35+ Interaction, meaningful improvements require larger structural changes — not refinements to existing components.
 - The radial-gradient press glow is subtle enough (8% opacity) to not compete with the overall dark void aesthetic. Team-color at >10% would start to feel like a UI highlight rather than institutional atmosphere.
 - Next cycle: Broadcast (rotation). Broadcast scores: VP=9.37, Conv=9.40, Emo=9.38, Int=9.37, Pur=9.38. Visual Polish (9.37) and Interaction (9.37) are weakest. Ideas: the tier selector in Broadcast could have ESPN-style graphics (stat comparison overlays when switching tiers), or the editorial section typography could be refined (drop caps, pull quotes).
+
+## Cycle 238 Learnings
+- When uncommitted changes from a prior session conflict with existing component names, rename the new component rather than the established one. The existing TaleOfTheTape (player stats vs season avg) was deeply integrated; renaming the new tier-attribute version to TierComparison was cleaner.
+- Data visualization components at the decision point (tier selector) are high-conversion-value additions because they give analytical buyers a rational framework. The bars make "Legendary is better than Open" visually undeniable without stating it.
+- The "Elite" badge (combined score ≥240) and "Max" micro-badge (individual ≥90) add broadcast commentary energy — ESPN always calls out statistical extremes with on-screen badges.
+- The composite score footer is a subtle but effective summary — it gives a single number to anchor the comparison, like a "player rating" in broadcast stat cards.
+- Top accent gradient (linear-gradient with transparent edges) is the ESPN/Fox graphic header pattern. It's 2px tall but immediately signals "this is a broadcast graphic panel."
+- Delta (+0.01) is expected at this maturity — the component is a net-new addition but the tier decision area was already well-supported by existing social proof (acquisition ticker, claim flash, tier cards). The main lift is on Conversion via rational justification.
+- Next cycle: Arena (rotation). Arena scores: VP=9.40, Conv=9.40, Emo=9.40, Int=9.38, Pur=9.42. Interaction (9.38) is weakest. Ideas: the hero section could have a more dramatic on-scroll transition, or the purchase flow could have a tier-specific celebration variant (different confetti colors/patterns per rarity).

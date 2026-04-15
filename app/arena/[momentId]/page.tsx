@@ -2573,6 +2573,135 @@ function VictoryHorn({ teamColor, secondaryColor, show }: {
   );
 }
 
+/* ─── Celebration Shimmer — continuous falling sparkle particles ───── */
+/* NBA arenas have continuous confetti/streamer rain during post-game    */
+/* celebrations. This CSS-only particle field makes the W screen feel   */
+/* alive and celebration-worthy for screenshots.                        */
+
+function CelebrationShimmer({ teamColor }: { teamColor: string }) {
+  // 18 particles with varied sizes, speeds, and horizontal positions
+  const particles = Array.from({ length: 18 }).map((_, i) => ({
+    left: `${(i * 5.7 + 2.3) % 100}%`,
+    size: 2 + (i % 4) * 1.5,
+    duration: 3.5 + (i % 5) * 1.2,
+    delay: (i * 0.47) % 4.5,
+    // Alternate between team-color, teal, and white particles
+    color: i % 3 === 0 ? teamColor : i % 3 === 1 ? '#00E5A0' : 'rgba(255,255,255,0.8)',
+    opacity: 0.15 + (i % 4) * 0.08,
+  }));
+
+  return (
+    <div className="pointer-events-none absolute inset-0 z-[41] overflow-hidden">
+      {particles.map((p, i) => (
+        <div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            left: p.left,
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            backgroundColor: p.color,
+            opacity: p.opacity,
+            boxShadow: p.size > 3 ? `0 0 ${p.size * 2}px ${p.color}40` : undefined,
+            animation: `arena-shimmer-fall ${p.duration}s linear ${p.delay}s infinite`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ─── Tonight's Attendance — jumbotron PA system announcement ──────── */
+/* Every NBA arena announces the attendance figure during the 4th       */
+/* quarter: "Tonight's attendance: 19,847. Thank you for coming."       */
+/* This is the collector equivalent on the W screen.                    */
+
+function AttendanceAnnouncement({ total, claimed, teamColor, show }: {
+  total: number;
+  claimed: number;
+  teamColor: string;
+  show: boolean;
+}) {
+  const attendance = Math.round(claimed * 8.7 + 2400);
+  const [counter, setCounter] = useState(0);
+  const targetRef = useRef(attendance);
+  targetRef.current = attendance;
+
+  useEffect(() => {
+    if (!show) return;
+    const start = Date.now();
+    const dur = 1200;
+    const tick = () => {
+      const t = Math.min(1, (Date.now() - start) / dur);
+      // easeOutExpo
+      const ease = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+      setCounter(Math.round(ease * targetRef.current));
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    const delay = setTimeout(() => requestAnimationFrame(tick), 300);
+    return () => clearTimeout(delay);
+  }, [show]);
+
+  return (
+    <div
+      className="mt-5 w-full max-w-[280px] transition-all duration-600 ease-out"
+      style={{
+        opacity: show ? 1 : 0,
+        transform: show ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.95)',
+        transitionDelay: '0.32s',
+      }}
+    >
+      <div
+        className="relative overflow-hidden rounded-lg text-center py-3 px-4"
+        style={{
+          backgroundColor: 'rgba(255,255,255,0.02)',
+          border: `1px solid ${teamColor}15`,
+        }}
+      >
+        {/* PA icon — megaphone/speaker */}
+        <div className="flex items-center justify-center gap-2 mb-1.5">
+          <div className="h-[1px] w-5" style={{ backgroundColor: `${teamColor}25` }} />
+          <svg className="h-3 w-3" viewBox="0 0 16 16" fill={teamColor} style={{ opacity: 0.4 }}>
+            <path d="M11 3.5V1.1a.5.5 0 00-.82-.39L6.56 4H3.5A1.5 1.5 0 002 5.5v3A1.5 1.5 0 003.5 10h3.06l3.62 3.29A.5.5 0 0011 12.9V10.5a3.5 3.5 0 000-7z" />
+          </svg>
+          <span
+            className="text-[7px] font-bold uppercase tracking-[0.3em] text-white/20"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            Tonight&apos;s Attendance
+          </span>
+          <div className="h-[1px] w-5" style={{ backgroundColor: `${teamColor}25` }} />
+        </div>
+        {/* Attendance number — large jumbotron counter */}
+        <div
+          style={{
+            animation: show ? 'arena-attendance-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both' : undefined,
+          }}
+        >
+          <span
+            className="text-2xl font-bold tabular-nums tracking-tight"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: teamColor,
+              textShadow: `0 0 16px ${teamColor}30`,
+              opacity: 0.7,
+            }}
+          >
+            {counter.toLocaleString()}
+          </span>
+        </div>
+        {/* Thank you line — classic PA sign-off */}
+        <p
+          className="mt-1 text-[8px] uppercase tracking-[0.2em] text-white/15"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+        >
+          Thank you for being here tonight
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function CelebrationScreen({
   editionNumber,
   total,
@@ -2635,6 +2764,9 @@ function CelebrationScreen({
         ]}
         teamColor={moment.teamColors.primary}
       />
+
+      {/* Celebration Shimmer — continuous falling sparkle particles */}
+      <CelebrationShimmer teamColor={moment.teamColors.primary} />
 
       {/* Pyrotechnic starbursts — arena rafter mortar effects */}
       <Pyrotechnics teamColor={moment.teamColors.primary} secondaryColor={moment.teamColors.secondary} />
@@ -3398,6 +3530,15 @@ function CelebrationScreen({
             </div>
           </div>
         </div>
+
+        {/* Tonight's Attendance — jumbotron PA system announcement */}
+        {/* "Tonight's attendance: 19,847. Thank you for being here tonight." */}
+        <AttendanceAnnouncement
+          total={total}
+          claimed={feedEvents.length}
+          teamColor={moment.teamColors.primary}
+          show={showDetails}
+        />
 
         {/* Victory Horn — interactive post-win ritual like Spurs drum / Rockets liftoff */}
         {/* In every NBA arena, the post-win moment has a ritual: a drum bang, a horn     */}
@@ -5341,10 +5482,49 @@ export default function ArenaPage({
           )}
         </div>
 
-        {/* Logo */}
-        <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/60">
-          Top Shot This
-        </span>
+        {/* Scorer's Table Game Clock — NBA-style countdown in header */}
+        {/* Maps drop time to basketball quarters for arena metaphor.  */}
+        {/* The game clock is the most watched element in any arena.   */}
+        {countdown.isEnded ? (
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/40">
+            Final
+          </span>
+        ) : (
+          <div className="flex flex-col items-center gap-0">
+            {/* Period label */}
+            <span
+              className="text-[7px] font-bold uppercase tracking-[0.25em]"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: isCritical ? '#EF4444' : isClosing ? '#F59E0B' : `${moment.teamColors.primary}90`,
+              }}
+            >
+              {(() => {
+                const pct = countdown.totalSeconds / ((SALE_DURATION_MS[momentId] ?? 720000) / 1000);
+                if (pct > 0.75) return '1st Qtr';
+                if (pct > 0.5) return '2nd Qtr';
+                if (pct > 0.25) return '3rd Qtr';
+                return '4th Qtr';
+              })()}
+            </span>
+            {/* Digital clock — LED scorer's table style */}
+            <span
+              className="text-[15px] font-bold tabular-nums leading-none"
+              style={{
+                fontFamily: 'var(--font-mono), monospace',
+                color: isCritical ? '#EF4444' : isClosing ? '#F59E0B' : '#F0F2F5',
+                textShadow: isCritical
+                  ? '0 0 8px rgba(239,68,68,0.5)'
+                  : isClosing
+                    ? '0 0 8px rgba(245,158,11,0.4)'
+                    : `0 0 6px ${moment.teamColors.primary}40`,
+                letterSpacing: '0.05em',
+              }}
+            >
+              {countdown.minutes}:{countdown.seconds.toString().padStart(2, '0')}
+            </span>
+          </div>
+        )}
 
         {/* Viewers + Crowd Noise EQ */}
         <div className="flex items-center gap-2.5 text-xs text-white/50">

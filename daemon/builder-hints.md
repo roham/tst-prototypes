@@ -2152,3 +2152,10 @@
 - Positioning the control at the right edge mid-height (top-1/2 -translate-y-1/2) keeps it discoverable but unobtrusive — the holographic sticker is bottom-right, paddle number top-left, lot number top-right. The mid-right position was the only available hero edge slot.
 - UV mode's hue-rotate(240deg) is the key to the ultraviolet look — it shifts everything to blue-purple, then the team-color fluorescence hotspots create the "materials glowing under UV" effect that condition specialists recognize.
 - Current scores: Supreme 9.44, Broadcast 9.45, Arena 9.46. Next cycle: Broadcast (rotation). Supreme closed the gap by 0.01 — now only 0.02 behind Arena.
+
+## Cycle 277 Learnings
+- The telestrator is the single most broadcast-specific element possible — no other direction would have it. Purity +0.01 is easy when the element is this distinctly broadcast.
+- SVG arrow arrowheads computed from direction vectors (unit vector math) look more natural than marker-end — the arrowhead scales with the arrow and points precisely.
+- Staggered reveal delays (0.3s increments) create the "analyst is drawing" rhythm. Faster (0.15s) felt too mechanical; slower (0.5s) felt boring. 0.3s is the sweet spot.
+- Per-moment play data (unique analyst + unique play breakdown) is what makes this feel real vs. generic. RJ breaking down Bam's isolation, JJ dissecting Jokić's no-look — each analyst has the right expertise for the moment.
+- Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.46. Next cycle: Arena (rotation). Arena and Broadcast now tied at 9.46. Supreme is 0.02 behind.

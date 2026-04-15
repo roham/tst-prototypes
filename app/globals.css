@@ -804,6 +804,42 @@ body {
   100% { opacity: 0; transform: translateY(-2px); }
 }
 
+/* Broadcast wrap sign-off ceremony — when the live window expires */
+@keyframes broadcast-wrap-wipe {
+  0% { clip-path: inset(0 100% 0 0); opacity: 0; }
+  20% { clip-path: inset(0 0% 0 0); opacity: 1; }
+  75% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+@keyframes broadcast-wrap-rule {
+  0% { transform: scaleX(0); opacity: 0; }
+  30% { transform: scaleX(1); opacity: 0.7; }
+  70% { transform: scaleX(1); opacity: 0.5; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+@keyframes broadcast-wrap-card {
+  0% { opacity: 0; transform: scale(0.97); }
+  15% { opacity: 1; transform: scale(1); }
+  70% { opacity: 0.9; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.99); }
+}
+@keyframes broadcast-wrap-text {
+  0% { opacity: 0; letter-spacing: 0.6em; }
+  20% { opacity: 0.7; letter-spacing: 0.35em; }
+  65% { opacity: 0.6; letter-spacing: 0.35em; }
+  100% { opacity: 0; letter-spacing: 0.38em; }
+}
+@keyframes broadcast-wrap-stat {
+  0% { opacity: 0; transform: translateY(4px); }
+  25% { opacity: 0.7; transform: translateY(0); }
+  65% { opacity: 0.6; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-1px); }
+}
+@keyframes broadcast-wrap-flash {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* Supreme CTA sonar invite — single expanding ring on page load */
 @keyframes supreme-sonar-invite {
   0% { transform: scale(1); opacity: 0.4; }

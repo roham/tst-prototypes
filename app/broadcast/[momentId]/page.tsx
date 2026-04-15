@@ -3960,6 +3960,26 @@ export default function BroadcastPage() {
     }
   }, [countdown.totalSeconds]);
 
+  // Broadcast Wrap — sign-off ceremony when clock expires (CRITICAL→ENDED)
+  // ESPN/TNT live broadcasts end with a dramatic sign-off: the host wraps,
+  // the theme sting plays, and the screen fades to the network card. This
+  // overlay fires once on the CRITICAL→ENDED transition to punctuate the
+  // end of the live broadcast window. Dedicated ref avoids conflict with
+  // prevBroadcastPhase (already consumed by feed-cut/quarter-bumper above).
+  const [broadcastWrap, setBroadcastWrap] = useState(false);
+  const prevPhaseForWrapRef = useRef<DropPhase>('OPEN');
+  useEffect(() => {
+    const currentPhase = derivePhase(countdown.totalSeconds);
+    const prev = prevPhaseForWrapRef.current;
+    prevPhaseForWrapRef.current = currentPhase;
+    if (prev === 'CRITICAL' && currentPhase === 'ENDED' && proto.state !== 'purchasing' && proto.state !== 'confirmed') {
+      setBroadcastWrap(true);
+      BROADCAST_HAPTIC.phaseBumper('CRITICAL');
+      const t = setTimeout(() => setBroadcastWrap(false), 2200);
+      return () => clearTimeout(t);
+    }
+  }, [countdown.totalSeconds, proto.state]);
+
   if (!moment) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-[#0B0E14] text-white/40 text-sm">
@@ -4129,6 +4149,84 @@ export default function BroadcastPage() {
               }}
             />
           </div>
+        </div>
+      )}
+
+      {/* ━━━ BROADCAST WRAP — sign-off ceremony on CRITICAL→ENDED ━━━━━━━━━━ */}
+      {/* ESPN/TNT broadcasts end with a dramatic wrap: horizontal wipe,       */}
+      {/* "BROADCAST CONCLUDED" headline, player + stat line, theme sting.     */}
+      {/* This fires once when the live window expires — the broadcast         */}
+      {/* equivalent of Supreme's "LOT CLOSED" ceremony (cycle 240).          */}
+      {broadcastWrap && (
+        <div className="fixed inset-0 z-[57] pointer-events-none flex items-center justify-center">
+          {/* Full-screen team-color wipe — horizontal sweep L→R */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(90deg, ${moment.teamColors.primary}18 0%, rgba(${rgb},0.06) 60%, transparent 100%)`,
+              animation: 'broadcast-wrap-wipe 2.2s cubic-bezier(0.22,1,0.36,1) forwards',
+            }}
+          />
+          {/* Horizontal rule — sweeps from center */}
+          <div
+            className="absolute left-0 right-0 h-[1px]"
+            style={{
+              top: '46%',
+              background: `linear-gradient(90deg, transparent 10%, ${moment.teamColors.primary}60 40%, ${moment.teamColors.primary}60 60%, transparent 90%)`,
+              transformOrigin: 'center',
+              animation: 'broadcast-wrap-rule 1.6s cubic-bezier(0.22,1,0.36,1) 0.15s both',
+            }}
+          />
+          {/* Center card — headline + stat */}
+          <div
+            className="relative text-center px-10 py-5"
+            style={{
+              backgroundColor: 'rgba(11,14,20,0.8)',
+              backdropFilter: 'blur(8px)',
+              borderTop: `2px solid ${moment.teamColors.primary}50`,
+              borderBottom: `2px solid ${moment.teamColors.primary}50`,
+              animation: 'broadcast-wrap-card 1.8s cubic-bezier(0.22,1,0.36,1) 0.1s both',
+            }}
+          >
+            {/* "BROADCAST CONCLUDED" — tracked Oswald headline */}
+            <p
+              className="text-[clamp(1rem,3.5vw,1.6rem)] font-bold uppercase tracking-[0.35em] text-white/60"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                animation: 'broadcast-wrap-text 1.6s cubic-bezier(0.22,1,0.36,1) 0.25s both',
+              }}
+            >
+              Broadcast Concluded
+            </p>
+            {/* Player + stat — team-color accent */}
+            <p
+              className="mt-2 text-[11px] uppercase tracking-[0.2em]"
+              style={{
+                color: `${moment.teamColors.primary}90`,
+                fontFamily: 'var(--font-oswald), sans-serif',
+                animation: 'broadcast-wrap-stat 1.4s cubic-bezier(0.22,1,0.36,1) 0.5s both',
+              }}
+            >
+              {moment.player} &middot; {moment.statLine}
+            </p>
+            {/* Team-color dot — anchor */}
+            <div
+              className="mx-auto mt-3 h-[3px] w-[3px] rounded-full"
+              style={{
+                backgroundColor: moment.teamColors.primary,
+                boxShadow: `0 0 8px ${moment.teamColors.primary}60`,
+                animation: 'broadcast-wrap-stat 1.4s cubic-bezier(0.22,1,0.36,1) 0.65s both',
+              }}
+            />
+          </div>
+          {/* Brief screen flash — broadcast transition sting */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: `rgba(${rgb},0.08)`,
+              animation: 'broadcast-wrap-flash 0.6s ease-out forwards',
+            }}
+          />
         </div>
       )}
 

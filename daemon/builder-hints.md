@@ -2222,3 +2222,10 @@
 - Cancel logic on finger movement before activation prevents accidental loupe when scrolling. Only stationary press triggers the hold timer.
 - The loupe targets Int + VP but composite didn't move (+0.00). Supreme is stuck at 9.44 — needs improvements that target 3+ dimensions simultaneously to advance. Conversion (9.44) is the key bottleneck alongside Emotion (9.44).
 - Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.48. Next cycle: Broadcast (rotation). Supreme still 0.04 behind Arena — it needs a breakthrough multi-dimensional improvement.
+
+## Cycle 289 Learnings
+- The Fan Poll targets 3 dimensions (Conv, Int, Emo) simultaneously, which was enough to advance the composite from 9.46 to 9.47. Confirms the pattern from cycle 287: need 3+ dimensions improving to move the needle at this score level.
+- Foot-in-the-door works best when the micro-commitment is ALIGNED with the purchase decision. "Is this the #1 play?" → YES → "Own this moment" is a natural escalation. A random poll ("What's your favorite team?") wouldn't prime the purchase.
+- The YES button is styled with team-color (prominent) while NO is muted (subdued) — this isn't neutral polling, it's conversion-optimized. The visual weight biases toward YES, which is the desired micro-commitment.
+- Results bars animate from 0% width with 700ms ease-out — the visual reveal of "87% agree with you" creates social validation that further primes the purchase.
+- Current scores: Supreme 9.44, Broadcast 9.47, Arena 9.48. Next cycle: Arena (rotation). Supreme is 0.04 behind Arena, 0.03 behind Broadcast — it needs a breakthrough multi-dimensional improvement.

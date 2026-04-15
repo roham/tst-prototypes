@@ -2167,3 +2167,10 @@
 - z-9 for ripples sits between the jumbotron pixel grid (z-6) and the text overlay (z-10), so ripples appear on the "court surface" below the player info.
 - Touch events on mobile fire both onTouchStart and onClick — but since ripples auto-clean after 900ms and max 3 concurrent, double-firing is harmless (just two overlapping ripples, which actually looks cool).
 - Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Supreme (rotation). Supreme is now the weakest at 0.03 behind Arena.
+
+## Cycle 279 Learnings
+- The provenance preview is a text-only element that targets Conv + Emo without adding visual complexity. Supreme's transaction area has many elements already — adding more visual weight risks clutter. Text-only additions maintain the minimalist aesthetic.
+- "Your Collection" in tier-accent italic is the key conversion trigger — it's the only element on the page that uses the buyer's perspective ("your") rather than institutional third-person. This makes it uniquely powerful for endowment effect activation.
+- Composite score didn't move (+0.00) despite Conv and Emo each advancing +0.01 — the weighted average rounds down when only 2 of 5 dimensions improve and the improvements are small. Need to target multiple dimensions simultaneously for composite advancement.
+- Supreme's biggest gap vs Arena/Broadcast is Visual (9.44 vs 9.47/9.46). Next Supreme cycle should focus on a VP improvement — a new visual element rather than text-based conversion mechanics.
+- Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Broadcast (rotation). Supreme still 0.03 behind Arena, 0.02 behind Broadcast.

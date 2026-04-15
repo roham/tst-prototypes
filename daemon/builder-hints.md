@@ -2117,3 +2117,10 @@
 - SVG mask-image for irregular edges is more performant than clip-path with many points, and the `preserveAspectRatio="none"` allows the pattern to stretch to any width without repeating.
 - The colophon should be nearly invisible (2.5-4% opacity) — it's not content, it's institutional completeness. If someone notices it, they think "this was designed by someone who knows what they're doing."
 - Current scores: Supreme 9.43, Broadcast 9.44, Arena 9.45. Next cycle: Broadcast (rotation). Broadcast weakest dimensions: VP 9.43, Conv 9.43, Emo 9.44, Int 9.43.
+
+## Cycle 271 Learnings
+- The "live read" progressive commitment pattern works particularly well for Broadcast because it leverages existing analyst characters (ANALYST_DESK data) — the endorsement feels organic, not bolted on.
+- CTA language upgrade is the cheapest conversion lift: changing "Own This Piece of History" to "Collect This Moment" after the live read creates action-oriented framing. The word "Collect" directly maps to the purchase action, while "Own" is aspirational and passive.
+- Expand/collapse patterns need careful maxHeight transitions — using a generous maxHeight (200px) with overflow:hidden creates smooth animation without needing to measure content height. The opacity crossfade (0→1) masks any slight height jitter.
+- The analyst avatar circle (initials in team-color) creates a human presence at the decision point — faces/initials convert better than abstract icons because they trigger social trust circuits.
+- Current scores: Supreme 9.43, Broadcast 9.45, Arena 9.45. Next cycle: Arena (rotation). Arena all dimensions at 9.44-9.46 ceiling — need to find unexplored arena-exclusive mechanics.

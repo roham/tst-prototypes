@@ -400,6 +400,14 @@ const HERO_GHOST_TEXT: Record<string, { word: string; subtext: string }> = {
   sga:   { word: 'CLUTCH', subtext: 'TAKEOVER' },
 };
 
+// Jersey numbers — every ESPN player intro card shows the number oversized.
+// The number IS the identity: #13, #15, #2 are instantly recognizable icons.
+const JERSEY_NUMBER: Record<string, string> = {
+  bam: '13',
+  jokic: '15',
+  sga: '2',
+};
+
 // ---------------------------------------------------------------------------
 // Sideline Report data — per-moment courtside reporter inserts.
 // Every ESPN/TNT broadcast cuts to the sideline reporter for courtside color:
@@ -5736,6 +5744,28 @@ export default function BroadcastPage() {
           <div
             className="absolute inset-x-0 bottom-0 z-20 px-5 pb-7 md:px-10 md:pb-12 broadcast-lower-third"
           >
+            {/* ── JERSEY NUMBER WATERMARK — ESPN player intro oversized number ── */}
+            {/* Every ESPN/TNT player spotlight card features the jersey number    */}
+            {/* at massive scale behind the name — it's the iconic identity mark. */}
+            {/* #13, #15, #2 are instantly recognizable to any NBA fan. The number */}
+            {/* adds typographic gravity and emotional weight to the lower-third.  */}
+            <div
+              className="absolute pointer-events-none select-none broadcast-jersey-reveal"
+              style={{
+                right: '5%',
+                bottom: '10px',
+                fontFamily: 'var(--font-oswald), sans-serif',
+                fontWeight: 900,
+                fontSize: 'clamp(10rem, 35vw, 22rem)',
+                lineHeight: 0.8,
+                letterSpacing: '-0.04em',
+                color: 'transparent',
+                WebkitTextStroke: `1.5px rgba(${rgb},0.07)`,
+                textShadow: `0 0 80px rgba(${rgb},0.04)`,
+              }}
+            >
+              {JERSEY_NUMBER[momentId] ?? '0'}
+            </div>
             {/* Team-color left edge accent */}
             <div
               className="absolute left-0 bottom-7 top-0 w-[3px] md:bottom-12"

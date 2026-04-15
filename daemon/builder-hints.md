@@ -1925,5 +1925,13 @@
 - z-57 was chosen for the wrap overlay: above the "SOLD TO" lower-third (z-56) and quarter bumper (z-52) but below the countdown leader (z-60). The z-index stack in Broadcast is getting deep — future additions should audit the stack.
 - The stat line in the sign-off card (player + statLine) serves as emotional closure — the last thing the viewer sees before the SMPTE end slate is a reminder of what just happened, like a TV host's final summary.
 - Next cycle: Arena (rotation). Arena scores: VP=9.42, Conv=9.40, Emo=9.42, Int=9.42, Pur=9.42. Conversion (9.40) is the clear weakest dimension. Ideas: Arena could benefit from a crowd-sourced urgency indicator (live attendance count), a tier popularity leaderboard (most-claimed tier), or a "last chance" jumbotron alert during CRITICAL phase.
+
+## Cycle 242 Learnings
+- The seat upgrade nudge uses hex color suffixes (e.g., `${teamColor}0F`) rather than `rgba(hexToRgb(...))` because Arena's page.tsx doesn't have a hexToRgb helper — it uses the shorthand hex+alpha syntax throughout. Always match the existing file's color convention.
+- Placing the upsell between STEAL DEAL (value perception) and CTA (commitment) creates a natural consideration funnel: see the deal → consider upgrading → commit. The sequence matters.
+- The `selectedTierIdx <= 1` condition ensures the prompt only shows for the two lowest tiers. Users who've already selected Legendary or Ultimate don't need upselling — they've self-selected premium.
+- The price delta framing ("+$X more" vs "$Y total") is critical: behavioral economics shows relative pricing feels cheaper than absolute pricing. The full price is visible on the tier card; the nudge shows only the marginal cost.
+- At 9.42 across all 5 dimensions, Arena is now the most balanced direction. Future improvements will need to be multi-dimensional to move the needle. The ceiling effect is real at 9.4+.
+- Next cycle: Supreme (rotation). Supreme scores: VP=9.38, Conv=9.37, Emo=9.40, Int=9.40, Pur=9.42. Conversion (9.37) is the clear weakest dimension. Ideas: Supreme could benefit from a provenance/authentication display, a "reserve your lot" prompt, or a price justification element showing collector market comparables.
 - Delta modest (+0.01) because Supreme's ENDED state was already functional, and the ceremony only fires once (users may not experience it in their first session). High craft value but low frequency impact.
 - Next cycle: Broadcast (rotation). Broadcast scores: VP=9.38, Conv=9.42, Emo=9.38, Int=9.38, Pur=9.39. Visual and Emotion are the weakest dimensions.

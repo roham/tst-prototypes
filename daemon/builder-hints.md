@@ -1789,3 +1789,11 @@
 - Urgency vignette (inset box-shadow pulse) is subtle but effective — it changes the hero's ambient feel during closing phases without adding UI elements. The 2s vs 3.5s timing difference between CRITICAL/CLOSING creates noticeable urgency escalation.
 - Per-moment ghost text words should be emotionally specific, not generic. "POSTERIZED" > "HIGHLIGHT". "DAGGER" > "BIG SHOT". "CLUTCH" > "GREAT PLAY". The specificity is what makes ESPN graphics feel authored.
 - Next cycle: Arena (rotation). Arena Interaction (9.25) is the weakest dimension across all directions. Ideas: interactive tier selector with hover/press states that feel arena-alive (LED glow on hover, haptic on press), or a more theatrical purchasing flow with crowd countdown during stages.
+
+## Cycle 224 Learnings
+- The purchasing ceremony is the highest-leverage Interaction improvement for any direction. Each direction now has a unique purchase ritual: Supreme = ledger inscription (silent clerk writing), Broadcast = TBD (currently basic), Arena = crowd chant countdown (3-2-1-YOURS!).
+- Sub-beats within a single purchase stage (stage 1 shows "2" then "1" at 300ms intervals) create the feeling of acceleration without changing the actual stage timing. The crowd speeds up as it gets closer to zero.
+- EQ bars as a "crowd energy" visualization work because they're universally associated with audio/sound systems — in an arena context they read as "the crowd is getting louder." The escalation from small bars to full eruption is viscerally satisfying.
+- The "YOURS!" text at finale creates a vocabulary bridge with Supreme's "Yours." but in Arena's style (all-caps, teal, with crowd explosion). Each direction can share the ownership moment but express it differently.
+- z-index 46 (above CrowdCountdown at 44) ensures the purchase ceremony takes visual priority over other overlays — when you're buying, nothing else matters.
+- Next cycle: Supreme (rotation). Supreme's Visual Polish and Emotion (both 9.30) are the weakest dimensions. Ideas: subtle ambient particle effect (floating motes of light in the saleroom — dust in spotlights like auction house atmosphere), or an editorial provenance illustration (hand-drawn SVG of the moment scene, revealed on the W screen).

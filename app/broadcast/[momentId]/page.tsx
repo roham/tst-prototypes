@@ -6176,6 +6176,90 @@ function CertificateScreen({
           </div>
         </div>
 
+        {/* ── AUDIO LEVELS — broadcast control room VU meters ───────── */}
+        {/* In every ESPN/TNT control room, audio engineers monitor VU   */}
+        {/* meters during the broadcast. After a huge play, the crowd    */}
+        {/* levels spike and the meters pin. This is that moment frozen. */}
+        <div
+          className="mt-5 w-full max-w-md mx-auto px-5 transition-all duration-700 ease-out"
+          style={{
+            opacity: phase >= 3 ? 1 : 0,
+            transform: phase >= 3 ? 'translateY(0)' : 'translateY(10px)',
+            transitionDelay: '0.6s',
+          }}
+        >
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-2.5">
+            <span
+              className="text-[7px] font-bold uppercase tracking-[0.25em] text-white/20"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+            >
+              Audio Levels
+            </span>
+            <div className="h-[1px] flex-1 bg-white/[0.05]" />
+            <span className="text-[6px] font-mono uppercase tracking-[0.15em] text-white/10">
+              PGM L/R
+            </span>
+          </div>
+
+          {/* VU meter bars — 5 channels */}
+          <div className="flex flex-col gap-1">
+            {[
+              { label: 'CROWD', level: 92, peak: true },
+              { label: 'COURT', level: 67, peak: false },
+              { label: 'PBP', level: 74, peak: false },
+              { label: 'ANLST', level: 58, peak: false },
+              { label: 'MIX', level: 85, peak: true },
+            ].map((ch, idx) => (
+              <div key={ch.label} className="flex items-center gap-2">
+                <span className="text-[6px] font-mono uppercase tracking-[0.1em] text-white/15 w-[28px] text-right tabular-nums">
+                  {ch.label}
+                </span>
+                {/* Meter bar background */}
+                <div className="flex-1 h-[5px] rounded-[1px] bg-white/[0.04] relative overflow-hidden">
+                  {/* Level fill */}
+                  <div
+                    className="absolute inset-y-0 left-0 rounded-[1px]"
+                    style={{
+                      width: `${ch.level}%`,
+                      background: ch.level > 85
+                        ? `linear-gradient(90deg, rgba(${rgb},0.3) 0%, rgba(${rgb},0.6) 75%, #EF4444 95%)`
+                        : `linear-gradient(90deg, rgba(${rgb},0.2) 0%, rgba(${rgb},0.5) 100%)`,
+                      animation: phase >= 3 ? `broadcast-vu-fill 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${0.6 + idx * 0.08}s both` : undefined,
+                    }}
+                  />
+                  {/* Peak indicator — red clip mark */}
+                  {ch.peak && (
+                    <div
+                      className="absolute inset-y-0 w-[2px] rounded-[1px]"
+                      style={{
+                        left: `${Math.min(ch.level + 3, 98)}%`,
+                        backgroundColor: '#EF4444',
+                        opacity: 0.7,
+                        animation: phase >= 3 ? `broadcast-vu-peak 1.5s ease-in-out ${1.2 + idx * 0.1}s infinite` : undefined,
+                      }}
+                    />
+                  )}
+                </div>
+                {/* dB reading */}
+                <span className="text-[6px] font-mono tabular-nums text-white/10 w-[22px]">
+                  {ch.level > 85 ? '-2' : ch.level > 70 ? '-8' : '-14'}dB
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Scale markers */}
+          <div className="flex items-center mt-1 ml-[36px]">
+            <div className="flex-1 flex justify-between">
+              {['-40', '-20', '-10', '-6', '0'].map((mark) => (
+                <span key={mark} className="text-[5px] font-mono text-white/8 tabular-nums">{mark}</span>
+              ))}
+            </div>
+            <div className="w-[22px]" />
+          </div>
+        </div>
+
         {/* ── PLAYER OF THE GAME — ESPN-style award graphic ──────────── */}
         {/* Every ESPN/TNT broadcast ends with a "Player of the Game"   */}
         {/* graphic: the highest individual honor in a broadcast recap.  */}

@@ -1037,6 +1037,16 @@ body {
   100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
 
+/* Broadcast VU meter — level fill animation and peak blink */
+@keyframes broadcast-vu-fill {
+  0% { transform: scaleX(0); transform-origin: left; opacity: 0; }
+  100% { transform: scaleX(1); transform-origin: left; opacity: 1; }
+}
+@keyframes broadcast-vu-peak {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.2; }
+}
+
 /* Broadcast location tag — "LIVE FROM [ARENA]" slides in from left, exits left */
 @keyframes broadcast-location-in {
   0% { transform: translateX(-110%); opacity: 0; }

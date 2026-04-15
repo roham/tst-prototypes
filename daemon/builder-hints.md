@@ -2236,3 +2236,12 @@
 - Only 2 dimensions improved (Emo + Pur), so composite stayed at 9.48. Arena needs 3+ dimensions simultaneously to advance. Next Arena cycle should target VP or Conv alongside other dimensions.
 - The Georgia italic quote text creates an interesting contrast with Arena's normally aggressive Oswald/mono typography — the quiet intimacy of a fan's memory amidst the arena chaos. This contrast is deliberate and effective.
 - Current scores: Supreme 9.44, Broadcast 9.47, Arena 9.48. Next cycle: Supreme (rotation). Supreme is 0.04 behind Arena and 0.03 behind Broadcast — it desperately needs a multi-dimensional breakthrough.
+
+## Cycle 291 Learnings
+- The saleroom timepiece advanced 3 dimensions (VP, Conv, Emo, Pur = 4 actually) but Int stayed flat because the clock is passive. At this score level, Interaction (15% weight) is the single most impactful dimension to target for Supreme — it's the lowest at 9.43 and every +0.01 there equals 0.0015 on the composite.
+- SVG analog clocks are surprisingly simple: 12 marker lines + 2-3 hand lines + 2 circles. The `hand()` helper function (angle + length → x,y) makes coordinate math trivial.
+- Phase-responsive tinting (face fill + rim stroke + marker color + hand color all transitioning) creates a strong visual state change with minimal code — just CSS transitions on fill/stroke properties.
+- The minute hand mapping (elapsed/total * 360°) provides a direct visual metaphor for time depletion that the digital countdown cannot: you see how much of the "clock face" has been consumed.
+- Placing the timepiece in the info strip (next to the phase label) was the right call — it's in the user's peripheral vision while they read the countdown, creating subconscious urgency reinforcement.
+- Supreme is stuck at 9.44. The key insight: to break through, the NEXT improvement must include an Interaction dimension lift. The clock was beautiful but passive. Supreme needs a new tappable mechanic that touches Int + at least 2 other dimensions.
+- Next cycle: Broadcast (rotation). Broadcast at 9.47 — ahead of Supreme. Then Arena at 9.48. Supreme won't get another cycle until 293 or 294.

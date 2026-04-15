@@ -7717,6 +7717,117 @@ export default function ArenaPage({
           </div>
         )}
 
+        {/* ── Supply Scoreboard — triple urgency stack: scarcity at CTA ── */}
+        {/* Research insight #2: Triple Urgency Stack. Arena had time + competition  */}
+        {/* urgency at the CTA but supply scarcity was buried in tier cards. This    */}
+        {/* jumbotron-style scoreboard shows CLAIMED vs REMAINING like a game score, */}
+        {/* completing the triple stack right at the decision point. Each simulated  */}
+        {/* purchase ticks CLAIMED up and REMAINING down with a flash animation.    */}
+        {!countdown.isEnded && proto.state !== 'purchasing' && (
+          (() => {
+            const tier = moment.rarityTiers[selectedTierIdx];
+            const remaining = liveTierRemaining[selectedTierIdx] ?? tier.remaining;
+            const total = tier.remaining + (tier.remaining - remaining) + remaining; // approximate total from initial
+            const claimed = (tier.remaining - remaining) + (moment.editionsClaimed - tier.remaining); // net claimed
+            const displayClaimed = Math.max(0, tier.remaining - remaining + Math.floor(moment.editionsClaimed * 0.6));
+            const displayRemaining = remaining;
+            const pct = Math.min(100, Math.round(((tier.remaining - remaining) / Math.max(1, tier.remaining)) * 100));
+            const isHot = pct >= 70;
+            const isAlmostGone = pct >= 90;
+            return (
+              <div
+                className="mb-2 rounded-lg px-3 py-2 transition-all duration-500"
+                style={{
+                  backgroundColor: isAlmostGone ? 'rgba(239,68,68,0.08)' : isHot ? 'rgba(245,158,11,0.06)' : 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${isAlmostGone ? 'rgba(239,68,68,0.2)' : isHot ? 'rgba(245,158,11,0.12)' : 'rgba(255,255,255,0.06)'}`,
+                }}
+              >
+                {/* Scoreboard header */}
+                <div className="flex items-center justify-between mb-1.5">
+                  <span
+                    className="text-[8px] font-bold uppercase tracking-[0.2em]"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: isAlmostGone ? '#EF4444' : isHot ? '#F59E0B' : 'rgba(255,255,255,0.3)',
+                    }}
+                  >
+                    {isAlmostGone ? '⚠ ALMOST GONE' : isHot ? 'SELLING FAST' : 'EDITION SUPPLY'}
+                  </span>
+                  <span
+                    className="text-[8px] font-mono tabular-nums"
+                    style={{ color: isAlmostGone ? '#EF4444' : isHot ? '#F59E0B' : 'rgba(255,255,255,0.2)' }}
+                  >
+                    {pct}% CLAIMED
+                  </span>
+                </div>
+                {/* Score display: CLAIMED vs REMAINING like a scoreboard */}
+                <div className="flex items-center justify-center gap-3">
+                  <div className="flex flex-col items-center min-w-[60px]">
+                    <span
+                      className="text-[18px] font-bold tabular-nums leading-none transition-all duration-300"
+                      style={{
+                        fontFamily: 'var(--font-oswald), sans-serif',
+                        color: moment.teamColors.primary,
+                        textShadow: tierFlashIdx === selectedTierIdx ? `0 0 12px ${moment.teamColors.primary}80` : 'none',
+                      }}
+                    >
+                      {displayClaimed.toLocaleString()}
+                    </span>
+                    <span className="text-[7px] uppercase tracking-[0.15em] text-white/25 mt-0.5" style={{ fontFamily: 'var(--font-oswald), sans-serif' }}>
+                      Claimed
+                    </span>
+                  </div>
+                  {/* VS divider — scoreboard style */}
+                  <div className="flex flex-col items-center">
+                    <span
+                      className="text-[10px] font-bold"
+                      style={{
+                        fontFamily: 'var(--font-oswald), sans-serif',
+                        color: 'rgba(255,255,255,0.15)',
+                      }}
+                    >
+                      vs
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-center min-w-[60px]">
+                    <span
+                      className={`text-[18px] font-bold tabular-nums leading-none transition-all duration-300 ${tierFlashIdx === selectedTierIdx ? 'scale-95' : ''}`}
+                      style={{
+                        fontFamily: 'var(--font-oswald), sans-serif',
+                        color: isAlmostGone ? '#EF4444' : isHot ? '#F59E0B' : 'rgba(240,242,245,0.6)',
+                        textShadow: tierFlashIdx === selectedTierIdx
+                          ? `0 0 10px ${isAlmostGone ? 'rgba(239,68,68,0.5)' : isHot ? 'rgba(245,158,11,0.4)' : 'rgba(255,255,255,0.15)'}`
+                          : 'none',
+                      }}
+                    >
+                      {displayRemaining.toLocaleString()}
+                    </span>
+                    <span className="text-[7px] uppercase tracking-[0.15em] text-white/25 mt-0.5" style={{ fontFamily: 'var(--font-oswald), sans-serif' }}>
+                      Left
+                    </span>
+                  </div>
+                </div>
+                {/* Supply depletion bar */}
+                <div className="mt-1.5 h-[3px] rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}>
+                  <div
+                    className="h-full rounded-full transition-all duration-700 ease-out"
+                    style={{
+                      width: `${pct}%`,
+                      backgroundColor: isAlmostGone ? '#EF4444' : isHot ? '#F59E0B' : moment.teamColors.primary,
+                      boxShadow: isAlmostGone
+                        ? '0 0 8px rgba(239,68,68,0.4)'
+                        : isHot
+                          ? '0 0 6px rgba(245,158,11,0.3)'
+                          : `0 0 4px ${moment.teamColors.primary}40`,
+                      animation: isAlmostGone ? 'arena-supply-pulse 1.2s ease-in-out infinite' : undefined,
+                    }}
+                  />
+                </div>
+              </div>
+            );
+          })()
+        )}
+
         {/* CTA Crowd Pulse Ring — sonar ring on each feed purchase */}
         <div className="relative">
           {!countdown.isEnded && proto.state === 'browsing' && (

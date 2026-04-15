@@ -1315,6 +1315,61 @@ function NetworkBug({ isEnded, teamColor, rgb, dropPhase }: {
   );
 }
 
+// ── TV Content Rating Badge — appears at start of every broadcast ───────────
+// At the start of every ESPN/TNT/ABC broadcast, the TV content rating badge
+// (TV-G, TV-PG, etc.) appears in the upper-left corner for ~4 seconds then
+// fades. It's one of the most universally recognized broadcast UI elements —
+// viewers have been conditioned to see it since childhood. A semi-transparent
+// box with the rating inside, positioned below the ScoreBug. Shows on page
+// load, auto-dismisses after 4.5s. Purely atmospheric broadcast production
+// detail. Distinctly Broadcast: Supreme would never show a content rating
+// (institutional silence), Arena would never show it (live commerce chaos).
+function TVRatingBadge({ isEnded }: { isEnded: boolean }) {
+  const [visible, setVisible] = useState(false);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    if (isEnded) return;
+    // Show after countdown leader completes (~2.8s)
+    const show = setTimeout(() => setVisible(true), 3200);
+    const fade = setTimeout(() => setFading(true), 7000);
+    const hide = setTimeout(() => setVisible(false), 7800);
+    return () => { clearTimeout(show); clearTimeout(fade); clearTimeout(hide); };
+  }, [isEnded]);
+
+  if (!visible || isEnded) return null;
+
+  return (
+    <div
+      className="fixed top-[108px] left-4 z-40 pointer-events-none md:top-[120px] md:left-6"
+      style={{
+        opacity: fading ? 0 : 0.35,
+        transition: 'opacity 0.8s ease',
+      }}
+    >
+      <div
+        className="flex items-center gap-0"
+        style={{
+          border: '1px solid rgba(240,242,245,0.25)',
+          borderRadius: '2px',
+          overflow: 'hidden',
+        }}
+      >
+        <span
+          className="text-[8px] font-bold uppercase leading-none px-[5px] py-[3px]"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: 'rgba(240,242,245,0.8)',
+            letterSpacing: '0.05em',
+          }}
+        >
+          TV-G
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // ── Graphics Package Accent Trim — ESPN-style L-frame accent lines ─────────
 // Every ESPN/FOX/TNT broadcast graphics package has consistent accent lines
 // that frame lower-thirds, stat cards, and hero graphics. These thin animated
@@ -4812,6 +4867,7 @@ export default function BroadcastPage() {
       {/* ━━━ SCORE BUG — persistent game score overlay ━━━━━━━━━━━━━━ */}
       <ScoreBug moment={moment} isEnded={countdown.isEnded} teamColor={moment.teamColors.primary} rgb={rgb} dropPhase={dropPhase} />
       <NetworkBug isEnded={countdown.isEnded} teamColor={moment.teamColors.primary} rgb={rgb} dropPhase={dropPhase} />
+      <TVRatingBadge isEnded={countdown.isEnded} />
 
       <div className="relative z-10">
         {/* ━━━ ESPN BOTTOMLINE — scrolling score ticker ━━━━━━━━━━━━━━━ */}

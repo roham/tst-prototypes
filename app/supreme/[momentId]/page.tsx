@@ -2392,6 +2392,56 @@ export default function SupremePage() {
           />
         </div>
 
+        {/* Intaglio plate mark — embossed rectangular indentation from copper     */}
+        {/* plate edge pressing into dampened paper during the printing process.     */}
+        {/* In fine art prints, the plate mark is the definitive sign of an original */}
+        {/* intaglio impression — it proves physical contact with the plate. The     */}
+        {/* asymmetric shadow (heavier on bottom-right) simulates directional        */}
+        {/* pressure from the printing press roller traveling top-to-bottom.         */}
+        <div
+          className="absolute z-[9] pointer-events-none transition-opacity duration-1000"
+          style={{
+            inset: '7px 7px 9px 7px',
+            border: 'none',
+            boxShadow: [
+              // Outer emboss — light catches top-left edge of the depression
+              'inset 0.5px 0.5px 0 rgba(255,255,255,0.035)',
+              // Inner shadow — the depression itself, heavier bottom-right (press direction)
+              'inset -1px -1px 2px rgba(0,0,0,0.12)',
+              'inset 1px 1px 1px rgba(0,0,0,0.06)',
+              // Soft ambient shadow inside the mark
+              'inset 0 0 4px rgba(0,0,0,0.08)',
+            ].join(', '),
+            opacity: isEnded ? 0.3 : 0.6,
+          }}
+        />
+
+        {/* Registration crosshairs — multi-plate alignment marks in print margins  */}
+        {/* In color intaglio and lithography, tiny crosshair marks in the margins   */}
+        {/* ensure each color plate aligns precisely. Their presence signals          */}
+        {/* "this is an original print pulled from plates, not a reproduction."       */}
+        {[
+          { top: '18px', left: '18px' },
+          { top: '18px', right: '18px' },
+          { bottom: '22px', left: '18px' },
+          { bottom: '22px', right: '18px' },
+        ].map((pos, i) => (
+          <div
+            key={`reg-${i}`}
+            className="absolute z-[13] pointer-events-none"
+            style={{ ...pos, opacity: isEnded ? 0.04 : 0.08 }}
+          >
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+              {/* Horizontal hair */}
+              <line x1="0" y1="4" x2="8" y2="4" stroke="#F0F2F5" strokeWidth="0.4" />
+              {/* Vertical hair */}
+              <line x1="4" y1="0" x2="4" y2="8" stroke="#F0F2F5" strokeWidth="0.4" />
+              {/* Center circle */}
+              <circle cx="4" cy="4" r="2" stroke="#F0F2F5" strokeWidth="0.4" fill="none" />
+            </svg>
+          </div>
+        ))}
+
         {/* Evening Sale catalogue header — institutional authority */}
         {/* Every Christie's/Sotheby's catalogue page has a formal header: */}
         {/* house name, sale title, date, location. Subliminal institutional gravitas. */}

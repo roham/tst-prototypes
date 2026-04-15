@@ -1917,5 +1917,13 @@
 - The lot closed ceremony reuses the gavel curtain's visual language (horizontal line sweep, team-color flash) but with longer timing (1.8s vs 0.85s) and softer opacity — the lot closing is a quieter, more resigned moment than the decisive gavel strike on purchase.
 - Letter-spacing animation (0.8em→0.45em) on "LOT CLOSED" creates the same kinetic energy as Arena's jumbotron text, but restrained — Supreme's text condenses quietly vs Arena's text slamming in from scale.
 - The ceremony only fires when the user is browsing — if they're in purchase flow, the gavel curtain handles that transition. This prevents double ceremonies from overlapping.
+
+## Cycle 241 Learnings
+- The CRITICAL→ENDED ceremony pattern is now proven across two directions (Supreme cycle 240, Broadcast cycle 241). The pattern: dedicated phase ref → detect CRITICAL→ENDED → fire timed overlay → auto-dismiss. Each direction's ceremony uses its own visual language: Supreme has gavel-fall line + institutional text, Broadcast has horizontal wipe + headline card.
+- Broadcast's existing prevBroadcastPhase ref is consumed by the feed-cut/quarter-bumper effect (which fires on OPEN→CLOSING and CLOSING→CRITICAL). A separate prevPhaseForWrapRef was needed for the CRITICAL→ENDED detection, same pattern as Supreme's prevPhaseForClosingRef.
+- The clip-path inset animation (broadcast-wrap-wipe) creates a true broadcast-style horizontal wipe that CSS transform scaleX can't achieve — clip-path reveals content progressively rather than stretching it.
+- z-57 was chosen for the wrap overlay: above the "SOLD TO" lower-third (z-56) and quarter bumper (z-52) but below the countdown leader (z-60). The z-index stack in Broadcast is getting deep — future additions should audit the stack.
+- The stat line in the sign-off card (player + statLine) serves as emotional closure — the last thing the viewer sees before the SMPTE end slate is a reminder of what just happened, like a TV host's final summary.
+- Next cycle: Arena (rotation). Arena scores: VP=9.42, Conv=9.40, Emo=9.42, Int=9.42, Pur=9.42. Conversion (9.40) is the clear weakest dimension. Ideas: Arena could benefit from a crowd-sourced urgency indicator (live attendance count), a tier popularity leaderboard (most-claimed tier), or a "last chance" jumbotron alert during CRITICAL phase.
 - Delta modest (+0.01) because Supreme's ENDED state was already functional, and the ceremony only fires once (users may not experience it in their first session). High craft value but low frequency impact.
 - Next cycle: Broadcast (rotation). Broadcast scores: VP=9.38, Conv=9.42, Emo=9.38, Int=9.38, Pur=9.39. Visual and Emotion are the weakest dimensions.

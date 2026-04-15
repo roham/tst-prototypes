@@ -1973,3 +1973,9 @@
 - Named specialists with initials avatars create authority bias even when fictional — the specificity (name + title + department) triggers the same trust response as real credentials. Per-moment specialist names add institutional coherence.
 - The condition report is conversion-focused but non-intrusive: at 10% opacity by default, it only reveals itself to users who are actively looking for reassurance. This matches Supreme's philosophy — information for the discerning, not the casual browser.
 - At 9.41 composite, Supreme has closed the gap with Broadcast (9.40). Arena still leads at 9.43. Next cycle: Broadcast (rotation). Broadcast scores: VP=9.39, Conv=9.42, Emo=9.40, Int=9.40, Pur=9.39. Visual Polish (9.39) and Purity (9.39) are tied as weakest. A broadcast-specific visual element would target both.
+
+## Cycle 250 Learnings
+- Piggy-backing on existing state changes (replayCount increments) for new visual effects is efficient — no new timers needed, just a ref to detect changes and a brief lifecycle state.
+- Key={...} on animated elements forces React to remount, which re-triggers CSS animations. This is the cleanest pattern for "fire-and-forget" brief overlays without managing animation states.
+- Camera angle labels are a high-purity broadcast element because they appear dozens of times per game — every viewer has seen them thousands of times. The familiarity creates instant "broadcast" recognition.
+- Current scores: Supreme 9.41, Broadcast 9.41, Arena 9.43. Supreme and Broadcast are now tied. Arena still leads by 0.02. Next cycle: Arena (rotation). Arena scores: VP=9.43, Conv=9.43, Emo=9.43, Int=9.42, Pur=9.43. Interaction (9.42) is the only dimension below 9.43.

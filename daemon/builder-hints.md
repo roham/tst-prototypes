@@ -2110,3 +2110,10 @@
 - LED scanline texture on the sticky buy button creates visual consistency with the main CTA — both buttons look like jumbotron displays.
 - At 9.45+ ceiling, the ticket stub and collector-of-the-game award already exist on the W screen (discovered during research). Must check existing features before planning improvements.
 - Current scores: Supreme 9.43, Broadcast 9.44, Arena 9.45. Next cycle: Supreme (rotation). Supreme is the weakest at 9.43 — 0.02 below Arena.
+
+## Cycle 270 Learnings
+- Print-production details (colophon, marginalia, deckled edges) are VP improvements that add perceived quality without adding content or changing layout. They reward close attention.
+- Pencil marginalia at very low opacity (6-8%) creates a "did I just see that?" effect — the kind of detail that makes a viewer zoom in and discover institutional craft. The slight rotation (-1° to -3°) is critical: perfectly aligned text doesn't look handwritten.
+- SVG mask-image for irregular edges is more performant than clip-path with many points, and the `preserveAspectRatio="none"` allows the pattern to stretch to any width without repeating.
+- The colophon should be nearly invisible (2.5-4% opacity) — it's not content, it's institutional completeness. If someone notices it, they think "this was designed by someone who knows what they're doing."
+- Current scores: Supreme 9.43, Broadcast 9.44, Arena 9.45. Next cycle: Broadcast (rotation). Broadcast weakest dimensions: VP 9.43, Conv 9.43, Emo 9.44, Int 9.43.

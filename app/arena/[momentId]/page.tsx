@@ -454,17 +454,23 @@ function PAAnnouncerIntro({ momentId, teamColor, playerName }: {
   );
 }
 
-function ConfettiCannon({ colors, teamColor }: { colors: string[]; teamColor: string }) {
-  // 4 cannon positions: bottom-left, bottom-right, center-left, center-right
-  const cannons = [
+function ConfettiCannon({ colors, teamColor, tierName = 'Open' }: { colors: string[]; teamColor: string; tierName?: string }) {
+  const intensity = TIER_INTENSITY[tierName] ?? TIER_INTENSITY.Open;
+  // Cannon positions scale with tier — more cannons = wider coverage
+  const allCannons = [
     { x: 5, angle: 65 },   // bottom-left, fires up-right
     { x: 95, angle: 115 },  // bottom-right, fires up-left
     { x: 20, angle: 75 },   // mid-left, fires up-right
     { x: 80, angle: 105 },  // mid-right, fires up-left
+    { x: 12, angle: 70 },   // extra inner-left
+    { x: 88, angle: 110 },  // extra inner-right
+    { x: 50, angle: 85 },   // center
+    { x: 50, angle: 95 },   // center alt
   ];
+  const cannons = allCannons.slice(0, intensity.cannonCount);
 
   const pieces = cannons.flatMap((cannon, ci) =>
-    Array.from({ length: 16 }, (_, pi) => {
+    Array.from({ length: intensity.confettiPerCannon }, (_, pi) => {
       const idx = ci * 16 + pi;
       const color = colors[idx % colors.length];
       // Spread angle around cannon direction (±25°)
@@ -505,7 +511,7 @@ function ConfettiCannon({ colors, teamColor }: { colors: string[]; teamColor: st
   );
 
   // Also keep a lighter version of classic falling confetti for sustained effect
-  const falling = Array.from({ length: 20 }, (_, i) => {
+  const falling = Array.from({ length: intensity.fallingCount }, (_, i) => {
     const color = colors[i % colors.length];
     const left = 10 + Math.random() * 80;
     const delay = 1.5 + Math.random() * 2; // starts after cannons fire
@@ -546,10 +552,22 @@ const PYRO_BURSTS = [
   { x: 50, y: 6, delay: 1.7, sparks: 18, size: 48 },
 ] as const;
 
-function Pyrotechnics({ teamColor, secondaryColor }: { teamColor: string; secondaryColor: string }) {
+function Pyrotechnics({ teamColor, secondaryColor, tierName = 'Open' }: { teamColor: string; secondaryColor: string; tierName?: string }) {
+  const intensity = TIER_INTENSITY[tierName] ?? TIER_INTENSITY.Open;
+  /* Extra pyro bursts for premium tiers — added at random positions */
+  const extraCount = Math.round((intensity.pyroMultiplier - 1) * PYRO_BURSTS.length);
+  const extraBursts = Array.from({ length: extraCount }, (_, i) => ({
+    x: 10 + Math.random() * 80,
+    y: 5 + Math.random() * 25,
+    delay: 2.0 + i * 0.4,
+    sparks: 12 + Math.floor(Math.random() * 8),
+    size: 30 + Math.floor(Math.random() * 20),
+  }));
+  const allBursts = [...PYRO_BURSTS, ...extraBursts];
+
   return (
     <div className="pointer-events-none fixed inset-0 z-[49] overflow-hidden">
-      {PYRO_BURSTS.map((burst, bi) => (
+      {allBursts.map((burst, bi) => (
         <div
           key={bi}
           className="absolute"
@@ -2209,6 +2227,27 @@ const TIER_SECTION: Record<string, string> = {
   Ultimate: 'FLOOR SEAT',
 };
 
+/* ─── Tier Intensity Scale — celebration effects escalate by rarity ─── */
+/* Open = baseline arena celebration. Ultimate = maximum spectacle.       */
+const TIER_INTENSITY: Record<string, {
+  confettiPerCannon: number;
+  cannonCount: number;
+  fallingCount: number;
+  pyroMultiplier: number;
+  flashOpacity: number;
+  flashDuration: number;
+  shakeDuration: number;
+  eqBarScale: number;
+  pulseRings: number;
+  suspenseMs: number;
+  label: string;
+}> = {
+  Open:      { confettiPerCannon: 16, cannonCount: 4, fallingCount: 20, pyroMultiplier: 1,   flashOpacity: 0.35, flashDuration: 400, shakeDuration: 500, eqBarScale: 1,    pulseRings: 1, suspenseMs: 0,   label: 'GENERAL ADMISSION' },
+  Rare:      { confettiPerCannon: 22, cannonCount: 5, fallingCount: 30, pyroMultiplier: 1.4, flashOpacity: 0.42, flashDuration: 500, shakeDuration: 600, eqBarScale: 1.15, pulseRings: 2, suspenseMs: 200, label: 'RARE COLLECTION' },
+  Legendary: { confettiPerCannon: 28, cannonCount: 6, fallingCount: 40, pyroMultiplier: 1.8, flashOpacity: 0.50, flashDuration: 600, shakeDuration: 700, eqBarScale: 1.3,  pulseRings: 3, suspenseMs: 500, label: 'LEGENDARY PULL' },
+  Ultimate:  { confettiPerCannon: 36, cannonCount: 8, fallingCount: 55, pyroMultiplier: 2.2, flashOpacity: 0.60, flashDuration: 700, shakeDuration: 900, eqBarScale: 1.5,  pulseRings: 4, suspenseMs: 800, label: 'ULTIMATE — 1 OF 5' },
+};
+
 /* ─── Live Tier Remaining — stock ticks down like Whatnot/TikTok Shop ── */
 /* On live commerce platforms, the available quantity visibly decrements    */
 /* in real time when someone buys. The number does a brief scale-pulse     */
@@ -3328,13 +3367,17 @@ function CelebrationScreen({
   moment,
   feedEvents,
   onReset,
+  tierName = 'Open',
 }: {
   editionNumber: number;
   total: number;
   moment: Moment;
   feedEvents: PurchaseEvent[];
   onReset: () => void;
+  tierName?: string;
 }) {
+  const intensity = TIER_INTENSITY[tierName] ?? TIER_INTENSITY.Open;
+  const tierColor = TIER_COLOR[tierName] ?? '#00E5A0';
   const acquireTime = (1.5 + Math.random() * 3).toFixed(1);
   const percentile = Math.max(1, Math.round((1 - editionNumber / total) * 100));
   const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
@@ -3344,6 +3387,7 @@ function CelebrationScreen({
   const [showShare, setShowShare] = useState(false);
   const [showReplay, setShowReplay] = useState(false);
   const [replayCountdownActive, setReplayCountdownActive] = useState(false);
+  const [showRarityBadge, setShowRarityBadge] = useState(false);
   const handleReplayCountdownDone = useRef(() => setShowReplay(true)).current;
 
   // PA announcement typing — starts after headline bounce-in settles
@@ -3352,14 +3396,16 @@ function CelebrationScreen({
 
   useEffect(() => {
     CROWD_HAPTIC.celebration();
-    const t0 = setTimeout(() => setShake(false), 500);
-    const t1 = setTimeout(() => setFlash(false), 400);
+    const t0 = setTimeout(() => setShake(false), intensity.shakeDuration);
+    const t1 = setTimeout(() => setFlash(false), intensity.flashDuration);
     const t2 = setTimeout(() => setShowDetails(true), 700);
     const t3 = setTimeout(() => setShowShare(true), 1400);
+    // Rarity badge slams in after the initial flash settles
+    const tBadge = setTimeout(() => setShowRarityBadge(true), intensity.flashDuration + 200);
     // Start replay countdown after details are visible
     const t4 = setTimeout(() => setReplayCountdownActive(true), 900);
-    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
-  }, []);
+    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(tBadge); };
+  }, [intensity.shakeDuration, intensity.flashDuration]);
 
   return (
     <div
@@ -3368,36 +3414,110 @@ function CelebrationScreen({
         animation: shake ? 'arena-rumble 0.5s ease-out' : undefined,
       }}
     >
-      {/* Entry flash — team color, brighter for arena energy */}
+      {/* Entry flash — team color, intensity scales with tier rarity */}
       <div
         className="absolute inset-0 z-[60] pointer-events-none transition-opacity duration-500"
         style={{
-          backgroundColor: moment.teamColors.primary,
-          opacity: flash ? 0.35 : 0,
+          backgroundColor: tierName === 'Open' ? moment.teamColors.primary : tierColor,
+          opacity: flash ? intensity.flashOpacity : 0,
         }}
       />
 
       <ConfettiCannon
         colors={[
-          '#00E5A0', '#3B82F6', '#F59E0B', '#A855F7', '#EF4444',
+          tierColor, '#00E5A0', '#3B82F6', '#F59E0B', '#A855F7', '#EF4444',
           moment.teamColors.primary, moment.teamColors.secondary,
         ]}
         teamColor={moment.teamColors.primary}
+        tierName={tierName}
       />
 
       {/* Celebration Shimmer — continuous falling sparkle particles */}
       <CelebrationShimmer teamColor={moment.teamColors.primary} />
 
       {/* Pyrotechnic starbursts — arena rafter mortar effects */}
-      <Pyrotechnics teamColor={moment.teamColors.primary} secondaryColor={moment.teamColors.secondary} />
+      <Pyrotechnics teamColor={moment.teamColors.primary} secondaryColor={moment.teamColors.secondary} tierName={tierName} />
 
-      {/* Team-color ambient glow — intensified */}
+      {/* Team-color ambient glow — tier-scaled */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          background: `radial-gradient(ellipse 70% 50% at 50% 45%, ${moment.teamColors.primary}25 0%, transparent 65%)`,
+          background: `radial-gradient(ellipse 70% 50% at 50% 45%, ${tierName === 'Open' ? moment.teamColors.primary : tierColor}${tierName === 'Ultimate' ? '35' : tierName === 'Legendary' ? '30' : '25'} 0%, transparent 65%)`,
         }}
       />
+
+      {/* ─── Rarity Reveal Badge — tier badge slams in with overshoot ─── */}
+      {/* Higher tiers get bigger badges with more dramatic entrance.       */}
+      {/* The badge sits at the top of the celebration screen as a          */}
+      {/* jumbotron-style announcement of what tier was collected.           */}
+      {showRarityBadge && tierName !== 'Open' && (
+        <div
+          className="absolute z-[55] pointer-events-none flex flex-col items-center"
+          style={{
+            top: tierName === 'Ultimate' ? '6%' : '7%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            animation: 'arena-rarity-badge-slam 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+          }}
+        >
+          {/* Glow ring behind badge */}
+          <div
+            className="absolute rounded-full"
+            style={{
+              width: tierName === 'Ultimate' ? '140px' : tierName === 'Legendary' ? '110px' : '80px',
+              height: tierName === 'Ultimate' ? '140px' : tierName === 'Legendary' ? '110px' : '80px',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              background: `radial-gradient(circle, ${tierColor}30 0%, transparent 70%)`,
+              animation: 'arena-rarity-glow-pulse 2s ease-in-out infinite',
+            }}
+          />
+          {/* Badge container */}
+          <div
+            className="relative flex flex-col items-center gap-0.5 px-4 py-2 rounded-sm"
+            style={{
+              backgroundColor: `${tierColor}15`,
+              border: `1.5px solid ${tierColor}50`,
+              boxShadow: `0 0 ${tierName === 'Ultimate' ? '30' : tierName === 'Legendary' ? '20' : '12'}px ${tierColor}30, inset 0 0 12px ${tierColor}08`,
+            }}
+          >
+            {/* Tier icon — diamond for Ultimate, star for Legendary, dot for Rare */}
+            <span
+              className="text-[10px]"
+              style={{ color: tierColor, filter: `drop-shadow(0 0 4px ${tierColor})` }}
+            >
+              {tierName === 'Ultimate' ? '◆' : tierName === 'Legendary' ? '★' : '●'}
+            </span>
+            <span
+              className="text-[11px] font-bold uppercase tracking-[0.2em]"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: tierColor,
+                textShadow: `0 0 8px ${tierColor}60`,
+              }}
+            >
+              {intensity.label}
+            </span>
+            {tierName === 'Ultimate' && (
+              <span
+                className="text-[7px] uppercase tracking-[0.3em] mt-0.5"
+                style={{
+                  fontFamily: 'var(--font-mono, monospace)',
+                  color: `${tierColor}80`,
+                  animation: 'arena-rarity-shimmer 3s linear infinite',
+                  backgroundImage: `linear-gradient(90deg, ${tierColor}80, ${tierColor}, ${tierColor}80)`,
+                  backgroundSize: '200% 100%',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                GRAIL STATUS
+              </span>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Player image backdrop — faint arena jumbotron feel */}
       <div
@@ -4587,10 +4707,14 @@ function CrowdCountdown({ num, teamColor }: { num: number; teamColor: string }) 
 function PurchaseCeremony({
   stage,
   teamColor,
+  tierName = 'Open',
 }: {
   stage: number; // 0=reserving(3!), 1=processing(2!..1!), 2=secured(YOURS!)
   teamColor: string;
+  tierName?: string;
 }) {
+  const intensity = TIER_INTENSITY[tierName] ?? TIER_INTENSITY.Open;
+  const tierColor = TIER_COLOR[tierName] ?? '#00E5A0';
   /* Track sub-beats within stage 1: show "2" then "1" */
   const [subBeat, setSubBeat] = useState(0);
   useEffect(() => {
@@ -4613,13 +4737,15 @@ function PurchaseCeremony({
   const beatKey = stage === 1 ? `1-${subBeat}` : `${stage}`;
 
   /* EQ bar heights escalate: stage 0 = low rumble, 1 = building, 2 = eruption */
+  /* Premium tiers get taller bars via intensity.eqBarScale */
   const barCount = 12;
+  const s = intensity.eqBarScale;
   const barHeights = Array.from({ length: barCount }, (_, i) => {
     const base =
       stage === 0 ? 15 + Math.sin(i * 0.8) * 10
         : stage === 1 ? 30 + Math.sin(i * 1.2 + subBeat * 2) * 20
           : 60 + Math.sin(i * 0.6) * 30;
-    return Math.min(100, Math.max(8, base + (isFinale ? Math.random() * 20 : 0)));
+    return Math.min(120, Math.max(8, (base + (isFinale ? Math.random() * 20 : 0)) * s));
   });
 
   return (
@@ -4673,17 +4799,21 @@ function PurchaseCeremony({
         {displayText}
       </span>
 
-      {/* Pulse ring on each beat */}
-      <div
-        key={`ring-${beatKey}`}
-        className="absolute arena-ceremony-ring"
-        style={{
-          width: '160px',
-          height: '160px',
-          borderRadius: '50%',
-          border: `2px solid ${isFinale ? '#00E5A0' : teamColor}`,
-        }}
-      />
+      {/* Pulse rings on each beat — premium tiers get multiple staggered rings */}
+      {Array.from({ length: intensity.pulseRings }).map((_, ri) => (
+        <div
+          key={`ring-${beatKey}-${ri}`}
+          className="absolute arena-ceremony-ring"
+          style={{
+            width: `${160 + ri * 40}px`,
+            height: `${160 + ri * 40}px`,
+            borderRadius: '50%',
+            border: `2px solid ${isFinale ? (ri % 2 === 0 ? '#00E5A0' : tierColor) : teamColor}`,
+            animationDelay: `${ri * 0.08}s`,
+            opacity: 1 - ri * 0.15,
+          }}
+        />
+      ))}
 
       {/* Label */}
       <div
@@ -6178,6 +6308,7 @@ export default function ArenaPage({
         moment={moment}
         feedEvents={feedEvents}
         onReset={proto.reset}
+        tierName={moment.rarityTiers[selectedTierIdx]?.tier ?? 'Open'}
       />
     );
   }
@@ -6267,7 +6398,7 @@ export default function ArenaPage({
 
       {/* ─── Purchase Ceremony — 3-2-1-YOURS! crowd countdown on buy ─── */}
       {proto.state === 'purchasing' && (
-        <PurchaseCeremony stage={purchaseStage} teamColor={moment.teamColors.primary} />
+        <PurchaseCeremony stage={purchaseStage} teamColor={moment.teamColors.primary} tierName={moment.rarityTiers[selectedTierIdx]?.tier ?? 'Open'} />
       )}
 
       {/* ─── Arena Buzzer — red LED flash + FINAL when drop ends ─── */}

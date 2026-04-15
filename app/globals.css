@@ -2148,3 +2148,23 @@ body {
   40%  { opacity: 0.6; transform: scale(1.8); }
   100% { opacity: 0; transform: scale(2.5); }
 }
+
+/* ── Arena Rarity Reveal Badge — tier badge slams in with overshoot ── */
+@keyframes arena-rarity-badge-slam {
+  0%   { opacity: 0; transform: translateX(-50%) scale(2.5); }
+  50%  { opacity: 1; transform: translateX(-50%) scale(0.92); }
+  70%  { transform: translateX(-50%) scale(1.05); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+/* ── Arena Rarity Glow Pulse — ambient glow behind tier badge ── */
+@keyframes arena-rarity-glow-pulse {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.15); }
+}
+
+/* ── Arena Rarity Shimmer — foil shimmer on Ultimate badge text ── */
+@keyframes arena-rarity-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

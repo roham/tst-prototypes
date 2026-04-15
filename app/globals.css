@@ -1889,6 +1889,12 @@ body {
   0%   { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }
 }
+/* ── Broadcast BottomLine ticker scroll — continuous ESPN news crawl ── */
+@keyframes broadcast-ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 /* ── Broadcast Bumper — ESPN production transition swoosh + COLLECTED slate ── */
 @keyframes broadcast-bumper-swoosh {
   0%   { transform: translateX(-120%); }

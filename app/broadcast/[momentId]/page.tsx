@@ -583,6 +583,68 @@ function BreakingNewsCutIn({ moment, tier, purchaseStage, rgb }: {
           </span>
         </div>
       </div>
+
+      {/* BottomLine News Ticker — ESPN's continuous scrolling crawl */}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-[59] overflow-hidden"
+        style={{
+          height: '26px',
+          backgroundColor: purchaseStage === 2 ? 'rgba(0,229,160,0.12)' : 'rgba(239,68,68,0.08)',
+          borderTop: `1px solid ${purchaseStage === 2 ? 'rgba(0,229,160,0.25)' : 'rgba(239,68,68,0.2)'}`,
+          transition: 'background-color 0.3s, border-color 0.3s',
+        }}
+      >
+        {/* Red/teal "LIVE" label — fixed left anchor */}
+        <div
+          className="absolute left-0 top-0 bottom-0 z-10 flex items-center px-2.5"
+          style={{
+            backgroundColor: purchaseStage === 2 ? '#00E5A0' : '#EF4444',
+          }}
+        >
+          <span
+            className="text-[8px] font-bold uppercase tracking-[0.25em]"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: purchaseStage === 2 ? '#0B0E14' : '#FFFFFF',
+            }}
+          >
+            {purchaseStage === 2 ? 'DONE' : 'LIVE'}
+          </span>
+        </div>
+        {/* Scrolling ticker text */}
+        <div
+          className="absolute top-0 bottom-0 flex items-center whitespace-nowrap"
+          style={{
+            left: '52px',
+            animation: 'broadcast-ticker-scroll 18s linear infinite',
+          }}
+        >
+          {[0, 1].map((copy) => (
+            <span
+              key={copy}
+              className="inline-flex items-center gap-4 mr-8 text-[9px] uppercase tracking-[0.1em]"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: 'rgba(240,242,245,0.5)',
+              }}
+            >
+              <span style={{ color: purchaseStage === 2 ? '#00E5A0' : moment.teamColors.primary }}>
+                {purchaseStage === 2 ? '✓ ACQUISITION CONFIRMED' : '● BREAKING'}
+              </span>
+              <span className="text-white/20">|</span>
+              <span>{moment.player} — {moment.statLine}</span>
+              <span className="text-white/20">|</span>
+              <span>{tier.tier} Edition · #{(moment.editionsClaimed + 1).toLocaleString()} of {tier.size.toLocaleString()}</span>
+              <span className="text-white/20">|</span>
+              <span>{moment.team} vs {moment.opponent} · {moment.playType}</span>
+              <span className="text-white/20">|</span>
+              <span style={{ color: 'rgba(240,242,245,0.3)' }}>
+                {purchaseStage === 0 ? 'Processing transaction...' : purchaseStage === 1 ? 'Verifying authenticity...' : 'Added to collection'}
+              </span>
+            </span>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

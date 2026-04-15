@@ -1695,3 +1695,9 @@
 - SVG viewBox dimensions (160×22) must be precise for Oswald at 15px with 0.5em letter-spacing. Too wide = tiny text; too narrow = clipping.
 - Supreme's W screen now has 3 calligraphic ink moments: YOURS. inscription → sale record field reveal → collector's signature flourish.
 - Next cycle: Broadcast (rotation). Ideas: broadcast booth monitor grid on W screen (4-up multi-camera layout), or a stadium flyover graphic before the editorial section.
+
+## Cycle 211 Learnings
+- Per-moment hardcoded game scores are better than algorithmic generation — they can be curated to tell a story (MIA won by 16, making Bam's 30-point game feel like a dominant performance).
+- Winner/loser brightness contrast (90% vs 30% white) is the simplest way to communicate game outcome without needing a "W" or "L" label — the visual hierarchy does the work.
+- The W screen is getting content-rich — timing the stagger delays carefully is critical. Each new card needs its own delay slot to prevent simultaneous reveals that overwhelm.
+- Next cycle: Arena (rotation). Arena W screen could use a jumbotron "REPLAY" countdown (3-2-1 with screen wipe before showing the play again), or a confetti cannon sound wave visualization.

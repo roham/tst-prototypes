@@ -1838,3 +1838,11 @@
 - Phase-aware color transitions on both the badge and the background create a satisfying "resolution" moment when the purchase confirms — red→teal shift is visible at the bottom edge of the screen.
 - Type error: RarityTier uses `size` not `editions` — always check the type definition before using properties.
 - Next cycle: Arena (rotation). Arena scores: VP=9.37, Conv=9.35, Emo=9.38, Int=9.35, Pur=9.42. Conversion and Interaction tied at 9.35 as weakest. Ideas: the tier selector could be more interactive (LED glow on hover/press, section-based naming like "Floor/Lower/Upper"), or the hero section entrance could be more dramatic (tunnel walk-out, smoke effect).
+
+## Cycle 230 Learnings
+- Full-card flash reactions (border + shadow + overlay) on purchase events create significantly more visual urgency than just scaling the inventory text. The card becomes a "live" element that the user watches for activity.
+- The claimedIdx/claimedKey state pattern (separate from flashIdx) allows the "CLAIMED!" label to persist for 650ms while flashIdx may reset faster. Decoupling display state from event state prevents animation glitches.
+- Gate scanner sweep (0.35s horizontal gradient translateX) is a fast, subtle effect that doesn't interrupt selection flow. overflow-hidden on the button is critical to keep the sweep contained within the rounded border.
+- The prevSelectedRef pattern for detecting selection changes is clean — useEffect fires only on actual changes, preventing scan animation on re-renders.
+- Delta was +0.02 (modest) because the tier selector was already functional and the improvements are micro-interaction polish. Higher deltas at this maturity require new structural elements, not refinements to existing ones.
+- Next cycle: Supreme (rotation). Supreme scores: VP=9.35, Conv=9.35, Emo=9.32, Int=9.35, Pur=9.40. Emotion (9.32) is the weakest. Ideas: ambient particle system in the hero area (auction house dust motes floating in the spotlight cone), or a moment narrative section that presents the play's story in Supreme's institutional voice (catalogue essay style).

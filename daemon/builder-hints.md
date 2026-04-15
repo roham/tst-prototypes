@@ -1701,3 +1701,11 @@
 - Winner/loser brightness contrast (90% vs 30% white) is the simplest way to communicate game outcome without needing a "W" or "L" label — the visual hierarchy does the work.
 - The W screen is getting content-rich — timing the stagger delays carefully is critical. Each new card needs its own delay slot to prevent simultaneous reveals that overwhelm.
 - Next cycle: Arena (rotation). Arena W screen could use a jumbotron "REPLAY" countdown (3-2-1 with screen wipe before showing the play again), or a confetti cannon sound wave visualization.
+
+## Cycle 212 Learnings
+- Gating a component reveal behind a countdown creates outsized emotional payoff relative to code complexity. The countdown is ~65 lines but transforms the replay card from "another reveal" to "a theatrical moment." Look for other reveals that could benefit from build-up animations.
+- `useRef(() => fn).current` for stable callback reference avoids re-triggering the countdown's useEffect. This pattern is essential when passing callbacks to child components that have their own useEffect with the callback as a dependency.
+- The 4-step sequence (3→2→1→REPLAY!) with 600ms per step feels right — fast enough to not bore, slow enough to build anticipation. Shorter (400ms) felt rushed in testing; longer (800ms) dragged.
+- Team-color flash at 0.25 opacity on a dark background creates the "jumbotron screen flash" effect without overwhelming. Higher opacity (0.4+) was too bright and competed with the number.
+- The elastic scale animation (2.2→0.85→1.08→1) with cubic-bezier(0.34,1.56,0.64,1) creates the "slam" feel — overshoot on the compress, slight bounce on settle. This matches the existing crowd countdown's approach.
+- Next cycle: Supreme (rotation). Ideas: lot provenance chain on W screen (previous sale records like Christie's lot history), or a "Going to" destination label (the auction house equivalent of "shipping to").

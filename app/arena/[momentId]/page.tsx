@@ -9138,6 +9138,92 @@ export default function ArenaPage({
           </div>
         )}
 
+        {/* ── Crowd Memory — fan testimonials at the decision point ── */}
+        {/* In arenas, the shared memory is everything — "I was there."       */}
+        {/* Brief first-person quotes from fans create vicarious arena        */}
+        {/* emotion for cold arrivals who didn't watch the game. Each quote   */}
+        {/* includes section/row for authentic arena location specificity.    */}
+        {/* Auto-cycles through 3 testimonials every 4s. Targets Emotion     */}
+        {/* (personal stories create connection even for cold arrivals) and   */}
+        {/* Conv (social proof at the decision point from passionate fans).   */}
+        {/* Distinctly Arena: Supreme has specialist prose, Broadcast has     */}
+        {/* analyst commentary. Arena has the fans — the people who were      */}
+        {/* there, on their feet, screaming.                                  */}
+        {!countdown.isEnded && proto.state === 'browsing' && (() => {
+          const memories: Record<string, { section: string; quote: string }[]> = {
+            bam: [
+              { section: 'SEC 112, ROW G', quote: 'I was on my feet before the ball went through the net. TD Garden went dead silent.' },
+              { section: 'SEC 305, ROW A', quote: 'My buddy said we should leave early. Then Bam happened. We stayed for every second.' },
+              { section: 'SEC 201, ROW K', quote: 'Thirty points. Franchise record. In BOSTON. I still get chills thinking about it.' },
+            ],
+            jokic: [
+              { section: 'SEC 108, ROW D', quote: 'He pump-faked from 28 feet and I already knew. You could feel the whole arena hold its breath.' },
+              { section: 'SEC 334, ROW C', quote: 'My daughter\'s first playoff game. She turned to me and said "is he always this good?" Yes. Yes he is.' },
+              { section: 'SEC 210, ROW F', quote: 'Fifteenth triple-double this postseason. We\'re watching the greatest to ever do it.' },
+            ],
+            sga: [
+              { section: 'SEC 103, ROW B', quote: 'The crossover. The floater. And the foul. Paycom Center shook. I mean literally shook.' },
+              { section: 'SEC 318, ROW A', quote: 'Been a Thunder fan since KD. SGA is different. This is HIS city now. Thirty-eight points different.' },
+              { section: 'SEC 215, ROW H', quote: 'Every single person was standing. Not because we were told to — because we couldn\'t sit down.' },
+            ],
+          };
+          const mems = memories[momentId] ?? memories.bam;
+          // Auto-cycle through testimonials
+          const [memIdx, setMemIdx] = useState(0);
+          useEffect(() => {
+            const id = setInterval(() => setMemIdx((p) => (p + 1) % mems.length), 4000);
+            return () => clearInterval(id);
+          }, [mems.length]);
+          const mem = mems[memIdx];
+          return (
+            <div className="mb-3 mx-auto max-w-sm w-full">
+              <div
+                className="rounded-lg px-4 py-3 transition-all duration-500"
+                style={{
+                  backgroundColor: 'rgba(255,255,255,0.02)',
+                  border: `1px solid rgba(255,255,255,0.04)`,
+                }}
+              >
+                {/* Section badge */}
+                <div className="flex items-center gap-2 mb-1.5">
+                  {/* Seat icon */}
+                  <svg className="w-2.5 h-2.5 flex-shrink-0 text-white/20" viewBox="0 0 10 10" fill="currentColor">
+                    <rect x="2" y="0" width="6" height="5" rx="1" />
+                    <rect x="1" y="6" width="8" height="3" rx="0.5" />
+                  </svg>
+                  <span
+                    className="text-[7px] font-mono uppercase tracking-[0.2em]"
+                    style={{ color: `${moment.teamColors.primary}70` }}
+                  >
+                    {mem.section}
+                  </span>
+                  <div className="flex-1" />
+                  {/* Cycle dots */}
+                  <div className="flex gap-1">
+                    {mems.map((_, i) => (
+                      <div
+                        key={i}
+                        className="h-[3px] w-[3px] rounded-full transition-all duration-300"
+                        style={{
+                          backgroundColor: i === memIdx ? moment.teamColors.primary : 'rgba(255,255,255,0.08)',
+                          boxShadow: i === memIdx ? `0 0 4px ${moment.teamColors.primary}40` : 'none',
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                {/* Quote */}
+                <p
+                  className="text-[11px] leading-relaxed text-white/35 italic"
+                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+                >
+                  &ldquo;{mem.quote}&rdquo;
+                </p>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Arena Value Scoreboard — jumbotron price anchor near CTA */}
         <ArenaValueScoreboard
           momentPrice={moment.rarityTiers[selectedTierIdx].price}

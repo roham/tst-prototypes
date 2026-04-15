@@ -2549,6 +2549,28 @@ export default function SupremePage() {
       </div>
 
       {/* ============================================================= */}
+      {/* CATALOGUE FOLIO — page number, sale title, date margins        */}
+      {/* Every Christie's/Sotheby's catalogue page has folio markers:   */}
+      {/* page number on one side, sale title and date on the other.     */}
+      {/* These ambient institutional details make the page feel like a  */}
+      {/* physical auction catalogue. Pure visual polish.                */}
+      {/* ============================================================= */}
+      <div className="flex items-center justify-between px-5 py-2 supreme-context-enter">
+        <span
+          className="text-[6px] font-mono uppercase tracking-[0.4em]"
+          style={{ color: 'rgba(255,255,255,0.06)' }}
+        >
+          Evening Sale &middot; {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+        </span>
+        <span
+          className="text-[6px] font-mono tabular-nums tracking-[0.3em]"
+          style={{ color: 'rgba(255,255,255,0.06)' }}
+        >
+          p. {((moment.id.charCodeAt(0) * 7 + moment.id.charCodeAt(1) * 3) % 90 + 10)}
+        </span>
+      </div>
+
+      {/* ============================================================= */}
       {/* CONTEXT — one emotional sentence, given room to breathe */}
       {/* ============================================================= */}
       <div className="px-5 pt-1 pb-2 supreme-context-enter">
@@ -2747,6 +2769,22 @@ export default function SupremePage() {
               </p>
             ))}
           </div>
+        </div>
+
+        {/* Bottom folio — catalogue page number repeated at footer (institutional convention) */}
+        <div className="flex items-center justify-between mt-5 pt-2" style={{ borderTop: '0.5px solid rgba(255,255,255,0.03)' }}>
+          <span
+            className="text-[6px] font-mono uppercase tracking-[0.3em]"
+            style={{ color: 'rgba(255,255,255,0.05)' }}
+          >
+            TST Collection &middot; Lot {((moment.id.charCodeAt(0) * 37 + moment.id.charCodeAt(1) * 13) % 9000 + 1000)}
+          </span>
+          <span
+            className="text-[6px] font-mono tabular-nums tracking-[0.3em]"
+            style={{ color: 'rgba(255,255,255,0.05)' }}
+          >
+            {((moment.id.charCodeAt(0) * 7 + moment.id.charCodeAt(1) * 3) % 90 + 10)}
+          </span>
         </div>
       </div>
 

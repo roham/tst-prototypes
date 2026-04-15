@@ -2229,3 +2229,10 @@
 - The YES button is styled with team-color (prominent) while NO is muted (subdued) — this isn't neutral polling, it's conversion-optimized. The visual weight biases toward YES, which is the desired micro-commitment.
 - Results bars animate from 0% width with 700ms ease-out — the visual reveal of "87% agree with you" creates social validation that further primes the purchase.
 - Current scores: Supreme 9.44, Broadcast 9.47, Arena 9.48. Next cycle: Arena (rotation). Supreme is 0.04 behind Arena, 0.03 behind Broadcast — it needs a breakthrough multi-dimensional improvement.
+
+## Cycle 290 Learnings
+- Fan testimonials with specific section/row create stronger emotional connection than generic social proof numbers. "SEC 112, ROW G" is a credential that validates the speaker's authority — they were there, close to the action.
+- Auto-cycling every 4s is appropriate for text-heavy content — faster would be unreadable, slower would feel static. The cycle dots provide visual feedback that more testimonials exist.
+- Only 2 dimensions improved (Emo + Pur), so composite stayed at 9.48. Arena needs 3+ dimensions simultaneously to advance. Next Arena cycle should target VP or Conv alongside other dimensions.
+- The Georgia italic quote text creates an interesting contrast with Arena's normally aggressive Oswald/mono typography — the quiet intimacy of a fan's memory amidst the arena chaos. This contrast is deliberate and effective.
+- Current scores: Supreme 9.44, Broadcast 9.47, Arena 9.48. Next cycle: Supreme (rotation). Supreme is 0.04 behind Arena and 0.03 behind Broadcast — it desperately needs a multi-dimensional breakthrough.

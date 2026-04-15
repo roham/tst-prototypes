@@ -1555,7 +1555,7 @@ export default function SupremePage() {
 
   if (isPurchasing) {
     buttonBg = '#00E5A0';
-    buttonText = purchaseStage === 0 ? 'Reserving...' : purchaseStage === 1 ? 'Confirming...' : 'Yours.';
+    buttonText = purchaseStage === 0 ? `Paddle ${paddleNumber} — Reserving...` : purchaseStage === 1 ? 'Recording Sale...' : 'Yours.';
     buttonTextColor = '#0B0E14';
   } else if (isEnded) {
     buttonBg = '#1C2333';
@@ -2983,6 +2983,52 @@ export default function SupremePage() {
                 </>
               );
             })()}
+          </p>
+        </div>
+      )}
+
+      {/* ============================================================= */}
+      {/* LOT CLERK NARRATION — institutional voice during purchase        */}
+      {/* At Sotheby's the lot clerk audibly announces each stage of the   */}
+      {/* sale process. This floating text creates the same whispered      */}
+      {/* ceremony: "The lot is reserved..." → "Recording the sale..."    */}
+      {/* Georgia italic at 10px, theatrical timing, team-color accent.    */}
+      {/* ============================================================= */}
+      {isPurchasing && (
+        <div className="flex items-center justify-center px-5 mb-3 supreme-info-enter">
+          <p
+            className="text-[10px] tracking-[0.15em] text-center transition-all duration-500"
+            style={{
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+              color: purchaseStage === 2
+                ? `${tierAccentColor}50`
+                : 'rgba(255,255,255,0.18)',
+              textShadow: purchaseStage === 2
+                ? `0 0 8px ${tierAccentColor}20`
+                : 'none',
+            }}
+          >
+            {purchaseStage === 0 && (
+              <>
+                The lot is reserved for Paddle{' '}
+                <span
+                  className="font-mono not-italic tabular-nums"
+                  style={{ color: `${tierAccentColor}40`, letterSpacing: '0.05em' }}
+                >
+                  {paddleNumber}
+                </span>
+                ...
+              </>
+            )}
+            {purchaseStage === 1 && (
+              <>Recording the sale &mdash; {selectedTier.tier} edition</>
+            )}
+            {purchaseStage === 2 && (
+              <>
+                Sold.
+              </>
+            )}
           </p>
         </div>
       )}

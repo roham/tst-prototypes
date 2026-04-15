@@ -959,3 +959,6 @@
 | 283 | broadcast | 9.46 | 9.46 | 9.46 | 9.46 | 9.48 | 9.46 | +0.00 | Tale of the Tape stat mode toggle (Season/Playoffs/Career High) |
 
 **Cycle 283: Broadcast — Tale of the Tape stat mode toggle.** Tappable SEASON / PLAYOFFS / CAREER HIGH tabs on the ESPN stat comparison card. Per-moment data for all 3 modes. Active tab indicator with team-color underline + tinted background. Channel switch haptic. Bars animate on mode change. "Above avg" → "Near high" in career mode. Every broadcast switches between stat contexts — this transforms the passive comparison into an interactive stat exploration. Int +0.01 (new 3-mode toggle with haptic), composite +0.00 at rounding.
+| 284 | arena | 9.47 | 9.47 | 9.47 | 9.48 | 9.47 | 9.47 | +0.00 | Whatnot-style queue position countdown during purchase (#N→#1) |
+
+**Cycle 284: Arena — Queue position countdown.** Purchase flow now starts with rapid "QUEUE POSITION #N" countdown (5-12 → #1) over 400ms before "RESERVING EDITION..." appears. Displayed in main CTA, sticky bar status, and sticky bar button. Creates live-auction queue energy during purchase processing. Int +0.01 (rapid countdown excitement), Conv +0.01 (social proof during buying window). Composite +0.00 at rounding.

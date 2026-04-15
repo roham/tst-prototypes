@@ -1991,3 +1991,9 @@
 - Placing financial details at the evaluation zone (between comparables and bid call) adds density without clutter — the eye scans past it but registers "this is serious."
 - W screen Sale Record benefits from completeness over minimalism — every real auction receipt has currency equivalents. Adding fields to the staggered reveal doesn't slow the ceremony because each entry is only 0.12s apart.
 - At 9.42, Supreme is converging with Broadcast (9.41). Arena leads at 9.44. Next cycle: Broadcast (rotation). Broadcast weakest dimensions: VP (9.40), Emo (9.40), Int (9.40). Multiple dimensions tied at 9.40 — Visual and Interaction are best targets.
+
+## Cycle 253 Learnings
+- TV Content Rating badges are extremely low-effort, high-recognition broadcast elements. The "TV-G" box is universally conditioned — viewers recognize it instantly without thinking.
+- At 9.41+ scores, single-element additions produce +0.00 delta due to rounding. Need to bundle 2-3 micro-improvements per cycle to register a +0.01.
+- Positioning fixed overlays: top-[108px] clears the ScoreBug (top-14 + ~40px height). Use developer tools to verify spacing.
+- Current scores: Supreme 9.42, Broadcast 9.41, Arena 9.44. Broadcast is now the weakest. Next cycle: Arena (rotation). After that, Broadcast should get priority if still trailing.

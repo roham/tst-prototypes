@@ -805,6 +805,160 @@ function EditionRevealCounter({ target, teamColor, started }: {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Saleroom Timepiece — miniature analog clock mapping countdown to dial
+// Every Christie's/Sotheby's saleroom has a prominent clock — time is the
+// currency of urgency in live auctions. The minute hand maps to remaining
+// time (full sweep = total duration). During CRITICAL, the face tints red
+// and the second hand ticks visibly. Hour hand fixed at ~8:15 PM (evening
+// sale midpoint). Team-color hour markers and hands.
+// ---------------------------------------------------------------------------
+
+function SaleroomTimepiece({
+  totalSeconds,
+  totalDurationMs,
+  phase,
+  teamColor,
+  timerTick,
+}: {
+  totalSeconds: number;
+  totalDurationMs: number;
+  phase: DropPhase;
+  teamColor: string;
+  timerTick: boolean;
+}) {
+  const SIZE = 36;
+  const CX = SIZE / 2;
+  const CY = SIZE / 2;
+  const R = 14; // clock face radius
+
+  // Minute hand: maps remaining time to 360° sweep (12 o'clock = full time, sweeps clockwise)
+  const totalDurationS = totalDurationMs / 1000;
+  const elapsed = totalDurationS - totalSeconds;
+  const minuteAngle = (elapsed / totalDurationS) * 360; // 0° at start, 360° at end
+
+  // Hour hand: fixed at ~8:15 PM (evening sale aesthetic) = 247.5°
+  const hourAngle = 247.5;
+
+  // Second hand: only visible in CRITICAL, ticks per second
+  const secondAngle = phase === 'CRITICAL' ? ((60 - (totalSeconds % 60)) / 60) * 360 : 0;
+
+  // Phase colors
+  const faceColor = phase === 'CRITICAL' ? 'rgba(239,68,68,0.06)' : 'rgba(255,255,255,0.02)';
+  const rimColor = phase === 'CRITICAL'
+    ? 'rgba(239,68,68,0.25)'
+    : phase === 'CLOSING'
+      ? 'rgba(245,158,11,0.15)'
+      : `${teamColor}12`;
+  const markerColor = phase === 'CRITICAL' ? 'rgba(239,68,68,0.3)' : `${teamColor}20`;
+  const handColor = phase === 'CRITICAL' ? 'rgba(239,68,68,0.5)' : 'rgba(255,255,255,0.35)';
+  const minuteHandColor = phase === 'CRITICAL' ? 'rgba(239,68,68,0.6)' : `${teamColor}50`;
+
+  // Hand endpoint from angle (12 o'clock = 0°, clockwise)
+  const hand = (angle: number, length: number) => {
+    const rad = ((angle - 90) * Math.PI) / 180;
+    return { x: CX + Math.cos(rad) * length, y: CY + Math.sin(rad) * length };
+  };
+
+  const hourTip = hand(hourAngle, R * 0.5);
+  const minuteTip = hand(minuteAngle, R * 0.78);
+  const secondTip = hand(secondAngle, R * 0.82);
+
+  // 12 hour markers
+  const markers = Array.from({ length: 12 }, (_, i) => {
+    const angle = i * 30;
+    const isCardinal = i % 3 === 0;
+    const inner = hand(angle, R * (isCardinal ? 0.72 : 0.8));
+    const outer = hand(angle, R * 0.92);
+    return { inner, outer, isCardinal };
+  });
+
+  return (
+    <svg
+      width={SIZE}
+      height={SIZE}
+      viewBox={`0 0 ${SIZE} ${SIZE}`}
+      className="flex-shrink-0"
+      style={{
+        opacity: 0.5,
+        transition: 'opacity 0.5s ease',
+      }}
+    >
+      {/* Face fill */}
+      <circle
+        cx={CX} cy={CY} r={R}
+        fill={faceColor}
+        stroke={rimColor}
+        strokeWidth="0.5"
+        style={{ transition: 'fill 1s ease, stroke 1s ease' }}
+      />
+
+      {/* Hour markers */}
+      {markers.map((m, i) => (
+        <line
+          key={i}
+          x1={m.inner.x} y1={m.inner.y}
+          x2={m.outer.x} y2={m.outer.y}
+          stroke={markerColor}
+          strokeWidth={m.isCardinal ? '0.8' : '0.4'}
+          strokeLinecap="round"
+          style={{ transition: 'stroke 1s ease' }}
+        />
+      ))}
+
+      {/* Center dot */}
+      <circle cx={CX} cy={CY} r="1" fill={handColor} style={{ transition: 'fill 1s ease' }} />
+
+      {/* Hour hand — short, thick */}
+      <line
+        x1={CX} y1={CY}
+        x2={hourTip.x} y2={hourTip.y}
+        stroke={handColor}
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        style={{ transition: 'stroke 1s ease' }}
+      />
+
+      {/* Minute hand — long, team-color, sweeps with countdown */}
+      <line
+        x1={CX} y1={CY}
+        x2={minuteTip.x} y2={minuteTip.y}
+        stroke={minuteHandColor}
+        strokeWidth="0.8"
+        strokeLinecap="round"
+        style={{ transition: 'x2 1s linear, y2 1s linear, stroke 1s ease' }}
+      />
+
+      {/* Second hand — only in CRITICAL, thin red, ticks per second */}
+      {phase === 'CRITICAL' && totalSeconds > 0 && (
+        <line
+          x1={CX} y1={CY}
+          x2={secondTip.x} y2={secondTip.y}
+          stroke="rgba(239,68,68,0.4)"
+          strokeWidth="0.4"
+          strokeLinecap="round"
+          style={{
+            transform: timerTick ? 'scale(1)' : 'scale(1)',
+            opacity: timerTick ? 0.6 : 0.35,
+            transition: 'opacity 120ms ease-out',
+          }}
+        />
+      )}
+
+      {/* CRITICAL glow ring */}
+      {phase === 'CRITICAL' && (
+        <circle
+          cx={CX} cy={CY} r={R + 1}
+          fill="none"
+          stroke="rgba(239,68,68,0.12)"
+          strokeWidth="1.5"
+          className="supreme-timepiece-pulse"
+        />
+      )}
+    </svg>
+  );
+}
+
 function WScreen({
   moment,
   editionNumber,
@@ -3739,6 +3893,19 @@ export default function SupremePage() {
         <div className="flex flex-col">
           {/* Phase label + bidder alert bell */}
           <div className="flex items-center gap-2 mb-1">
+            {/* Saleroom Timepiece — miniature analog clock mapping countdown to dial */}
+            {/* Every Christie's/Sotheby's saleroom has a prominent clock face. The   */}
+            {/* minute hand sweeps as time depletes. During CRITICAL the face tints    */}
+            {/* red and the second hand ticks visibly — a universal urgency symbol.    */}
+            {!isEnded && (
+              <SaleroomTimepiece
+                totalSeconds={countdown.totalSeconds}
+                totalDurationMs={totalDuration}
+                phase={dropPhase}
+                teamColor={moment.teamColors.primary}
+                timerTick={timerTick}
+              />
+            )}
             <span
               className="text-[9px] uppercase tracking-[0.2em] font-semibold transition-colors duration-500"
               style={{
@@ -4634,6 +4801,48 @@ export default function SupremePage() {
               </span>
             </span>
           ))}
+        </div>
+      )}
+
+      {/* ============================================================= */}
+      {/* YOUR EDITION — pre-purchase endowment preview                    */}
+      {/* At Christie's/Sotheby's, every lot has a unique lot number and   */}
+      {/* provenance that makes it singular. Showing "Your Edition" with   */}
+      {/* a specific number BEFORE purchase activates the endowment        */}
+      {/* effect — the collector sees their specific piece and imagines    */}
+      {/* it already in their collection. Research insight #6: ownership   */}
+      {/* language converts. This is the most personal element on the      */}
+      {/* page — "Edition #4,382" is YOUR number, waiting for you.         */}
+      {/* Distinctly Supreme: Arena shows supply as urgency ("only X       */}
+      {/* left!"), Broadcast shows it as social metric. Supreme assigns    */}
+      {/* the collector their specific edition — institutional, personal.  */}
+      {/* ============================================================= */}
+      {!isEnded && !isPurchasing && (
+        <div className="flex items-center justify-center gap-2 px-5 mb-2 supreme-info-enter">
+          {/* Tiny certificate frame icon */}
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ opacity: 0.12 }}>
+            <rect x="0.5" y="0.5" width="9" height="9" rx="0.5" stroke="white" strokeWidth="0.4" />
+            <rect x="2" y="2" width="6" height="6" rx="0.3" stroke="white" strokeWidth="0.3" />
+            <circle cx="5" cy="5" r="1.5" stroke="white" strokeWidth="0.3" />
+          </svg>
+          <span
+            className="text-[7px] font-mono uppercase tracking-[0.2em]"
+            style={{ color: 'rgba(255,255,255,0.08)' }}
+          >
+            Your Edition
+          </span>
+          <span
+            className="text-[8px] font-mono font-semibold tabular-nums tracking-wide"
+            style={{ color: `${tierAccentColor}35` }}
+          >
+            #{(claimed + 1).toLocaleString()}
+          </span>
+          <span
+            className="text-[6px] font-mono uppercase tracking-[0.15em]"
+            style={{ color: 'rgba(255,255,255,0.06)' }}
+          >
+            of {selectedTier.size.toLocaleString()}
+          </span>
         </div>
       )}
 

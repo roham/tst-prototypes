@@ -1745,3 +1745,10 @@
 - The 5-channel structure (CROWD/COURT/PBP/ANLST/MIX) is the real ESPN audio routing architecture. Authentic labels matter for broadcast purity.
 - Next cycle: Arena (rotation). Ideas: Arena could improve Conversion on the pre-purchase page — maybe a "Section" selector that reframes tiers as arena seating sections (Floor/Lower/Upper/Nosebleed), or a crowd noise visualization (sound wave) that pulses with urgency.
 
+
+## Cycle 218 Learnings
+- Placing data visualizations AT the decision point (above the CTA) is more conversion-effective than floating overlay notifications. The sparkline consolidates social proof into one compact element right where the user decides. Previous cycle improvements (streaks, scoring runs, fast breaks) were floating overlays that competed for attention but didn't influence the purchase moment directly.
+- Rolling window timestamp tracking with bucketed bars creates a meaningful real-time visualization without complex state management. The 30s window with 3s buckets (10 bars) is the right granularity — fast enough to show individual purchase spikes, slow enough to show trends.
+- The 3s periodic refresh interval is essential — without it, bars only update on new events, so if purchases slow down the chart would freeze at a "surging" state instead of decaying. The decay is what makes the momentum feel real.
+- The "surging" detection (bars[8] >= 2 || bars[9] >= 2) is simple but effective — it only triggers when the most recent 6 seconds have multiple purchases, which naturally coincides with the simulated feed's rapid-fire moments.
+- Next cycle: Supreme (rotation). Supreme's Conversion score (9.3) could improve. Ideas: lot estimate comparison (pre-sale estimate vs current price like "Est: $12-18, Starting bid: $5"), or a reserve price indicator that shows the auction reaching its reserve — both are institutional auction conversion mechanics.

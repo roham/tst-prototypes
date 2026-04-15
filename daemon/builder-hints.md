@@ -2124,3 +2124,10 @@
 - Expand/collapse patterns need careful maxHeight transitions — using a generous maxHeight (200px) with overflow:hidden creates smooth animation without needing to measure content height. The opacity crossfade (0→1) masks any slight height jitter.
 - The analyst avatar circle (initials in team-color) creates a human presence at the decision point — faces/initials convert better than abstract icons because they trigger social trust circuits.
 - Current scores: Supreme 9.43, Broadcast 9.45, Arena 9.45. Next cycle: Arena (rotation). Arena all dimensions at 9.44-9.46 ceiling — need to find unexplored arena-exclusive mechanics.
+
+## Cycle 273 Learnings
+- Converting static displays to interactive buttons (tap-to-expand) is the lowest-effort way to add Interaction points. The existing content doesn't change, you just gate part of it behind a tap. The chevron indicator makes affordance clear.
+- Per-moment specialist copy (specific market reasoning) is more convincing than generic copy ("we recommend this lot"). Bam's "franchise-defining moments" and Jokić's "2.8× appreciation within six months" feel like a real specialist wrote them vs. the same boilerplate for all three.
+- One-shot interactions (bell can't be un-set) create stronger commitment than toggles. At Sotheby's, "Register Interest" can't be undone — you've declared intent. The irreversibility amplifies the foot-in-the-door effect.
+- The background ambient shift from OPEN→CLOSING→CRITICAL was ALREADY implemented (lines 1720-1726 using color-mix). Always check existing code before planning improvements from the idea list — the page is 4900+ lines and features accumulate.
+- Current scores: Supreme 9.43 (VP 9.43, Conv 9.43, Emo 9.43, Int 9.43, Pur 9.44), Broadcast 9.45, Arena 9.45. Next cycle: Broadcast (rotation). Supreme's dimensions are now more evenly distributed — previous cycle focused on Conv/Int which were 0.02 behind.

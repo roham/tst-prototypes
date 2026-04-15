@@ -1997,3 +1997,10 @@
 - At 9.41+ scores, single-element additions produce +0.00 delta due to rounding. Need to bundle 2-3 micro-improvements per cycle to register a +0.01.
 - Positioning fixed overlays: top-[108px] clears the ScoreBug (top-14 + ~40px height). Use developer tools to verify spacing.
 - Current scores: Supreme 9.42, Broadcast 9.41, Arena 9.44. Broadcast is now the weakest. Next cycle: Arena (rotation). After that, Broadcast should get priority if still trailing.
+
+## Cycle 254 Learnings
+- The triple urgency stack (time + supply + competition) is a framework for auditing conversion completeness. Arena had 2/3 at the CTA — supply was buried in tier cards. Surfacing the missing element at the decision point is a focused conversion win.
+- Scoreboard metaphor (X vs Y) is more engaging than a simple progress bar for Arena — it gamifies the scarcity by framing it as a competition between buyers and supply.
+- At 9.44+ ceiling, conversion improvements (+0.02 in one dimension) don't move the composite because they're divided across 5 weighted dimensions. Need multi-dimension improvements to register delta.
+- The IIFE pattern `(() => { ... })()` works well for inline components that need local variables computed from page state, avoiding a separate component when the logic is CTA-context-specific.
+- Current scores: Supreme 9.42, Broadcast 9.41, Arena 9.44. Broadcast is weakest. Next cycle: Supreme (rotation). After that, Broadcast should get priority. Supreme weakest dimensions: estimate VP (9.40), Conv (9.41).

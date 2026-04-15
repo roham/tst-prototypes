@@ -146,6 +146,29 @@ function useSmpteTimecode(isEnded: boolean) {
   return tc;
 }
 
+// Master Clock — every broadcast control room has a wall clock showing
+// current time. ESPN/TNT studios have multiple (ET, PT, UTC). This is the
+// digital master clock with blinking colon, updated every second.
+function useMasterClock() {
+  const [time, setTime] = useState('');
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      const h = now.getHours();
+      const m = now.getMinutes();
+      const s = now.getSeconds();
+      const hh = String(h % 12 || 12).padStart(2, '0');
+      const mm = String(m).padStart(2, '0');
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      setTime(`${hh}:${mm} ${ampm}`);
+    };
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+}
+
 // ── Broadcast Countdown Leader — "3-2-1-LIVE" intro sequence ──────────────
 // Classic broadcast TV countdown leader that plays on first page load.
 // Every sports fan recognizes this from live TV production.
@@ -4145,6 +4168,167 @@ function CommentatorCall({ momentId, phase, totalSeconds, teamColor, rgb }: {
 }
 
 // ---------------------------------------------------------------------------
+// Broadcast Rundown Strip — ESPN-style segment navigation bar
+// ESPN broadcasts show a thin program rundown bar between segments:
+// "REPLAY | ANALYSIS | COLLECT" with the current segment highlighted.
+// IntersectionObserver-based scrollspy tracks which section is in view.
+// Sticky at top when scrolled past. Distinctly Broadcast: Supreme has
+// catalogue page markers, Arena has jumbotron section headers. Broadcast
+// has program rundown navigation — the director's segment guide.
+// ---------------------------------------------------------------------------
+
+function BroadcastRundownStrip({
+  heroRef,
+  editorialRef,
+  transactionRef,
+  teamColor,
+  rgb,
+  isEnded,
+}: {
+  heroRef: React.RefObject<HTMLElement | null>;
+  editorialRef: React.RefObject<HTMLElement | null>;
+  transactionRef: React.RefObject<HTMLElement | null>;
+  teamColor: string;
+  rgb: string;
+  isEnded: boolean;
+}) {
+  const [activeSegment, setActiveSegment] = useState<'replay' | 'analysis' | 'collect'>('replay');
+  const stripRef = useRef<HTMLDivElement>(null);
+  const [isSticky, setIsSticky] = useState(false);
+
+  // Scrollspy — track which section is in view
+  useEffect(() => {
+    const sections = [
+      { id: 'replay' as const, ref: heroRef },
+      { id: 'analysis' as const, ref: editorialRef },
+      { id: 'collect' as const, ref: transactionRef },
+    ];
+    const observers: IntersectionObserver[] = [];
+    const visible = new Set<string>();
+
+    sections.forEach(({ id, ref }) => {
+      const el = ref.current;
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            visible.add(id);
+          } else {
+            visible.delete(id);
+          }
+          // Priority: collect > analysis > replay (lowest section wins)
+          if (visible.has('collect')) setActiveSegment('collect');
+          else if (visible.has('analysis')) setActiveSegment('analysis');
+          else setActiveSegment('replay');
+        },
+        { threshold: 0.15 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, [heroRef, editorialRef, transactionRef]);
+
+  // Sticky detection — IntersectionObserver on the strip itself
+  useEffect(() => {
+    const el = stripRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        // When the strip's top edge leaves the viewport, it becomes sticky
+        setIsSticky(!entry.isIntersecting);
+      },
+      { threshold: 1, rootMargin: '-1px 0px 0px 0px' }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const segments = [
+    { id: 'replay' as const, label: 'Replay', ref: heroRef },
+    { id: 'analysis' as const, label: 'Analysis', ref: editorialRef },
+    { id: 'collect' as const, label: 'Collect', ref: transactionRef },
+  ];
+
+  return (
+    <>
+      {/* Sentinel — tracks when the strip passes the top of the viewport */}
+      <div ref={stripRef} className="h-0 w-full" />
+      <div
+        className="sticky top-0 z-40 w-full transition-all duration-300"
+        style={{
+          backgroundColor: isSticky ? 'rgba(11,14,20,0.95)' : 'rgba(11,14,20,0.7)',
+          backdropFilter: isSticky ? 'blur(12px)' : 'blur(4px)',
+          borderBottom: `1px solid ${isSticky ? `rgba(${rgb},0.12)` : 'rgba(255,255,255,0.04)'}`,
+        }}
+      >
+        <div className="mx-auto max-w-3xl flex items-stretch h-[34px]">
+          {segments.map((seg, idx) => {
+            const isActive = activeSegment === seg.id;
+            return (
+              <button
+                key={seg.id}
+                onClick={() => {
+                  seg.ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                className="flex-1 relative flex items-center justify-center gap-1.5 cursor-pointer transition-all duration-300"
+              >
+                {/* Segment number — production rundown index */}
+                <span
+                  className="text-[7px] font-mono tabular-nums transition-colors duration-300"
+                  style={{ color: isActive ? `${teamColor}80` : 'rgba(255,255,255,0.1)' }}
+                >
+                  {String(idx + 1).padStart(2, '0')}
+                </span>
+                {/* Segment label */}
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.25em] transition-colors duration-300"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: isActive ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.2)',
+                  }}
+                >
+                  {seg.label}
+                </span>
+                {/* Active tally dot — red broadcast indicator */}
+                {isActive && (
+                  <div
+                    className="h-[4px] w-[4px] rounded-full animate-pulse"
+                    style={{
+                      backgroundColor: isEnded ? 'rgba(255,255,255,0.2)' : '#EF4444',
+                      boxShadow: isEnded ? 'none' : '0 0 4px #EF4444',
+                    }}
+                  />
+                )}
+                {/* Bottom accent line — team-color active indicator */}
+                <div
+                  className="absolute bottom-0 left-[15%] right-[15%] h-[2px] transition-all duration-300"
+                  style={{
+                    backgroundColor: teamColor,
+                    opacity: isActive ? 1 : 0,
+                    transform: isActive ? 'scaleX(1)' : 'scaleX(0)',
+                    transformOrigin: 'center',
+                    boxShadow: isActive ? `0 0 8px ${teamColor}40` : 'none',
+                  }}
+                />
+                {/* Divider — thin line between segments (not after last) */}
+                {idx < segments.length - 1 && (
+                  <div
+                    className="absolute right-0 top-[25%] bottom-[25%] w-[1px]"
+                    style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main Page
 // ---------------------------------------------------------------------------
 
@@ -4222,6 +4406,7 @@ export default function BroadcastPage() {
   const ctaRef = useRef<HTMLButtonElement>(null);
   const transactionRef = useRef<HTMLElement>(null);
   const heroRef = useRef<HTMLElement>(null);
+  const editorialRef = useRef<HTMLDivElement>(null);
 
   const countdown = useCountdown(SALE_DURATION_MS[params.momentId as string] ?? 12 * 60 * 1000);
   const proto = usePrototypeState(momentId);
@@ -4430,6 +4615,7 @@ export default function BroadcastPage() {
   const urgencyCopy = editorialUrgencyCopy(dropPhase, countdown.totalSeconds);
   const recentCollectors = useRecentCollectors();
   const smpteTimecode = useSmpteTimecode(countdown.isEnded);
+  const masterClock = useMasterClock();
   const acquisitionEvent = useAcquisitionFeed(moment?.editionsClaimed ?? 0, countdown.isEnded);
   const tierClaimFlash = useTierClaimFlash(acquisitionEvent, moment.rarityTiers.length);
 
@@ -5535,10 +5721,16 @@ export default function BroadcastPage() {
               <span className="text-[7px] font-mono uppercase tracking-[0.15em] text-white/20 transition-opacity duration-200">
                 {camLabel}
               </span>
-              {/* SMPTE timecode — running production counter */}
-              <span className="text-[7px] font-mono tabular-nums tracking-[0.08em] text-white/15 broadcast-timecode">
-                {smpteTimecode}
-              </span>
+              {/* SMPTE timecode — running production counter in burn-in window */}
+              <div className="flex items-center gap-1">
+                <span className="text-[5px] font-mono uppercase tracking-wider text-white/10">TC</span>
+                <span
+                  className="text-[7px] font-mono tabular-nums tracking-[0.08em] text-white/25 broadcast-timecode px-1 py-[1px] rounded-[1px]"
+                  style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
+                >
+                  {smpteTimecode}
+                </span>
+              </div>
               {/* VU audio level meter — bouncing green/yellow/red bars */}
               <div className="flex items-end gap-[1.5px] h-[14px] mt-0.5">
                 {[
@@ -5565,6 +5757,23 @@ export default function BroadcastPage() {
                   VU
                 </span>
               </div>
+              {/* Master Clock — every broadcast control room has a wall clock */}
+              <div className="flex items-center gap-1 mt-0.5">
+                <span className="text-[5px] font-mono uppercase tracking-wider text-white/10">CLK</span>
+                <span
+                  className="text-[7px] font-mono tabular-nums tracking-[0.08em] text-white/20 px-1 py-[1px] rounded-[1px]"
+                  style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
+                >
+                  {masterClock}
+                </span>
+                <span className="text-[4px] font-mono uppercase tracking-wider text-white/8">
+                  ET
+                </span>
+              </div>
+              {/* White balance — camera technical parameter */}
+              <span className="text-[5px] font-mono uppercase tracking-wider text-white/8 mt-0.5">
+                WB 5600K · F2.8
+              </span>
             </div>
           )}
 
@@ -5763,6 +5972,18 @@ export default function BroadcastPage() {
           )}
         </section>
 
+        {/* ━━━ BROADCAST RUNDOWN STRIP — ESPN segment navigation bar ━━━━ */}
+        {leaderDone && (
+          <BroadcastRundownStrip
+            heroRef={heroRef}
+            editorialRef={editorialRef}
+            transactionRef={transactionRef}
+            teamColor={moment.teamColors.primary}
+            rgb={rgb}
+            isEnded={countdown.isEnded}
+          />
+        )}
+
         {/* ━━━ EDITORIAL URGENCY BANNER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         {urgencyCopy && (
           <div
@@ -5807,6 +6028,8 @@ export default function BroadcastPage() {
           />
         </div>
 
+        {/* ━━━ EDITORIAL CONTENT — wrapped for rundown strip scrollspy ━━━ */}
+        <div ref={editorialRef}>
         {/* ━━━ FEATURE PACKAGE — ESPN cinematic voiceover text fragments ━━━ */}
         {/* ESPN's signature pre-game feature story: punchy text fragments    */}
         {/* that build a dramatic narrative arc before the full editorial.     */}
@@ -5971,6 +6194,7 @@ export default function BroadcastPage() {
 
         {/* Team-color thin divider — cinematic section reveal (expands from center on scroll) */}
         <SectionRevealLine teamColor={moment.teamColors.primary} />
+        </div>{/* end editorialRef wrapper */}
 
         {/* ━━━ TRANSACTION SECTION ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section ref={transactionRef} className="mx-auto max-w-3xl px-5 pt-10 pb-16 md:px-10 md:pb-24 scroll-mt-4">

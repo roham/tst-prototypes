@@ -1663,3 +1663,11 @@
 - Horizontal translateX reveals (vs vertical translateY) feel more like "writing across a page" — appropriate for ledger/document metaphors. Vertical slides feel more like "dropping in" — better for cards and overlays.
 - The Tailwind arbitrary class syntax `text-[${var}px]` doesn't work with dynamic values — these need inline styles. But the current implementation uses template literals in className which Tailwind won't process. This is a known limitation; the fields render correctly because the parent already has the font-size context. Worth revisiting if font sizes break.
 - Next cycle: Arena (rotation).
+
+## Cycle 207 Learnings
+- Interactive elements on the W screen create significantly more engagement than passive display cards. The victory horn gives users a reason to stay on the W screen longer and creates positive emotional association before the share prompt appears.
+- Escalating micro-games (tap N times to reach the reward) are compelling because they combine variable effort with guaranteed payoff — the user can see the decibel bars filling and knows the crescendo is coming. The 5-slam threshold is low enough that everyone reaches it but high enough to feel earned.
+- Real NBA post-win rituals (Spurs drum, Rockets liftoff) are strong inspiration sources because they solve the same problem: "how do you give fans something to DO in the moment of victory?" The answer is always physical participation.
+- Haptic feedback on share buttons was a missed opportunity for all 3 directions. Arena now has it; check if Supreme and Broadcast need share button haptics wired in too.
+- The `key` prop trick for re-triggering CSS animations (pulseKey counter) works well for repeatable button interactions. Each new key forces React to unmount/remount the animation element, giving a fresh animation lifecycle.
+- Next cycle: Broadcast (rotation).

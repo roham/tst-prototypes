@@ -1371,6 +1371,19 @@ export default function SupremePage() {
   // Condition Report drawer — specialist assessment resolves purchase doubt
   const [conditionReportOpen, setConditionReportOpen] = useState(false);
 
+  // Specialist's Estimate Note — tappable auction estimate reveals valuation
+  // justification. At Christie's, the specialist's written assessment of value
+  // accompanies every lot estimate. Tapping reveals the rationale, creating
+  // interaction at the decision point and anchoring value through authority.
+  const [estimateNoteOpen, setEstimateNoteOpen] = useState(false);
+
+  // Bidder Alert — tapping the bell "registers" for lot-close notification.
+  // At Sotheby's online, registered bidders receive alerts before lot closes.
+  // The act of setting an alert is a micro-commitment (foot-in-the-door):
+  // "I care enough to be notified" → "I should bid."
+  const [bidderAlertSet, setBidderAlertSet] = useState(false);
+  const [bidderAlertFlash, setBidderAlertFlash] = useState(false);
+
   // Register Interest — at Christie's/Sotheby's online, the "Register Interest"
   // action is the strongest pre-bid commitment signal. Once registered, you've
   // self-identified as an active participant — not a browser. The foot-in-the-door
@@ -1785,6 +1798,47 @@ export default function SupremePage() {
               style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic' }}
             >
               Registered for Evening Sale
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================= */}
+      {/* BIDDER ALERT CONFIRMATION — brief toast when alert is set     */}
+      {/* At Sotheby's, setting a lot alert confirms with a quiet note. */}
+      {/* This micro-commitment ("I want to be notified") primes the    */}
+      {/* bidder for purchase — the alert is a promise to yourself.     */}
+      {/* ============================================================= */}
+      {bidderAlertFlash && (
+        <div
+          className="fixed bottom-8 left-0 right-0 z-[35] pointer-events-none flex justify-center supreme-paddle-notice"
+        >
+          <div className="flex items-center gap-3 px-5 py-2.5 rounded-sm"
+            style={{
+              backgroundColor: 'rgba(11,14,20,0.85)',
+              border: `0.5px solid ${moment.teamColors.primary}20`,
+              backdropFilter: 'blur(8px)',
+            }}
+          >
+            <svg width="10" height="10" viewBox="0 0 11 11" fill="none">
+              <path
+                d="M5.5 1C5.5 1 3 1.5 3 4.5C3 6.5 2 7.5 2 7.5L9 7.5C9 7.5 8 6.5 8 4.5C8 1.5 5.5 1 5.5 1Z"
+                stroke={moment.teamColors.primary}
+                strokeWidth="0.7"
+                fill={`${moment.teamColors.primary}25`}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span
+              className="text-[8px] uppercase tracking-[0.25em]"
+              style={{
+                fontFamily: 'Georgia, serif',
+                fontStyle: 'italic',
+                color: `${moment.teamColors.primary}50`,
+              }}
+            >
+              Alert set — you&apos;ll be notified before lot closes
             </span>
           </div>
         </div>
@@ -3344,21 +3398,81 @@ export default function SupremePage() {
       <div className="flex items-center justify-between px-5 py-3.5 supreme-info-enter border-t border-white/[0.04]">
         {/* Timer */}
         <div className="flex flex-col">
-          {/* Phase label — subtle state indicator */}
-          <span
-            className="text-[9px] uppercase tracking-[0.2em] font-semibold mb-1 transition-colors duration-500"
-            style={{
-              color: isEnded ? '#6B7A9960' :
-                dropPhase === 'CRITICAL' ? '#EF444490' :
-                dropPhase === 'CLOSING' ? '#F59E0B80' :
-                '#00E5A050',
-            }}
-          >
-            {isEnded ? 'Drop closed' :
-             dropPhase === 'CRITICAL' ? 'Final seconds' :
-             dropPhase === 'CLOSING' ? 'Closing soon' :
-             'Live now'}
-          </span>
+          {/* Phase label + bidder alert bell */}
+          <div className="flex items-center gap-2 mb-1">
+            <span
+              className="text-[9px] uppercase tracking-[0.2em] font-semibold transition-colors duration-500"
+              style={{
+                color: isEnded ? '#6B7A9960' :
+                  dropPhase === 'CRITICAL' ? '#EF444490' :
+                  dropPhase === 'CLOSING' ? '#F59E0B80' :
+                  '#00E5A050',
+              }}
+            >
+              {isEnded ? 'Drop closed' :
+               dropPhase === 'CRITICAL' ? 'Final seconds' :
+               dropPhase === 'CLOSING' ? 'Closing soon' :
+               'Live now'}
+            </span>
+            {/* Bidder Alert Bell — Sotheby's lot-close notification */}
+            {!isEnded && (
+              <button
+                className="relative flex items-center justify-center transition-all duration-300"
+                style={{
+                  opacity: bidderAlertSet ? 0.5 : 0.15,
+                }}
+                onClick={() => {
+                  if (!bidderAlertSet) {
+                    setBidderAlertSet(true);
+                    setBidderAlertFlash(true);
+                    HAPTIC.tap();
+                    setTimeout(() => setBidderAlertFlash(false), 600);
+                  }
+                }}
+                aria-label={bidderAlertSet ? 'Alert set' : 'Set lot close alert'}
+              >
+                <svg
+                  width="11" height="11" viewBox="0 0 11 11" fill="none"
+                  className="transition-transform duration-200"
+                  style={{
+                    transform: bidderAlertFlash ? 'rotate(-15deg) scale(1.15)' : 'rotate(0deg) scale(1)',
+                  }}
+                >
+                  {/* Bell body */}
+                  <path
+                    d="M5.5 1C5.5 1 3 1.5 3 4.5C3 6.5 2 7.5 2 7.5L9 7.5C9 7.5 8 6.5 8 4.5C8 1.5 5.5 1 5.5 1Z"
+                    stroke={bidderAlertSet ? moment.teamColors.primary : 'currentColor'}
+                    strokeWidth="0.7"
+                    fill={bidderAlertSet ? `${moment.teamColors.primary}30` : 'none'}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  {/* Clapper */}
+                  <path
+                    d="M4.5 7.5C4.5 8.3 5 9 5.5 9C6 9 6.5 8.3 6.5 7.5"
+                    stroke={bidderAlertSet ? moment.teamColors.primary : 'currentColor'}
+                    strokeWidth="0.6"
+                    fill="none"
+                  />
+                  {/* Top knob */}
+                  <circle cx="5.5" cy="1" r="0.5"
+                    fill={bidderAlertSet ? moment.teamColors.primary : 'currentColor'}
+                    opacity="0.6"
+                  />
+                </svg>
+                {/* Active indicator dot */}
+                {bidderAlertSet && (
+                  <div
+                    className="absolute -top-0.5 -right-0.5 h-[4px] w-[4px] rounded-full"
+                    style={{
+                      backgroundColor: moment.teamColors.primary,
+                      boxShadow: `0 0 4px ${moment.teamColors.primary}60`,
+                    }}
+                  />
+                )}
+              </button>
+            )}
+          </div>
           <div className="flex items-baseline gap-2">
             {/* Auctioneer's gavel — taps on each second in CRITICAL phase */}
             {dropPhase === 'CRITICAL' && !isEnded && (
@@ -3663,7 +3777,10 @@ export default function SupremePage() {
       {/* ============================================================= */}
       {!isEnded && !isPurchasing && (
         <div className="px-5 mt-2 supreme-info-enter">
-          <div className="flex items-center justify-center gap-2">
+          <button
+            className="flex items-center justify-center gap-2 w-full group"
+            onClick={() => { setEstimateNoteOpen(prev => !prev); HAPTIC.tierSelect(); }}
+          >
             <span
               className="text-[8px] font-mono uppercase tracking-[0.3em] text-white/15"
             >
@@ -3690,6 +3807,48 @@ export default function SupremePage() {
             >
               Secondary
             </span>
+            {/* Chevron — rotates on open */}
+            <svg
+              width="8" height="8" viewBox="0 0 8 8" fill="none"
+              className="transition-transform duration-300 ml-0.5"
+              style={{
+                transform: estimateNoteOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                opacity: 0.15,
+              }}
+            >
+              <path d="M2 3 L4 5 L6 3" stroke="currentColor" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          {/* Specialist's Estimate Note — valuation justification */}
+          <div
+            className="overflow-hidden transition-all duration-400 ease-out"
+            style={{
+              maxHeight: estimateNoteOpen ? '120px' : '0px',
+              opacity: estimateNoteOpen ? 1 : 0,
+            }}
+          >
+            <div className="pt-2 pb-1 flex flex-col items-center gap-1.5">
+              <p
+                className="text-[8px] text-center leading-relaxed max-w-[260px] tracking-[0.03em]"
+                style={{
+                  fontFamily: 'Georgia, serif',
+                  fontStyle: 'italic',
+                  color: 'rgba(255,255,255,0.12)',
+                }}
+              >
+                {moment.id === 'bam'
+                  ? 'Based on comparable primary sales of franchise-defining moments and exceptional post-game narrative strength. The department notes heightened pre-sale interest from institutional collectors.'
+                  : moment.id === 'jokic'
+                    ? 'Reflects the sustained market premium for MVP-caliber playmaking moments. Comparable assists of this rarity have appreciated 2.8× within six months of primary sale.'
+                    : 'Strong upward pressure anticipated given the player\'s trajectory and market scarcity at this edition size. Our department recommends this lot for both new and established collectors.'}
+              </p>
+              <span
+                className="text-[7px] font-mono uppercase tracking-[0.25em]"
+                style={{ color: `${moment.teamColors.primary}20` }}
+              >
+                — Dept. of Digital Art
+              </span>
+            </div>
           </div>
           {/* Value trend sparkline — implied secondary value rising with demand */}
           {/* At real auction houses, lot estimates get revised upward when interest is high */}

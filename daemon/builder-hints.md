@@ -2245,3 +2245,12 @@
 - Placing the timepiece in the info strip (next to the phase label) was the right call — it's in the user's peripheral vision while they read the countdown, creating subconscious urgency reinforcement.
 - Supreme is stuck at 9.44. The key insight: to break through, the NEXT improvement must include an Interaction dimension lift. The clock was beautiful but passive. Supreme needs a new tappable mechanic that touches Int + at least 2 other dimensions.
 - Next cycle: Broadcast (rotation). Broadcast at 9.47 — ahead of Supreme. Then Arena at 9.48. Supreme won't get another cycle until 293 or 294.
+
+## Cycle 292 Learnings
+- The filmstrip horizontal scroll with snap creates a satisfying browse mechanic — each frame snaps into view, creating a "scrubbing through replay" feel that's natively broadcast.
+- Tappable expand (160px→280px) gives the frames a dual purpose: small for quick visual browse, large for reading the annotation. The CSS transition on width/min-height creates smooth expansion without layout jank.
+- Per-moment replay data with specific game clock times (03:47→03:41 Q4) adds authenticity. The exact timestamps make the replay feel sourced from actual broadcast footage, not generic.
+- Film sprocket strips (24 tiny 3px×6px rectangles) above and below the filmstrip are a subtle but effective visual cue — they signal "this is physical film" without being heavy-handed.
+- Three dimensions improved (VP, Emo, Int) but composite rounded to same 9.47. At this score ceiling, need improvements that target Conv (highest-weight dimension) to break through.
+- Broadcast's weakest dimension is now VP and Conv (both 9.47). Next Broadcast cycle should target Conv — something at the decision point.
+- Current scores: Supreme 9.44, Broadcast 9.47, Arena 9.48. Next cycle: Arena (rotation). Supreme is still 0.04 behind Arena.

@@ -5,6 +5,107 @@ import { getMoment, SALE_DURATION_MS, type Moment, type RarityTier } from '@/lib
 import { useCountdown } from '@/lib/use-countdown';
 import { usePrototypeState } from '@/lib/use-prototype-state';
 
+/* ─── Play-by-Play Moment Ticker — jumbotron narration of the play ── */
+/* NBA arenas run a play-by-play ticker on the jumbotron during replays.  */
+/* This scrolls the actual moment breakdown step-by-step, creating       */
+/* narrative emotion even for cold arrivals who didn't see the play.      */
+
+const PLAY_BY_PLAY: Record<string, { time: string; steps: string[] }> = {
+  bam: {
+    time: '3Q 2:14',
+    steps: [
+      'ADEBAYO receives at the elbow',
+      'Spins baseline past White',
+      'Rises over TWO defenders',
+      'ONE-HANDED SLAM',
+      'AND ONE!',
+      'TD Garden SILENCED',
+      '30 PTS — franchise playoff record',
+    ],
+  },
+  jokic: {
+    time: '4Q 0:42',
+    steps: [
+      'JOKIĆ catches at the triple-threat',
+      'Pump fake freezes Murray',
+      'Step-back from 28 feet',
+      'NOTHING BUT NET',
+      'Dagger THREE',
+      'Ball Arena ERUPTS',
+      '41 PTS — 15th triple-double this postseason',
+    ],
+  },
+  sga: {
+    time: '4Q 1:08',
+    steps: [
+      'SGA brings it up the floor',
+      'Crosses over at the arc',
+      'Blows past the screen',
+      'Floater over Gobert',
+      'BUCKET — and the foul!',
+      'Paycom Center ON ITS FEET',
+      '38 PTS — OKC franchise record',
+    ],
+  },
+};
+
+function PlayByPlayTicker({ momentId, teamColor, isActive }: {
+  momentId: string;
+  teamColor: string;
+  isActive: boolean;
+}) {
+  const data = PLAY_BY_PLAY[momentId] ?? PLAY_BY_PLAY.bam;
+  const [stepIdx, setStepIdx] = useState(0);
+
+  useEffect(() => {
+    if (!isActive) return;
+    const id = setInterval(() => {
+      setStepIdx((prev) => (prev + 1) % data.steps.length);
+    }, 2800);
+    return () => clearInterval(id);
+  }, [isActive, data.steps.length]);
+
+  if (!isActive) return null;
+
+  return (
+    <div className="mt-2 flex items-center gap-2 overflow-hidden">
+      {/* Play clock badge */}
+      <span
+        className="shrink-0 text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded"
+        style={{
+          backgroundColor: `${teamColor}15`,
+          color: `${teamColor}90`,
+          border: `1px solid ${teamColor}20`,
+        }}
+      >
+        {data.time}
+      </span>
+      {/* Scrolling step text */}
+      <div className="relative flex-1 h-[18px] overflow-hidden">
+        <p
+          key={stepIdx}
+          className="absolute inset-0 flex items-center text-[11px] uppercase tracking-[0.08em] whitespace-nowrap"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            fontWeight: 500,
+            color: 'rgba(240,242,245,0.55)',
+            animation: 'arena-pbp-step 2.8s ease-in-out forwards',
+          }}
+        >
+          <span
+            className="inline-block h-[3px] w-[3px] rounded-full mr-2 shrink-0"
+            style={{ backgroundColor: teamColor, boxShadow: `0 0 4px ${teamColor}60` }}
+          />
+          {data.steps[stepIdx]}
+          {stepIdx < data.steps.length - 1 && (
+            <span className="ml-2 text-white/20">→</span>
+          )}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Crowd Haptics — aggressive arena vibration patterns ────── */
 /* Arena haptics are loud, buzzy, and crowd-energy-driven.        */
 /* Distinct from Supreme's restrained institutional pulses.       */
@@ -5066,6 +5167,27 @@ export default function ArenaPage({
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=processing, 2=secured
   const [activeBuyers, setActiveBuyers] = useState(Math.floor(Math.random() * 20) + 12);
   const ctaRef = useRef<HTMLButtonElement>(null);
+
+  /* ── Arena Blackout Blast — transition between purchase and W screen ── */
+  /* NBA arenas drop house lights to black before jumbotron celebrations. */
+  /* This intercepts the purchasing→confirmed transition with a blackout, */
+  /* horn pulse, and team-color flash before revealing CelebrationScreen. */
+  const [blackoutActive, setBlackoutActive] = useState(false);
+  const [blackoutPhase, setBlackoutPhase] = useState<'dark' | 'pulse' | 'flash' | 'done'>('dark');
+  const prevProtoState = useRef(proto.state);
+  useEffect(() => {
+    if (prevProtoState.current === 'purchasing' && proto.state === 'confirmed') {
+      setBlackoutActive(true);
+      setBlackoutPhase('dark');
+      // Phase sequence: dark(0ms) → pulse(250ms) → flash(500ms) → done(900ms)
+      const t1 = setTimeout(() => setBlackoutPhase('pulse'), 250);
+      const t2 = setTimeout(() => setBlackoutPhase('flash'), 500);
+      const t3 = setTimeout(() => { setBlackoutPhase('done'); setBlackoutActive(false); }, 900);
+      prevProtoState.current = proto.state;
+      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    }
+    prevProtoState.current = proto.state;
+  }, [proto.state]);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
 
   /* ── CTA crowd pulse — sonar ring on each feed purchase ──────── */
@@ -5277,8 +5399,48 @@ export default function ArenaPage({
     );
   }
 
-  /* ── Confirmed state → celebration ──────────────────────────── */
+  /* ── Confirmed state → celebration (with blackout transition) ── */
   if (proto.state === 'confirmed' && proto.editionNumber) {
+    if (blackoutActive) {
+      // Arena Blackout Blast: house lights drop → horn pulse → team flash → reveal
+      const tc = moment.teamColors.primary;
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0B0E14]">
+          {/* Dark void — house lights are OFF */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: '#000',
+              opacity: blackoutPhase === 'flash' ? 0 : 1,
+              transition: 'opacity 0.3s ease-out',
+            }}
+          />
+          {/* Horn pulse ring — expanding circle during 'pulse' phase */}
+          {(blackoutPhase === 'pulse' || blackoutPhase === 'flash') && (
+            <div
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                width: '60px',
+                height: '60px',
+                border: `2px solid ${tc}`,
+                boxShadow: `0 0 30px ${tc}60, 0 0 60px ${tc}30`,
+                animation: 'arena-blackout-pulse 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              }}
+            />
+          )}
+          {/* Team-color flash — the spotlight hits */}
+          {blackoutPhase === 'flash' && (
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: `radial-gradient(circle at 50% 50%, ${tc}40, transparent 70%)`,
+                animation: 'arena-blackout-flash 0.4s ease-out forwards',
+              }}
+            />
+          )}
+        </div>
+      );
+    }
     return (
       <CelebrationScreen
         editionNumber={proto.editionNumber}
@@ -5808,6 +5970,12 @@ export default function ArenaPage({
           <div className="mt-1.5">
             <JumbotronStatLine statLine={moment.statLine} teamColor={moment.teamColors.primary} />
           </div>
+          {/* Play-by-Play Ticker — jumbotron narration scrolling through the moment */}
+          <PlayByPlayTicker
+            momentId={moment.id}
+            teamColor={moment.teamColors.primary}
+            isActive={!countdown.isEnded}
+          />
           {/* Context line — enhanced emotional weight */}
           <p className="mt-2 text-sm leading-relaxed text-white/50 tracking-wide">
             {moment.context}

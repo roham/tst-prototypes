@@ -2067,3 +2067,10 @@
 - LED scanline textures (repeating-linear-gradient 2px) are now used consistently across Arena's interactive cards (Seat Upgrade, Crowd Noise, CTA). This establishes a "jumbotron display" design language.
 - Reusing existing state variables (activeBuyers was maintained but underutilized) is more efficient than creating new state — no new hooks or effects needed.
 - Current scores: Supreme 9.43, Broadcast 9.43, Arena 9.45. Supreme next (rotation). Supreme and Broadcast tied at 9.43, both 0.02 below Arena. Supreme weakest dimensions: VP (9.42), Conv (9.41), Int (9.41). Conversion and Interaction tied at 9.41 as weakest.
+
+## Cycle 264 Learnings
+- The 3-step commitment ladder (Register Interest → Telephone Bid → Confirm Bid) is the highest-leverage Conversion improvement for Supreme because each step naturally leads to the next: registering makes you a participant, arranging a telephone bid assigns you a specialist, and the CTA reflects your deepening commitment.
+- Progressive disclosure (telephone bid only appears after Register Interest) prevents decision fatigue — the user sees one action at a time, not a wall of options. This is also better for Interaction because each step feels like a discovery.
+- Named specialist assignment (R. Park / A. Kovalev / J. Thornton) reuses existing Condition Report specialist data, maintaining institutional coherence. The same specialist who wrote the condition report will call you — that's how real auction houses work.
+- CTA language escalation ("OWN THIS MOMENT" → "PLACE BID" → "CONFIRM BID") moves from emotional (ownership) to procedural (bid) to decisive (confirm). Each upgrade makes the click feel more like a natural next step in an ongoing process, not a cold purchase.
+- Current scores: Supreme 9.43, Broadcast 9.43, Arena 9.45. Supreme and Broadcast tied at 9.43. Next cycle: Broadcast (rotation). Broadcast weakest dimensions: VP (9.42), Conv (9.43), Emo (9.43), Int (9.43), Pur (9.44). Visual Polish (9.42) is the weakest dimension.

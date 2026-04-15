@@ -498,6 +498,70 @@ function HolographicSticker({ teamColor }: { teamColor: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// Gallery Spotlight Cone — directed track light on the lot from above
+// The most recognizable visual in any auction house saleroom: a single
+// focused spotlight illuminating the object under the hammer. A warm cone
+// shape from above with slow breathing — you are looking at art in a gallery.
+// ---------------------------------------------------------------------------
+
+function GallerySpotlight({ teamColor, phase }: { teamColor: string; phase: DropPhase }) {
+  if (phase === 'ENDED') return null;
+
+  // Warm white during OPEN, amber-tinted during CLOSING, gone during CRITICAL (handled by saleroom spotlight)
+  const coneColor = phase === 'CLOSING'
+    ? 'rgba(245, 180, 80, 0.045)'
+    : 'rgba(255, 248, 235, 0.035)';
+  const flareColor = phase === 'CLOSING'
+    ? `${teamColor}06`
+    : 'rgba(255, 248, 235, 0.02)';
+
+  return (
+    <div className="absolute inset-0 z-[4] pointer-events-none overflow-hidden">
+      {/* Primary cone — narrow track light from top center */}
+      <div
+        className="absolute supreme-spotlight-breathe"
+        style={{
+          top: '-5%',
+          left: '25%',
+          width: '50%',
+          height: '85%',
+          clipPath: 'polygon(42% 0%, 58% 0%, 80% 100%, 20% 100%)',
+          background: `linear-gradient(to bottom, ${coneColor} 0%, transparent 85%)`,
+          transition: 'background 2s ease',
+        }}
+      />
+      {/* Secondary wider haze — ambient fill light spill */}
+      <div
+        className="absolute"
+        style={{
+          top: '0%',
+          left: '15%',
+          width: '70%',
+          height: '70%',
+          clipPath: 'polygon(35% 0%, 65% 0%, 90% 100%, 10% 100%)',
+          background: `linear-gradient(to bottom, ${flareColor} 0%, transparent 70%)`,
+          transition: 'background 2s ease',
+        }}
+      />
+      {/* Light source flare — tiny bright point at cone origin */}
+      <div
+        className="absolute left-1/2 -translate-x-1/2 supreme-spotlight-breathe"
+        style={{
+          top: '-2px',
+          width: '40px',
+          height: '6px',
+          borderRadius: '50%',
+          background: phase === 'CLOSING'
+            ? 'radial-gradient(ellipse, rgba(245,180,80,0.12) 0%, transparent 70%)'
+            : 'radial-gradient(ellipse, rgba(255,248,235,0.08) 0%, transparent 70%)',
+          transition: 'background 2s ease',
+        }}
+      />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Ambient Particles — luminous dust motes drifting in a museum spotlight
 // ---------------------------------------------------------------------------
 
@@ -2032,6 +2096,11 @@ export default function SupremePage() {
               }}
             />
           </div>
+        )}
+
+        {/* Gallery spotlight cone — directed track light from above */}
+        {!isPurchasing && (
+          <GallerySpotlight teamColor={moment.teamColors.primary} phase={dropPhase} />
         )}
 
         {/* Ambient particles — luminous dust motes in museum spotlight */}

@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState, useEffect, useRef, useCallback } from 'react';
+import { use, useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { getMoment, SALE_DURATION_MS, type Moment, type RarityTier } from '@/lib/mock-data';
 import { useCountdown } from '@/lib/use-countdown';
 import { usePrototypeState } from '@/lib/use-prototype-state';
@@ -5926,6 +5926,125 @@ function CrowdReactionBar({ teamColor, isCritical, isClosing }: { teamColor: str
   );
 }
 
+/* ─── Fan Reaction Cam — tappable jumbotron reaction buttons ─────────── */
+/* At every NBA arena, the jumbotron shows fan reactions — Kiss Cam,       */
+/* Dance Cam, Flex Cam. The crowd gets excited when the camera finds them. */
+/* Modern arenas also use AR emoji filters where fans' expressions trigger */
+/* on-screen reactions. This translates that into tappable reaction        */
+/* buttons: tap one, see YOUR reaction briefly displayed in a jumbotron    */
+/* frame with your "section" number. Each tap fires haptic + brief         */
+/* display. Creates active participation, not passive viewing.             */
+/* Distinctly Arena: Supreme would never have fan reactions (institutional */
+/* silence), Broadcast would show emoji as data (VU-meter style). Arena   */
+/* puts the camera on YOU.                                                 */
+
+const FAN_REACTIONS = [
+  { emoji: '🔥', label: 'FIRE' },
+  { emoji: '💪', label: 'FLEX' },
+  { emoji: '😤', label: 'HYPED' },
+  { emoji: '🤯', label: 'WILD' },
+  { emoji: '👏', label: 'MVP' },
+] as const;
+
+function FanReactionCam({ teamColor, isActive }: { teamColor: string; isActive: boolean }) {
+  const [activeReaction, setActiveReaction] = useState<{ emoji: string; label: string } | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const sectionNum = useMemo(() => Math.floor(Math.random() * 300) + 101, []);
+
+  const handleTap = useCallback((reaction: { emoji: string; label: string }) => {
+    CROWD_HAPTIC.fanCam();
+    setActiveReaction(reaction);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => setActiveReaction(null), 2200);
+  }, []);
+
+  useEffect(() => {
+    return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
+  }, []);
+
+  if (!isActive) return null;
+
+  return (
+    <div className="mx-4 mt-2 mb-1 relative z-[1]">
+      {/* Jumbotron display — shows your reaction briefly */}
+      {activeReaction && (
+        <div
+          key={activeReaction.label}
+          className="mb-2 relative overflow-hidden rounded-lg"
+          style={{
+            backgroundColor: `${teamColor}10`,
+            border: `1px solid ${teamColor}30`,
+            animation: 'arena-reaction-cam-in 0.3s cubic-bezier(0.22,1,0.36,1) forwards',
+          }}
+        >
+          {/* Scanline overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px)',
+            }}
+          />
+          {/* Top accent bar */}
+          <div className="h-[2px] w-full" style={{ background: `linear-gradient(90deg, ${teamColor}, ${teamColor}40)` }} />
+          <div className="flex items-center justify-between px-3.5 py-2.5">
+            <div className="flex items-center gap-2.5">
+              {/* Camera viewfinder icon */}
+              <svg className="h-3 w-3 shrink-0" viewBox="0 0 12 12" fill="none" style={{ color: teamColor, opacity: 0.6 }}>
+                <rect x="0.5" y="2.5" width="11" height="7" rx="1" stroke="currentColor" strokeWidth="0.7" />
+                <circle cx="6" cy="6" r="2" stroke="currentColor" strokeWidth="0.7" />
+                <circle cx="6" cy="6" r="0.6" fill="currentColor" />
+              </svg>
+              <div className="flex flex-col">
+                <span
+                  className="text-[8px] font-bold uppercase tracking-[0.3em]"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif', color: teamColor }}
+                >
+                  Fan Cam
+                </span>
+                <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/25">
+                  SEC {sectionNum} · ROW {Math.floor(Math.random() * 20) + 1}
+                </span>
+              </div>
+            </div>
+            <span className="text-[28px]" style={{ filter: `drop-shadow(0 0 8px ${teamColor}40)` }}>
+              {activeReaction.emoji}
+            </span>
+            <span
+              className="text-[11px] font-bold uppercase tracking-[0.15em]"
+              style={{ fontFamily: 'var(--font-oswald), sans-serif', color: teamColor }}
+            >
+              {activeReaction.label}
+            </span>
+          </div>
+        </div>
+      )}
+      {/* Tappable reaction buttons */}
+      <div className="flex items-center justify-center gap-2">
+        <span
+          className="text-[7px] font-bold uppercase tracking-[0.3em] text-white/10 mr-1"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+        >
+          React
+        </span>
+        {FAN_REACTIONS.map((r) => (
+          <button
+            key={r.label}
+            onClick={() => handleTap(r)}
+            className="flex items-center gap-1 rounded-full px-2 py-1 transition-all active:scale-90"
+            style={{
+              backgroundColor: activeReaction?.label === r.label ? `${teamColor}20` : 'rgba(255,255,255,0.04)',
+              border: `1px solid ${activeReaction?.label === r.label ? `${teamColor}40` : 'rgba(255,255,255,0.06)'}`,
+            }}
+          >
+            <span className="text-[12px]">{r.emoji}</span>
+            <span className="text-[7px] font-bold uppercase tracking-wider text-white/30">{r.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Crowd Wave — stadium wave triggered by velocity spikes ─────────── */
 /* In every NBA arena, the crowd wave is the ultimate expression of         */
 /* collective energy — thousands of fans standing in sequence, creating a   */
@@ -7575,6 +7694,15 @@ export default function ArenaPage({
       {!countdown.isEnded && proto.state === 'browsing' && (
         <CrowdReactionBar teamColor={moment.teamColors.primary} isCritical={isCritical} isClosing={isClosing} />
       )}
+
+      {/* ─── Fan Reaction Cam — tappable jumbotron reaction buttons ─── */}
+      {/* NBA arenas show Fan Cam / Kiss Cam / Flex Cam — the jumbotron     */}
+      {/* puts the camera on you and shows your reaction. Tap a reaction    */}
+      {/* to see it displayed in a jumbotron frame with your section/row.   */}
+      <FanReactionCam
+        teamColor={moment.teamColors.primary}
+        isActive={!countdown.isEnded && proto.state === 'browsing'}
+      />
 
       {/* ─── STEAL DEAL — Whatnot-style live commerce deal alert ─── */}
       {/* On Whatnot/TikTok Shop, hosts constantly frame the deal:             */}

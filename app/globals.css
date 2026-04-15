@@ -1562,6 +1562,13 @@ body {
   100% { transform: translateY(-180px) scale(0.7); opacity: 0; }
 }
 
+/* Arena fan reaction cam — jumbotron frame pop-in */
+@keyframes arena-reaction-cam-in {
+  0% { transform: scaleY(0.3) scaleX(0.95); opacity: 0; }
+  60% { transform: scaleY(1.02) scaleX(1.01); opacity: 1; }
+  100% { transform: scaleY(1) scaleX(1); opacity: 1; }
+}
+
 /* Arena laser show — thin diagonal beams sweep across hero like NBA arena laser rigs */
 @keyframes arena-laser-sweep-1 {
   0% { transform: translateX(-100%) rotate(25deg); opacity: 0; }

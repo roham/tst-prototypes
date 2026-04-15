@@ -851,6 +851,12 @@ body {
   animation: arena-energy-pulse 0.8s ease-in-out infinite;
 }
 
+/* Arena sparkline pulse — purchase velocity bar glow at CTA */
+@keyframes arena-sparkline-pulse {
+  0%, 100% { opacity: 1; transform: scaleY(1); }
+  50% { opacity: 0.7; transform: scaleY(0.85); }
+}
+
 /* Arena claim badge pulse — hero price badge urgency glow */
 @keyframes arena-claim-badge-pulse {
   0%, 100% { box-shadow: 0 0 16px rgba(0,229,160,0.15), 0 0 40px rgba(0,229,160,0.05); }

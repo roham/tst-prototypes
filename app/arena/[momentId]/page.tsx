@@ -1065,6 +1065,131 @@ function FastBreakBanner({ visible, velocity, teamColor }: { visible: boolean; v
   );
 }
 
+/* ─── Purchase Velocity Sparkline — live momentum chart at CTA ─────── */
+/* Like a stock ticker's mini chart: shows the last 30 seconds of       */
+/* purchase activity as 10 bars. Visible momentum creates FOMO at the   */
+/* exact decision point. Sportsbook terminals show real-time bet volume  */
+/* as sparklines — this is the purchase equivalent. Distinctly Arena:    */
+/* live data visualization that pulses with crowd energy.                */
+
+function usePurchaseSparkline(eventCount: number) {
+  const timestamps = useRef<number[]>([]);
+  const [bars, setBars] = useState<number[]>(Array(10).fill(0));
+  const peakRef = useRef(0);
+
+  useEffect(() => {
+    if (eventCount === 0) return;
+    timestamps.current.push(Date.now());
+
+    // Rebuild bars from timestamps within last 30s
+    const now = Date.now();
+    const cutoff = now - 30000;
+    timestamps.current = timestamps.current.filter((t) => t >= cutoff);
+
+    const newBars = Array(10).fill(0) as number[];
+    for (const t of timestamps.current) {
+      const age = now - t;
+      const bucket = Math.min(9, Math.floor(age / 3000));
+      newBars[9 - bucket] += 1; // most recent on the right
+    }
+    const peak = Math.max(...newBars, 1);
+    if (peak > peakRef.current) peakRef.current = peak;
+    setBars(newBars);
+  }, [eventCount]);
+
+  // Periodic refresh so bars decay even without new events
+  useEffect(() => {
+    const iv = setInterval(() => {
+      const now = Date.now();
+      const cutoff = now - 30000;
+      timestamps.current = timestamps.current.filter((t) => t >= cutoff);
+      const newBars = Array(10).fill(0) as number[];
+      for (const t of timestamps.current) {
+        const age = now - t;
+        const bucket = Math.min(9, Math.floor(age / 3000));
+        newBars[9 - bucket] += 1;
+      }
+      setBars(newBars);
+    }, 3000);
+    return () => clearInterval(iv);
+  }, []);
+
+  return { bars, total: timestamps.current.length };
+}
+
+function PurchaseSparkline({
+  bars,
+  total,
+  teamColor,
+  isCritical,
+  isClosing,
+}: {
+  bars: number[];
+  total: number;
+  teamColor: string;
+  isCritical: boolean;
+  isClosing: boolean;
+}) {
+  const peak = Math.max(...bars, 1);
+  const accentColor = isCritical ? '#EF4444' : isClosing ? '#F59E0B' : teamColor;
+  const isSurging = bars[9] >= 2 || bars[8] >= 2; // recent bars are hot
+
+  return (
+    <div className="flex items-center gap-2.5 mb-2">
+      {/* Sparkline bars */}
+      <div className="flex items-end gap-[2px] h-[18px]">
+        {bars.map((val, i) => {
+          const height = peak > 0 ? Math.max(2, (val / peak) * 18) : 2;
+          const isRecent = i >= 8;
+          const barColor = val === 0
+            ? 'rgba(255,255,255,0.06)'
+            : isRecent && isSurging
+              ? accentColor
+              : `${teamColor}${val > 0 ? '80' : '30'}`;
+
+          return (
+            <div
+              key={i}
+              className="w-[4px] rounded-t-sm transition-all duration-500 ease-out"
+              style={{
+                height: `${height}px`,
+                backgroundColor: barColor,
+                boxShadow: isRecent && val >= 2 ? `0 0 6px ${accentColor}50` : 'none',
+                animation: isRecent && val >= 2 && isSurging
+                  ? 'arena-sparkline-pulse 1.2s ease-in-out infinite'
+                  : undefined,
+              }}
+            />
+          );
+        })}
+      </div>
+
+      {/* Label — momentum status */}
+      <div className="flex items-center gap-1.5">
+        {isSurging && (
+          <span
+            className="inline-block h-1.5 w-1.5 rounded-full"
+            style={{
+              backgroundColor: accentColor,
+              boxShadow: `0 0 4px ${accentColor}80`,
+              animation: 'pulse 1.5s ease-in-out infinite',
+            }}
+          />
+        )}
+        <span
+          className="text-[8px] font-bold uppercase tracking-[0.2em] tabular-nums"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: isSurging ? accentColor : 'rgba(255,255,255,0.2)',
+          }}
+        >
+          {isSurging ? `${total} IN 30s — SURGING` : `${total} IN 30s`}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Jumbotron Noise Prompt — "MAKE SOME NOISE" crowd engagement ─── */
 // Triggers when velocity spikes >= 16, shows for 2.5s, cooldown 35s.
 // Every arena fan has seen the jumbotron tell the crowd to get louder.
@@ -4928,6 +5053,9 @@ export default function ArenaPage({
   /* ── Scoring run (momentum banner on rapid purchase sequences) ── */
   const { run: scoringRun, visible: scoringRunVisible } = useScoringRun(feedEvents);
 
+  /* ── Purchase velocity sparkline — live momentum chart at CTA ── */
+  const { bars: sparklineBars, total: sparklineTotal } = usePurchaseSparkline(feedEvents.length);
+
   /* ── Animated metrics ───────────────────────────────────────── */
   const [liveVelocity, setLiveVelocity] = useState(14);
   const [viewers, setViewers] = useState(847);
@@ -6108,6 +6236,19 @@ export default function ArenaPage({
                 {activeBuyers} buying this tier now
               </span>
             </div>
+          </div>
+        )}
+
+        {/* Purchase Velocity Sparkline — live momentum chart above CTA */}
+        {!countdown.isEnded && proto.state !== 'purchasing' && feedEvents.length >= 2 && (
+          <div className="flex justify-center">
+            <PurchaseSparkline
+              bars={sparklineBars}
+              total={sparklineTotal}
+              teamColor={moment.teamColors.primary}
+              isCritical={isCritical}
+              isClosing={isClosing}
+            />
           </div>
         )}
 

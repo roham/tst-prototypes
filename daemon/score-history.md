@@ -962,3 +962,7 @@
 | 284 | arena | 9.47 | 9.47 | 9.47 | 9.48 | 9.47 | 9.47 | +0.00 | Whatnot-style queue position countdown during purchase (#N→#1) |
 
 **Cycle 284: Arena — Queue position countdown.** Purchase flow now starts with rapid "QUEUE POSITION #N" countdown (5-12 → #1) over 400ms before "RESERVING EDITION..." appears. Displayed in main CTA, sticky bar status, and sticky bar button. Creates live-auction queue energy during purchase processing. Int +0.01 (rapid countdown excitement), Conv +0.01 (social proof during buying window). Composite +0.00 at rounding.
+
+| 285 | supreme | 9.45 | 9.44 | 9.44 | 9.43 | 9.45 | 9.44 | +0.00 | Intaglio plate mark + registration crosshairs |
+
+**Cycle 285: Supreme — Intaglio plate mark + registration crosshairs.** Embossed rectangular depression (inset 7px/9px) with asymmetric directional shadows (heavier bottom-right simulating press roller direction). Light catch on top-left edge (0.5px white at 3.5%). Four corner registration crosshairs (8×8 SVG: hairline cross + circle) at 8% opacity. Both are physical intaglio printmaking authentication markers. VP +0.01 (two new authentic visual layers), composite +0.00 at rounding.

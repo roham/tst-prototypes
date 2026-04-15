@@ -2194,3 +2194,10 @@
 - Using CSS custom properties (--supreme-dropcap-color) per-moment is cleaner than trying to pass team color through a class name. The style prop on the paragraph sets the variable, and CSS picks it up — keeps the stylesheet generic.
 - Supreme's VP gap was the primary target (9.44 vs Arena 9.47, Broadcast 9.46). The drop cap closes it by 0.01. Still 0.02 behind Arena. Need more VP improvements on Supreme — consider: folio page numbering in margins, plate marks (embossed impression border), or exhibition label cards.
 - Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Broadcast (rotation). Broadcast's weakest dimension is Interaction (9.45).
+
+## Cycle 285 Learnings
+- Intaglio plate marks use asymmetric shadows because the press roller creates directional pressure — heavier impression on the trailing edge (bottom-right). This is more convincing than uniform inset shadows.
+- Registration crosshairs at 8% opacity are barely visible — they register subconsciously as "this is a real print" without competing with any content. At 12%+ they started to look like UI elements rather than print artifacts.
+- Two VP-only improvements in one cycle still didn't move the composite (+0.00). Supreme needs multi-dimensional improvements to advance — targeting VP + one other dimension simultaneously.
+- Supreme's weakest dimension remains Interaction (9.43). The lighting mode toggle (cycle 276) was the last interaction improvement. Next Supreme cycle should target an Interaction improvement that also advances another dimension.
+- Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Broadcast (rotation). Supreme still 0.03 behind Arena.

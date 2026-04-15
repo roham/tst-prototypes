@@ -4940,6 +4940,7 @@ export default function BroadcastPage() {
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
   const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=authenticating, 2=acquired
   const [liveReadOpen, setLiveReadOpen] = useState(false); // Commentator Live Read progressive commitment
+  const [fanPollVote, setFanPollVote] = useState<'yes' | 'no' | null>(null); // Fan Poll micro-commitment
   const [leaderDone, setLeaderDone] = useState(false);
   const handleLeaderComplete = useCallback(() => setLeaderDone(true), []);
 
@@ -7541,6 +7542,185 @@ export default function BroadcastPage() {
               </div>
             );
           })()}
+
+          {/* ── FAN POLL — ESPN-style tappable vote, micro-commitment before CTA ── */}
+          {/* ESPN runs live polls during every broadcast: "IS THIS THE PLAY OF   */}
+          {/* THE NIGHT?" with YES/NO buttons and real-time results bar. Voting    */}
+          {/* YES is a micro-commitment (foot-in-the-door effect) that makes the   */}
+          {/* subsequent purchase feel psychologically consistent — "I just said    */}
+          {/* this IS the best play, of course I should own it." Positioned        */}
+          {/* between analyst endorsement and CTA for maximum priming.             */}
+          {/* Distinctly Broadcast: Supreme has registration of interest (private), */}
+          {/* Arena has crowd noise/towel wave (collective energy). Broadcast has   */}
+          {/* the on-screen poll — the viewer's voice in the production.            */}
+          {!countdown.isEnded && !isPurchasing && (
+            <div className="mb-5 mx-auto max-w-md w-full">
+              <div
+                className="rounded-md overflow-hidden"
+                style={{
+                  backgroundColor: 'rgba(20,25,37,0.5)',
+                  border: `1px solid rgba(${rgb},0.1)`,
+                }}
+              >
+                {/* Poll header — ESPN poll badge */}
+                <div
+                  className="flex items-center gap-2 px-4 py-2"
+                  style={{
+                    borderBottom: `1px solid rgba(${rgb},0.08)`,
+                    background: `linear-gradient(90deg, rgba(${rgb},0.06) 0%, transparent 60%)`,
+                  }}
+                >
+                  {/* Poll icon — bar chart */}
+                  <svg className="w-3 h-3 flex-shrink-0" viewBox="0 0 12 12" fill="none" style={{ color: moment.teamColors.primary, opacity: 0.6 }}>
+                    <rect x="1" y="6" width="2.5" height="5" rx="0.5" fill="currentColor" />
+                    <rect x="4.75" y="3" width="2.5" height="8" rx="0.5" fill="currentColor" />
+                    <rect x="8.5" y="1" width="2.5" height="10" rx="0.5" fill="currentColor" />
+                  </svg>
+                  <span
+                    className="text-[8px] font-bold uppercase tracking-[0.3em]"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif', color: moment.teamColors.primary }}
+                  >
+                    Fan Poll
+                  </span>
+                  <div className="h-[1px] flex-1" style={{ backgroundColor: `rgba(${rgb},0.08)` }} />
+                  {!fanPollVote && (
+                    <div className="flex items-center gap-1">
+                      <div
+                        className="h-[4px] w-[4px] rounded-full animate-pulse"
+                        style={{ backgroundColor: '#EF4444', boxShadow: '0 0 4px rgba(239,68,68,0.4)' }}
+                      />
+                      <span className="text-[7px] uppercase tracking-[0.2em] text-[#EF4444]/50 font-mono">Live</span>
+                    </div>
+                  )}
+                  {fanPollVote && (
+                    <span className="text-[7px] uppercase tracking-[0.15em] text-white/20 font-mono">
+                      {(12847 + Math.floor(moment.editionsClaimed * 3.7)).toLocaleString()} votes
+                    </span>
+                  )}
+                </div>
+
+                {/* Poll question */}
+                <div className="px-4 pt-3 pb-2">
+                  <p
+                    className="text-[12px] font-bold uppercase tracking-[0.1em] text-white/70"
+                    style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    Is this the #1 play tonight?
+                  </p>
+                </div>
+
+                {/* Vote buttons OR results */}
+                <div className="px-4 pb-3">
+                  {!fanPollVote ? (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => { setFanPollVote('yes'); broadcastHaptic(10); }}
+                        className="flex-1 rounded-sm py-2 text-center transition-all duration-200 active:scale-[0.97]"
+                        style={{
+                          border: `1px solid rgba(${rgb},0.2)`,
+                          backgroundColor: `rgba(${rgb},0.06)`,
+                        }}
+                      >
+                        <span
+                          className="text-[11px] font-bold uppercase tracking-[0.15em]"
+                          style={{ fontFamily: 'var(--font-oswald), sans-serif', color: moment.teamColors.primary }}
+                        >
+                          Yes
+                        </span>
+                      </button>
+                      <button
+                        onClick={() => { setFanPollVote('no'); broadcastHaptic(6); }}
+                        className="flex-1 rounded-sm py-2 text-center transition-all duration-200 active:scale-[0.97]"
+                        style={{
+                          border: '1px solid rgba(255,255,255,0.06)',
+                          backgroundColor: 'rgba(255,255,255,0.02)',
+                        }}
+                      >
+                        <span
+                          className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/30"
+                          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                        >
+                          No
+                        </span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {/* YES bar */}
+                      {(() => {
+                        const yesPct = fanPollVote === 'yes' ? 87 : 84;
+                        const noPct = 100 - yesPct;
+                        return (
+                          <>
+                            <div>
+                              <div className="flex items-center justify-between mb-1">
+                                <span
+                                  className="text-[10px] font-bold uppercase tracking-[0.15em]"
+                                  style={{
+                                    fontFamily: 'var(--font-oswald), sans-serif',
+                                    color: fanPollVote === 'yes' ? moment.teamColors.primary : 'rgba(255,255,255,0.5)',
+                                  }}
+                                >
+                                  Yes {fanPollVote === 'yes' && '✓'}
+                                </span>
+                                <span
+                                  className="text-[10px] font-bold tabular-nums"
+                                  style={{
+                                    fontFamily: 'var(--font-oswald), sans-serif',
+                                    color: moment.teamColors.primary,
+                                  }}
+                                >
+                                  {yesPct}%
+                                </span>
+                              </div>
+                              <div className="h-[6px] rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
+                                <div
+                                  className="h-full rounded-full transition-all duration-700 ease-out"
+                                  style={{
+                                    width: `${yesPct}%`,
+                                    backgroundColor: moment.teamColors.primary,
+                                    boxShadow: `0 0 8px rgba(${rgb},0.3)`,
+                                  }}
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <div className="flex items-center justify-between mb-1">
+                                <span
+                                  className="text-[10px] font-bold uppercase tracking-[0.15em]"
+                                  style={{
+                                    fontFamily: 'var(--font-oswald), sans-serif',
+                                    color: fanPollVote === 'no' ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.25)',
+                                  }}
+                                >
+                                  No {fanPollVote === 'no' && '✓'}
+                                </span>
+                                <span
+                                  className="text-[10px] font-bold tabular-nums text-white/30"
+                                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                                >
+                                  {noPct}%
+                                </span>
+                              </div>
+                              <div className="h-[6px] rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
+                                <div
+                                  className="h-full rounded-full transition-all duration-700 ease-out"
+                                  style={{
+                                    width: `${noPct}%`,
+                                    backgroundColor: 'rgba(255,255,255,0.15)',
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* CTA button */}
           <div className={`${!countdown.isEnded && !isPurchasing ? '' : 'mt-8'} flex flex-col items-center`}>

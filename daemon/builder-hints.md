@@ -2263,3 +2263,11 @@
 - Perforation dashed line at 25% from the right mimics real tear-off stubs. It's a small detail that signals "this is a real ticket."
 - Arena is now at 9.49 (highest). Supreme at 9.44 is 0.05 behind — it desperately needs a breakthrough. Broadcast at 9.47.
 - Current scores: Supreme 9.44, Broadcast 9.47, Arena 9.49. Next cycle: Supreme (rotation). Supreme's weakest dimension is Interaction (9.43) — must target that.
+
+## Cycle 294 Learnings
+- Coexisting swipe detection with touch-hold (loupe) works cleanly: swipe needs >50px horizontal + <60px vertical + <400ms, while hold needs 300ms stationary press. The gestures don't conflict because the loupe cancels on movement before activation.
+- Three absolute-positioned image layers with opacity transitions is simpler and more reliable than swapping a single layer's backgroundImage. The browser can preload all three, so plate switches are instant.
+- The Roman numeral plate indicators (I, II, III) in Georgia serif are more institutional than dots or numbered tabs. The serif font signals "printed catalogue" vs. mono font which signals "digital interface."
+- Supreme's composite advanced from 9.44 to 9.45 — first improvement in several cycles. The +0.02 Interaction lift (from 9.43 to 9.45) was the key driver. Int was Supreme's weakest dimension; targeting it with two new modalities (swipe + tap) was the right call.
+- The action shot at full brightness on Plate II is a strong emotional beat — the faint 5% opacity background layer was invisible before. Now the collector can examine the actual play at full visual intensity.
+- Current scores: Supreme 9.45, Broadcast 9.47, Arena 9.49. Next cycle: Broadcast (rotation). Supreme still 0.04 behind Arena but the gap narrowed by 0.01. Broadcast's weakest dimensions are VP (9.46) and Conv (9.46).

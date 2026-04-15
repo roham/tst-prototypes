@@ -3000,9 +3000,40 @@ export default function SupremePage() {
               <button
                 key={tier.tier}
                 onClick={() => { setSelectedTierIdx(idx); HAPTIC.tierSelect(); }}
-                className="relative px-3 py-2 text-center transition-all duration-200 active:scale-95"
-                style={{ flex: '1 1 0%' }}
+                className="relative px-3 py-2 text-center transition-all duration-300 active:scale-[0.97]"
+                style={{
+                  flex: '1 1 0%',
+                  backgroundColor: isSelected ? `${tierAccentColor}06` : 'transparent',
+                  border: isSelected ? `0.5px solid ${tierAccentColor}18` : '0.5px solid transparent',
+                  borderRadius: '2px',
+                  transform: isSelected ? 'scale(1.02)' : 'scale(1)',
+                  boxShadow: isSelected
+                    ? `inset 0 1px 0 ${tierAccentColor}08, 0 0 12px ${tierAccentColor}06`
+                    : 'none',
+                }}
               >
+                {/* Radial press glow on selected tier */}
+                {isSelected && (
+                  <div
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      background: `radial-gradient(circle at 50% 40%, ${tierAccentColor}08, transparent 70%)`,
+                      borderRadius: '2px',
+                    }}
+                  />
+                )}
+                {/* Lot number — catalogue convention */}
+                {isSelected && !isEnded && (
+                  <span
+                    className="block text-[5px] font-mono uppercase tracking-[0.5em] mb-0.5"
+                    style={{
+                      color: `${tierAccentColor}25`,
+                      animation: 'supreme-lot-number-in 0.3s ease-out forwards',
+                    }}
+                  >
+                    Lot {idx + 1}
+                  </span>
+                )}
                 <span
                   className={`block text-[10px] uppercase tracking-[0.15em] font-semibold transition-colors duration-200 ${
                     isSelected ? 'text-white/80' : 'text-white/25'

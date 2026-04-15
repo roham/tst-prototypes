@@ -363,6 +363,12 @@ body {
   100% { opacity: 1; transform: translateX(0); }
 }
 
+/* Supreme catalogue lot number — fades in above tier name on selection */
+@keyframes supreme-lot-number-in {
+  0%   { opacity: 0; transform: translateY(3px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
 /* Supreme authentication seal — ring draws in around edition number on W screen */
 @keyframes supreme-seal-draw {
   0% { stroke-dashoffset: 301.6; opacity: 0; }

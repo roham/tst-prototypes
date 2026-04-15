@@ -5069,6 +5069,90 @@ function CourtLines({ teamColor, isEnded }: { teamColor: string; isEnded: boolea
 /* — always running, always live. Makes the page feel like the inside of    */
 /* an arena before you even reach the hero image.                           */
 
+// ---------------------------------------------------------------------------
+// Now Playing — arena music ticker showing current pump-up track
+// Every NBA arena plays music during warmups, timeouts, and dead balls — the
+// jumbotron and ribbon boards show the track name + artist. This atmospheric
+// element completes the sensory immersion. Rotates through a playlist of
+// real NBA arena pump-up tracks with smooth crossfade transitions.
+// ---------------------------------------------------------------------------
+
+const ARENA_PLAYLISTS: Record<string, { track: string; artist: string }[]> = {
+  bam: [
+    { track: 'Started From The Bottom', artist: 'Drake' },
+    { track: 'Lose Yourself', artist: 'Eminem' },
+    { track: 'All I Do Is Win', artist: 'DJ Khaled' },
+    { track: 'Power', artist: 'Kanye West' },
+    { track: 'Welcome to Miami', artist: 'Will Smith' },
+  ],
+  jokic: [
+    { track: 'Thunderstruck', artist: 'AC/DC' },
+    { track: 'Levels', artist: 'Avicii' },
+    { track: 'Can\'t Hold Us', artist: 'Macklemore' },
+    { track: 'Pursuit of Happiness', artist: 'Kid Cudi' },
+    { track: 'Rocky Mountain High', artist: 'John Denver' },
+  ],
+  sga: [
+    { track: 'Sicko Mode', artist: 'Travis Scott' },
+    { track: 'DNA.', artist: 'Kendrick Lamar' },
+    { track: 'Industry Baby', artist: 'Lil Nas X' },
+    { track: 'Congratulations', artist: 'Post Malone' },
+    { track: 'Thunder', artist: 'Imagine Dragons' },
+  ],
+};
+
+function ArenaNowPlaying({ teamColor, momentId }: { teamColor: string; momentId: string }) {
+  const playlist = ARENA_PLAYLISTS[momentId] ?? ARENA_PLAYLISTS.bam;
+  const [trackIdx, setTrackIdx] = useState(0);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFading(true);
+      setTimeout(() => {
+        setTrackIdx((prev) => (prev + 1) % playlist.length);
+        setFading(false);
+      }, 400);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, [playlist.length]);
+
+  const current = playlist[trackIdx];
+
+  return (
+    <div
+      className="flex items-center justify-center gap-2 py-1.5 relative overflow-hidden"
+      style={{ opacity: 0.25 }}
+    >
+      {/* Music note icon */}
+      <svg className="h-2.5 w-2.5 flex-shrink-0" viewBox="0 0 12 12" fill={teamColor}>
+        <path d="M10 1v7.5a1.5 1.5 0 1 1-1-1.42V3.3L5 4.2v5.3a1.5 1.5 0 1 1-1-1.42V2.5a.5.5 0 0 1 .36-.48l5-1.5A.5.5 0 0 1 10 1Z" />
+      </svg>
+      <span
+        className="text-[8px] font-bold uppercase tracking-[0.25em]"
+        style={{
+          fontFamily: 'var(--font-oswald), sans-serif',
+          color: teamColor,
+          opacity: 0.7,
+        }}
+      >
+        Now Playing
+      </span>
+      <span className="text-[7px] text-white/30">·</span>
+      <span
+        className="text-[8px] text-white/40 truncate max-w-[180px]"
+        style={{
+          fontFamily: 'var(--font-mono), monospace',
+          transition: 'opacity 0.4s ease',
+          opacity: fading ? 0 : 1,
+        }}
+      >
+        {current.track} — {current.artist}
+      </span>
+    </div>
+  );
+}
+
 function ArenaLEDRibbon({ moment, isActive }: { moment: Moment; isActive: boolean }) {
   if (!isActive) return null;
 
@@ -7324,6 +7408,14 @@ export default function ArenaPage({
 
       {/* ─── Arena LED Ribbon — scrolling jumbotron ring ticker ─── */}
       <ArenaLEDRibbon moment={moment} isActive={!countdown.isEnded} />
+
+      {/* ─── Now Playing — arena music ticker ─── */}
+      {/* Every NBA arena plays pump-up music during warmups, timeouts, and   */}
+      {/* dead balls. The jumbotron shows the track name. This atmospheric    */}
+      {/* element completes the sensory immersion: you're IN the building.    */}
+      {!countdown.isEnded && (
+        <ArenaNowPlaying teamColor={moment.teamColors.primary} momentId={moment.id} />
+      )}
 
       {/* ─── Moment Hero Section (40vh) ─── */}
       <section className="relative flex h-[40vh] min-h-[260px] flex-col justify-end overflow-hidden">

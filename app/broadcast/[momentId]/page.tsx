@@ -5321,6 +5321,14 @@ export default function BroadcastPage() {
             ))}
           </div>
 
+          {/* Tier Comparison — ESPN tier attribute bars */}
+          <TierComparison
+            tierName={selectedTier.tier}
+            teamColor={moment.teamColors.primary}
+            rgb={rgb}
+            isVisible={!countdown.isEnded && !isPurchasing}
+          />
+
           {/* Countdown — broadcast game clock escalation */}
           {/* During CRITICAL phase, the countdown transforms into a dominant    */}
           {/* ESPN-style game clock graphic — large digits, team-color accents,  */}
@@ -5986,6 +5994,184 @@ export default function BroadcastPage() {
 // ═══════════════════════════════════════════════════════════════════════════
 // Tier Card
 // ═══════════════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Tier Comparison — ESPN-style tier attribute bars at decision point
+// ESPN's "Tale of the Tape" comparison graphic is used before every big fight
+// and matchup. Here it compares the selected tier across 3 dimensions:
+// Exclusivity (inverse of edition size), Value (secondary market multiplier),
+// and Prestige (tier position). Team-color bars animate on tier switch.
+// ═══════════════════════════════════════════════════════════════════════════
+
+const TIER_TAPE_DATA: Record<string, { exclusivity: number; value: number; prestige: number }> = {
+  Open:      { exclusivity: 15, value: 25, prestige: 20 },
+  Rare:      { exclusivity: 55, value: 60, prestige: 50 },
+  Legendary: { exclusivity: 82, value: 80, prestige: 80 },
+  Ultimate:  { exclusivity: 98, value: 95, prestige: 98 },
+};
+
+function TierComparison({ tierName, teamColor, rgb, isVisible }: {
+  tierName: string;
+  teamColor: string;
+  rgb: string;
+  isVisible: boolean;
+}) {
+  const data = TIER_TAPE_DATA[tierName] ?? TIER_TAPE_DATA.Open;
+
+  if (!isVisible) return null;
+
+  const metrics = [
+    { label: 'Exclusivity', value: data.exclusivity },
+    { label: 'Value Potential', value: data.value },
+    { label: 'Prestige', value: data.prestige },
+  ];
+
+  const totalScore = metrics.reduce((sum, m) => sum + m.value, 0);
+  const isEliteTier = totalScore >= 240; // Legendary+ territory
+
+  return (
+    <div
+      key={tierName}
+      className="mt-4 rounded-lg overflow-hidden relative"
+      style={{
+        backgroundColor: 'rgba(255,255,255,0.02)',
+        border: `1px solid rgba(${rgb},${isEliteTier ? '0.15' : '0.05'})`,
+      }}
+    >
+      {/* Top accent gradient — ESPN graphic header bar */}
+      <div
+        className="h-[2px] w-full"
+        style={{
+          background: `linear-gradient(90deg, transparent 5%, ${teamColor} 50%, transparent 95%)`,
+          opacity: isEliteTier ? 0.7 : 0.3,
+        }}
+      />
+
+      {/* Header bar */}
+      <div
+        className="flex items-center justify-between px-4 py-2"
+        style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+      >
+        <div className="flex items-center gap-2">
+          <div
+            className="h-[10px] w-[2px] rounded-full"
+            style={{ backgroundColor: teamColor }}
+          />
+          <span
+            className="text-[8px] font-bold uppercase tracking-[0.25em] text-white/35"
+            style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            Tier Breakdown
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          {isEliteTier && (
+            <span
+              className="text-[6px] font-bold uppercase tracking-[0.2em] px-1.5 py-0.5 rounded-sm"
+              style={{
+                backgroundColor: `rgba(${rgb},0.15)`,
+                color: teamColor,
+                fontFamily: 'var(--font-oswald), sans-serif',
+                border: `0.5px solid rgba(${rgb},0.25)`,
+              }}
+            >
+              Elite
+            </span>
+          )}
+          <span
+            className="text-[7px] font-bold uppercase tracking-[0.2em]"
+            style={{
+              color: teamColor,
+              fontFamily: 'var(--font-oswald), sans-serif',
+              opacity: 0.6,
+            }}
+          >
+            {tierName}
+          </span>
+        </div>
+      </div>
+
+      {/* Comparison bars */}
+      <div className="px-4 py-3 flex flex-col gap-3">
+        {metrics.map((metric, i) => (
+          <div key={metric.label} className="flex flex-col gap-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[8px] uppercase tracking-[0.15em] text-white/30"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                {metric.label}
+              </span>
+              <div className="flex items-center gap-1.5">
+                {metric.value >= 90 && (
+                  <span
+                    className="text-[5px] font-bold uppercase tracking-[0.15em] px-1 py-px rounded-sm"
+                    style={{
+                      backgroundColor: `rgba(${rgb},0.12)`,
+                      color: teamColor,
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                    }}
+                  >
+                    Max
+                  </span>
+                )}
+                <span
+                  className="text-[9px] font-bold tabular-nums"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: metric.value >= 80 ? teamColor : 'rgba(255,255,255,0.4)',
+                    textShadow: metric.value >= 90 ? `0 0 8px rgba(${rgb},0.4)` : 'none',
+                  }}
+                >
+                  {metric.value}
+                </span>
+              </div>
+            </div>
+            {/* Bar track with tip marker */}
+            <div
+              className="h-[4px] rounded-full overflow-hidden relative"
+              style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}
+            >
+              {/* Bar fill — animates on tier switch */}
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: `${metric.value}%`,
+                  background: metric.value >= 80
+                    ? `linear-gradient(90deg, rgba(${rgb},0.4), rgba(${rgb},0.7), ${teamColor})`
+                    : `linear-gradient(90deg, rgba(${rgb},0.2), rgba(${rgb},0.35))`,
+                  animation: `broadcast-tape-bar-fill 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.1}s both`,
+                  boxShadow: metric.value >= 80 ? `0 0 8px rgba(${rgb},0.3), 0 0 2px rgba(${rgb},0.5)` : 'none',
+                }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Footer summary — broadcast graphic bottom rule */}
+      <div
+        className="px-4 py-1.5 flex items-center justify-between"
+        style={{ borderTop: '1px solid rgba(255,255,255,0.03)' }}
+      >
+        <span className="text-[6px] uppercase tracking-[0.15em] text-white/15"
+          style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+        >
+          Composite Score
+        </span>
+        <span
+          className="text-[8px] font-bold tabular-nums"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: isEliteTier ? teamColor : 'rgba(255,255,255,0.3)',
+            textShadow: isEliteTier ? `0 0 6px rgba(${rgb},0.3)` : 'none',
+          }}
+        >
+          {Math.round(totalScore / 3)}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 // Editorial taglines per tier — Sotheby's catalog energy
 const TIER_TAGLINE: Record<string, string> = {

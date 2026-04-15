@@ -896,6 +896,12 @@ body {
   animation: broadcast-shimmer 4s ease-in-out infinite;
 }
 
+/* Broadcast Tale of the Tape — comparison bar fill animation */
+@keyframes broadcast-tape-bar-fill {
+  0%   { transform: scaleX(0); transform-origin: left; }
+  100% { transform: scaleX(1); transform-origin: left; }
+}
+
 /* Broadcast tier claim wash — team-color sweep on purchase events */
 @keyframes broadcast-tier-claim-wash {
   0% { opacity: 0.8; transform: translateX(-100%); }

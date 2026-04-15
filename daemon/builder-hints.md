@@ -1782,3 +1782,10 @@
 - The flourish checkmark path (M118,148 L130,158 L162,136) positioned behind "SOLD" adds a subtle but critical detail — the clerk's final mark confirming the sale. The stroke-dashoffset animation makes it feel drawn rather than stamped.
 - CTA button text progression ("Reserving..." → "Opening Ledger..." → "Recording Sale..." → "Yours.") creates narrative in the button itself — the user reads the ceremony's progress even without looking at the overlay.
 - Next cycle: Broadcast (rotation). Broadcast Conversion (9.2→9.35 last cycle) could still improve. Ideas: a pre-roll countdown bumper before the CTA appears (like ESPN's "We'll be right back" → commercial → "Welcome back"), or a ticker-tape urgency banner scrolling under the CTA.
+
+## Cycle 223 Learnings
+- Ghost text watermark is a high-value Emotion improvement for Broadcast — it frames the moment in one word before any content is read. The stroke-only (no fill) technique ensures it doesn't compete with the lower-third text.
+- The z-index layering (ghost at z-[5], lower-third at z-20) ensures the watermark sits behind content. Positioning bottom-right aligns it with the player name area without overlapping.
+- Urgency vignette (inset box-shadow pulse) is subtle but effective — it changes the hero's ambient feel during closing phases without adding UI elements. The 2s vs 3.5s timing difference between CRITICAL/CLOSING creates noticeable urgency escalation.
+- Per-moment ghost text words should be emotionally specific, not generic. "POSTERIZED" > "HIGHLIGHT". "DAGGER" > "BIG SHOT". "CLUTCH" > "GREAT PLAY". The specificity is what makes ESPN graphics feel authored.
+- Next cycle: Arena (rotation). Arena Interaction (9.25) is the weakest dimension across all directions. Ideas: interactive tier selector with hover/press states that feel arena-alive (LED glow on hover, haptic on press), or a more theatrical purchasing flow with crowd countdown during stages.

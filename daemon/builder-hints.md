@@ -2020,3 +2020,10 @@
 - Three thematically unified improvements (all from broadcast control room vocabulary) move more dimensions than three unrelated changes. Camera switcher=Interaction, signal glitch=Emotion, tally lights=Purity. Targeted multi-dimension approach.
 - Current scores: Supreme 9.41, Broadcast 9.42, Arena 9.44. Broadcast overtakes Supreme by 0.01. Next cycle: Arena (rotation). Arena weakest: Emotion (9.44), Interaction (9.44) — all dimensions clustered near ceiling.
 
+
+## Cycle 257 Learnings
+- W screen social proof elements (crowd cam grid showing other buyers) enhance Emotion by creating "you're part of a crowd" feeling. Displaying surrounding buyers with their cities adds geographic breadth.
+- Camera viewfinder brackets (4 corner L-shapes per cell) are a low-effort visual element that instantly signals "camera feed" — viewers recognize the convention from any camera UI.
+- Staggered entrance animations (delay offset per grid cell) create a "feeds coming online" effect that feels natural for a multi-camera display.
+- At 9.44+ ceiling, W screen improvements can still register +0.01 when they hit 3 dimensions simultaneously (Visual + Emotion + Purity). Single-dimension improvements get absorbed by rounding.
+- Current scores: Supreme 9.41, Broadcast 9.42, Arena 9.45. Supreme is weakest (0.04 below Arena). Next cycle: Supreme (rotation). Supreme weakest dimensions: VP (9.41), Conv (9.41), Emo (9.40). Emotion at 9.40 is the single weakest dimension across all three directions.

@@ -8306,6 +8306,8 @@ function CertificateScreen({
   const [phase, setPhase] = useState(0); // 0=hidden, 1=hero+flash, 2=details+chyron, 3=cert, 4=share
   const [showFlash, setShowFlash] = useState(false);
   const [chyronState, setChyronState] = useState<'hidden' | 'in' | 'out'>('hidden'); // chyron lifecycle
+  const [liveCam, setLiveCam] = useState(0); // Director's monitor wall — which camera is "on air"
+  const [cutFlash, setCutFlash] = useState(false); // Brief white flash on camera cut
   useEffect(() => {
     const t0 = setTimeout(() => { setPhase(1); setShowFlash(true); }, 50);
     const tFlash = setTimeout(() => setShowFlash(false), 350); // flash ends
@@ -8812,15 +8814,35 @@ function CertificateScreen({
           }}
         >
           <div className="relative rounded-md overflow-hidden" style={{ aspectRatio: '16/9' }}>
-            {/* Action image — broadcast-graded */}
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{
-                backgroundImage: `url(${moment.actionImageUrl})`,
-                backgroundPosition: 'center 30%',
-                filter: 'saturate(0.85) contrast(1.15) brightness(0.9)',
-              }}
-            />
+            {/* Cut flash — white burst on camera switch */}
+            {cutFlash && (
+              <div
+                className="absolute inset-0 z-20 pointer-events-none bg-white"
+                style={{ animation: 'broadcast-flash-burst 180ms ease-out forwards' }}
+              />
+            )}
+            {/* Action image — broadcast-graded, responds to director's monitor selection */}
+            {(() => {
+              const cams = [
+                { crop: 'center 30%', filter: 'saturate(0.85) contrast(1.15) brightness(0.9)', img: moment.actionImageUrl, scale: undefined as string | undefined },
+                { crop: 'center 40%', filter: 'saturate(0.7) contrast(1.2) brightness(0.85)', img: moment.playerImageUrl, scale: undefined },
+                { crop: 'center 25%', filter: 'saturate(0.75) contrast(1.2) brightness(0.85) sepia(0.1)', img: moment.actionImageUrl, scale: 'scale(1.4)' },
+                { crop: 'center 50%', filter: 'saturate(0.5) contrast(1.1) brightness(0.8)', img: moment.actionImageUrl, scale: 'scale(1.15) translateX(-5%)' },
+              ];
+              const activeCam = cams[liveCam] ?? cams[0];
+              return (
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url(${activeCam.img})`,
+                    backgroundPosition: activeCam.crop,
+                    filter: activeCam.filter,
+                    transform: activeCam.scale,
+                    transition: 'filter 0.4s ease, transform 0.4s ease, background-position 0.4s ease',
+                  }}
+                />
+              );
+            })()}
             {/* Dark vignette */}
             <div
               className="absolute inset-0"
@@ -8862,7 +8884,7 @@ function CertificateScreen({
                   className="text-[8px] font-bold uppercase tracking-[0.2em]"
                   style={{ fontFamily: 'var(--font-oswald), sans-serif', color: moment.teamColors.primary }}
                 >
-                  Replay
+                  {['Replay · Wide', 'Replay · Tight', 'Replay · ISO', 'Replay · Slo-Mo'][liveCam]}
                 </span>
               </div>
             </div>
@@ -8907,23 +8929,30 @@ function CertificateScreen({
             </span>
           </div>
 
-          {/* 2×2 monitor grid */}
+          {/* 2×2 monitor grid — tappable! Tap a monitor to "cut" to that feed */}
           <div className="grid grid-cols-2 gap-1.5">
             {[
-              { label: 'CAM 1', sub: 'Wide', live: true, crop: 'center 30%', filter: 'saturate(0.7) contrast(1.2) brightness(0.85)', img: moment.actionImageUrl },
-              { label: 'CAM 2', sub: 'Tight', live: false, crop: 'center 40%', filter: 'saturate(0.5) contrast(1.3) brightness(0.75)', img: moment.playerImageUrl },
-              { label: 'ISO', sub: moment.player.split(' ').pop(), live: false, crop: 'center 25%', filter: 'saturate(0.6) contrast(1.25) brightness(0.8) sepia(0.1)', img: moment.actionImageUrl },
-              { label: 'REPLAY', sub: 'SLO-MO', live: false, crop: 'center 50%', filter: 'saturate(0.4) contrast(1.1) brightness(0.7)', img: moment.actionImageUrl },
+              { label: 'CAM 1', sub: 'Wide', crop: 'center 30%', filter: 'saturate(0.7) contrast(1.2) brightness(0.85)', img: moment.actionImageUrl },
+              { label: 'CAM 2', sub: 'Tight', crop: 'center 40%', filter: 'saturate(0.5) contrast(1.3) brightness(0.75)', img: moment.playerImageUrl },
+              { label: 'ISO', sub: moment.player.split(' ').pop(), crop: 'center 25%', filter: 'saturate(0.6) contrast(1.25) brightness(0.8) sepia(0.1)', img: moment.actionImageUrl },
+              { label: 'REPLAY', sub: 'SLO-MO', crop: 'center 50%', filter: 'saturate(0.4) contrast(1.1) brightness(0.7)', img: moment.actionImageUrl },
             ].map((cam, i) => (
               <div
                 key={cam.label}
-                className="relative overflow-hidden rounded-sm"
+                className="relative overflow-hidden rounded-sm cursor-pointer"
+                onClick={() => {
+                  if (liveCam === i) return;
+                  setLiveCam(i);
+                  setCutFlash(true);
+                  BROADCAST_HAPTIC.channelSwitch();
+                  setTimeout(() => setCutFlash(false), 180);
+                }}
                 style={{
                   aspectRatio: '16/10',
-                  border: cam.live
+                  border: liveCam === i
                     ? '1px solid rgba(239,68,68,0.4)'
                     : '1px solid rgba(255,255,255,0.06)',
-                  animation: cam.live ? undefined : undefined,
+                  transition: 'border-color 0.2s ease',
                 }}
               >
                 {/* Camera feed image */}
@@ -8951,7 +8980,7 @@ function CertificateScreen({
                 {/* Camera label — top-left */}
                 <div className="absolute top-1 left-1.5 flex items-center gap-1">
                   {/* Tally light — red dot for live feed */}
-                  {cam.live && (
+                  {liveCam === i && (
                     <div
                       className="w-1.5 h-1.5 rounded-full"
                       style={{
@@ -8965,8 +8994,8 @@ function CertificateScreen({
                     className="text-[7px] font-bold uppercase tracking-[0.1em]"
                     style={{
                       fontFamily: 'var(--font-mono), monospace',
-                      color: cam.live ? '#EF4444' : 'rgba(255,255,255,0.35)',
-                      textShadow: cam.live ? '0 0 6px rgba(239,68,68,0.4)' : undefined,
+                      color: liveCam === i ? '#EF4444' : 'rgba(255,255,255,0.35)',
+                      textShadow: liveCam === i ? '0 0 6px rgba(239,68,68,0.4)' : undefined,
                     }}
                   >
                     {cam.label}
@@ -8990,14 +9019,14 @@ function CertificateScreen({
                     className="text-[6px] tabular-nums"
                     style={{
                       fontFamily: 'var(--font-mono), monospace',
-                      color: cam.live ? 'rgba(239,68,68,0.35)' : 'rgba(255,255,255,0.12)',
+                      color: liveCam === i ? 'rgba(239,68,68,0.35)' : 'rgba(255,255,255,0.12)',
                     }}
                   >
                     {`00:${String(4 - i).padStart(2, '0')}:${String(17 + i * 3).padStart(2, '0')}:${String(i * 7 + 12).padStart(2, '0')}`}
                   </span>
                 </div>
                 {/* LIVE badge on active feed */}
-                {cam.live && (
+                {liveCam === i && (
                   <div className="absolute top-1 right-1.5">
                     <span
                       className="text-[6px] font-bold uppercase tracking-[0.15em] px-1 py-px rounded-sm"
@@ -9021,7 +9050,7 @@ function CertificateScreen({
             className="mt-1.5 flex items-center justify-between px-1"
           >
             <span className="text-[6px] uppercase tracking-[0.2em] text-white/10 font-mono">
-              PGM OUT: CAM 1
+              PGM OUT: {['CAM 1', 'CAM 2', 'ISO', 'REPLAY'][liveCam]}
             </span>
             <span className="text-[6px] uppercase tracking-[0.2em] text-white/10 font-mono">
               REC ● 00:04:17

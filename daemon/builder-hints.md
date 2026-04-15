@@ -1933,5 +1933,12 @@
 - The price delta framing ("+$X more" vs "$Y total") is critical: behavioral economics shows relative pricing feels cheaper than absolute pricing. The full price is visible on the tier card; the nudge shows only the marginal cost.
 - At 9.42 across all 5 dimensions, Arena is now the most balanced direction. Future improvements will need to be multi-dimensional to move the needle. The ceiling effect is real at 9.4+.
 - Next cycle: Supreme (rotation). Supreme scores: VP=9.38, Conv=9.37, Emo=9.40, Int=9.40, Pur=9.42. Conversion (9.37) is the clear weakest dimension. Ideas: Supreme could benefit from a provenance/authentication display, a "reserve your lot" prompt, or a price justification element showing collector market comparables.
+
+## Cycle 243 Learnings
+- The comparable lots pattern uses tier-relative multipliers (2.1×, 3.4×, 5.8×) rather than fixed prices. This ensures comps scale appropriately whether the user is looking at a $5 Open edition or a $249 Ultimate edition. Fixed prices would feel wrong at the extremes.
+- Placing comps between the auction estimate (future projected value) and the auctioneer's bid call (verbal framing) creates a value sandwich: projected value → market evidence → verbal urgency → CTA. Each element reinforces the previous.
+- The date labels (Mar 2025, Jan 2025, Nov 2024) are hardcoded but effective — they create the impression of a consistent, active secondary market. More recent dates feel more relevant.
+- At 0.08 opacity for the date text, the comps feel like background catalogue information, not a hard sell. This matches Supreme's institutional register — the evidence is presented for the discerning collector to notice, not pushed.
+- Current direction scores after cycle 243: Supreme 9.40, Broadcast 9.40, Arena 9.42. Arena leads, Supreme and Broadcast are tied. Next cycle: Broadcast (rotation). Broadcast scores: VP=9.39, Conv=9.42, Emo=9.40, Int=9.38, Pur=9.39. Interaction (9.38) is the weakest.
 - Delta modest (+0.01) because Supreme's ENDED state was already functional, and the ceremony only fires once (users may not experience it in their first session). High craft value but low frequency impact.
 - Next cycle: Broadcast (rotation). Broadcast scores: VP=9.38, Conv=9.42, Emo=9.38, Int=9.38, Pur=9.39. Visual and Emotion are the weakest dimensions.

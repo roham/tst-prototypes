@@ -1797,3 +1797,11 @@
 - The "YOURS!" text at finale creates a vocabulary bridge with Supreme's "Yours." but in Arena's style (all-caps, teal, with crowd explosion). Each direction can share the ownership moment but express it differently.
 - z-index 46 (above CrowdCountdown at 44) ensures the purchase ceremony takes visual priority over other overlays — when you're buying, nothing else matters.
 - Next cycle: Supreme (rotation). Supreme's Visual Polish and Emotion (both 9.30) are the weakest dimensions. Ideas: subtle ambient particle effect (floating motes of light in the saleroom — dust in spotlights like auction house atmosphere), or an editorial provenance illustration (hand-drawn SVG of the moment scene, revealed on the W screen).
+
+## Cycle 225 Learnings
+- clip-path: polygon() is the cleanest way to create a cone/trapezoid shape for spotlight effects. The coordinates map directly to the physical shape of light (narrow source, wide spread). Much more natural than radial-gradient alone.
+- Three-layer lighting (primary cone + fill haze + flare point) creates depth that a single gradient cannot. Each layer serves a distinct visual role: cone = directed light shape, haze = ambient atmosphere, flare = light source identity.
+- Phase-aware color temperature (warm white → amber) creates emotional progression without adding new UI elements. The CLOSING amber tint subconsciously signals "time is passing" through the lighting alone — auction houses actually do this by dimming general lighting.
+- Excluding the CRITICAL phase avoids competing with the existing saleroom spotlight narrowing effect. Two spotlight effects at once would dilute both.
+- Delta was modest (+0.02) because the effect is deliberately subtle (opacity 0.035-0.045). Higher opacity would feel like a flashlight, not a gallery spot. Atmospheric improvements have diminishing visual returns — the page already has many ambient layers.
+- Next cycle: Broadcast (rotation). Broadcast Conversion (9.35) and Interaction (9.25) are the weakest. Ideas: the purchasing flow needs ceremony like Supreme's ledger and Arena's crowd countdown — could add a TV production "GOING TO AIR" bumper sequence during purchase stages, or a director's cut commercial break transition.

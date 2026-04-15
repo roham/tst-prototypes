@@ -1642,3 +1642,10 @@
 - The `broadcastHaptic` helper pattern (try/catch, typeof check) is identical across all 3 directions — could be extracted to a shared utility, but keeping it inline preserves direction independence.
 - Wiring haptics into existing interaction points (CTA, tier select, purchase stages, phase transitions) is clean because those hooks/handlers already exist. The changes are surgical additions, not structural refactors.
 - Next cycle: Arena (rotation).
+
+## Cycle 204 Learnings
+- Shockwave ring animations need to start at a meaningful size (scale 0.15, not 0.01) and end big (4.5×) — too small a start makes the rings invisible, too big an end makes them feel like they expand beyond the screen meaninglessly.
+- Layering `filter: brightness()` animation on a progress bar is a zero-cost way to create "key moment" highlights — the same bar element gets two animations (width growth + brightness pulses) composited together.
+- Staggered micro-bounce pop-ins (arena-stat-pop) work best at 0.1s intervals — 0.05s feels simultaneous, 0.2s feels sluggish. The spring overshoot (1.12× peak) should be proportional to element size — big headlines get bigger overshoot, small stat text gets subtle bounce.
+- The celebration screen animation timeline is now: 0ms (shockwave + shake + flash) → 400ms (flash fades) → 500ms (shake stops) → 600ms (shockwave rings reach full expansion) → 700ms (details fade in, stats start popping) → 800ms (PA typewriter). Each layer overlaps the next for continuous motion.
+- Next cycle: Supreme (rotation).

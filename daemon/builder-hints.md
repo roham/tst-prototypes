@@ -2254,3 +2254,12 @@
 - Three dimensions improved (VP, Emo, Int) but composite rounded to same 9.47. At this score ceiling, need improvements that target Conv (highest-weight dimension) to break through.
 - Broadcast's weakest dimension is now VP and Conv (both 9.47). Next Broadcast cycle should target Conv — something at the decision point.
 - Current scores: Supreme 9.44, Broadcast 9.47, Arena 9.48. Next cycle: Arena (rotation). Supreme is still 0.04 behind Arena.
+
+## Cycle 293 Learnings
+- The ticket stub advances Arena's composite from 9.48 to 9.49 — the first composite improvement in several cycles. 3 dimensions (VP, Conv, Int) all moved +0.01.
+- The 3D flip mechanic (perspective + rotateY) is satisfying and lightweight. The 500ms transition is snappy without being jarring. backfaceVisibility:hidden prevents the back showing through.
+- Endowment effect at the decision point is a high-conviction conversion tool — research insight #6 validated. "Your ticket" language is the arena version of Supreme's "Your Collection" provenance preview.
+- The barcode SVG (40 variable-width stripes) is generated inline with alternating widths and opacities. Simple but visually convincing.
+- Perforation dashed line at 25% from the right mimics real tear-off stubs. It's a small detail that signals "this is a real ticket."
+- Arena is now at 9.49 (highest). Supreme at 9.44 is 0.05 behind — it desperately needs a breakthrough. Broadcast at 9.47.
+- Current scores: Supreme 9.44, Broadcast 9.47, Arena 9.49. Next cycle: Supreme (rotation). Supreme's weakest dimension is Interaction (9.43) — must target that.

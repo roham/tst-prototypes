@@ -1627,3 +1627,11 @@
 - Pulse ring animations need to start with higher opacity (0.45) than you'd think — at lower values (0.2-0.3) they're invisible against the dark background, especially on mobile screens in bright environments.
 - The urgency-colored pulse ring (teal → amber → red) creates a secondary urgency signal at the CTA without changing the button itself — layered urgency rather than overloading one element.
 - Next cycle: Supreme (rotation).
+
+## Cycle 202 Learnings
+- The paddle registration notice creates psychological commitment before any purchase intent — the visitor is now a "registered bidder" whether they intended to buy or not. This is the same anchoring technique physical auction houses use: once you have a paddle, you feel compelled to use it.
+- Reusing the same paddle number between arrival notice and purchase ceremony creates narrative continuity. The user sees "Paddle 347" on arrival and then "Paddle 347 — Ownership Recorded" during purchase — the story completes. Previously the paddle number only appeared during purchase, which was a missed setup opportunity.
+- Bottom-of-viewport placement for transient notices avoids competing with the hero (top) and CTA (middle). The paddle notice lives in dead space and draws the eye downward briefly before attention returns to the hero image.
+- The Georgia italic "Registered for Evening Sale" paired with Oswald bold number creates the same typographic duality Supreme uses throughout: institutional serif for description, bold condensed for data. Consistency reinforces the auction-house brand.
+- The 1.8s delay (after hero reveal at 200ms and sonar at 1200ms) ensures the paddle notice arrives when the user has already absorbed the hero image and is beginning to explore — the perfect moment to contextualize them as a participant.
+- Next cycle: Broadcast (rotation).

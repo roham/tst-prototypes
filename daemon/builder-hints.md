@@ -1961,3 +1961,9 @@
 - Next cycle: Broadcast (rotation). Broadcast scores: VP=9.39, Conv=9.42, Emo=9.40, Int=9.40, Pur=9.39. VP and Pur tied as weakest (9.39). Purity is harder to move at this level — it requires deeply broadcast-specific additions. Visual is more tractable.
 - Delta modest (+0.01) because Supreme's ENDED state was already functional, and the ceremony only fires once (users may not experience it in their first session). High craft value but low frequency impact.
 - Next cycle: Broadcast (rotation). Broadcast scores: VP=9.38, Conv=9.42, Emo=9.38, Int=9.38, Pur=9.39. Visual and Emotion are the weakest dimensions.
+
+## Cycle 248 Learnings
+- Hardware-inspired elements (LED bezel frame) create stronger immersion than software-inspired elements (gradients, glows). The frame works because it references something physically visible in every arena — the viewer's brain maps the hero section onto the jumbotron.
+- Phase-aware animation speed (not just color) is an underutilized urgency channel. Running dots at 4s/loop vs 8s/loop creates a visceral "things are speeding up" feeling without any explicit urgency text.
+- At the 9.42+ ceiling, improvements that touch multiple dimensions (Visual + Emotion + Purity = 3 of 5) are the only way to move the composite. Single-dimension improvements round to +0.00.
+- Current direction scores after cycle 248: Supreme 9.40, Broadcast 9.40, Arena 9.43. Arena still leads. Next cycle: Supreme (rotation). Supreme scores: VP=9.40, Conv=9.39, Emo=9.40, Int=9.40, Pur=9.42. Conversion (9.39) remains the weakest dimension.

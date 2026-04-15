@@ -2379,6 +2379,204 @@ function AnalystDesk({ moment, rgb }: { moment: Moment; rgb: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// Analyst Verdict — editorial consensus "COLLECT" recommendation card
+// ESPN pre-game shows end with each analyst giving their "LOCK" — the pick
+// they're most confident about. This compact graphic synthesizes the full
+// analyst desk's consensus into a single authoritative recommendation placed
+// right above the CTA button. The most powerful conversion tool in broadcast:
+// expert authority endorsing the purchase decision.
+// ---------------------------------------------------------------------------
+
+const ANALYST_VERDICT: Record<string, {
+  headline: string;
+  reasons: Array<{ icon: string; label: string; detail: string }>;
+  consensus: string;
+}> = {
+  bam: {
+    headline: 'Bam Adebayo — Tonight\u2019s Lock',
+    reasons: [
+      { icon: '🔥', label: 'SIGNIFICANCE', detail: 'Career-defining poster dunk in playoff elimination' },
+      { icon: '📈', label: 'VALUE', detail: 'Primary sale at a fraction of projected secondary' },
+      { icon: '📊', label: 'SCARCITY', detail: 'Limited editions selling fast — editions won\u2019t restock' },
+    ],
+    consensus: '3 of 3 analysts say COLLECT',
+  },
+  jokic: {
+    headline: 'Nikola Joki\u0107 — Tonight\u2019s Lock',
+    reasons: [
+      { icon: '🔥', label: 'SIGNIFICANCE', detail: 'No-look dagger assist — quintessential Joki\u0107 magic' },
+      { icon: '📈', label: 'VALUE', detail: 'Primary price vs. secondary upside is a steal' },
+      { icon: '📊', label: 'SCARCITY', detail: 'Joki\u0107 moments consistently sell out — don\u2019t wait' },
+    ],
+    consensus: '3 of 3 analysts say COLLECT',
+  },
+  sga: {
+    headline: 'Shai Gilgeous-Alexander — Tonight\u2019s Lock',
+    reasons: [
+      { icon: '🔥', label: 'SIGNIFICANCE', detail: '42-point masterclass in a must-win playoff game' },
+      { icon: '📈', label: 'VALUE', detail: 'MVP candidate at entry-level pricing' },
+      { icon: '📊', label: 'SCARCITY', detail: 'Highest demand drop this quarter — moving fast' },
+    ],
+    consensus: '3 of 3 analysts say COLLECT',
+  },
+};
+
+function AnalystVerdict({ moment, tier, rgb, phase }: {
+  moment: Moment;
+  tier: RarityTier;
+  rgb: string;
+  phase: DropPhase;
+}) {
+  const verdict = ANALYST_VERDICT[moment.id] ?? ANALYST_VERDICT.bam;
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.2 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className="w-full max-w-md mx-auto mb-5"
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(10px)',
+        transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
+      }}
+    >
+      <div
+        className="relative overflow-hidden rounded-sm"
+        style={{
+          backgroundColor: 'rgba(20,25,37,0.6)',
+          border: `1px solid rgba(${rgb},0.1)`,
+        }}
+      >
+        {/* Gold top accent — league-level authority, not team-specific */}
+        <div
+          className="h-[2px] w-full"
+          style={{ background: 'linear-gradient(to right, #D4A01780, #D4A01720)' }}
+        />
+        <div className="px-4 py-3">
+          {/* Header row — verdict badge + analyst consensus */}
+          <div className="flex items-center justify-between mb-2.5">
+            <div className="flex items-center gap-2">
+              {/* Gavel / verdict icon */}
+              <svg className="h-3 w-3 shrink-0" viewBox="0 0 12 12" fill="none" style={{ color: '#D4A017', opacity: 0.6 }}>
+                <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="0.8" />
+                <path d="M4 6.5 L5.5 8 L8 4.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span
+                className="text-[8px] font-bold uppercase tracking-[0.3em]"
+                style={{ color: '#D4A017', opacity: 0.8, fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                Analyst Verdict
+              </span>
+            </div>
+            {/* Consensus badge */}
+            <span
+              className="text-[7px] font-bold uppercase tracking-[0.15em] px-2 py-0.5 rounded-sm"
+              style={{
+                backgroundColor: '#00E5A015',
+                color: '#00E5A0',
+                opacity: 0.7,
+                fontFamily: 'var(--font-oswald), sans-serif',
+                border: '1px solid #00E5A015',
+              }}
+            >
+              {verdict.consensus}
+            </span>
+          </div>
+
+          {/* Headline — player + "Tonight's Lock" */}
+          <p
+            className="text-[13px] font-bold uppercase tracking-wide mb-3"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: moment.teamColors.primary,
+              textShadow: `0 0 12px ${moment.teamColors.primary}20`,
+            }}
+          >
+            {verdict.headline}
+          </p>
+
+          {/* 3 reasons — compact one-liners */}
+          <div className="flex flex-col gap-1.5">
+            {verdict.reasons.map((reason, idx) => (
+              <div
+                key={reason.label}
+                className="flex items-start gap-2"
+                style={{
+                  opacity: visible ? 1 : 0,
+                  transform: visible ? 'translateX(0)' : 'translateX(-8px)',
+                  transition: `opacity 0.35s ease-out ${0.15 + idx * 0.1}s, transform 0.35s ease-out ${0.15 + idx * 0.1}s`,
+                }}
+              >
+                <span className="text-[9px] leading-none mt-0.5 shrink-0">{reason.icon}</span>
+                <div className="flex items-baseline gap-1.5 min-w-0">
+                  <span
+                    className="text-[7px] font-bold uppercase tracking-[0.2em] shrink-0"
+                    style={{ color: '#D4A017', opacity: 0.5, fontFamily: 'var(--font-oswald), sans-serif' }}
+                  >
+                    {reason.label}
+                  </span>
+                  <span
+                    className="text-[10px] text-white/40 leading-snug truncate"
+                    style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic' }}
+                  >
+                    {reason.detail}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Large COLLECT recommendation — the verdict itself */}
+          <div
+            className="mt-3 pt-2.5 flex items-center justify-center gap-2.5"
+            style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}
+          >
+            <span
+              className="text-[18px] font-bold uppercase tracking-[0.15em]"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: '#00E5A0',
+                textShadow: '0 0 16px rgba(0,229,160,0.15)',
+              }}
+            >
+              COLLECT
+            </span>
+            <span className="text-[9px] text-white/20 font-mono">
+              ${tier.price} &middot; {tier.tier}
+            </span>
+          </div>
+        </div>
+
+        {/* Production footer */}
+        <div
+          className="px-4 py-1 flex items-center gap-2"
+          style={{ backgroundColor: 'rgba(212,160,23,0.02)', borderTop: '1px solid rgba(255,255,255,0.02)' }}
+        >
+          <span className="text-[6px] font-mono uppercase tracking-[0.2em] text-white/8">
+            TST BROADCAST
+          </span>
+          <div className="h-[1px] flex-1 bg-white/[0.02]" />
+          <span className="text-[6px] font-mono uppercase tracking-[0.15em] text-white/8">
+            {phase === 'CRITICAL' ? 'FINAL VERDICT' : phase === 'CLOSING' ? 'PRE-CLOSE VERDICT' : 'ANALYST CONSENSUS'}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Broadcast Ratings Spike — "Peak Viewership" chart showing the moment's
 // audience spike. ESPN tracks live ratings and highlights peak moments.
 // A sparkline SVG shows viewership ramping up then spiking at the play,
@@ -2939,6 +3137,122 @@ function AcquisitionLowerThird({ event, teamColor, rgb }: {
             LIVE
           </span>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Commentator's Call — play-by-play urgency narration above CTA
+// The announcer's voice IS the urgency in a broadcast. "Shot clock winding
+// down..." makes you hold your breath. Per-moment, per-phase quotes from
+// recognizable broadcast voices create editorial tension before the buy.
+// ---------------------------------------------------------------------------
+
+const COMMENTATOR_URGENCY_CALLS: Record<string, Record<'CLOSING' | 'CRITICAL', { voice: string; call: string }[]>> = {
+  bam: {
+    CLOSING: [
+      { voice: 'Mike Breen', call: 'The window is closing on this moment — collectors moving fast.' },
+      { voice: 'Jeff Van Gundy', call: 'If you\'re on the fence, this is your last commercial break.' },
+    ],
+    CRITICAL: [
+      { voice: 'Mike Breen', call: 'Final moments. This is it. Don\'t let this one get away.' },
+      { voice: 'Mark Jackson', call: 'Mama, there goes that moment — going, going...' },
+    ],
+  },
+  jokic: {
+    CLOSING: [
+      { voice: 'Kevin Harlan', call: 'Time running short — the Joker waits for no one.' },
+      { voice: 'Reggie Miller', call: 'Are you kidding me? This moment won\'t last.' },
+    ],
+    CRITICAL: [
+      { voice: 'Kevin Harlan', call: 'The clock is against you! This is the final possession!' },
+      { voice: 'Reggie Miller', call: 'No OT tonight — it\'s now or never.' },
+    ],
+  },
+  sga: {
+    CLOSING: [
+      { voice: 'Ian Eagle', call: 'The young man is special — and editions are moving.' },
+      { voice: 'Richard Jefferson', call: 'Don\'t overthink this one. Trust your instincts.' },
+    ],
+    CRITICAL: [
+      { voice: 'Ian Eagle', call: 'Down to the wire! SGA\'s moment is about to close!' },
+      { voice: 'Richard Jefferson', call: 'Last call. The bucket is about to be empty.' },
+    ],
+  },
+};
+
+function CommentatorCall({ momentId, phase, totalSeconds, teamColor, rgb }: {
+  momentId: string;
+  phase: 'CLOSING' | 'CRITICAL';
+  totalSeconds: number;
+  teamColor: string;
+  rgb: string;
+}) {
+  // Pick a call based on seconds remaining for variety
+  const calls = COMMENTATOR_URGENCY_CALLS[momentId]?.[phase] ?? COMMENTATOR_URGENCY_CALLS.bam[phase];
+  const callIdx = totalSeconds % calls.length;
+  const { voice, call } = calls[callIdx];
+
+  return (
+    <div
+      className="mb-4 w-full max-w-md rounded-lg overflow-hidden"
+      style={{
+        animation: 'broadcast-commentator-call 0.5s cubic-bezier(0.16,1,0.3,1) forwards',
+        border: `1px solid ${phase === 'CRITICAL' ? 'rgba(239,68,68,0.2)' : `rgba(${rgb},0.15)`}`,
+        background: phase === 'CRITICAL'
+          ? 'linear-gradient(135deg, rgba(239,68,68,0.06) 0%, rgba(11,14,20,0.95) 100%)'
+          : `linear-gradient(135deg, rgba(${rgb},0.05) 0%, rgba(11,14,20,0.95) 100%)`,
+      }}
+    >
+      {/* Accent bar — team color or red for critical */}
+      <div
+        className="h-[2px]"
+        style={{
+          background: phase === 'CRITICAL'
+            ? 'linear-gradient(90deg, #EF4444, #EF444460, #EF4444)'
+            : `linear-gradient(90deg, ${teamColor}, ${teamColor}60, ${teamColor})`,
+        }}
+      />
+      <div className="px-4 py-3">
+        {/* Voice attribution — small, authoritative */}
+        <div className="flex items-center gap-2 mb-1.5">
+          {/* Mic icon */}
+          <svg className="h-3 w-3 flex-shrink-0" viewBox="0 0 16 16" fill="none" style={{ color: phase === 'CRITICAL' ? '#EF4444' : teamColor }}>
+            <path d="M8 1a3 3 0 00-3 3v4a3 3 0 006 0V4a3 3 0 00-3-3z" fill="currentColor" opacity="0.6" />
+            <path d="M4 7v1a4 4 0 008 0V7M8 12v2.5M6 14.5h4" stroke="currentColor" strokeWidth="1" strokeLinecap="round" fill="none" opacity="0.4" />
+          </svg>
+          <span
+            className="text-[8px] font-bold uppercase tracking-[0.25em]"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: phase === 'CRITICAL' ? 'rgba(239,68,68,0.6)' : `rgba(${rgb},0.5)`,
+            }}
+          >
+            {voice}
+          </span>
+          {/* LIVE indicator */}
+          <span className="relative flex h-[5px] w-[5px] ml-auto">
+            <span
+              className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-50"
+              style={{ backgroundColor: phase === 'CRITICAL' ? '#EF4444' : teamColor }}
+            />
+            <span
+              className="relative inline-flex h-[5px] w-[5px] rounded-full"
+              style={{ backgroundColor: phase === 'CRITICAL' ? '#EF4444' : teamColor }}
+            />
+          </span>
+        </div>
+        {/* The call itself — editorial italic for broadcast voice */}
+        <p
+          className="text-[13px] leading-snug text-white/70"
+          style={{
+            fontStyle: 'italic',
+            fontFamily: 'Georgia, serif',
+          }}
+        >
+          &ldquo;{call}&rdquo;
+        </p>
       </div>
     </div>
   );
@@ -4608,6 +4922,32 @@ export default function BroadcastPage() {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* ── Analyst Verdict — editorial consensus recommendation ── */}
+          {/* ESPN's pre-game shows end with each analyst giving their "LOCK" —  */}
+          {/* the pick they're most confident in. This card synthesizes the full */}
+          {/* analyst desk's consensus into a single editorial recommendation    */}
+          {/* right before the CTA. Authority-driven conversion: "the experts    */}
+          {/* agree, this is worth collecting." Distinctly Broadcast: Supreme    */}
+          {/* would never editorialize (auction houses don't recommend), Arena   */}
+          {/* would show crowd behavior. Broadcast uses expert authority.        */}
+          {!isPurchasing && !countdown.isEnded && (
+            <AnalystVerdict moment={moment} tier={selectedTier} rgb={rgb} phase={dropPhase} />
+          )}
+
+          {/* Commentator's Call — play-by-play urgency line above CTA */}
+          {/* In every close game, the announcer's voice creates the urgency.    */}
+          {/* "Clock winding down..." This is the broadcaster narrating the      */}
+          {/* conversion moment — editorial urgency, not raw countdown numbers.  */}
+          {(dropPhase === 'CLOSING' || dropPhase === 'CRITICAL') && !isPurchasing && !countdown.isEnded && (
+            <CommentatorCall
+              momentId={momentId}
+              phase={dropPhase}
+              totalSeconds={countdown.totalSeconds}
+              teamColor={moment.teamColors.primary}
+              rgb={rgb}
+            />
           )}
 
           {/* CTA button */}

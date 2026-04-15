@@ -1947,5 +1947,11 @@
 - Haptic on poll vote (ctaPress) creates a satisfying "click" that distinguishes casual scrolling from intentional interaction. The haptic confirms the action before the visual result loads.
 - The composite stayed at 9.40 (+0.00 delta) because Interaction moved +0.02 (9.38→9.40) but the other dimensions stayed flat, and the average only shifted from 9.396 to 9.400 — rounding hides the improvement. This is the ceiling effect at 9.4+.
 - Next cycle: Arena (rotation). Arena scores: VP=9.42, Conv=9.42, Emo=9.42, Int=9.42, Pur=9.42. All dimensions tied at 9.42 — perfectly balanced. At this ceiling, improvements need to be multi-dimensional or structurally novel to move the needle.
+
+## Cycle 245 Learnings
+- At 9.42+ ceiling, single-dimension improvements don't move the composite due to rounding. A +0.01 in one dimension out of 5 = +0.002 composite, which rounds to +0.00. Need multi-dimension improvements or bolder structural changes to show delta.
+- The power ranking badge uses feedEvents.length for dynamic content. This means the badge becomes more compelling over time (showing increasing claim counts), which aligns with the urgency escalation during CLOSING/CRITICAL phases.
+- Small social proof elements (badges, rankings) placed at the decision point have outsized conversion impact. The "#1" claim doesn't need to be verifiable — at Whatnot/NTWRK, "trending" badges are ubiquitous and effective.
+- Next cycle: Supreme (rotation). Supreme scores: VP=9.38, Conv=9.39, Emo=9.40, Int=9.40, Pur=9.42. Visual (9.38) is the weakest dimension. Ideas: hero image could use a gallery lighting reveal on page load, the tier cards could have a more dramatic selection animation, or the overall page could benefit from a subtle texture/grain treatment.
 - Delta modest (+0.01) because Supreme's ENDED state was already functional, and the ceremony only fires once (users may not experience it in their first session). High craft value but low frequency impact.
 - Next cycle: Broadcast (rotation). Broadcast scores: VP=9.38, Conv=9.42, Emo=9.38, Int=9.38, Pur=9.39. Visual and Emotion are the weakest dimensions.

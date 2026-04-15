@@ -1877,3 +1877,12 @@
 - Delta was marginal (+0.00 from rounding) because the hero already had significant visual density (Ken Burns, grain, scanlines, film frame, lens flare, ghost text, letterbox, vignette). Adding more overlay elements has diminishing returns. The hero is approaching maximum visual complexity.
 - Lesson: at 9.35+ scores with dense hero sections, future Visual Polish and Emotion improvements should target UNDER-SERVED areas of the page (transaction section styling, editorial section typography, W screen refinements) rather than adding more hero overlays.
 - Next cycle: Arena (rotation). Arena scores: VP=9.38, Conv=9.40, Emo=9.38, Int=9.38, Pur=9.42. Emotion (9.38) and Visual Polish (9.38) tied for weakest. Ideas: the W screen could have more arena energy (jumbotron replay celebration), or the editorial section could have arena-style stat visualizations.
+
+## Cycle 236 Learnings
+- The jumbotron player stat card fills the visual gap between hero and feed/transaction that was identified as under-served. The card provides emotional context (big numbers + highlight badges) that primes the visitor before they reach the tier selector.
+- Reusing the existing useCountUp hook (with a slightly longer 1.6s duration) maintains consistency with the JumbotronStatLine in the hero while giving the card its own pacing. The larger numbers (text-3xl vs text-lg) justify the longer animation.
+- Clip-path polygon for the angled top edge (0 0, 100% 6px, 100% 100%, 0 100%) is a subtle but effective HUD/tech detail — the 6px offset is small enough to not look broken but visible enough to feel intentional.
+- Per-moment highlight badges (FRANCHISE RECORD, TRIPLE-DOUBLE, OKC RECORD) add more emotional weight than generic labels. Each badge tells a story that contextualizes the play's significance.
+- The light sweep animation (arena-stat-card-sweep) uses translateX(-100%) to translateX(100%) — a simple but effective "scan" that draws the eye on entry. The 0.3s delay ensures the card is visible before the sweep fires.
+- Delta (+0.04) is good for this maturity level — the card adds a genuinely new visual element to an under-served area rather than refining an already-polished section.
+- Next cycle: Supreme (rotation). Supreme scores: VP=9.36, Conv=9.37, Emo=9.36, Int=9.35, Pur=9.42. Interaction (9.35) and Emotion/VP (9.36) are weakest. Ideas: the tier selector could have a more tactile selection interaction (page peel, catalogue spread), or the hero could have a more dramatic reveal on scroll.

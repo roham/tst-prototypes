@@ -1974,3 +1974,19 @@ body {
   0%, 100% { transform: scale(1); }
   50%      { transform: scale(1.6); }
 }
+
+/* ── Broadcast Ghost Text — hero watermark word reveal ── */
+@keyframes broadcast-ghost-word {
+  0%   { opacity: 0; transform: translateX(30px) scale(1.05); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes broadcast-ghost-sub {
+  0%   { opacity: 0; transform: translateX(20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Broadcast Urgency Vignette — edge pulse during CLOSING/CRITICAL ── */
+@keyframes broadcast-vignette-pulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}

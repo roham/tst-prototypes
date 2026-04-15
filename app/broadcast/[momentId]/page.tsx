@@ -311,6 +311,19 @@ const COMMENTATOR_CALLS: Record<string, { call: string; announcer: string; netwo
 };
 
 // ---------------------------------------------------------------------------
+// Hero Ghost Text — dramatic ESPN-style watermark behind the lower-third.
+// ESPN's premium graphics layer huge semi-transparent words behind highlights:
+// "TRIPLE DOUBLE", "PLAYOFF RECORD", "CAREER HIGH". It's the broadcast
+// equivalent of a magazine cover's oversized pull word. Creates emotional
+// weight and editorial framing without adding UI clutter.
+// ---------------------------------------------------------------------------
+const HERO_GHOST_TEXT: Record<string, { word: string; subtext: string }> = {
+  bam:   { word: 'POSTERIZED', subtext: 'SIGNATURE MOMENT' },
+  jokic: { word: 'DAGGER', subtext: 'DEFINING PLAY' },
+  sga:   { word: 'CLUTCH', subtext: 'TAKEOVER' },
+};
+
+// ---------------------------------------------------------------------------
 // Sideline Report data — per-moment courtside reporter inserts.
 // Every ESPN/TNT broadcast cuts to the sideline reporter for courtside color:
 // injury updates, locker room intel, and emotional context the booth can't see.
@@ -2698,6 +2711,116 @@ function BroadcastShotClock({ totalSeconds, phase, rgb, teamColor, remaining }: 
 }
 
 // ---------------------------------------------------------------------------
+// Broadcast BottomLine — ESPN's iconic scrolling ticker below the CTA.
+// Runs in ALL phases (OPEN/CLOSING/CRITICAL). During OPEN it contextualizes
+// the moment with editorial facts. During CLOSING/CRITICAL it escalates to
+// urgency messaging. The BottomLine is the single most recognized ESPN UI
+// element — adding it at the CTA creates persistent conversion support.
+// ---------------------------------------------------------------------------
+
+function BroadcastBottomLine({
+  moment,
+  dropPhase,
+  totalSeconds,
+  rgb,
+  teamColor,
+  recentCollectors,
+}: {
+  moment: Moment;
+  dropPhase: DropPhase;
+  totalSeconds: number;
+  rgb: string;
+  teamColor: string;
+  recentCollectors: number;
+}) {
+  const remaining = moment.editionSize - moment.editionsClaimed;
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  const timeStr = `${m}:${s.toString().padStart(2, '0')}`;
+
+  // Phase-specific messages — editorial voice escalates with urgency
+  const items: string[] = dropPhase === 'CRITICAL'
+    ? [
+        `FINAL ${timeStr}`,
+        `${remaining.toLocaleString()} EDITIONS LEFT`,
+        `${recentCollectors} COLLECTING NOW`,
+        `${moment.player.toUpperCase()} · ${moment.statLine}`,
+        `FROM $${moment.price}`,
+      ]
+    : dropPhase === 'CLOSING'
+      ? [
+          `CLOSING IN ${timeStr}`,
+          `${moment.editionsClaimed.toLocaleString()} COLLECTED`,
+          `${remaining.toLocaleString()} EDITIONS AVAILABLE`,
+          `${moment.player.toUpperCase()} · ${moment.playType}`,
+          `${moment.team} VS ${moment.opponent}`,
+        ]
+      : [
+          `${moment.player.toUpperCase()} · ${moment.statLine}`,
+          `${moment.editionSize.toLocaleString()} TOTAL EDITIONS`,
+          `${moment.editionsClaimed.toLocaleString()} ALREADY COLLECTED`,
+          `${moment.team} VS ${moment.opponent}`,
+          `FROM $${moment.price}`,
+          `${moment.playType.toUpperCase()}`,
+        ];
+
+  const crawlText = items.join('   ◆   ') + '   ◆   ' + items.join('   ◆   ');
+
+  const accentColor = dropPhase === 'CRITICAL' ? '#EF4444' : dropPhase === 'CLOSING' ? '#F59E0B' : teamColor;
+  const labelBg = dropPhase === 'CRITICAL' ? 'rgba(239,68,68,0.15)' : dropPhase === 'CLOSING' ? 'rgba(245,158,11,0.1)' : `rgba(${rgb},0.08)`;
+  const labelText = dropPhase === 'CRITICAL' ? 'ALERT' : dropPhase === 'CLOSING' ? 'UPDATE' : 'BOTTOMLINE';
+
+  return (
+    <div
+      className="w-full max-w-md mx-auto mt-3 rounded overflow-hidden"
+      style={{
+        height: '22px',
+        background: `linear-gradient(90deg, rgba(${rgb},0.04) 0%, rgba(${rgb},0.02) 100%)`,
+        borderTop: `0.5px solid ${accentColor}20`,
+        borderBottom: `0.5px solid ${accentColor}10`,
+      }}
+    >
+      <div className="relative h-full flex items-center">
+        {/* Label — pinned left */}
+        <div
+          className="relative z-10 flex items-center h-full px-2 shrink-0"
+          style={{
+            background: labelBg,
+            borderRight: `0.5px solid ${accentColor}30`,
+          }}
+        >
+          <span
+            className="text-[7px] font-bold tracking-[0.2em]"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: accentColor,
+            }}
+          >
+            {labelText}
+          </span>
+        </div>
+
+        {/* Scrolling text */}
+        <div className="flex-1 overflow-hidden h-full flex items-center">
+          <div
+            className="broadcast-bottomline-scroll whitespace-nowrap"
+            style={{
+              color: `${accentColor}90`,
+              fontSize: '8px',
+              fontFamily: 'var(--font-mono), monospace',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+            }}
+          >
+            {crawlText}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Broadcast Ratings Spike — "Peak Viewership" chart showing the moment's
 // audience spike. ESPN tracks live ratings and highlights peak moments.
 // A sparkline SVG shows viewership ramping up then spiking at the play,
@@ -4053,6 +4176,62 @@ export default function BroadcastPage() {
           />
           {/* Dark overlay from bottom for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/70 to-transparent" />
+
+          {/* ── GHOST TEXT WATERMARK — ESPN premium graphic word behind lower-third ── */}
+          {/* Large semi-transparent editorial word that frames the moment emotionally. */}
+          {/* Like when ESPN overlays "PLAYOFF RECORD" in huge ghosted type behind a   */}
+          {/* highlight — it tells you what you're witnessing before you read a word.   */}
+          {(() => {
+            const ghost = HERO_GHOST_TEXT[momentId] ?? HERO_GHOST_TEXT.bam;
+            return (
+              <div
+                className="absolute inset-0 z-[5] pointer-events-none overflow-hidden flex flex-col items-end justify-end"
+                style={{ padding: '0 20px 110px 0' }}
+              >
+                {/* Subtext — small editorial label above the big word */}
+                <span
+                  className="text-[9px] font-bold uppercase tracking-[0.35em] mb-1"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: `rgba(${rgb},0.12)`,
+                    animation: 'broadcast-ghost-sub 1s cubic-bezier(0.22,1,0.36,1) 2.2s both',
+                  }}
+                >
+                  {ghost.subtext}
+                </span>
+                {/* Main ghost word — huge, transparent, cinematic */}
+                <span
+                  className="text-[clamp(4.5rem,18vw,9rem)] font-bold uppercase leading-[0.85] text-right"
+                  style={{
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                    color: 'transparent',
+                    WebkitTextStroke: `1px rgba(${rgb},0.08)`,
+                    textShadow: `0 0 60px rgba(${rgb},0.04)`,
+                    animation: 'broadcast-ghost-word 1.4s cubic-bezier(0.22,1,0.36,1) 2s both',
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  {ghost.word}
+                </span>
+              </div>
+            );
+          })()}
+
+          {/* ── URGENCY VIGNETTE — team-color edge pulse during CLOSING/CRITICAL ── */}
+          {/* Broadcast control rooms cue a red/amber tint on transitions to signal  */}
+          {/* urgency. This subtle vignette pulses at the hero edges to create       */}
+          {/* subconscious tension during the final minutes.                          */}
+          {(dropPhase === 'CLOSING' || dropPhase === 'CRITICAL') && !countdown.isEnded && (
+            <div
+              className="absolute inset-0 z-[6] pointer-events-none"
+              style={{
+                boxShadow: `inset 0 0 ${dropPhase === 'CRITICAL' ? '80px' : '60px'} ${
+                  dropPhase === 'CRITICAL' ? 'rgba(239,68,68,0.12)' : `rgba(${rgb},0.08)`
+                }`,
+                animation: `broadcast-vignette-pulse ${dropPhase === 'CRITICAL' ? '2s' : '3.5s'} ease-in-out infinite`,
+              }}
+            />
+          )}
 
           {/* Top bar: editorial label + status badge + countdown */}
           <div className="absolute left-5 right-5 top-5 z-20 flex items-center justify-between md:left-10 md:right-10 md:top-10">

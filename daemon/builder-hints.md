@@ -2027,3 +2027,10 @@
 - Staggered entrance animations (delay offset per grid cell) create a "feeds coming online" effect that feels natural for a multi-camera display.
 - At 9.44+ ceiling, W screen improvements can still register +0.01 when they hit 3 dimensions simultaneously (Visual + Emotion + Purity). Single-dimension improvements get absorbed by rounding.
 - Current scores: Supreme 9.41, Broadcast 9.42, Arena 9.45. Supreme is weakest (0.04 below Arena). Next cycle: Supreme (rotation). Supreme weakest dimensions: VP (9.41), Conv (9.41), Emo (9.40). Emotion at 9.40 is the single weakest dimension across all three directions.
+
+## Cycle 258 Learnings
+- The Catalogue Essay is the single highest-leverage Emotion improvement for Supreme. Institutional mechanics (condition reports, comparable sales, currency equivalents) create trust and prestige, but evocative prose creates feeling. The combination is what makes Christie's/Sotheby's catalogues so effective.
+- Per-moment narrative specificity matters: "the silence of seventeen thousand witnesses" (Bam), "sees the game several seconds ahead" (Jokić), "chose this evening to go through it" (SGA). Generic praise doesn't move Emotion; concrete sensory detail does.
+- Author attributions that match existing specialist names (from Condition Report drawer) create institutional coherence — the same named specialists write the essay and certify the condition.
+- Georgia serif italic at 9.5px/0.14 opacity is the sweet spot for catalogue essay text — readable but not competing with the hero or CTA. The second paragraph at 0.12 creates a natural fadeout effect, like ink aging on a page.
+- Current scores: Supreme 9.42, Broadcast 9.42, Arena 9.45. Supreme and Broadcast tied. Arena still leads by 0.03. Next cycle: Broadcast (rotation). Broadcast weakest dimensions: VP (9.40), Emo (9.40), Int (9.43), Pur (9.42). Emotion and Visual tied at 9.40 as weakest.

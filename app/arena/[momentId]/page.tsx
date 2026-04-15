@@ -3752,6 +3752,79 @@ function CourtLines({ teamColor, isEnded }: { teamColor: string; isEnded: boolea
   );
 }
 
+/* ─── Arena LED Ribbon — continuous scrolling ticker like jumbotron ring ── */
+/* Every NBA arena has an LED ribbon strip that circles above the seating,  */
+/* continuously scrolling player stats, scores, and promos. This thin       */
+/* ticker sits between the header and hero, scrolling moment data in a      */
+/* dot-matrix-inspired style with team-color accents. Persistent atmosphere */
+/* — always running, always live. Makes the page feel like the inside of    */
+/* an arena before you even reach the hero image.                           */
+
+function ArenaLEDRibbon({ moment, isActive }: { moment: Moment; isActive: boolean }) {
+  if (!isActive) return null;
+
+  const items = [
+    `★ ${moment.player.toUpperCase()} — ${moment.playType.toUpperCase()}`,
+    moment.statLine.toUpperCase(),
+    `${moment.team} vs ${moment.opponent}  •  ${moment.context}`,
+    `${moment.editionsClaimed.toLocaleString()} EDITIONS CLAIMED`,
+    `LIVE DROP  •  TOP SHOT THIS`,
+    `${moment.team.toUpperCase()} ARENA  •  ${moment.player.toUpperCase()} MOMENT OF THE NIGHT`,
+  ];
+  const ribbonText = items.join('     ◆     ');
+
+  return (
+    <div
+      className="relative w-full overflow-hidden"
+      style={{
+        height: '22px',
+        backgroundColor: 'rgba(11,14,20,0.95)',
+        borderTop: `1px solid ${moment.teamColors.primary}15`,
+        borderBottom: `1px solid ${moment.teamColors.primary}15`,
+      }}
+    >
+      {/* Subtle LED dot-matrix texture overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.04]"
+        style={{
+          backgroundImage: 'radial-gradient(circle, white 0.5px, transparent 0.5px)',
+          backgroundSize: '3px 3px',
+        }}
+      />
+      {/* Scrolling content — duplicated for seamless loop */}
+      <div
+        className="flex items-center h-full whitespace-nowrap"
+        style={{ animation: 'arena-led-ribbon 25s linear infinite' }}
+      >
+        {[0, 1].map((copy) => (
+          <span
+            key={copy}
+            className="inline-block text-[10px] font-bold uppercase tracking-[0.2em] pl-4"
+            style={{
+              fontFamily: 'var(--font-oswald), sans-serif',
+              color: moment.teamColors.primary,
+              opacity: 0.7,
+              textShadow: `0 0 8px ${moment.teamColors.primary}30`,
+              filter: 'brightness(1.1)',
+            }}
+          >
+            {ribbonText}
+          </span>
+        ))}
+      </div>
+      {/* Fade edges — arena LED ribbons have soft falloff at screen edges */}
+      <div
+        className="absolute inset-y-0 left-0 w-8 pointer-events-none"
+        style={{ background: 'linear-gradient(to right, rgba(11,14,20,0.95), transparent)' }}
+      />
+      <div
+        className="absolute inset-y-0 right-0 w-8 pointer-events-none"
+        style={{ background: 'linear-gradient(to left, rgba(11,14,20,0.95), transparent)' }}
+      />
+    </div>
+  );
+}
+
 /* ─── Arena CO2 Fog — low-lying atmospheric haze like NBA player intros ── */
 /* Every NBA arena fires CO2 fog machines during player introductions —     */
 /* thick low-lying clouds that hug the court. Three staggered fog layers    */
@@ -5188,6 +5261,9 @@ export default function ArenaPage({
 
       {/* Spacer for fixed header */}
       <div className="h-12" />
+
+      {/* ─── Arena LED Ribbon — scrolling jumbotron ring ticker ─── */}
+      <ArenaLEDRibbon moment={moment} isActive={!countdown.isEnded} />
 
       {/* ─── Moment Hero Section (40vh) ─── */}
       <section className="relative flex h-[40vh] min-h-[260px] flex-col justify-end overflow-hidden">

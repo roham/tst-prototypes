@@ -1403,6 +1403,12 @@ body {
   animation: arena-led-scan 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Arena LED Ribbon — continuous horizontal scroll like jumbotron ring ticker */
+@keyframes arena-led-ribbon {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 /* Arena ribbon board traveling color pulse — 360° chase around page border */
 @keyframes arena-ribbon-chase {
   0% { stroke-dashoffset: 398; opacity: 0.9; }

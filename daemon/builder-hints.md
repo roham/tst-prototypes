@@ -1752,3 +1752,10 @@
 - The 3s periodic refresh interval is essential — without it, bars only update on new events, so if purchases slow down the chart would freeze at a "surging" state instead of decaying. The decay is what makes the momentum feel real.
 - The "surging" detection (bars[8] >= 2 || bars[9] >= 2) is simple but effective — it only triggers when the most recent 6 seconds have multiple purchases, which naturally coincides with the simulated feed's rapid-fire moments.
 - Next cycle: Supreme (rotation). Supreme's Conversion score (9.3) could improve. Ideas: lot estimate comparison (pre-sale estimate vs current price like "Est: $12-18, Starting bid: $5"), or a reserve price indicator that shows the auction reaching its reserve — both are institutional auction conversion mechanics.
+
+## Cycle 219 Learnings
+- Block-scoped variable ordering matters: useMemo that depends on `isEnded` (derived from dropPhase === 'ENDED') must either be placed after the const declaration or check dropPhase directly. Using `dropPhase === 'ENDED'` inside the memo avoids the forward-reference issue.
+- The sticky CTA was a pure bare button — adding a thin context bar above it (tier + timer + temperature) is high ROI for conversion since it's what the user sees when scrolled past the main CTA.
+- Single-word status indicators (Quiet/Active/Competitive/Heated) are the most information-dense way to convey room energy in Supreme's minimal aesthetic. Any additional detail (numbers, charts, feeds) would drift toward Arena.
+- The temperature escalation thresholds (claimed% + phase + bid log length) create natural progression that maps to real auction room energy: early = quiet, mid = active, closing = competitive, critical with high claims = heated.
+- Next cycle: Broadcast (rotation). Broadcast's Conversion (9.2) is the lowest across all 3 directions — could benefit from a similar "at the decision point" conversion optimization. Ideas: a countdown leader graphic that appears above the main CTA during CLOSING/CRITICAL (ESPN-style "CLOCK" graphic), or a "Director's Call" — the TV director's voice calling "TAKE THE SHOT" as a conversion cue.

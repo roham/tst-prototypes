@@ -1767,3 +1767,10 @@
 - "FINAL 2:00" is better than "CRITICAL" as a broadcast label — it's the actual ESPN phrase used when the game enters the final 2 minutes. Authentic broadcast language > generic labels.
 - Score delta was modest (+0.02) because Broadcast already had CommentatorCall text urgency near the CTA. The shot clock adds VISUAL urgency but the text was already there. Bigger deltas come from adding urgency where none existed before.
 - Next cycle: Arena (rotation). Arena's Interaction (9.25) and Emotion (9.25) are the weakest dimensions. Ideas: arena tunnel walk-out entrance animation (dramatic player emergence), or a crowd decibel meter that responds to purchase velocity.
+
+## Cycle 221 Learnings
+- Per-moment play-by-play data is high-value for emotional context. 7 steps per moment creates a complete narrative arc: receive → action → climax → crowd reaction → stat milestone. The escalation from neutral ("receives at the elbow") to dramatic ("TD Garden SILENCED") mirrors real PA announcer energy.
+- The 2.8s cycle interval with slide-up/fade-through animation feels right for readability — fast enough to create urgency/movement, slow enough to read each step. Shorter (1.5s) was too rushed; longer (4s) felt static.
+- Placing the ticker between stat line and context text keeps it above-fold in the hero section without competing with the player name or CTA. It adds narrative depth to an area that was previously just static text.
+- The score delta was modest (+0.01) because the ticker primarily improves Emotion without affecting Interaction. Future Arena improvements should target Interaction (9.25) — the weakest dimension. Ideas: the purchasing flow could have more arena ceremony (crowd countdown during the 3 purchase stages), or the tier selector could have interactive hover/press states that feel more alive.
+- Next cycle: Supreme (rotation). Supreme Interaction (9.2) is the weakest across all 3 directions. Ideas: lot viewing card flip on tap (front = image, back = details), or a more theatrical lot clerk ceremony during purchasing stages.

@@ -2215,3 +2215,10 @@
 - LED scanline overlay on the scoreboard maintains visual consistency with the CTA button's scanline. Reusing the same texture across jumbotron-styled elements creates a cohesive display language.
 - Three dimensions moved (+0.01 each: VP, Conv, Purity), which was enough to advance the composite from 9.47 to 9.48. Confirms the pattern: need 3+ dimensions improving simultaneously at this score level to move the needle.
 - Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.48. Next cycle: Supreme (rotation). Supreme is 0.04 behind Arena and 0.02 behind Broadcast — it's the weakest direction and needs multi-dimensional improvement.
+
+## Cycle 288 Learnings
+- The loupe uses background-size:200% with percentage-based position to create 2× zoom. The background-position maps directly from touch-point percentage, so the magnified view stays centered on the finger. Simple and effective.
+- Touch-hold (300ms) is the right activation — instant would conflict with scrolling, longer would feel unresponsive. 300ms matches iOS long-press timing.
+- Cancel logic on finger movement before activation prevents accidental loupe when scrolling. Only stationary press triggers the hold timer.
+- The loupe targets Int + VP but composite didn't move (+0.00). Supreme is stuck at 9.44 — needs improvements that target 3+ dimensions simultaneously to advance. Conversion (9.44) is the key bottleneck alongside Emotion (9.44).
+- Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.48. Next cycle: Broadcast (rotation). Supreme still 0.04 behind Arena — it needs a breakthrough multi-dimensional improvement.

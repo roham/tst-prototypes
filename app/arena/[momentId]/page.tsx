@@ -1490,6 +1490,188 @@ function CrowdNoiseEQ({ teamColor, isActive }: { teamColor: string; isActive: bo
   );
 }
 
+/* ─── Crowd Consensus Meter — jumbotron live poll of tier popularity ──── */
+/* NBA arenas run live polls on the jumbotron: "Who's your MVP tonight?"   */
+/* "Best dunk of the season?" Fans watch the bars move in real time.       */
+/* This shows which tier the crowd is gravitating toward — social proof    */
+/* at the decision point. The leading tier's bar pulses with team-color    */
+/* energy. Distinctly Arena: Supreme would never poll the room (the        */
+/* auctioneer decides), Broadcast would show an analyst's pick. Arena      */
+/* lets the crowd vote with their wallets.                                 */
+
+function useCrowdConsensus(tiers: RarityTier[], feedEvents: PurchaseEvent[]) {
+  // Simulate tier purchase distribution — weighted toward lower tiers
+  // but shifts dynamically based on feed event count
+  const [distribution, setDistribution] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (tiers.length === 0) return;
+    // Base weights: Open heavy, rarer tiers lighter
+    const baseWeights = tiers.map((_, i) =>
+      i === 0 ? 48 : i === 1 ? 28 : i === 2 ? 16 : 8,
+    );
+    // Add jitter based on feed events
+    const jitter = feedEvents.length % 7;
+    const weights = baseWeights.map((w, i) => {
+      const shift = ((jitter + i) % 3) - 1; // -1, 0, or 1
+      return Math.max(5, w + shift * 3);
+    });
+    const total = weights.reduce((a, b) => a + b, 0);
+    setDistribution(weights.map((w) => Math.round((w / total) * 100)));
+  }, [tiers, feedEvents.length]);
+
+  return distribution;
+}
+
+function CrowdConsensusMeter({
+  tiers,
+  distribution,
+  selectedIdx,
+  teamColor,
+  isVisible,
+}: {
+  tiers: RarityTier[];
+  distribution: number[];
+  selectedIdx: number;
+  teamColor: string;
+  isVisible: boolean;
+}) {
+  if (!isVisible || distribution.length === 0 || tiers.length === 0) return null;
+
+  const maxPct = Math.max(...distribution);
+  const leadingIdx = distribution.indexOf(maxPct);
+
+  return (
+    <div className="mx-4 mt-2 mb-1 relative z-[1]">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-1.5">
+        <span
+          className="text-[8px] font-bold uppercase tracking-[0.25em]"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: `${teamColor}60`,
+          }}
+        >
+          📊 Crowd Pick
+        </span>
+        <div className="h-[1px] flex-1" style={{ backgroundColor: `${teamColor}10` }} />
+        <span className="text-[7px] font-mono uppercase tracking-wider text-white/15">
+          Live Poll
+        </span>
+      </div>
+
+      {/* Stacked horizontal bar */}
+      <div
+        className="relative h-[22px] w-full overflow-hidden rounded-md"
+        style={{
+          backgroundColor: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.05)',
+        }}
+      >
+        <div className="absolute inset-0 flex">
+          {tiers.map((tier, i) => {
+            const pct = distribution[i] ?? 0;
+            const color = TIER_COLOR[tier.tier] ?? '#6B7A99';
+            const isLeading = i === leadingIdx;
+            const isSelected = i === selectedIdx;
+            return (
+              <div
+                key={tier.tier}
+                className="relative h-full flex items-center justify-center overflow-hidden transition-all duration-700 ease-out"
+                style={{
+                  width: `${pct}%`,
+                  backgroundColor: `${color}${isLeading ? '30' : '18'}`,
+                  borderRight:
+                    i < tiers.length - 1
+                      ? `1px solid rgba(11,14,20,0.6)`
+                      : undefined,
+                  animation: isLeading
+                    ? 'arena-consensus-pulse 2.5s ease-in-out infinite'
+                    : undefined,
+                }}
+              >
+                {/* Selected tier indicator — brighter left border */}
+                {isSelected && (
+                  <div
+                    className="absolute left-0 top-0 bottom-0 w-[2px]"
+                    style={{
+                      backgroundColor: color,
+                      boxShadow: `0 0 6px ${color}80`,
+                    }}
+                  />
+                )}
+                {/* Tier label + percentage */}
+                {pct >= 15 && (
+                  <div className="flex items-center gap-1 px-1">
+                    <span
+                      className="text-[7px] font-bold uppercase tracking-[0.15em]"
+                      style={{
+                        fontFamily: 'var(--font-oswald), sans-serif',
+                        color: `${color}${isLeading ? 'DD' : '90'}`,
+                        textShadow: isLeading ? `0 0 4px ${color}40` : 'none',
+                      }}
+                    >
+                      {tier.tier}
+                    </span>
+                    <span
+                      className="text-[9px] font-bold tabular-nums"
+                      style={{
+                        fontFamily: 'var(--font-mono), monospace',
+                        color: isLeading ? '#F0F2F5' : 'rgba(240,242,245,0.5)',
+                        textShadow: isLeading ? `0 0 4px ${color}30` : 'none',
+                      }}
+                    >
+                      {pct}%
+                    </span>
+                    {isLeading && (
+                      <span
+                        className="text-[6px] font-bold uppercase tracking-[0.1em] px-1 py-0.5 rounded-sm"
+                        style={{
+                          backgroundColor: `${color}25`,
+                          color,
+                          border: `1px solid ${color}30`,
+                        }}
+                      >
+                        HOT
+                      </span>
+                    )}
+                  </div>
+                )}
+                {/* Narrow tier — just percentage */}
+                {pct > 0 && pct < 15 && (
+                  <span
+                    className="text-[7px] font-mono tabular-nums"
+                    style={{ color: 'rgba(240,242,245,0.3)' }}
+                  >
+                    {pct}%
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Bottom label — "X fans chose [leading tier]" */}
+      <div className="flex items-center justify-between mt-1">
+        <span className="text-[8px] text-white/20">
+          Most fans choosing{' '}
+          <span
+            style={{ color: TIER_COLOR[tiers[leadingIdx]?.tier] ?? '#6B7A99' }}
+          >
+            {tiers[leadingIdx]?.tier}
+          </span>
+        </span>
+        {tiers[selectedIdx] && leadingIdx !== selectedIdx && (
+          <span className="text-[7px] text-white/15 italic">
+            You picked {tiers[selectedIdx].tier}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Arena Camera Flash — brief white burst simulating crowd cameras ── */
 
 function ArenaCameraFlash({ events }: { events: PurchaseEvent[] }) {
@@ -5506,6 +5688,9 @@ export default function ArenaPage({
   /* ── Purchase velocity sparkline — live momentum chart at CTA ── */
   const { bars: sparklineBars, total: sparklineTotal } = usePurchaseSparkline(feedEvents.length);
 
+  /* ── Crowd consensus — jumbotron live poll of tier popularity ── */
+  const crowdConsensus = useCrowdConsensus(moment?.rarityTiers ?? [], feedEvents);
+
   /* ── Animated metrics ───────────────────────────────────────── */
   const [liveVelocity, setLiveVelocity] = useState(14);
   const [viewers, setViewers] = useState(847);
@@ -6663,6 +6848,15 @@ export default function ArenaPage({
         violation={shotClock.violation}
         teamColor={moment.teamColors.primary}
         isVisible={tierVisible && !countdown.isEnded && proto.state === 'browsing'}
+      />
+
+      {/* ─── Crowd Consensus Meter — jumbotron live poll of tier popularity ─── */}
+      <CrowdConsensusMeter
+        tiers={moment.rarityTiers}
+        distribution={crowdConsensus}
+        selectedIdx={selectedTierIdx}
+        teamColor={moment.teamColors.primary}
+        isVisible={!countdown.isEnded && proto.state === 'browsing'}
       />
 
       {/* ─── Crowd Reaction Bar — live emoji reactions floating up from viewers ─── */}

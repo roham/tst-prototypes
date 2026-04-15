@@ -2383,9 +2383,31 @@ const SEASON_AVERAGES: Record<string, { pts: number; reb: number; ast: number }>
   sga: { pts: 31.2, reb: 5.5, ast: 6.2 },
 };
 
+// Per-moment playoff averages for Tale of the Tape stat mode toggle
+const PLAYOFF_AVERAGES: Record<string, { pts: number; reb: number; ast: number }> = {
+  bam: { pts: 24.8, reb: 11.2, ast: 4.3 },
+  jokic: { pts: 29.7, reb: 13.1, ast: 10.4 },
+  sga: { pts: 33.8, reb: 5.9, ast: 6.8 },
+};
+
+// Per-moment career highs for Tale of the Tape stat mode toggle
+const CAREER_HIGHS: Record<string, { pts: number; reb: number; ast: number }> = {
+  bam: { pts: 42, reb: 17, ast: 12 },
+  jokic: { pts: 50, reb: 21, ast: 17 },
+  sga: { pts: 55, reb: 11, ast: 14 },
+};
+
+type StatMode = 'season' | 'playoffs' | 'career';
+const STAT_MODES: { key: StatMode; label: string }[] = [
+  { key: 'season', label: 'SEASON' },
+  { key: 'playoffs', label: 'PLAYOFFS' },
+  { key: 'career', label: 'CAREER HIGH' },
+];
+
 function TaleOfTheTape({ moment, rgb }: { moment: Moment; rgb: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [statMode, setStatMode] = useState<StatMode>('season');
 
   useEffect(() => {
     const el = containerRef.current;
@@ -2404,12 +2426,21 @@ function TaleOfTheTape({ moment, rgb }: { moment: Moment; rgb: string }) {
     return m ? { value: parseInt(m[1], 10), label: m[2].trim() } : null;
   }).filter(Boolean) as { value: number; label: string }[];
 
-  const seasonAvg = SEASON_AVERAGES[moment.id] ?? { pts: 20, reb: 8, ast: 5 };
-  const avgMap: Record<string, number> = { PTS: seasonAvg.pts, REB: seasonAvg.reb, AST: seasonAvg.ast };
+  // Select comparison data based on active stat mode
+  const compData = useMemo(() => {
+    const src = statMode === 'playoffs'
+      ? (PLAYOFF_AVERAGES[moment.id] ?? { pts: 22, reb: 9, ast: 5 })
+      : statMode === 'career'
+        ? (CAREER_HIGHS[moment.id] ?? { pts: 40, reb: 15, ast: 10 })
+        : (SEASON_AVERAGES[moment.id] ?? { pts: 20, reb: 8, ast: 5 });
+    return { PTS: src.pts, REB: src.reb, AST: src.ast } as Record<string, number>;
+  }, [moment.id, statMode]);
+
+  const compLabel = statMode === 'playoffs' ? 'Playoff Avg' : statMode === 'career' ? 'Career High' : 'Season Avg';
 
   // Build comparison rows
   const rows = parsed.map((stat) => {
-    const avg = avgMap[stat.label] ?? 10;
+    const avg = compData[stat.label] ?? 10;
     const maxVal = Math.max(stat.value, avg) * 1.25; // scale to 80% max width
     return {
       label: stat.label,
@@ -2446,7 +2477,7 @@ function TaleOfTheTape({ moment, rgb }: { moment: Moment; rgb: string }) {
         {/* Top accent */}
         <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ backgroundColor: `rgba(${rgb},0.25)` }} />
 
-        {/* Column headers */}
+        {/* Column headers + stat mode toggle */}
         <div className="flex items-center justify-between px-4 pt-4 pb-2">
           <span
             className="text-[9px] font-bold uppercase tracking-[0.3em]"
@@ -2454,9 +2485,34 @@ function TaleOfTheTape({ moment, rgb }: { moment: Moment; rgb: string }) {
           >
             Tonight
           </span>
-          <span className="text-[8px] uppercase tracking-[0.25em] text-white/20">
-            vs Season Avg
-          </span>
+          {/* ESPN stat mode switcher — tap to toggle between Season / Playoffs / Career High */}
+          <div className="flex items-center gap-0.5">
+            {STAT_MODES.map((mode) => (
+              <button
+                key={mode.key}
+                onClick={() => { setStatMode(mode.key); BROADCAST_HAPTIC.channelSwitch(); }}
+                className="relative px-2 py-0.5 transition-all duration-300 ease-out"
+                style={{
+                  fontFamily: 'var(--font-oswald), sans-serif',
+                  fontSize: '7px',
+                  fontWeight: 700,
+                  letterSpacing: '0.2em',
+                  textTransform: 'uppercase' as const,
+                  color: statMode === mode.key ? moment.teamColors.primary : 'rgba(255,255,255,0.2)',
+                  backgroundColor: statMode === mode.key ? `rgba(${rgb},0.08)` : 'transparent',
+                  borderRadius: '3px',
+                }}
+              >
+                {mode.label}
+                {statMode === mode.key && (
+                  <span
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[1px] w-3/4 transition-all duration-300"
+                    style={{ backgroundColor: moment.teamColors.primary }}
+                  />
+                )}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Stat rows */}
@@ -2482,14 +2538,14 @@ function TaleOfTheTape({ moment, rgb }: { moment: Moment; rgb: string }) {
                   </span>
                   {row.isAbove && (
                     <span
-                      className="text-[7px] font-bold uppercase tracking-[0.2em] px-1 py-px rounded-sm"
+                      className="text-[7px] font-bold uppercase tracking-[0.2em] px-1 py-px rounded-sm transition-colors duration-300"
                       style={{
                         backgroundColor: `rgba(${rgb},0.12)`,
                         color: moment.teamColors.primary,
                         fontFamily: 'var(--font-oswald), sans-serif',
                       }}
                     >
-                      Above avg
+                      {statMode === 'career' ? 'Near high' : 'Above avg'}
                     </span>
                   )}
                 </div>
@@ -2503,8 +2559,8 @@ function TaleOfTheTape({ moment, rgb }: { moment: Moment; rgb: string }) {
                   >
                     {row.tonight}
                   </span>
-                  <span className="text-[11px] tabular-nums text-white/25 font-mono">
-                    {row.avg.toFixed(1)}
+                  <span className="text-[11px] tabular-nums text-white/25 font-mono transition-opacity duration-200">
+                    {statMode === 'career' ? row.avg : row.avg.toFixed(1)}
                   </span>
                 </div>
               </div>
@@ -2523,7 +2579,7 @@ function TaleOfTheTape({ moment, rgb }: { moment: Moment; rgb: string }) {
                     }}
                   />
                 </div>
-                {/* Season avg bar */}
+                {/* Comparison bar (season avg / playoff avg / career high) */}
                 <div className="h-[3px] rounded-full bg-white/[0.03] overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all ease-out"

@@ -1979,3 +1979,9 @@
 - Key={...} on animated elements forces React to remount, which re-triggers CSS animations. This is the cleanest pattern for "fire-and-forget" brief overlays without managing animation states.
 - Camera angle labels are a high-purity broadcast element because they appear dozens of times per game — every viewer has seen them thousands of times. The familiarity creates instant "broadcast" recognition.
 - Current scores: Supreme 9.41, Broadcast 9.41, Arena 9.43. Supreme and Broadcast are now tied. Arena still leads by 0.02. Next cycle: Arena (rotation). Arena scores: VP=9.43, Conv=9.43, Emo=9.43, Int=9.42, Pur=9.43. Interaction (9.42) is the only dimension below 9.43.
+
+## Cycle 251 Learnings
+- Tappable elements with escalating feedback (visual + haptic + text) are the highest-leverage Interaction improvements. The noise meter combines 4 feedback channels: bar fill, icon activation, label text change, and haptic pattern escalation.
+- Decay mechanics create micro-urgency within a single interaction — "keep tapping or lose progress" is a proven gamification loop (DDR/Guitar Hero energy meters). This keeps users engaged on the page.
+- The celebration burst at max level creates a genuine peak moment — users feel rewarded for their participation, which primes them emotionally for the adjacent purchase CTA.
+- Current scores: Supreme 9.41, Broadcast 9.41, Arena 9.44. Arena extended its lead. Supreme and Broadcast need attention. Next cycle: Supreme (rotation). Supreme weakest dimensions: Conv (9.41), VP (9.40), Emo (9.40), Int (9.41). Visual Polish and Emotion tied at 9.40 as weakest.

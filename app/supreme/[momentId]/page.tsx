@@ -1000,6 +1000,7 @@ function WScreen({
               {/* Sale Record fields — staggered reveal like an auction clerk filling in the ledger */}
               {[
                 { label: 'Hammer Price', value: `$${tierPrice.toFixed(2)}`, bold: true, large: true },
+                { label: 'Currency Equiv.', value: `£${(tierPrice * 0.79).toFixed(2)} / €${(tierPrice * 0.92).toFixed(2)} / HK$${(tierPrice * 7.8).toFixed(2)}`, bold: false, large: false },
                 { label: 'Pre-Sale Estimate', value: `$${Math.round(tierPrice * 1.8).toFixed(2)}–$${Math.round(tierPrice * 3.2).toFixed(2)}`, bold: false, large: false },
                 { label: 'Acquired', value: dateStr, bold: false, large: false },
                 { label: 'Status', value: 'Sold', bold: true, large: false, teal: true },
@@ -3420,6 +3421,23 @@ export default function SupremePage() {
               })}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ============================================================= */}
+      {/* INTERNATIONAL CURRENCY EQUIVALENTS — global auction house      */}
+      {/* standard. At Christie's/Sotheby's, every lot estimate shows    */}
+      {/* approximate prices in GBP, EUR, and HKD for international      */}
+      {/* bidders. The multi-currency display signals "this is a global   */}
+      {/* auction house with international demand" — prestige through     */}
+      {/* institutional convention, not marketing language. Subtle mono   */}
+      {/* typography at minimal opacity, centered below comparables.      */}
+      {/* ============================================================= */}
+      {!isEnded && !isPurchasing && (
+        <div className="flex items-center justify-center px-5 mt-1.5 supreme-info-enter">
+          <span className="text-[6.5px] font-mono tabular-nums tracking-[0.15em] text-white/[0.07]">
+            ≈ £{Math.round(selectedTier.price * 0.79)} / €{Math.round(selectedTier.price * 0.92)} / HK${Math.round(selectedTier.price * 7.8)} / ¥{Math.round(selectedTier.price * 149)}
+          </span>
         </div>
       )}
 

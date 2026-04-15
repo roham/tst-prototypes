@@ -1367,6 +1367,9 @@ export default function SupremePage() {
     }
   }, [viewPhase, purchaseStage]);
 
+  // Condition Report drawer — specialist assessment resolves purchase doubt
+  const [conditionReportOpen, setConditionReportOpen] = useState(false);
+
   // CTA sonar invite — single ring pulse on page load, draws eye to button
   const [sonarFired, setSonarFired] = useState(false);
   useEffect(() => {
@@ -3569,6 +3572,163 @@ export default function SupremePage() {
               </span>
             </span>
           ))}
+        </div>
+      )}
+
+      {/* ============================================================= */}
+      {/* SPECIALIST CONDITION REPORT — tappable drawer resolving doubt   */}
+      {/* At Christie's/Sotheby's, every lot has a named specialist who   */}
+      {/* provides a formal condition assessment. Serious bidders request  */}
+      {/* this report before committing — it's the strongest intent       */}
+      {/* signal before a bid. The named specialist creates authority     */}
+      {/* bias (Cialdini), the clinical language signals institutional    */}
+      {/* rigor, and the tap-to-reveal effort heuristic makes the        */}
+      {/* information feel more trustworthy than freely displayed text.   */}
+      {/* Distinctly Supreme: Arena would never have condition reports    */}
+      {/* (live commerce), Broadcast would narrate it editorially.       */}
+      {/* Supreme puts it in institutional catalogue fine print.          */}
+      {/* ============================================================= */}
+      {!isEnded && !isPurchasing && (
+        <div className="px-5 mt-2 mb-1 supreme-info-enter">
+          <div className="flex flex-col items-center">
+            {/* Tappable trigger — magnifying glass + label */}
+            <button
+              onClick={() => { setConditionReportOpen(prev => !prev); HAPTIC.tierSelect(); }}
+              className="flex items-center gap-1.5 py-1 transition-opacity duration-300"
+              style={{ opacity: conditionReportOpen ? 0.22 : 0.10 }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = '0.22'; }}
+              onMouseLeave={(e) => { if (!conditionReportOpen) (e.currentTarget as HTMLElement).style.opacity = '0.10'; }}
+            >
+              {/* Magnifying glass icon */}
+              <svg width="8" height="8" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/30">
+                <circle cx="7" cy="7" r="4.5" />
+                <line x1="10.2" y1="10.2" x2="14" y2="14" />
+              </svg>
+              <span
+                className="text-[6.5px] uppercase tracking-[0.3em]"
+                style={{ fontFamily: 'Georgia, serif', color: 'rgba(255,255,255,0.30)' }}
+              >
+                {conditionReportOpen ? 'Close Report' : 'View Condition Report'}
+              </span>
+            </button>
+
+            {/* Expandable drawer */}
+            <div
+              className="overflow-hidden transition-all duration-500 ease-out"
+              style={{
+                maxHeight: conditionReportOpen ? '280px' : '0px',
+                opacity: conditionReportOpen ? 1 : 0,
+              }}
+            >
+              <div
+                className="mt-1.5 px-3 py-2.5 rounded-sm"
+                style={{
+                  border: `0.5px solid ${tierAccentColor}10`,
+                  backgroundColor: `${tierAccentColor}03`,
+                }}
+              >
+                {/* Specialist attribution */}
+                <div className="flex items-center gap-2 mb-2">
+                  <div
+                    className="h-5 w-5 rounded-full flex items-center justify-center text-[6px] font-bold"
+                    style={{
+                      backgroundColor: `${tierAccentColor}12`,
+                      color: `${tierAccentColor}60`,
+                      fontFamily: 'Georgia, serif',
+                    }}
+                  >
+                    {moment.team === 'MIA' ? 'RP' : moment.team === 'DEN' ? 'AK' : 'JT'}
+                  </div>
+                  <div className="flex flex-col">
+                    <span
+                      className="text-[7px] tracking-[0.1em]"
+                      style={{ fontFamily: 'Georgia, serif', color: 'rgba(255,255,255,0.25)' }}
+                    >
+                      {moment.team === 'MIA' ? 'Rachel Park' : moment.team === 'DEN' ? 'Alexei Kovalev' : 'James Thornton'}
+                    </span>
+                    <span className="text-[5.5px] font-mono uppercase tracking-[0.2em] text-white/10">
+                      Senior Specialist, Digital Collectibles
+                    </span>
+                  </div>
+                </div>
+
+                {/* Hairline separator */}
+                <div className="h-[0.5px] w-full mb-2" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }} />
+
+                {/* Structured condition fields */}
+                <div className="flex flex-col gap-1.5">
+                  {/* Overall grade */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-[6px] font-mono uppercase tracking-[0.25em] text-white/10">
+                      Overall Condition
+                    </span>
+                    <span
+                      className="text-[7px] font-bold uppercase tracking-[0.15em]"
+                      style={{ fontFamily: 'Georgia, serif', color: `${tierAccentColor}40` }}
+                    >
+                      Mint
+                    </span>
+                  </div>
+
+                  {/* Provenance */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-[6px] font-mono uppercase tracking-[0.25em] text-white/10">
+                      Provenance
+                    </span>
+                    <span
+                      className="text-[6.5px] tracking-[0.08em]"
+                      style={{ fontFamily: 'Georgia, serif', color: 'rgba(255,255,255,0.18)' }}
+                    >
+                      Direct from NBA Top Shot
+                    </span>
+                  </div>
+
+                  {/* Authentication */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-[6px] font-mono uppercase tracking-[0.25em] text-white/10">
+                      Authentication
+                    </span>
+                    <span
+                      className="text-[6.5px] tracking-[0.08em]"
+                      style={{ fontFamily: 'Georgia, serif', color: 'rgba(255,255,255,0.18)' }}
+                    >
+                      On-chain verified · Flow blockchain
+                    </span>
+                  </div>
+
+                  {/* Media integrity */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-[6px] font-mono uppercase tracking-[0.25em] text-white/10">
+                      Media Integrity
+                    </span>
+                    <span
+                      className="text-[6.5px] tracking-[0.08em]"
+                      style={{ fontFamily: 'Georgia, serif', color: 'rgba(255,255,255,0.18)' }}
+                    >
+                      HD source · Official NBA footage
+                    </span>
+                  </div>
+
+                  {/* Specialist note */}
+                  <div className="h-[0.5px] w-full mt-0.5 mb-0.5" style={{ backgroundColor: 'rgba(255,255,255,0.04)' }} />
+                  <p
+                    className="text-[6.5px] leading-[1.6] tracking-[0.04em]"
+                    style={{
+                      fontFamily: 'Georgia, serif',
+                      fontStyle: 'italic',
+                      color: 'rgba(255,255,255,0.13)',
+                    }}
+                  >
+                    {moment.team === 'MIA'
+                      ? 'A defining postseason performance from Adebayo. The play captured — a one-handed dunk over two defenders at TD Garden — represents the apex of this series. Primary market offering; no prior ownership history. Recommended without reservation.'
+                      : moment.team === 'DEN'
+                        ? 'Jokić\u2019s fourth consecutive playoff triple-double places this moment in a statistical lineage with Chamberlain and Robertson. The no-look assist captured in the final minute is among the most technically remarkable plays of the postseason. Recommended without reservation.'
+                        : 'Gilgeous-Alexander\u2019s franchise-record performance cements his status as a generational talent. The play captured — a step-back three over two defenders — sealed a decisive playoff victory. Primary market offering with exceptional long-term significance. Recommended without reservation.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

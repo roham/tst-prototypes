@@ -2034,3 +2034,10 @@
 - Author attributions that match existing specialist names (from Condition Report drawer) create institutional coherence — the same named specialists write the essay and certify the condition.
 - Georgia serif italic at 9.5px/0.14 opacity is the sweet spot for catalogue essay text — readable but not competing with the hero or CTA. The second paragraph at 0.12 creates a natural fadeout effect, like ink aging on a page.
 - Current scores: Supreme 9.42, Broadcast 9.42, Arena 9.45. Supreme and Broadcast tied. Arena still leads by 0.03. Next cycle: Broadcast (rotation). Broadcast weakest dimensions: VP (9.40), Emo (9.40), Int (9.43), Pur (9.42). Emotion and Visual tied at 9.40 as weakest.
+
+## Cycle 259 Learnings
+- ESPN Feature Package (fragmented dramatic text with staggered reveal) is a high-leverage Emotion+Visual improvement for Broadcast. The rhythm of punchy fragments building to a thesis mirrors how voiceover narration works — each line adds weight until the kicker lands.
+- IntersectionObserver + inline CSS transitions (opacity/transform with staggered delay) is a cleaner pattern than adding new CSS keyframes for scroll-triggered stagger animations. No globals.css change needed.
+- The kicker line in team-color creates a natural visual punctuation mark — the build lines in muted white (55%) create restraint, then the team-color kicker (100%) delivers the payoff. This mirrors broadcast pacing: setup → setup → setup → punchline.
+- Per-moment text specificity matters for emotional impact: "A FRANCHISE RECORD THAT STOOD FOR FIFTEEN YEARS" (Bam), "A FEAT LAST ACHIEVED IN 1962" (Jokić), "A FRANCHISE RECORD IN OKLAHOMA CITY" (SGA). Historical context in the fragment text creates weight.
+- Current scores: Supreme 9.42, Broadcast 9.42, Arena 9.45. Supreme and Broadcast now tied at 9.42. Arena still leads by 0.03. Next cycle: Arena (rotation). Arena scores: VP=9.45, Conv=9.45, Emo=9.45, Int=9.44, Pur=9.45. Interaction (9.44) is the weakest dimension.

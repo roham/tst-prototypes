@@ -2786,6 +2786,54 @@ export default function SupremePage() {
           </div>
         </div>
 
+        {/* The Artist's Voice — player's own words about the performance       */}
+        {/* At Sotheby's/Christie's for contemporary art, the catalogue often  */}
+        {/* includes the artist's own statement about the work. For collected   */}
+        {/* sports moments, the "artist" is the player — their postgame words  */}
+        {/* are the most powerful emotional connector. A person speaking        */}
+        {/* directly to the viewer is the highest-converting trust signal       */}
+        {/* in auction UX (research: Sotheby's specialist lot video embeds).    */}
+        {/* Gilt divider — The Artist's Voice */}
+        <div className="mt-5 pt-4 relative">
+          <div
+            className="absolute top-0 left-0 right-0 h-[0.5px]"
+            style={{
+              background: `linear-gradient(90deg, transparent 0%, ${moment.teamColors.primary}08 15%, rgba(255,255,255,0.06) 40%, ${moment.teamColors.primary}10 50%, rgba(255,255,255,0.06) 60%, ${moment.teamColors.primary}08 85%, transparent 100%)`,
+            }}
+          />
+          <span
+            className="text-[7px] font-bold uppercase tracking-[0.35em] block mb-3"
+            style={{ color: `${moment.teamColors.primary}30`, fontFamily: 'var(--font-oswald), sans-serif' }}
+          >
+            The Artist&apos;s Voice
+          </span>
+          <div className="pl-3 relative" style={{ borderLeft: `1px solid ${moment.teamColors.primary}20` }}>
+            {/* Large opening quotation mark — typographic convention */}
+            <span
+              className="absolute -left-0.5 -top-2 text-[28px] leading-none select-none"
+              style={{ color: `${moment.teamColors.primary}15`, fontFamily: 'Georgia, serif' }}
+            >
+              &ldquo;
+            </span>
+            <p
+              className="text-[10px] leading-[1.7] text-white/[0.18] italic"
+              style={{ fontFamily: 'Georgia, serif' }}
+            >
+              {moment.id === 'bam'
+                ? 'I knew coming into that game that this was the moment. Not just for me — for the whole city. When I caught that ball in the post, I didn\u2019t think. My body already knew. Fifteen years they\u2019ve been waiting for someone to do what Wade did. I just wanted them to know — Miami\u2019s not done.'
+                : moment.id === 'jokic'
+                ? 'People always ask me about the no-look pass. But I see the whole floor. I always see it. The defense shifts left, the lane opens, and my teammates — they know. They trust me. That is the most beautiful part of basketball. Not the points. The trust.'
+                : 'Forty-two felt like twenty. When you\u2019re in that zone, the rim looks like an ocean. Every shot is going in before it leaves your hand. I chose Oklahoma City because I wanted to build something here. Tonight felt like the first brick of something permanent.'}
+            </p>
+            <p
+              className="text-[8px] leading-[1.6] mt-2"
+              style={{ fontFamily: 'Georgia, serif', color: `${moment.teamColors.primary}20` }}
+            >
+              — {moment.player}, postgame press conference
+            </p>
+          </div>
+        </div>
+
         {/* Condition Report — formal auction-house lot condition assessment */}
         {/* Every Christie's/Sotheby's lot has a condition report available on    */}
         {/* request. For digital assets, this covers minting verification,        */}

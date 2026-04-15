@@ -1620,3 +1620,10 @@
 - SVG trophy icons at small sizes (36×36) need simplified geometry — cup, handles, stem, base, and a single star emblem. Too much detail becomes noise at small scales. Stroke-only (no fill except the star) keeps it elegant.
 - The Broadcast W screen now has 10 distinct content sections in its staggered reveal. This is approaching the maximum — any more and the scroll depth becomes unwieldy. Future Broadcast W improvements should enhance existing sections rather than adding new ones.
 - Next cycle: Arena (rotation).
+
+## Cycle 201 Learnings
+- Re-keying elements with a counter (`ctaPulseKey`) is the cleanest way to trigger one-shot CSS animations on recurring events — each new key forces React to mount a fresh element with the animation starting from 0%.
+- Social proof is most effective when placed at the action point, not in a separate feed section. The buyer name flash above the CTA creates "someone else just bought → here's where YOU buy" in a single visual zone.
+- Pulse ring animations need to start with higher opacity (0.45) than you'd think — at lower values (0.2-0.3) they're invisible against the dark background, especially on mobile screens in bright environments.
+- The urgency-colored pulse ring (teal → amber → red) creates a secondary urgency signal at the CTA without changing the button itself — layered urgency rather than overloading one element.
+- Next cycle: Supreme (rotation).

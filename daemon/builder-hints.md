@@ -2181,3 +2181,10 @@
 - Broadcast's Conv and Pur both improved +0.01 but composite still rounds to 9.46. Same issue as Supreme cycle 279 — need 3+ dimensions moving simultaneously for composite advancement at this score level.
 - Broadcast's weakest dimensions are now Conv 9.46, Int 9.45. Next Broadcast cycle should target Interaction — the direction has fewer interactive elements than Arena or Supreme.
 - Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Arena (rotation). Supreme still lagging — needs VP-focused improvement.
+
+## Cycle 281 Learnings
+- Rally towels are a stronger arena-purity signal than noise meters because they're a PHYSICAL PROP — every fan holds one. The noise meter is auditory (could exist in broadcast), but the towel is visual and tactile, uniquely in-person.
+- The full-screen sweep payoff is what makes this mechanic compelling vs. just another bar to fill. The crowd noise meter rewards with haptic + text escalation, but the towel wave rewards with a VISUAL event that takes over the whole viewport. Different reward modalities keep mechanics from feeling repetitive.
+- Decay rate of 120 per 300ms (400/sec) vs. addition of ~1000 per tap means users need ~3-4 taps/sec to maintain level, which is the right tension — achievable but requires effort. Crowd noise decays faster relative to input, making it harder to sustain.
+- The sweep threshold resets at <4K (not 0), creating a hysteresis loop: reach 5K for first sweep, decay a bit, tap back up for next sweep. This prevents instant re-triggering while still rewarding continued engagement.
+- Current scores: Supreme 9.44, Broadcast 9.46, Arena 9.47. Next cycle: Supreme (rotation). Supreme is the weakest at 0.03 behind Arena. Builder hints from cycle 279 say Supreme needs a VP improvement — visual element, not text.

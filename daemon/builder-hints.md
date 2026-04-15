@@ -1903,3 +1903,11 @@
 - Top accent gradient (linear-gradient with transparent edges) is the ESPN/Fox graphic header pattern. It's 2px tall but immediately signals "this is a broadcast graphic panel."
 - Delta (+0.01) is expected at this maturity — the component is a net-new addition but the tier decision area was already well-supported by existing social proof (acquisition ticker, claim flash, tier cards). The main lift is on Conversion via rational justification.
 - Next cycle: Arena (rotation). Arena scores: VP=9.40, Conv=9.40, Emo=9.40, Int=9.38, Pur=9.42. Interaction (9.38) is weakest. Ideas: the hero section could have a more dramatic on-scroll transition, or the purchase flow could have a tier-specific celebration variant (different confetti colors/patterns per rarity).
+
+## Cycle 239 Learnings
+- Tier-scaling celebration effects is a structural improvement that touches many components (ConfettiCannon, Pyrotechnics, PurchaseCeremony, CelebrationScreen). Using a single TIER_INTENSITY config object keeps the scaling parameters centralized and easy to tune.
+- The overshoot cubic-bezier (0.34, 1.56, 0.64, 1) on the badge slam creates a satisfying "thunk" feel — the badge overshoots past its final size then settles back. This is the universal gacha/trading card reveal technique.
+- Parameterizing ConfettiCannon with dynamic cannon count (vs fixed 4) required defining 8 possible cannon positions upfront and slicing. This avoids runtime random generation that would change on every re-render.
+- The delta (+0.01) reflects that at 9.40+, even structural improvements have diminishing returns. The tier-escalation is a significant Interaction improvement but doesn't move Visual Polish or Conversion since those dimensions were already well-served.
+- The foil shimmer effect (animated background-position on background-clip:text) is a CSS-only technique that creates the holographic card effect. Works well at small text sizes.
+- Next cycle: Supreme (rotation). Supreme scores: VP=9.37, Conv=9.37, Emo=9.37, Int=9.38, Pur=9.42. All non-Purity dimensions are tied low (9.37-9.38). Ideas: Supreme could benefit from a similar tier-scaling approach for its auction ceremony (longer inscription for premium lots), or the hero image could have a more dramatic gallery lighting reveal on page load.

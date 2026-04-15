@@ -1940,5 +1940,12 @@
 - The date labels (Mar 2025, Jan 2025, Nov 2024) are hardcoded but effective — they create the impression of a consistent, active secondary market. More recent dates feel more relevant.
 - At 0.08 opacity for the date text, the comps feel like background catalogue information, not a hard sell. This matches Supreme's institutional register — the evidence is presented for the discerning collector to notice, not pushed.
 - Current direction scores after cycle 243: Supreme 9.40, Broadcast 9.40, Arena 9.42. Arena leads, Supreme and Broadcast are tied. Next cycle: Broadcast (rotation). Broadcast scores: VP=9.39, Conv=9.42, Emo=9.40, Int=9.38, Pur=9.39. Interaction (9.38) is the weakest.
+
+## Cycle 244 Learnings
+- Converting display-only components to interactive ones is a high-leverage Interaction improvement. The FanVerdict had all the visual infrastructure (bars, percentages, animation) — adding vote buttons + a gate was minimal code but significant UX change.
+- The vote → result reveal creates a psychological commitment: "I said yes, and 87% agree with me" reinforces the positive sentiment about the moment, making the subsequent purchase feel validated by the crowd.
+- Haptic on poll vote (ctaPress) creates a satisfying "click" that distinguishes casual scrolling from intentional interaction. The haptic confirms the action before the visual result loads.
+- The composite stayed at 9.40 (+0.00 delta) because Interaction moved +0.02 (9.38→9.40) but the other dimensions stayed flat, and the average only shifted from 9.396 to 9.400 — rounding hides the improvement. This is the ceiling effect at 9.4+.
+- Next cycle: Arena (rotation). Arena scores: VP=9.42, Conv=9.42, Emo=9.42, Int=9.42, Pur=9.42. All dimensions tied at 9.42 — perfectly balanced. At this ceiling, improvements need to be multi-dimensional or structurally novel to move the needle.
 - Delta modest (+0.01) because Supreme's ENDED state was already functional, and the ceremony only fires once (users may not experience it in their first session). High craft value but low frequency impact.
 - Next cycle: Broadcast (rotation). Broadcast scores: VP=9.38, Conv=9.42, Emo=9.38, Int=9.38, Pur=9.39. Visual and Emotion are the weakest dimensions.

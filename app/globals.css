@@ -90,6 +90,44 @@ body {
 .glow-teal { box-shadow: 0 0 20px rgba(0, 229, 160, 0.3); }
 .glow-orange { box-shadow: 0 0 20px rgba(255, 107, 53, 0.3); }
 
+/* Arena shockwave — concentric impact rings on W screen reveal */
+/* NBA jumbotron graphics fire expanding rings on big plays —     */
+/* the visual equivalent of a bass cannon sonic boom.             */
+@keyframes arena-shockwave-ring {
+  0% {
+    transform: scale(0.15);
+    opacity: 0.65;
+    border-width: 3px;
+  }
+  40% {
+    opacity: 0.35;
+    border-width: 2px;
+  }
+  100% {
+    transform: scale(4.5);
+    opacity: 0;
+    border-width: 0.5px;
+  }
+}
+
+/* Arena replay progress glow pulse — brightness surges at key replay moments */
+@keyframes arena-replay-glow {
+  0%, 100% { filter: brightness(1) drop-shadow(0 0 4px currentColor); }
+  25% { filter: brightness(1.6) drop-shadow(0 0 10px currentColor); }
+  28% { filter: brightness(1) drop-shadow(0 0 4px currentColor); }
+  50% { filter: brightness(1.8) drop-shadow(0 0 12px currentColor); }
+  53% { filter: brightness(1) drop-shadow(0 0 4px currentColor); }
+  75% { filter: brightness(1.5) drop-shadow(0 0 8px currentColor); }
+  78% { filter: brightness(1) drop-shadow(0 0 4px currentColor); }
+}
+
+/* Arena stat pop — micro bounce on W screen stat reveals */
+@keyframes arena-stat-pop {
+  0% { opacity: 0; transform: scale(0.7) translateY(4px); }
+  60% { opacity: 1; transform: scale(1.12) translateY(-1px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
 /* Arena screen shake — rumble on W screen entry */
 @keyframes arena-rumble {
   0% { transform: translate(0, 0); }

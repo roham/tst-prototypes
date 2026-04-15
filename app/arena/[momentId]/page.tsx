@@ -2373,6 +2373,26 @@ function CelebrationScreen({
           ))}
         </div>
 
+        {/* Shockwave impact rings — concentric blasts from headline center */}
+        {/* NBA jumbotrons fire expanding ring graphics on slam dunks.      */}
+        {/* 3 staggered rings create a sonic-boom cascade behind the text.  */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[41]">
+          {[0, 0.15, 0.32].map((delay, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full"
+              style={{
+                width: '100px',
+                height: '100px',
+                border: `3px solid ${moment.teamColors.primary}`,
+                animation: `arena-shockwave-ring 1s cubic-bezier(0.2, 0.6, 0.3, 1) ${delay}s forwards`,
+                opacity: 0,
+                boxShadow: `0 0 24px ${moment.teamColors.primary}35, inset 0 0 12px ${moment.teamColors.primary}15`,
+              }}
+            />
+          ))}
+        </div>
+
         {/* YOU'RE IN — bigger, arena-jumbotron energy */}
         <div style={{ animation: 'bounceIn 0.6s ease-out' }}>
           <h1
@@ -2531,14 +2551,15 @@ function CelebrationScreen({
                     0:12
                   </span>
                 </div>
-                {/* Progress bar track */}
+                {/* Progress bar track — with glow surges at key replay moments */}
                 <div className="h-[3px] w-full bg-white/[0.08]">
                   <div
                     className="h-full rounded-r-full"
                     style={{
                       backgroundColor: moment.teamColors.primary,
+                      color: moment.teamColors.primary,
                       boxShadow: `0 0 6px ${moment.teamColors.primary}60`,
-                      animation: 'arena-replay-progress 12s linear 0.5s both',
+                      animation: 'arena-replay-progress 12s linear 0.5s both, arena-replay-glow 12s ease-in-out 0.5s both',
                     }}
                   />
                 </div>
@@ -2552,12 +2573,18 @@ function CelebrationScreen({
                 borderTop: `1px solid ${moment.teamColors.primary}15`,
               }}
             >
-              {moment.statLine.split(' / ').map((stat) => {
+              {moment.statLine.split(' / ').map((stat, idx) => {
                 const parts = stat.trim().split(' ');
                 const value = parts[0];
                 const label = parts.slice(1).join(' ');
                 return (
-                  <div key={stat} className="flex items-center gap-1.5">
+                  <div
+                    key={stat}
+                    className="flex items-center gap-1.5"
+                    style={{
+                      animation: showDetails ? `arena-stat-pop 0.45s cubic-bezier(0.34,1.56,0.64,1) ${0.3 + idx * 0.1}s both` : undefined,
+                    }}
+                  >
                     <span
                       className="text-[13px] font-bold tabular-nums"
                       style={{

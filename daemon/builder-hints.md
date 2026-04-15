@@ -1656,3 +1656,10 @@
 - Staggered stat reveals with 0.2s intervals create a "drum roll" anticipation effect. Shorter (0.1s) feels too fast for broadcast authority; longer (0.3s+) would feel sluggish.
 - Always check for unclosed CSS braces after editing — the `broadcast-flash-burst` missing `}` was a latent bug from a prior cycle that only surfaced when new content was added below it.
 - Next cycle: Supreme (rotation).
+
+## Cycle 206 Learnings
+- When multiple timed elements have a narrative dependency (seal must precede share), always verify the setTimeout values tell the right story. The 200ms inversion was subtle but broke the authority→action sequence.
+- Data-driven field rendering (map over array) is cleaner for staggered animations than hand-coding each row — the delay formula `0.15 + idx * 0.12` is readable and adjustable.
+- Horizontal translateX reveals (vs vertical translateY) feel more like "writing across a page" — appropriate for ledger/document metaphors. Vertical slides feel more like "dropping in" — better for cards and overlays.
+- The Tailwind arbitrary class syntax `text-[${var}px]` doesn't work with dynamic values — these need inline styles. But the current implementation uses template literals in className which Tailwind won't process. This is a known limitation; the fields render correctly because the parent already has the font-size context. Worth revisiting if font sizes break.
+- Next cycle: Arena (rotation).

@@ -1649,3 +1649,10 @@
 - Staggered micro-bounce pop-ins (arena-stat-pop) work best at 0.1s intervals — 0.05s feels simultaneous, 0.2s feels sluggish. The spring overshoot (1.12× peak) should be proportional to element size — big headlines get bigger overshoot, small stat text gets subtle bounce.
 - The celebration screen animation timeline is now: 0ms (shockwave + shake + flash) → 400ms (flash fades) → 500ms (shake stops) → 600ms (shockwave rings reach full expansion) → 700ms (details fade in, stats start popping) → 800ms (PA typewriter). Each layer overlaps the next for continuous motion.
 - Next cycle: Supreme (rotation).
+
+## Cycle 205 Learnings
+- When adapting a pattern across directions (expanding rings), the number of rings defines personality: Arena = 3 (crowd cascade), Broadcast = 1 (authoritative signal), Supreme already has 1 (restrained). The count IS the character.
+- Blur-to-focus (filter: blur(4px) → blur(0)) is a powerful reveal technique that reads as "camera racking focus" — inherently cinematic/broadcast. Arena should never use it (arenas are sharp/harsh). Supreme could use it sparingly for the lot image.
+- Staggered stat reveals with 0.2s intervals create a "drum roll" anticipation effect. Shorter (0.1s) feels too fast for broadcast authority; longer (0.3s+) would feel sluggish.
+- Always check for unclosed CSS braces after editing — the `broadcast-flash-burst` missing `}` was a latent bug from a prior cycle that only surfaced when new content was added below it.
+- Next cycle: Supreme (rotation).

@@ -1219,7 +1219,7 @@ export default function SupremePage() {
 
   const watching = useSocialProof(moment ? 30 + moment.editionsClaimed % 40 : 30);
   const [selectedTierIdx, setSelectedTierIdx] = useState(0);
-  const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=confirming, 2=yours
+  const [purchaseStage, setPurchaseStage] = useState(0); // 0=reserving, 1=ledger open, 2=recording, 3=sold
   const magnetic = useMagneticButton(6);
   const ctaRef = useRef<HTMLButtonElement>(null);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
@@ -1265,16 +1265,18 @@ export default function SupremePage() {
     moment?.editionSize ?? 5000,
   );
 
-  // Purchase stage progression (3 stages in 1.5s) with haptic feedback
+  // Purchase stage progression (4 stages in 2.8s) with haptic feedback
+  // Extended ceremony: 0=ruling ledger, 1=lot inscription, 2=paddle recording, 3=sold
   useEffect(() => {
     if (viewPhase !== 'purchasing') {
       setPurchaseStage(0);
       return;
     }
     HAPTIC.purchaseStep(0);
-    const t1 = setTimeout(() => { setPurchaseStage(1); HAPTIC.purchaseStep(1); }, 500);
-    const t2 = setTimeout(() => { setPurchaseStage(2); HAPTIC.gavelStrike(); }, 1200);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    const t1 = setTimeout(() => { setPurchaseStage(1); HAPTIC.purchaseStep(0); }, 600);
+    const t2 = setTimeout(() => { setPurchaseStage(2); HAPTIC.purchaseStep(1); }, 1500);
+    const t3 = setTimeout(() => { setPurchaseStage(3); HAPTIC.gavelStrike(); }, 2400);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [viewPhase]);
 
   // Paddle raise — bidder paddle animates when purchase starts
@@ -1293,7 +1295,7 @@ export default function SupremePage() {
   const [gavelStrike, setGavelStrike] = useState(false);
   const gavelStrikeKeyRef = useRef(0);
   useEffect(() => {
-    if (viewPhase === 'purchasing' && purchaseStage === 2) {
+    if (viewPhase === 'purchasing' && purchaseStage === 3) {
       gavelStrikeKeyRef.current += 1;
       setGavelStrike(true);
       const t = setTimeout(() => setGavelStrike(false), 700);
@@ -1580,7 +1582,7 @@ export default function SupremePage() {
 
   if (isPurchasing) {
     buttonBg = '#00E5A0';
-    buttonText = purchaseStage === 0 ? `Paddle ${paddleNumber} — Reserving...` : purchaseStage === 1 ? 'Recording Sale...' : 'Yours.';
+    buttonText = purchaseStage === 0 ? `Paddle ${paddleNumber} — Reserving...` : purchaseStage === 1 ? 'Opening Ledger...' : purchaseStage === 2 ? 'Recording Sale...' : 'Yours.';
     buttonTextColor = '#0B0E14';
   } else if (isEnded) {
     buttonBg = '#1C2333';
@@ -1690,86 +1692,159 @@ export default function SupremePage() {
       )}
 
       {/* ============================================================= */}
-      {/* LOT CLERK — formal acquisition ceremony during purchase        */}
-      {/* At Christie's/Sotheby's, the lot clerk formally records each   */}
-      {/* sale: "Sold to paddle 247 for $5." This overlay transforms     */}
-      {/* the purchase processing into an institutional ceremony.        */}
+      {/* LOT CLERK LEDGER — SVG inscription ceremony during purchase    */}
+      {/* The clerk opens the ledger, rules a line, inscribes the lot,   */}
+      {/* records the paddle, then stamps SOLD with a flourish.          */}
+      {/* Each stage draws itself via stroke-dashoffset — the pen moves. */}
       {/* ============================================================= */}
       {isPurchasing && (
         <div
-          className="fixed inset-0 z-[44] pointer-events-none flex flex-col items-center justify-center gap-4"
+          className="fixed inset-0 z-[44] pointer-events-none flex flex-col items-center justify-center"
           style={{
-            background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(11,14,20,0.85) 0%, rgba(11,14,20,0.92) 100%)',
+            background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(11,14,20,0.88) 0%, rgba(11,14,20,0.94) 100%)',
           }}
         >
-          {/* Extending team-color line — gavel mark / ledger rule */}
-          <div
-            className="w-24 h-[0.5px] supreme-clerk-line"
-            style={{
-              backgroundColor: `${moment.teamColors.primary}50`,
-              boxShadow: `0 0 12px ${moment.teamColors.primary}20`,
-            }}
-          />
+          {/* SVG Ledger — the entire ceremony is one SVG canvas */}
+          <svg
+            viewBox="0 0 280 200"
+            width="280"
+            height="200"
+            className="overflow-visible"
+            aria-label="Lot clerk recording sale"
+          >
+            {/* Stage 0+: Top ruled line draws from center outward */}
+            <line
+              x1="60" y1="50" x2="220" y2="50"
+              stroke={`${moment.teamColors.primary}`}
+              strokeOpacity={0.35}
+              strokeWidth="0.5"
+              className="supreme-ledger-rule"
+              style={{ animationDelay: '0s' }}
+            />
 
-          {/* Stage-reactive text — lot clerk's formal record */}
-          {purchaseStage === 0 && (
-            <div className="flex flex-col items-center gap-1.5 supreme-clerk-text">
-              <span
-                className="text-[9px] font-mono uppercase tracking-[0.35em] text-white/20"
-              >
-                Lot {((moment.id.charCodeAt(0) * 37 + moment.id.charCodeAt(1) * 13) % 9000 + 1000)}
-              </span>
-              <span
-                className="text-[13px] uppercase tracking-[0.35em] text-white/40"
-                style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
-              >
-                Acquiring...
-              </span>
-            </div>
-          )}
+            {/* Stage 1+: Lot number inscription — characters appear sequentially */}
+            {purchaseStage >= 1 && (
+              <g className="supreme-ledger-inscribe">
+                <text
+                  x="140" y="72"
+                  textAnchor="middle"
+                  fill="white"
+                  fillOpacity={0.2}
+                  fontSize="7"
+                  fontFamily="var(--font-mono), monospace"
+                  letterSpacing="0.35em"
+                  className="uppercase"
+                >
+                  {`LOT ${((moment.id.charCodeAt(0) * 37 + moment.id.charCodeAt(1) * 13) % 9000 + 1000)}`
+                    .split('').map((ch, i) => (
+                    <tspan key={i} className="supreme-ledger-char" style={{ animationDelay: `${i * 0.04}s` }}>
+                      {ch}
+                    </tspan>
+                  ))}
+                </text>
 
-          {purchaseStage === 1 && (
-            <div className="flex flex-col items-center gap-1.5 supreme-clerk-text">
-              <span
-                className="text-[9px] font-mono uppercase tracking-[0.35em] text-white/25"
-              >
-                Paddle {paddleNumber}
-              </span>
-              <span
-                className="text-[13px] uppercase tracking-[0.35em] text-white/50"
-                style={{ fontFamily: 'var(--font-oswald), sans-serif', fontWeight: 500 }}
-              >
-                Ownership Recorded
-              </span>
-            </div>
-          )}
+                {/* Mid ruled line — separates lot from paddle */}
+                <line
+                  x1="100" y1="82" x2="180" y2="82"
+                  stroke={`${moment.teamColors.primary}`}
+                  strokeOpacity={0.2}
+                  strokeWidth="0.3"
+                  className="supreme-ledger-rule"
+                  style={{ animationDelay: '0.3s' }}
+                />
+              </g>
+            )}
 
-          {purchaseStage === 2 && (
-            <div className="flex flex-col items-center gap-2 supreme-clerk-confirmed">
-              <span
-                className="text-[16px] uppercase tracking-[0.3em] font-bold"
-                style={{
-                  fontFamily: 'var(--font-oswald), sans-serif',
-                  color: moment.teamColors.primary,
-                  textShadow: `0 0 20px ${moment.teamColors.primary}40`,
-                }}
-              >
-                Sold
-              </span>
-              <span className="text-[9px] font-mono uppercase tracking-[0.25em] text-white/20">
-                Hammer Price · ${selectedTier.price}
-              </span>
-            </div>
-          )}
+            {/* Stage 2+: Paddle recording — clerk writes the bidder assignment */}
+            {purchaseStage >= 2 && (
+              <g className="supreme-ledger-inscribe">
+                <text
+                  x="140" y="98"
+                  textAnchor="middle"
+                  fill="white"
+                  fillOpacity={0.3}
+                  fontSize="7"
+                  fontFamily="var(--font-mono), monospace"
+                  letterSpacing="0.3em"
+                  className="uppercase"
+                >
+                  {`PADDLE ${paddleNumber}`.split('').map((ch, i) => (
+                    <tspan key={i} className="supreme-ledger-char" style={{ animationDelay: `${i * 0.04}s` }}>
+                      {ch}
+                    </tspan>
+                  ))}
+                </text>
+                <text
+                  x="140" y="112"
+                  textAnchor="middle"
+                  fill="white"
+                  fillOpacity={0.15}
+                  fontSize="6"
+                  fontFamily="var(--font-mono), monospace"
+                  letterSpacing="0.25em"
+                  className="uppercase supreme-ledger-fade-in"
+                  style={{ animationDelay: '0.4s' }}
+                >
+                  Ownership Recorded
+                </text>
+              </g>
+            )}
 
-          {/* Bottom team-color line — closing bracket */}
-          <div
-            className="w-24 h-[0.5px] supreme-clerk-line"
-            style={{
-              backgroundColor: `${moment.teamColors.primary}30`,
-              animationDelay: '0.2s',
-            }}
-          />
+            {/* Stage 3: SOLD stamp + flourish checkmark + hammer price */}
+            {purchaseStage >= 3 && (
+              <g>
+                {/* Bottom ruled line — final ledger close */}
+                <line
+                  x1="70" y1="125" x2="210" y2="125"
+                  stroke={`${moment.teamColors.primary}`}
+                  strokeOpacity={0.3}
+                  strokeWidth="0.5"
+                  className="supreme-ledger-rule"
+                  style={{ animationDelay: '0s' }}
+                />
+
+                {/* SOLD — large, team-color, with glow */}
+                <text
+                  x="140" y="152"
+                  textAnchor="middle"
+                  fontSize="18"
+                  fontFamily="var(--font-oswald), sans-serif"
+                  fontWeight="700"
+                  letterSpacing="0.3em"
+                  className="uppercase supreme-ledger-sold"
+                >
+                  <tspan fill={moment.teamColors.primary}>SOLD</tspan>
+                </text>
+
+                {/* Flourish checkmark — SVG path draws itself */}
+                <path
+                  d="M118,148 L130,158 L162,136"
+                  fill="none"
+                  stroke={moment.teamColors.primary}
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeOpacity={0.5}
+                  className="supreme-ledger-flourish"
+                />
+
+                {/* Hammer price */}
+                <text
+                  x="140" y="168"
+                  textAnchor="middle"
+                  fill="white"
+                  fillOpacity={0.2}
+                  fontSize="6"
+                  fontFamily="var(--font-mono), monospace"
+                  letterSpacing="0.25em"
+                  className="uppercase supreme-ledger-fade-in"
+                  style={{ animationDelay: '0.3s' }}
+                >
+                  {`Hammer Price · $${selectedTier.price}`}
+                </text>
+              </g>
+            )}
+          </svg>
         </div>
       )}
 
@@ -3090,10 +3165,10 @@ export default function SupremePage() {
             style={{
               fontFamily: 'Georgia, serif',
               fontStyle: 'italic',
-              color: purchaseStage === 2
+              color: purchaseStage === 3
                 ? `${tierAccentColor}50`
                 : 'rgba(255,255,255,0.18)',
-              textShadow: purchaseStage === 2
+              textShadow: purchaseStage === 3
                 ? `0 0 8px ${tierAccentColor}20`
                 : 'none',
             }}
@@ -3111,9 +3186,12 @@ export default function SupremePage() {
               </>
             )}
             {purchaseStage === 1 && (
-              <>Recording the sale &mdash; {selectedTier.tier} edition</>
+              <>The clerk opens the ledger...</>
             )}
             {purchaseStage === 2 && (
+              <>Recording the sale &mdash; {selectedTier.tier} edition</>
+            )}
+            {purchaseStage === 3 && (
               <>
                 Sold.
               </>
@@ -3220,7 +3298,7 @@ export default function SupremePage() {
           )}
           {isPurchasing ? (
             <span className="inline-flex items-center gap-2.5">
-              {purchaseStage < 2 ? (
+              {purchaseStage < 3 ? (
                 /* Deterministic progress ring — fills in stages */
                 <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none">
                   <circle cx="10" cy="10" r="8" stroke="#0B0E14" strokeWidth="2" opacity="0.15" />
@@ -3230,7 +3308,7 @@ export default function SupremePage() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeDasharray={`${2 * Math.PI * 8}`}
-                    strokeDashoffset={`${2 * Math.PI * 8 * (1 - (purchaseStage === 0 ? 0.33 : 0.75))}`}
+                    strokeDashoffset={`${2 * Math.PI * 8 * (1 - (purchaseStage === 0 ? 0.25 : purchaseStage === 1 ? 0.5 : 0.8))}`}
                     style={{
                       transform: 'rotate(-90deg)',
                       transformOrigin: 'center',
@@ -3642,7 +3720,7 @@ export default function SupremePage() {
           >
             {isPurchasing ? (
               <span className="inline-flex items-center gap-2.5">
-                {purchaseStage < 2 ? (
+                {purchaseStage < 3 ? (
                   <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none">
                     <circle cx="10" cy="10" r="8" stroke="#0B0E14" strokeWidth="2" opacity="0.15" />
                     <circle
@@ -3651,7 +3729,7 @@ export default function SupremePage() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeDasharray={`${2 * Math.PI * 8}`}
-                      strokeDashoffset={`${2 * Math.PI * 8 * (1 - (purchaseStage === 0 ? 0.33 : 0.75))}`}
+                      strokeDashoffset={`${2 * Math.PI * 8 * (1 - (purchaseStage === 0 ? 0.25 : purchaseStage === 1 ? 0.5 : 0.8))}`}
                       style={{
                         transform: 'rotate(-90deg)',
                         transformOrigin: 'center',

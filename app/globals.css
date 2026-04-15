@@ -660,6 +660,56 @@ body {
   animation: supreme-clerk-confirmed 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Supreme ledger inscription — SVG-drawn lot clerk ceremony */
+@keyframes supreme-ledger-rule-draw {
+  0% { stroke-dashoffset: 160; opacity: 0; }
+  15% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+@keyframes supreme-ledger-char-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes supreme-ledger-fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes supreme-ledger-sold-in {
+  0% { opacity: 0; transform: scale(0.92); }
+  40% { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes supreme-ledger-flourish-draw {
+  0% { stroke-dashoffset: 80; }
+  100% { stroke-dashoffset: 0; }
+}
+.supreme-ledger-rule {
+  stroke-dasharray: 160;
+  stroke-dashoffset: 160;
+  animation: supreme-ledger-rule-draw 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+.supreme-ledger-inscribe {
+  animation: supreme-ledger-fade-in 0.15s ease-out forwards;
+}
+.supreme-ledger-char {
+  opacity: 0;
+  animation: supreme-ledger-char-in 0.12s ease-out forwards;
+}
+.supreme-ledger-fade-in {
+  opacity: 0;
+  animation: supreme-ledger-fade-in 0.5s ease-out forwards;
+}
+.supreme-ledger-sold {
+  opacity: 0;
+  transform-origin: center;
+  animation: supreme-ledger-sold-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+.supreme-ledger-flourish {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: supreme-ledger-flourish-draw 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) 0.25s forwards;
+}
+
 /* Supreme gavel-fall curtain — transition between "Sold" and W screen */
 @keyframes supreme-gavel-curtain-line {
   0% { transform: scaleX(0); opacity: 0; }

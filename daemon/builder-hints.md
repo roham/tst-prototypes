@@ -2095,3 +2095,10 @@
 - Per-moment quote content should reveal character, not just recap the play. Bam's "Miami's not done" shows franchise loyalty. Jokić's "the trust" shows selflessness. SGA's "first brick of something permanent" shows commitment to OKC. These character moments convert better than stats.
 - Georgia serif italic at 18% white opacity with team-color accents fits seamlessly into the existing catalogue typographic hierarchy. The large opening quotation mark (28px) at 15% team-color opacity provides visual landmark without disrupting Supreme's minimal aesthetic.
 - Current scores: Supreme 9.43, Broadcast 9.43, Arena 9.45. Next cycle: Broadcast (rotation). Broadcast weakest dimensions remain VP and Conv at 9.43.
+
+## Cycle 268 Learnings
+- SVG shot charts are a natural fit for broadcast because they're inherently data-driven and visual — the broadcast direction thrives on making data tangible.
+- Color-coding with the existing brand palette (teal for hot, amber for warm, red for cold) maintains visual consistency while adding new information density.
+- Per-moment zone data should reflect the player's known style: Bam is a paint beast, Jokić is versatile from the elbow, SGA has a balanced mid-range game. This makes the data feel authentic even though it's fictional.
+- IntersectionObserver with staggered zone reveals (0.12s offset) creates the "data loading in" feel that broadcast graphics use — zones populate one by one as if powered by real-time tracking.
+- Current scores: Supreme 9.43, Broadcast 9.44, Arena 9.45. Next cycle: Arena (rotation). Arena all dimensions at 9.44-9.46 ceiling.

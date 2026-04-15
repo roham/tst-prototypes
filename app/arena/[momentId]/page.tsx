@@ -7152,6 +7152,59 @@ export default function ArenaPage({
         isEnded={countdown.isEnded}
       />
 
+      {/* ─── POWER RANKING — "#1 Trending Drop" jumbotron badge ─── */}
+      {/* At NBA arenas the jumbotron constantly shows standings, rankings,   */}
+      {/* and leaderboards. This badge creates social proof + FOMO at the     */}
+      {/* decision point: you're looking at the #1 drop right now.            */}
+      {!countdown.isEnded && (
+        <div className="mx-4 mt-2 mb-1 flex items-center justify-center gap-2.5">
+          <div
+            className="flex items-center gap-2 rounded-lg px-3 py-1.5"
+            style={{
+              backgroundColor: 'rgba(0,229,160,0.06)',
+              border: '1px solid rgba(0,229,160,0.12)',
+            }}
+          >
+            {/* Rank number — large bold */}
+            <span
+              className="text-[18px] font-bold tabular-nums"
+              style={{
+                fontFamily: 'var(--font-oswald), sans-serif',
+                color: '#00E5A0',
+                textShadow: '0 0 10px rgba(0,229,160,0.3)',
+              }}
+            >
+              #1
+            </span>
+            {/* Label stack */}
+            <div className="flex flex-col">
+              <span
+                className="text-[9px] font-bold uppercase tracking-[0.15em] text-white/50"
+                style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+              >
+                Trending Drop
+              </span>
+              <span className="text-[7px] font-mono uppercase tracking-[0.15em] text-white/20">
+                {moment.player} &middot; {feedEvents.length > 0 ? `${feedEvents.length} claims` : 'Live now'}
+              </span>
+            </div>
+            {/* Fire icon — trending indicator */}
+            <svg className="h-3.5 w-3.5 ml-1 shrink-0" viewBox="0 0 14 14" fill="none">
+              <path
+                d="M7 1C7 1 4.5 4 4.5 7C4.5 8.38 5.12 9.62 6 10.5C5.5 9.5 5.5 8 7 6.5C8.5 8 8.5 9.5 8 10.5C8.88 9.62 9.5 8.38 9.5 7C9.5 4 7 1 7 1Z"
+                fill="#00E5A0"
+                fillOpacity="0.5"
+              />
+              <path
+                d="M7 5.5C7 5.5 5.75 7.25 5.75 8.5C5.75 9.19 6.31 9.75 7 9.75C7.69 9.75 8.25 9.19 8.25 8.5C8.25 7.25 7 5.5 7 5.5Z"
+                fill="#00E5A0"
+                fillOpacity="0.8"
+              />
+            </svg>
+          </div>
+        </div>
+      )}
+
       {/* ─── Rarity Tiers — live auction selector ─── */}
       <div ref={tierSectionRef} className={`${countdown.isEnded ? 'mt-3' : 'mt-1'} relative z-[1]`}>
         <p className="mb-2 px-4 text-[10px] font-semibold uppercase tracking-widest text-white/30">

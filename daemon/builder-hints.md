@@ -1846,3 +1846,11 @@
 - The prevSelectedRef pattern for detecting selection changes is clean — useEffect fires only on actual changes, preventing scan animation on re-renders.
 - Delta was +0.02 (modest) because the tier selector was already functional and the improvements are micro-interaction polish. Higher deltas at this maturity require new structural elements, not refinements to existing ones.
 - Next cycle: Supreme (rotation). Supreme scores: VP=9.35, Conv=9.35, Emo=9.32, Int=9.35, Pur=9.40. Emotion (9.32) is the weakest. Ideas: ambient particle system in the hero area (auction house dust motes floating in the spotlight cone), or a moment narrative section that presents the play's story in Supreme's institutional voice (catalogue essay style).
+
+## Cycle 231 Learnings
+- Exhibition History and Literature sections are high-value Emotion additions because they contextualize the moment within a broader cultural narrative. "ESPN SportsCenter Top 10 No. 1" immediately tells a cold arrival that this is the #1 play of the night.
+- The ★ star lot designation is a simple visual marker that creates outsized emotional impact — it's the equivalent of a museum's "masterpiece" label. The word "Highlight" is the exact term Christie's uses.
+- Per-moment data (different exhibitions and literature for each player) prevents the sections from feeling generic. Bam gets TNT Inside the NBA, Jokic gets The Athletic, SGA gets Bleacher Report — matching each player's media coverage patterns.
+- Text opacity levels (0.08-0.15) follow Supreme's established convention: institutional details are present but subdued, rewarding careful readers without cluttering the visual field. This is the catalogue's "footnote" density.
+- The delta (+0.02) is consistent with content additions at this maturity level. Larger Emotion improvements now require fundamentally new emotional triggers (audio, motion, narrative structure changes), not additional content sections.
+- Next cycle: Broadcast (rotation). Broadcast scores: VP=9.35, Conv=9.35, Emo=9.35, Int=9.35, Pur=9.35. All dimensions tied — choose based on highest-impact opportunity. Ideas: the hero section could have a slow cinematic Ken Burns pan/zoom effect on the moment image (subtle parallax), or the lower-third could have a more dynamic entrance animation sequence (elements staggering in like a live broadcast graphic package).

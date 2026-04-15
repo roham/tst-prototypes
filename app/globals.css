@@ -872,6 +872,20 @@ body {
   background-size: 256px 256px;
 }
 
+/* Supreme catalogue drop cap — oversized decorative initial on essay opening */
+/* Christie's/Sotheby's fine catalogues open essays with a large serif       */
+/* initial that anchors the reader's eye and signals editorial gravitas.      */
+.supreme-dropcap::first-letter {
+  float: left;
+  font-size: 2.4em;
+  line-height: 0.85;
+  padding-right: 0.08em;
+  padding-top: 0.04em;
+  font-style: normal;
+  font-weight: 400;
+  color: var(--supreme-dropcap-color, rgba(255,255,255,0.22));
+}
+
 /* Supreme W screen ink-stroke "YOURS." — pen inscribes, then ink fills */
 @keyframes supreme-ink-draw {
   0% { stroke-dashoffset: 500; fill: transparent; }

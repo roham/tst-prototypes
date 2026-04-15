@@ -2946,7 +2946,10 @@ export default function SupremePage() {
           <div className="space-y-3" style={{ fontFamily: 'Georgia, serif' }}>
             {moment.id === 'bam' ? (
               <>
-                <p className="text-[9.5px] leading-[1.75] text-white/[0.14] italic">
+                <p
+                  className="text-[9.5px] leading-[1.75] text-white/[0.14] italic supreme-dropcap"
+                  style={{ '--supreme-dropcap-color': `${moment.teamColors.primary}35` } as React.CSSProperties}
+                >
                   There are performances that alter the trajectory of a franchise, and then there are those that alter
                   the way we understand a player entirely. Bam Adebayo&apos;s thirty-point eruption at TD Garden belongs
                   to the latter category. On a court where dynasties have been built and broken, Adebayo did not merely
@@ -2967,7 +2970,10 @@ export default function SupremePage() {
               </>
             ) : moment.id === 'jokic' ? (
               <>
-                <p className="text-[9.5px] leading-[1.75] text-white/[0.14] italic">
+                <p
+                  className="text-[9.5px] leading-[1.75] text-white/[0.14] italic supreme-dropcap"
+                  style={{ '--supreme-dropcap-color': `${moment.teamColors.primary}35` } as React.CSSProperties}
+                >
                   The triple-double, in its modern inflation, has become almost commonplace. And then there is what
                   Nikola Joki&#x107; does with it — not a statistical accumulation but a complete orchestration of basketball,
                   conducted with the unhurried precision of someone who sees the game several seconds ahead of
@@ -2987,7 +2993,10 @@ export default function SupremePage() {
               </>
             ) : (
               <>
-                <p className="text-[9.5px] leading-[1.75] text-white/[0.14] italic">
+                <p
+                  className="text-[9.5px] leading-[1.75] text-white/[0.14] italic supreme-dropcap"
+                  style={{ '--supreme-dropcap-color': `${moment.teamColors.primary}35` } as React.CSSProperties}
+                >
                   Forty-two points is a number. What Shai Gilgeous-Alexander did to the Phoenix Suns is something
                   else entirely — a dismantling so methodical and so beautiful that it redefined what Oklahoma City
                   basketball can look like in the modern era. His career playoff high arrived not with the chaos

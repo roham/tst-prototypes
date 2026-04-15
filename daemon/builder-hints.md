@@ -1813,3 +1813,11 @@
 - Score delta was modest (+0.01) because the transition only fires once per purchase flow. The BreakingNewsCutIn was already doing good work during the purchasing state itself. The bumper fills the gap between "CONFIRMED" (end of BreakingNewsCutIn) and CertificateScreen (W screen).
 - All three directions now have complete purchasing ceremonies AND transitions: Supreme (ledger inscription → gavel-fall curtain), Arena (crowd countdown → blackout blast), Broadcast (breaking news cut-in → production bumper). The entire purchase flow is now direction-specific across all three.
 - Next cycle: Arena (rotation). Current Arena scores: VP=9.35, Conv=9.35, Emo=9.35, Int=9.35, Pur=9.40. All dimensions very close. Ideas: the tier selector could have more arena-specific interactions (LED glow on hover, crowd noise on selection), or the hero section could have a more dramatic entrance animation (player tunnel walk-out).
+
+## Cycle 227 Learnings
+- Game score context is high-value for Emotion — showing "MIA 108 BOS 101 FINAL" immediately tells cold arrivals the outcome. This is Research Insight #4 (Bam-Tatum gap): a good page compensates for low-emotion arrivals with internal context.
+- The scoreboard component uses inline-flex for a compact, horizontal layout that fits naturally in the hero badge row. Vertical scoreboard layouts (stacked teams) would take too much space in the hero.
+- Winner/loser visual contrast (bright vs dimmed digits, team-color tint vs transparent) creates hierarchy within the tiny component — you immediately see who won.
+- Score delta was modest (+0.01) because the scoreboard is informational, not interactive or urgency-creating. Emotional context improvements have lower delta than urgency/conversion improvements at this maturity level.
+- GAME_SCORES data is now hardcoded in arena/page.tsx (matching broadcast/page.tsx). Could eventually be moved to mock-data.ts, but keeping it per-direction for now maintains independence.
+- Next cycle: Supreme (rotation). Supreme scores: VP=9.35, Conv=9.30, Emo=9.32, Int=9.35, Pur=9.40. Conversion (9.30) is the weakest. Ideas: the CTA area could have more urgency — the saleroom temperature and sticky CTA context were good additions, but the actual button state during CLOSING/CRITICAL could be more dramatic (pulsing glow, auctioneer's "hammer about to fall" visual cue).

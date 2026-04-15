@@ -352,6 +352,17 @@ body {
   100% { opacity: 1; transform: translateX(0); }
 }
 
+/* Supreme catalogue page turn — tier detail content slides on switch */
+/* Like flipping pages in a Christie's Evening Sale catalogue.        */
+@keyframes supreme-page-turn-right {
+  0%   { opacity: 0; transform: translateX(20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes supreme-page-turn-left {
+  0%   { opacity: 0; transform: translateX(-20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
 /* Supreme authentication seal — ring draws in around edition number on W screen */
 @keyframes supreme-seal-draw {
   0% { stroke-dashoffset: 301.6; opacity: 0; }

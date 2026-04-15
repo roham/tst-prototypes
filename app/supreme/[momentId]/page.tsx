@@ -1390,10 +1390,15 @@ export default function SupremePage() {
   }, [lastClaimer, dropPhase, viewPhase, countdown.totalSeconds]);
 
   // Tier switch breathe — brief content shift acknowledges tier change
+  // Also tracks direction for catalogue page-turn animation
   const [tierBreathe, setTierBreathe] = useState(false);
+  const [tierDirection, setTierDirection] = useState<'left' | 'right'>('right');
+  const [tierTurnKey, setTierTurnKey] = useState(0);
   const prevTierIdx = useRef(selectedTierIdx);
   useEffect(() => {
     if (prevTierIdx.current !== selectedTierIdx) {
+      setTierDirection(selectedTierIdx > prevTierIdx.current ? 'right' : 'left');
+      setTierTurnKey((k) => k + 1);
       prevTierIdx.current = selectedTierIdx;
       setTierBreathe(true);
       const t = setTimeout(() => setTierBreathe(false), 350);
@@ -2812,6 +2817,21 @@ export default function SupremePage() {
       </div>
 
       {/* ============================================================= */}
+      {/* CATALOGUE PAGE TURN — tier detail content slides on switch     */}
+      {/* At Christie's, flipping through the catalogue is physical:     */}
+      {/* pages slide past as you move between lots. Tier switching      */}
+      {/* animates content horizontally, matching the tier hierarchy.    */}
+      {/* ============================================================= */}
+      <div
+        key={`tier-detail-${tierTurnKey}`}
+        style={{
+          animation: tierTurnKey > 0
+            ? `supreme-page-turn-${tierDirection} 0.4s cubic-bezier(0.16, 1, 0.3, 1) both`
+            : undefined,
+        }}
+      >
+
+      {/* ============================================================= */}
       {/* PREMIER LOT DESIGNATION — institutional prestige for premium   */}
       {/* tiers. At Sotheby's/Christie's, premier lots are marked with  */}
       {/* ◆ and receive enhanced catalogue treatment: dedicated imagery, */}
@@ -2951,6 +2971,7 @@ export default function SupremePage() {
 
       {/* ============================================================= */}
       {/* AUCTIONEER'S BID CALL — "The bid stands at $5. Do I hear $25?" */}
+
       {/* At Christie's/Sotheby's the auctioneer verbally frames the     */}
       {/* current bid and invites the next increment. This creates both  */}
       {/* urgency (the sale is active) and subtle upsell (there's a     */}
@@ -3052,6 +3073,8 @@ export default function SupremePage() {
           />
         </div>
       )}
+
+      </div>{/* END catalogue page turn wrapper */}
 
       {/* ============================================================= */}
       {/* LOT CLERK NARRATION — institutional voice during purchase        */}

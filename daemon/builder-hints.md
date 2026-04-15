@@ -2145,3 +2145,10 @@
 - The three-point arc and paint are the two most recognizable court elements. The center circle serves as a visual anchor at the section transition point.
 - This is a pure VP improvement — no new interactions, no content changes, just atmospheric visual detail. At 9.46 ceiling, these small atmospheric additions are the remaining path to VP improvement.
 - Current scores: Supreme 9.43, Broadcast 9.45, Arena 9.46. Next cycle: Supreme (rotation). Supreme is still the weakest at 9.43 — 0.03 below Arena, 0.02 below Broadcast.
+
+## Cycle 276 Learnings
+- Interactive examination of the hero image (lighting modes) is a powerful Interaction + Emotion + Purity triple-hit because it transforms passive viewing into active specialist behavior.
+- The lighting overlays (raking gradient, UV violet wash + fluorescence) layer ON TOP of CSS filter changes — both are needed. The filter changes the image fundamentally (contrast, hue-rotate), while the overlays add atmospheric lighting character (directional shadow, UV glow).
+- Positioning the control at the right edge mid-height (top-1/2 -translate-y-1/2) keeps it discoverable but unobtrusive — the holographic sticker is bottom-right, paddle number top-left, lot number top-right. The mid-right position was the only available hero edge slot.
+- UV mode's hue-rotate(240deg) is the key to the ultraviolet look — it shifts everything to blue-purple, then the team-color fluorescence hotspots create the "materials glowing under UV" effect that condition specialists recognize.
+- Current scores: Supreme 9.44, Broadcast 9.45, Arena 9.46. Next cycle: Broadcast (rotation). Supreme closed the gap by 0.01 — now only 0.02 behind Arena.

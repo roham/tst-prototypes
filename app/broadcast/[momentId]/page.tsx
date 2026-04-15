@@ -4234,6 +4234,23 @@ export default function BroadcastPage() {
   const [feedCut, setFeedCut] = useState(false);
   const [camLabel, setCamLabel] = useState('ISO CAM 1');
   const [crashZoom, setCrashZoom] = useState(false);
+
+  // ── Camera Angle Switcher — broadcast director's feed selector ──
+  const CAMERA_ANGLES = useMemo(() => [
+    { id: 'wide', label: 'WIDE', pos: 'center top', scale: 1, filter: '' },
+    { id: 'tight', label: 'TIGHT', pos: 'center 20%', scale: 1.25, filter: '' },
+    { id: 'iso', label: 'ISO', pos: '55% 15%', scale: 1.45, filter: 'contrast(1.08)' },
+    { id: 'slomo', label: 'SLO-MO', pos: 'center 30%', scale: 1.15, filter: 'saturate(0.7) contrast(1.12)' },
+  ] as const, []);
+  const [cameraAngleIdx, setCameraAngleIdx] = useState(0);
+  const [cameraFlash, setCameraFlash] = useState(false);
+  const switchCamera = useCallback((idx: number) => {
+    if (idx === cameraAngleIdx) return;
+    BROADCAST_HAPTIC.channelSwitch();
+    setCameraFlash(true);
+    setCameraAngleIdx(idx);
+    setTimeout(() => setCameraFlash(false), 150);
+  }, [cameraAngleIdx]);
   const [quarterBumper, setQuarterBumper] = useState<{ phase: 'CLOSING' | 'CRITICAL'; state: 'in' | 'hold' | 'out' } | null>(null);
   const prevBroadcastPhase = useRef<DropPhase>('OPEN');
   useEffect(() => {
@@ -4897,19 +4914,63 @@ export default function BroadcastPage() {
               filter: countdown.isEnded ? 'grayscale(0.8) brightness(0.5)' : 'grayscale(0.2) brightness(0.8)',
             }}
           />
-          {/* Player headshot + gradient overlay */}
+          {/* Player headshot + gradient overlay — camera angle controls crop/zoom */}
           <div
-            className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+            className="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out"
             style={{
               backgroundImage: `url(${moment.playerImageUrl}), ${moment.thumbnailGradient}`,
               backgroundSize: 'cover, cover',
-              backgroundPosition: 'center top, center',
+              backgroundPosition: `${CAMERA_ANGLES[cameraAngleIdx].pos}, center`,
+              transform: `scale(${CAMERA_ANGLES[cameraAngleIdx].scale})`,
               filter: countdown.isEnded ? 'grayscale(0.6) brightness(0.65)' :
-                      dropPhase === 'CRITICAL' ? 'saturate(1.15) contrast(1.05)' : 'none',
+                      dropPhase === 'CRITICAL' ? `saturate(1.15) contrast(1.05) ${CAMERA_ANGLES[cameraAngleIdx].filter}` :
+                      CAMERA_ANGLES[cameraAngleIdx].filter || 'none',
             }}
           />
+          {/* Camera switch static flash — brief white burst simulating feed cut */}
+          {cameraFlash && (
+            <div className="absolute inset-0 z-[12] pointer-events-none bg-white/[0.07]"
+              style={{ animation: 'broadcast-cam-flash 150ms ease-out forwards' }}
+            />
+          )}
           {/* Dark overlay from bottom for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/70 to-transparent" />
+
+          {/* ── SIGNAL INTERFERENCE — broadcast stress artifacts in CRITICAL ── */}
+          {/* When a live broadcast is under duress (signal issues, extreme       */}
+          {/* conditions), the feed shows horizontal displacement lines and       */}
+          {/* chromatic fringing. During CRITICAL phase, these artifacts hint     */}
+          {/* that the broadcast itself is under pressure — time is running out   */}
+          {/* and even the feed is straining. Subtle enough to be atmospheric,    */}
+          {/* not distracting. Distinctly Broadcast: Supreme has saleroom         */}
+          {/* tension (vignette), Arena has crowd panic. Broadcast has signal     */}
+          {/* degradation — the medium itself is stressed.                        */}
+          {dropPhase === 'CRITICAL' && !countdown.isEnded && (
+            <div className="absolute inset-0 z-[11] pointer-events-none overflow-hidden" style={{ mixBlendMode: 'screen' }}>
+              {/* Horizontal scan distortion lines — 3 thin lines at random positions */}
+              {[22, 51, 78].map((top) => (
+                <div
+                  key={top}
+                  className="absolute left-0 right-0 h-[1px]"
+                  style={{
+                    top: `${top}%`,
+                    background: `linear-gradient(90deg, transparent 0%, rgba(${rgb},0.08) 20%, rgba(255,255,255,0.04) 50%, rgba(${rgb},0.08) 80%, transparent 100%)`,
+                    animation: `broadcast-signal-glitch ${2 + top * 0.03}s ease-in-out infinite`,
+                    animationDelay: `${top * 0.02}s`,
+                  }}
+                />
+              ))}
+              {/* Chromatic aberration band — brief horizontal red/cyan fringe */}
+              <div
+                className="absolute left-0 right-0 h-[2px]"
+                style={{
+                  top: '35%',
+                  background: 'linear-gradient(90deg, transparent 0%, rgba(239,68,68,0.06) 30%, transparent 50%, rgba(0,229,160,0.04) 70%, transparent 100%)',
+                  animation: 'broadcast-chroma-drift 4s ease-in-out infinite',
+                }}
+              />
+            </div>
+          )}
 
           {/* ── GRAPHICS PACKAGE ACCENT TRIM — ESPN-style L-frame accent lines ── */}
           <GraphicsPackageTrim rgb={rgb} dropPhase={dropPhase} isEnded={countdown.isEnded} />
@@ -5500,6 +5561,55 @@ export default function BroadcastPage() {
               background: 'linear-gradient(to top, #0B0E14 60%, transparent)',
             }}
           />
+
+          {/* ── Camera Angle Switcher — director's feed selector buttons ── */}
+          {/* Every broadcast control room has a bank of monitors showing     */}
+          {/* different camera angles. The director punches between them.     */}
+          {/* These buttons let the viewer become the director, switching     */}
+          {/* between WIDE/TIGHT/ISO/SLO-MO feeds with a static flash on     */}
+          {/* each cut. Deeply broadcast: no other direction has camera       */}
+          {/* angles. Supreme has gallery lighting, Arena has jumbotron LEDs. */}
+          {!countdown.isEnded && !isPurchasing && (
+            <div className="absolute bottom-[70px] right-3 z-20 flex flex-col gap-1">
+              {CAMERA_ANGLES.map((angle, idx) => (
+                <button
+                  key={angle.id}
+                  onClick={() => switchCamera(idx)}
+                  className="group flex items-center gap-1.5 rounded-sm px-2 py-1 transition-all duration-200 cursor-pointer"
+                  style={{
+                    backgroundColor: idx === cameraAngleIdx
+                      ? `rgba(${rgb},0.18)`
+                      : 'rgba(11,14,20,0.55)',
+                    backdropFilter: 'blur(6px)',
+                    border: idx === cameraAngleIdx
+                      ? `1px solid ${moment.teamColors.primary}40`
+                      : '1px solid rgba(255,255,255,0.06)',
+                    boxShadow: idx === cameraAngleIdx
+                      ? `0 0 8px rgba(${rgb},0.1)`
+                      : 'none',
+                  }}
+                >
+                  {/* Tally light — red dot on active feed */}
+                  <div
+                    className={`h-[4px] w-[4px] rounded-full transition-all duration-200 ${idx === cameraAngleIdx ? 'animate-pulse' : ''}`}
+                    style={{
+                      backgroundColor: idx === cameraAngleIdx ? '#EF4444' : 'rgba(255,255,255,0.12)',
+                      boxShadow: idx === cameraAngleIdx ? '0 0 3px #EF4444' : 'none',
+                    }}
+                  />
+                  <span
+                    className="text-[7px] font-bold uppercase tracking-[0.2em] transition-colors duration-200"
+                    style={{
+                      fontFamily: 'var(--font-oswald), sans-serif',
+                      color: idx === cameraAngleIdx ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.25)',
+                    }}
+                  >
+                    {angle.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* Scroll indicator — animated chevron that scrolls to transaction */}
           {!countdown.isEnded && (
@@ -6737,6 +6847,24 @@ function TierCard({
           opacity: isSelected || isFlashing ? 1 : 0,
         }}
       />
+
+      {/* Tally light — production switcher active source indicator */}
+      {/* In broadcast control rooms, the active camera/source has a   */}
+      {/* glowing red tally LED. Selected tier = active source on the  */}
+      {/* production switcher. Deeply broadcast — no other direction   */}
+      {/* would have tally lights.                                     */}
+      <div
+        className="absolute top-2.5 right-2.5 flex items-center gap-1 transition-opacity duration-300"
+        style={{ opacity: isSelected ? 1 : 0.15 }}
+      >
+        <div
+          className={`h-[5px] w-[5px] rounded-full transition-all duration-300 ${isSelected ? 'animate-pulse' : ''}`}
+          style={{
+            backgroundColor: isSelected ? '#EF4444' : 'rgba(255,255,255,0.15)',
+            boxShadow: isSelected ? '0 0 4px #EF4444, 0 0 8px #EF444440' : 'none',
+          }}
+        />
+      </div>
 
       {/* ── Claim flash — broadcast-style bottom wipe + "JUST COLLECTED" ── */}
       {isFlashing && (

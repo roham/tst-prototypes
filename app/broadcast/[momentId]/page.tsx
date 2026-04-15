@@ -5974,21 +5974,75 @@ export default function BroadcastPage() {
 
         {/* ━━━ TRANSACTION SECTION ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
         <section ref={transactionRef} className="mx-auto max-w-3xl px-5 pt-10 pb-16 md:px-10 md:pb-24 scroll-mt-4">
-          {/* Section header */}
-          <div className="flex items-center gap-3 mb-6">
+          {/* ── Broadcast Segment Bumper — ESPN-style section transition ── */}
+          {/* ESPN uses dramatic segment bumpers between broadcast blocks:     */}
+          {/* angled team-color stripe, bold segment title, horizontal rules.  */}
+          {/* This replaces the plain "Collect" label with a proper broadcast  */}
+          {/* segment transition that frames the transaction area as the next  */}
+          {/* segment of the live broadcast. Distinctly Broadcast: Supreme     */}
+          {/* has catalogue section dividers, Arena has jumbotron headers.     */}
+          {/* Broadcast has segment bumpers.                                   */}
+          <div className="relative mb-8 overflow-hidden rounded-sm">
+            {/* Background — dark surface with angled team-color stripe */}
             <div
-              className="h-[2px] w-8"
+              className="absolute inset-0"
+              style={{
+                background: `linear-gradient(105deg, rgba(${rgb},0.08) 0%, rgba(${rgb},0.02) 35%, transparent 50%)`,
+              }}
+            />
+            {/* Angled team-color accent — the signature ESPN bumper diagonal */}
+            <div
+              className="absolute left-0 top-0 bottom-0 w-[4px]"
               style={{ backgroundColor: moment.teamColors.primary }}
             />
-            <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/30">
-              Collect
-            </span>
-            {/* "Presented by" — broadcast segment sponsor tag */}
-            <span className="ml-auto text-[7px] uppercase tracking-[0.25em] text-white/10 italic"
-              style={{ fontFamily: 'Georgia, serif' }}
-            >
-              Presented by NBA Top Shot
-            </span>
+            {/* Content */}
+            <div className="relative flex items-center gap-3 px-5 py-3">
+              {/* Segment title */}
+              <div className="flex flex-col gap-0.5">
+                <span
+                  className="text-[14px] font-bold uppercase tracking-[0.15em] text-white/80"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  Collect
+                </span>
+                <span className="text-[7px] uppercase tracking-[0.3em] text-white/20"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  Live Transaction Window
+                </span>
+              </div>
+              {/* Right side — live dot + sponsor */}
+              <div className="ml-auto flex items-center gap-3">
+                {!countdown.isEnded && (
+                  <div className="flex items-center gap-1.5">
+                    <div
+                      className="h-[5px] w-[5px] rounded-full animate-pulse"
+                      style={{
+                        backgroundColor: '#EF4444',
+                        boxShadow: '0 0 6px rgba(239,68,68,0.4)',
+                      }}
+                    />
+                    <span
+                      className="text-[7px] font-bold uppercase tracking-[0.25em] text-[#EF4444]/60"
+                      style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                    >
+                      On Air
+                    </span>
+                  </div>
+                )}
+                <div className="h-3 w-[1px] bg-white/6" />
+                <span className="text-[7px] uppercase tracking-[0.25em] text-white/10 italic"
+                  style={{ fontFamily: 'Georgia, serif' }}
+                >
+                  Presented by NBA Top Shot
+                </span>
+              </div>
+            </div>
+            {/* Bottom rule — team-color gradient, ESPN graphic style */}
+            <div
+              className="h-[1px] w-full"
+              style={{ background: `linear-gradient(90deg, ${moment.teamColors.primary}40, ${moment.teamColors.primary}08)` }}
+            />
           </div>
 
           {/* ── ACQUISITION TICKER — live "THIS JUST IN" crawl at the decision point ── */}
@@ -6369,6 +6423,45 @@ export default function BroadcastPage() {
             />
           )}
 
+          {/* ── CTA Production Frame — broadcast graphic card ── */}
+          {/* ESPN wraps key on-screen elements in production graphic frames:   */}
+          {/* corner brackets, thin rules, source labels. This frames the CTA   */}
+          {/* as a live broadcast graphic card — not just a button, but a       */}
+          {/* production element. The corner marks signal "this is the shot"    */}
+          {/* to the viewer, like a camera viewfinder framing the key action.   */}
+          {!countdown.isEnded && !isPurchasing && (
+            <div className="relative max-w-md mx-auto w-full mb-3 mt-2">
+              {/* Corner brackets — top-left */}
+              <div className="absolute top-0 left-0 w-3 h-3 pointer-events-none">
+                <div className="absolute top-0 left-0 w-full h-[1px]" style={{ backgroundColor: `rgba(${rgb},0.25)` }} />
+                <div className="absolute top-0 left-0 h-full w-[1px]" style={{ backgroundColor: `rgba(${rgb},0.25)` }} />
+              </div>
+              {/* Corner brackets — top-right */}
+              <div className="absolute top-0 right-0 w-3 h-3 pointer-events-none">
+                <div className="absolute top-0 right-0 w-full h-[1px]" style={{ backgroundColor: `rgba(${rgb},0.25)` }} />
+                <div className="absolute top-0 right-0 h-full w-[1px]" style={{ backgroundColor: `rgba(${rgb},0.25)` }} />
+              </div>
+              {/* Corner brackets — bottom-left */}
+              <div className="absolute bottom-0 left-0 w-3 h-3 pointer-events-none">
+                <div className="absolute bottom-0 left-0 w-full h-[1px]" style={{ backgroundColor: `rgba(${rgb},0.25)` }} />
+                <div className="absolute bottom-0 left-0 h-full w-[1px]" style={{ backgroundColor: `rgba(${rgb},0.25)` }} />
+              </div>
+              {/* Corner brackets — bottom-right */}
+              <div className="absolute bottom-0 right-0 w-3 h-3 pointer-events-none">
+                <div className="absolute bottom-0 right-0 w-full h-[1px]" style={{ backgroundColor: `rgba(${rgb},0.25)` }} />
+                <div className="absolute bottom-0 right-0 h-full w-[1px]" style={{ backgroundColor: `rgba(${rgb},0.25)` }} />
+              </div>
+              {/* Production source label — top center */}
+              <div className="flex justify-center mb-1.5">
+                <span
+                  className="text-[6px] font-bold uppercase tracking-[0.4em] text-white/12"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  Source: PGM-1 · Live Transaction
+                </span>
+              </div>
+            </div>
+          )}
           {/* CTA button */}
           <div className={`${!countdown.isEnded && !isPurchasing ? '' : 'mt-8'} flex flex-col items-center`}>
             <button

@@ -1671,3 +1671,11 @@
 - Haptic feedback on share buttons was a missed opportunity for all 3 directions. Arena now has it; check if Supreme and Broadcast need share button haptics wired in too.
 - The `key` prop trick for re-triggering CSS animations (pulseKey counter) works well for repeatable button interactions. Each new key forces React to unmount/remount the animation element, giving a fresh animation lifecycle.
 - Next cycle: Broadcast (rotation).
+
+## Cycle 208 Learnings
+- The Analyst Verdict card is a broadcast-native conversion tool: expert consensus at the decision point. This is the broadcast equivalent of Arena's social proof (crowd behavior) and Supreme's institutional silence (the lot speaks for itself). Each direction's conversion strategy must match its personality.
+- Gold (#D4A017) for "Analyst Verdict" creates visual distinction from the teal (#00E5A0) "COLLECT" recommendation below it — authority (gold) endorses the action (teal). Two-color hierarchy at the decision point.
+- Pre-existing bugs compound over many cycles. The duplicate `COMMENTATOR_CALLS` constant was likely introduced when a second commentator system was added without checking the first. At 6000+ lines, naming conflicts become a real risk — prefixing with purpose (COMMENTATOR_URGENCY_CALLS) prevents collisions.
+- TypeScript type definitions can fall out of sync with usage when parameters are added incrementally across cycles. The `totalSeconds` parameter was used in the function body but missing from the type — Turbopack only caught this when compilation was triggered fresh. Always verify types match usage when touching existing components.
+- Placing the verdict between Market Snapshot (data) and Commentator's Call (urgency narration) creates a decision funnel: data → authority → urgency → CTA. Information architecture at the conversion zone matters more than elsewhere on the page.
+- Next cycle: Arena (rotation).

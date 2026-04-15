@@ -950,6 +950,32 @@ body {
   100% { opacity: 0; }
 }
 
+/* Broadcast signal burst — single clean expanding ring on W screen hero */
+/* TV signal emission aesthetic: one authoritative ring, not a cascade.  */
+@keyframes broadcast-signal-burst {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.5;
+    border-width: 2px;
+  }
+  50% {
+    opacity: 0.25;
+    border-width: 1.5px;
+  }
+  100% {
+    transform: scale(3.5);
+    opacity: 0;
+    border-width: 0.5px;
+  }
+}
+
+/* Broadcast stat roll-up — numbers count from 0 to final value */
+@keyframes broadcast-stat-reveal {
+  0% { opacity: 0; transform: translateY(8px) scale(0.85); filter: blur(4px); }
+  60% { opacity: 1; transform: translateY(-1px) scale(1.02); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
 /* Broadcast location tag — "LIVE FROM [ARENA]" slides in from left, exits left */
 @keyframes broadcast-location-in {
   0% { transform: translateX(-110%); opacity: 0; }

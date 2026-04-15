@@ -5216,12 +5216,30 @@ function CertificateScreen({
 
         {/* ── TOP: Broadcast "COLLECTED" announcement ── */}
         <div
-          className="w-full pt-16 pb-8 px-5 text-center transition-all duration-700 ease-out"
+          className="w-full pt-16 pb-8 px-5 text-center transition-all duration-700 ease-out relative"
           style={{
             opacity: phase >= 1 ? 1 : 0,
             transform: phase >= 1 ? 'translateY(0)' : 'translateY(-20px)',
           }}
         >
+          {/* Signal burst — single clean expanding ring behind headline */}
+          {/* TV broadcast signal emission: one authoritative ring.     */}
+          {phase >= 1 && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div
+                className="absolute rounded-full"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  border: `2px solid rgba(${rgb},0.6)`,
+                  animation: 'broadcast-signal-burst 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards',
+                  opacity: 0,
+                  boxShadow: `0 0 16px rgba(${rgb},0.2)`,
+                }}
+              />
+            </div>
+          )}
+
           {/* COLLECTED banner — broadcast lower-third energy */}
           <div className="inline-flex items-center gap-3 mb-6">
             <div className="h-[2px] w-8" style={{ backgroundColor: moment.teamColors.primary }} />
@@ -5450,9 +5468,9 @@ function CertificateScreen({
                 {fullTeam(moment.team)}
               </span>
             </div>
-            {/* Stat grid — broadcast-style large values with labels */}
+            {/* Stat grid — broadcast-style large values with staggered reveal */}
             <div className="grid grid-cols-3 gap-[1px]" style={{ backgroundColor: `rgba(${rgb},0.06)` }}>
-              {moment.statLine.split(' / ').map((stat) => {
+              {moment.statLine.split(' / ').map((stat, idx) => {
                 const parts = stat.trim().split(' ');
                 const value = parts[0];
                 const label = parts.slice(1).join(' ');
@@ -5467,13 +5485,17 @@ function CertificateScreen({
                         fontFamily: 'var(--font-oswald), sans-serif',
                         color: moment.teamColors.primary,
                         textShadow: `0 0 12px rgba(${rgb},0.2)`,
+                        animation: phase >= 3 ? `broadcast-stat-reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${0.4 + idx * 0.2}s both` : undefined,
                       }}
                     >
                       {value}
                     </span>
                     <span
                       className="mt-1 text-[8px] font-bold uppercase tracking-[0.2em] text-white/30"
-                      style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                      style={{
+                        fontFamily: 'var(--font-oswald), sans-serif',
+                        animation: phase >= 3 ? `broadcast-stat-reveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${0.55 + idx * 0.2}s both` : undefined,
+                      }}
                     >
                       {label}
                     </span>

@@ -1709,3 +1709,9 @@
 - Team-color flash at 0.25 opacity on a dark background creates the "jumbotron screen flash" effect without overwhelming. Higher opacity (0.4+) was too bright and competed with the number.
 - The elastic scale animation (2.2→0.85→1.08→1) with cubic-bezier(0.34,1.56,0.64,1) creates the "slam" feel — overshoot on the compress, slight bounce on settle. This matches the existing crowd countdown's approach.
 - Next cycle: Supreme (rotation). Ideas: lot provenance chain on W screen (previous sale records like Christie's lot history), or a "Going to" destination label (the auction house equivalent of "shipping to").
+
+## Cycle 213 Learnings
+- Provenance/timeline components are compact but high-value. The 3-entry timeline is ~75 lines but adds a new dimension of institutional authenticity. Look for other auction-house documentation patterns: exhibition history, literature references, condition reports.
+- Reusing existing keyframes (supreme-field-reveal) for new components maintains visual consistency. The provenance entries animate identically to the sale record fields — same clerk, same ledger, same rhythm.
+- "Private Collection" as auction language for anonymous living collectors is powerful — it transforms the user from "buyer" to "collector" through institutional naming convention.
+- Next cycle: Broadcast (rotation). Ideas: broadcast booth monitor grid on W screen (multi-camera layout), or an "Up Next" promo card showing the next moment in the drop queue.

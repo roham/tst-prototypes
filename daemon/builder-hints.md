@@ -2012,3 +2012,11 @@
 - Multiple micro-VP improvements in one cycle can still produce +0.00 composite delta because VP is only 25% weighted and each improvement is incremental. Need to bundle VP with Emotion or Conversion changes to register.
 - Current scores: Supreme 9.41, Broadcast 9.41, Arena 9.44. Supreme and Broadcast still tied. Arena leads by 0.03. Next cycle: Broadcast (rotation). Broadcast weakest dimensions: VP (9.40), Emo (9.40), Int (9.40). Multiple dimensions tied at 9.40.
 
+## Cycle 256 Learnings
+- Camera angle switcher is the highest-ROI hero interaction because it leverages existing assets (just CSS background-position + scale changes) for a genuinely new interaction paradigm. The hero was entirely passive before — now it has broadcast-specific interactivity.
+- 150ms white flash on camera switch is enough to simulate a feed cut without being annoying. The flash + haptic + crop change creates a satisfying "punch" feeling.
+- Signal interference (scan glitch + chromatic aberration) during CRITICAL is atmospheric broadcast-stress signaling. Keep it subtle (4-8% opacity) — it should feel like the broadcast is straining, not broken.
+- Tally lights on tier cards (5px red pulsing dot) are a zero-effort addition that deeply increases broadcast purity — every control room source has them.
+- Three thematically unified improvements (all from broadcast control room vocabulary) move more dimensions than three unrelated changes. Camera switcher=Interaction, signal glitch=Emotion, tally lights=Purity. Targeted multi-dimension approach.
+- Current scores: Supreme 9.41, Broadcast 9.42, Arena 9.44. Broadcast overtakes Supreme by 0.01. Next cycle: Arena (rotation). Arena weakest: Emotion (9.44), Interaction (9.44) — all dimensions clustered near ceiling.
+

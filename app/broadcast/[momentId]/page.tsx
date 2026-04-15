@@ -4164,6 +4164,206 @@ function RatingsSpike({ moment, rgb }: { moment: Moment; rgb: string }) {
   );
 }
 
+// ── Highlight Reel Filmstrip — ESPN replay analysis frame-by-frame breakdown ──
+// Every broadcast replay package breaks the play into 4-5 keyframes with
+// timecodes and analyst annotations. The filmstrip is the visual language of
+// "let's break this down frame by frame." Horizontal scroll with snap.
+// Tappable frames expand to show full analyst annotation.
+
+const REPLAY_FRAMES: Record<string, Array<{
+  tc: string; label: string; annotation: string; gradient: string;
+}>> = {
+  bam: [
+    { tc: '03:47 Q4', label: 'ISOLATION', annotation: 'Adebayo catches the entry pass on the left block. Two defenders shade toward him — Boston selling out to stop the drive.', gradient: 'linear-gradient(135deg,rgba(152,0,46,0.6),rgba(152,0,46,0.15))' },
+    { tc: '03:45 Q4', label: 'FIRST STEP', annotation: 'Bam puts the ball on the floor — one explosive dribble right. Horford commits to the help. The lane opens.', gradient: 'linear-gradient(135deg,rgba(152,0,46,0.45),rgba(249,160,27,0.2))' },
+    { tc: '03:44 Q4', label: 'GATHER', annotation: 'Two-foot gather at the restricted area. Both defenders are in the air. Bam is rising with the ball in his right hand — no hesitation.', gradient: 'linear-gradient(135deg,rgba(249,160,27,0.4),rgba(152,0,46,0.25))' },
+    { tc: '03:43 Q4', label: 'CONTACT', annotation: 'One-handed tomahawk OVER two defenders. Full extension. The contact doesn\'t matter. TD Garden goes silent.', gradient: 'linear-gradient(135deg,rgba(152,0,46,0.7),rgba(0,0,0,0.4))' },
+    { tc: '03:41 Q4', label: 'AFTERMATH', annotation: 'Bam hangs on the rim. Stares down the Boston bench. Miami\'s bench erupts. This is the moment the series turned.', gradient: 'linear-gradient(135deg,rgba(249,160,27,0.5),rgba(152,0,46,0.3))' },
+  ],
+  jokic: [
+    { tc: '00:52 Q4', label: 'POST UP', annotation: 'Jokić catches at the elbow. Davis fronts him. The Lakers are in a switch-everything scheme — Jokić sees the mismatch developing.', gradient: 'linear-gradient(135deg,rgba(14,34,64,0.6),rgba(254,197,36,0.15))' },
+    { tc: '00:50 Q4', label: 'SURVEY', annotation: 'The Joker holds the ball high, scanning. His eyes go left — Murray relocates to the corner. LeBron cheats one step toward the paint.', gradient: 'linear-gradient(135deg,rgba(14,34,64,0.45),rgba(254,197,36,0.25))' },
+    { tc: '00:49 Q4', label: 'NO-LOOK', annotation: 'Without turning his head, Jokić fires a one-handed bullet pass to Gordon cutting backdoor. The entire Lakers defense is frozen.', gradient: 'linear-gradient(135deg,rgba(254,197,36,0.4),rgba(14,34,64,0.3))' },
+    { tc: '00:48 Q4', label: 'HOCKEY ASSIST', annotation: 'Gordon catches in the paint, draws the help, kicks to Murray in the corner. Murray is WIDE open. The dagger.', gradient: 'linear-gradient(135deg,rgba(14,34,64,0.55),rgba(254,197,36,0.35))' },
+    { tc: '00:47 Q4', label: 'DAGGER', annotation: 'Murray releases. Nothing but net. Jokić is already walking back on defense, index finger raised. He knew before it left Murray\'s hands.', gradient: 'linear-gradient(135deg,rgba(254,197,36,0.6),rgba(14,34,64,0.2))' },
+  ],
+  sga: [
+    { tc: '02:13 Q4', label: 'PICK & ROLL', annotation: 'SGA calls for the screen at the top of the key. Holmgren sets it high. The defender goes under — that\'s the wrong choice against Shai.', gradient: 'linear-gradient(135deg,rgba(0,122,193,0.6),rgba(239,97,0,0.15))' },
+    { tc: '02:11 Q4', label: 'PULL-UP', annotation: 'Shai pulls up from 28 feet. The defender is still recovering from the screen. This is the shot OKC has practiced ten thousand times.', gradient: 'linear-gradient(135deg,rgba(0,122,193,0.45),rgba(239,97,0,0.25))' },
+    { tc: '02:10 Q4', label: 'RELEASE', annotation: 'High release point. Perfect rotation. The arc is textbook — 47 degrees. SGA\'s face is calm. He already knows.', gradient: 'linear-gradient(135deg,rgba(239,97,0,0.4),rgba(0,122,193,0.3))' },
+    { tc: '02:09 Q4', label: 'SPLASH', annotation: 'Bottom of the net. Paycom Center erupts. SGA turns before it goes in — he felt the release. Ice in his veins at 25 years old.', gradient: 'linear-gradient(135deg,rgba(0,122,193,0.6),rgba(239,97,0,0.4))' },
+    { tc: '02:07 Q4', label: 'THE STARE', annotation: 'SGA holds the follow-through. Three fingers pointed at the sky. The building is shaking. This is his city now.', gradient: 'linear-gradient(135deg,rgba(239,97,0,0.5),rgba(0,122,193,0.2))' },
+  ],
+};
+
+function HighlightReelFilmstrip({ moment, rgb }: { moment: Moment; rgb: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [expandedFrame, setExpandedFrame] = useState<number | null>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); observer.disconnect(); } },
+      { threshold: 0.2 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const frames = REPLAY_FRAMES[moment.id] ?? REPLAY_FRAMES.bam;
+
+  return (
+    <div ref={containerRef} className="mt-8 mb-4">
+      {/* Broadcast graphic header */}
+      <div className="flex items-center gap-2 mb-3">
+        {/* Film reel icon */}
+        <svg className="h-3 w-3 shrink-0" viewBox="0 0 12 12" fill="none" style={{ color: moment.teamColors.primary, opacity: 0.5 }}>
+          <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="0.8" />
+          <circle cx="6" cy="6" r="1.5" fill="currentColor" opacity="0.6" />
+          <circle cx="6" cy="2.5" r="0.7" fill="currentColor" opacity="0.4" />
+          <circle cx="6" cy="9.5" r="0.7" fill="currentColor" opacity="0.4" />
+          <circle cx="2.5" cy="6" r="0.7" fill="currentColor" opacity="0.4" />
+          <circle cx="9.5" cy="6" r="0.7" fill="currentColor" opacity="0.4" />
+        </svg>
+        <span
+          className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
+          style={{
+            backgroundColor: `rgba(${rgb},0.12)`,
+            color: moment.teamColors.primary,
+            fontFamily: 'var(--font-oswald), sans-serif',
+          }}
+        >
+          Replay Breakdown
+        </span>
+        <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/15">
+          Frame-by-Frame
+        </span>
+        <div className="h-[1px] flex-1 bg-white/[0.06]" />
+        <span className="text-[7px] font-mono uppercase text-white/15 tracking-wider">
+          {frames.length} FRAMES
+        </span>
+      </div>
+
+      {/* Film sprocket strip — top */}
+      <div className="flex gap-[6px] mb-1 px-1">
+        {Array.from({ length: 24 }).map((_, i) => (
+          <div key={i} className="h-[3px] w-[6px] rounded-[0.5px] bg-white/[0.06]" />
+        ))}
+      </div>
+
+      {/* Horizontal scrollable filmstrip */}
+      <div
+        className="flex gap-3 overflow-x-auto pb-3 px-1 snap-x snap-mandatory scrollbar-none"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {frames.map((frame, i) => {
+          const isExpanded = expandedFrame === i;
+          const delay = i * 0.15;
+          return (
+            <button
+              key={i}
+              type="button"
+              className="snap-start shrink-0 relative overflow-hidden rounded-md border text-left transition-all duration-300"
+              style={{
+                width: isExpanded ? '280px' : '160px',
+                minHeight: isExpanded ? '200px' : '120px',
+                borderColor: isExpanded ? `rgba(${rgb},0.4)` : `rgba(${rgb},0.12)`,
+                background: frame.gradient,
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? 'translateY(0)' : 'translateY(12px)',
+                transition: `opacity 0.5s ease ${delay}s, transform 0.5s ease ${delay}s, width 0.35s ease, min-height 0.35s ease, border-color 0.3s ease`,
+              }}
+              onClick={() => {
+                broadcastHaptic(8);
+                setExpandedFrame(isExpanded ? null : i);
+              }}
+            >
+              {/* SMPTE timecode overlay */}
+              <div
+                className="absolute top-1.5 left-1.5 flex items-center gap-1 px-1 py-px rounded-sm"
+                style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
+              >
+                <div className="h-1 w-1 rounded-full bg-red-500 animate-pulse" />
+                <span className="text-[7px] font-mono text-white/80 tracking-wider">
+                  {frame.tc}
+                </span>
+              </div>
+
+              {/* Frame number — top right */}
+              <div
+                className="absolute top-1.5 right-1.5 text-[8px] font-mono font-bold tracking-wider"
+                style={{ color: `rgba(${rgb},0.5)` }}
+              >
+                F{i + 1}
+              </div>
+
+              {/* REPLAY badge on key frame (frame 4) */}
+              {i === 3 && (
+                <div
+                  className="absolute top-1.5 left-1/2 -translate-x-1/2 text-[6px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
+                  style={{
+                    backgroundColor: 'rgba(239,68,68,0.8)',
+                    color: '#fff',
+                    fontFamily: 'var(--font-oswald), sans-serif',
+                  }}
+                >
+                  Key Play
+                </div>
+              )}
+
+              {/* Frame label */}
+              <div className="absolute bottom-0 left-0 right-0 p-2" style={{ background: 'linear-gradient(transparent,rgba(0,0,0,0.7))' }}>
+                <div
+                  className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/90 mb-0.5"
+                  style={{ fontFamily: 'var(--font-oswald), sans-serif' }}
+                >
+                  {frame.label}
+                </div>
+                {isExpanded && (
+                  <p
+                    className="text-[9px] leading-[1.5] text-white/60 mt-1"
+                    style={{
+                      fontFamily: "Georgia, 'Times New Roman', serif",
+                      opacity: isExpanded ? 1 : 0,
+                      transition: 'opacity 0.3s ease 0.15s',
+                    }}
+                  >
+                    {frame.annotation}
+                  </p>
+                )}
+              </div>
+
+              {/* Scan line overlay for film texture */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: 'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px)',
+                }}
+              />
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Film sprocket strip — bottom */}
+      <div className="flex gap-[6px] mt-1 px-1">
+        {Array.from({ length: 24 }).map((_, i) => (
+          <div key={i} className="h-[3px] w-[6px] rounded-[0.5px] bg-white/[0.06]" />
+        ))}
+      </div>
+
+      {/* Tap hint */}
+      <div className="text-center mt-2">
+        <span className="text-[7px] font-mono uppercase tracking-[0.3em] text-white/15">
+          Tap frame to expand · Scroll for more
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function SportsCenterTop10({ moment, rgb }: { moment: Moment; rgb: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -6745,6 +6945,12 @@ export default function BroadcastPage() {
 
           {/* Telestrator Breakdown — analyst's hand-drawn play diagram */}
           <TelestratorBreakdown moment={moment} rgb={rgb} />
+
+          {/* ── HIGHLIGHT REEL FILMSTRIP — frame-by-frame replay analysis ── */}
+          {/* ESPN's signature replay breakdown: key moments of the play laid  */}
+          {/* out as a horizontal filmstrip with SMPTE timecodes and analyst   */}
+          {/* annotations. Tappable frames expand to show full commentary.     */}
+          <HighlightReelFilmstrip moment={moment} rgb={rgb} />
 
           {/* ── GAME FLOW — ESPN win probability style momentum chart ── */}
           {/* Every ESPN/TNT broadcast shows a win probability or game     */}

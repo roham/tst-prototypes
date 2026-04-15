@@ -2113,6 +2113,266 @@ function ShotChartGraphic({ moment, rgb }: { moment: Moment; rgb: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// Telestrator Breakdown — ESPN analyst's hand-drawn play diagram
+// The telestrator is the defining broadcast analysis tool: analysts draw arrows,
+// circles, and X marks over replay footage to explain the play. John Madden
+// popularized it; today every ESPN/TNT analyst uses it for replay breakdowns.
+// SVG annotations simulate the hand-drawn telestrator style with staggered
+// reveal animation as if the analyst is drawing in real-time.
+// ---------------------------------------------------------------------------
+
+const TELESTRATOR_PLAYS: Record<string, {
+  title: string;
+  analyst: string;
+  steps: { type: 'arrow' | 'circle' | 'x' | 'text'; x: number; y: number; x2?: number; y2?: number; label?: string; delay: number }[];
+}> = {
+  bam: {
+    title: 'THE ISOLATION',
+    analyst: 'RJ Barrett',
+    steps: [
+      { type: 'circle', x: 100, y: 70, delay: 0, label: 'BAM' },
+      { type: 'x', x: 100, y: 30, delay: 0.3 },
+      { type: 'arrow', x: 100, y: 65, x2: 100, y2: 35, delay: 0.6, label: 'DRIVES BASELINE' },
+      { type: 'circle', x: 60, y: 50, delay: 0.9, label: 'HELP' },
+      { type: 'arrow', x: 60, y: 50, x2: 90, y2: 35, delay: 1.2 },
+      { type: 'text', x: 140, y: 25, delay: 1.5, label: 'TOO LATE' },
+      { type: 'circle', x: 100, y: 18, delay: 1.8, label: 'DUNK' },
+    ],
+  },
+  jokic: {
+    title: 'THE NO-LOOK',
+    analyst: 'JJ Redick',
+    steps: [
+      { type: 'circle', x: 100, y: 55, delay: 0, label: 'JOKIĆ' },
+      { type: 'circle', x: 50, y: 30, delay: 0.3, label: 'CUTTER' },
+      { type: 'x', x: 75, y: 42, delay: 0.5 },
+      { type: 'x', x: 120, y: 50, delay: 0.5 },
+      { type: 'text', x: 130, y: 70, delay: 0.8, label: 'EYES HERE' },
+      { type: 'arrow', x: 130, y: 65, x2: 150, y2: 45, delay: 1.0 },
+      { type: 'arrow', x: 95, y: 52, x2: 55, y2: 28, delay: 1.3, label: 'PASS GOES HERE' },
+      { type: 'circle', x: 50, y: 18, delay: 1.6, label: 'LAYUP' },
+    ],
+  },
+  sga: {
+    title: 'THE STEP-BACK',
+    analyst: 'Chiney Ogwumike',
+    steps: [
+      { type: 'circle', x: 100, y: 80, delay: 0, label: 'SGA' },
+      { type: 'x', x: 95, y: 65, delay: 0.3 },
+      { type: 'arrow', x: 100, y: 75, x2: 80, y2: 58, delay: 0.5, label: 'DRIVES LEFT' },
+      { type: 'x', x: 70, y: 50, delay: 0.8 },
+      { type: 'text', x: 40, y: 48, delay: 1.0, label: 'HELP SHIFTS' },
+      { type: 'arrow', x: 80, y: 55, x2: 100, y2: 60, delay: 1.2, label: 'STEP-BACK' },
+      { type: 'circle', x: 100, y: 62, delay: 1.5, label: 'PULL-UP 3' },
+    ],
+  },
+};
+
+function TelestratorBreakdown({ moment, rgb }: { moment: Moment; rgb: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setIsVisible(true); observer.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const play = TELESTRATOR_PLAYS[moment.id] ?? TELESTRATOR_PLAYS.bam;
+
+  return (
+    <div ref={containerRef} className="mt-8 mb-4">
+      {/* Broadcast graphic header */}
+      <div className="flex items-center gap-2 mb-3">
+        {/* Telestrator pen icon */}
+        <svg className="h-3 w-3 shrink-0" viewBox="0 0 12 12" fill="none" style={{ color: moment.teamColors.primary, opacity: 0.5 }}>
+          <path d="M1.5 10.5 L8.5 3.5 L10 5 L3 12 L1 11 Z" stroke="currentColor" strokeWidth="0.8" fill="none" />
+          <path d="M8.5 3.5 L9.5 2.5 L11 4 L10 5" stroke="currentColor" strokeWidth="0.8" fill="none" />
+          <circle cx="2" cy="10.5" r="0.8" fill="currentColor" opacity="0.6" />
+        </svg>
+        <span
+          className="text-[8px] font-bold uppercase tracking-[0.3em] px-1.5 py-px rounded-sm"
+          style={{
+            backgroundColor: `rgba(${rgb},0.12)`,
+            color: moment.teamColors.primary,
+            fontFamily: 'var(--font-oswald), sans-serif',
+          }}
+        >
+          Telestrator
+        </span>
+        <div className="h-[1px] flex-1 bg-white/[0.06]" />
+        <span className="text-[7px] font-mono uppercase tracking-[0.2em] text-white/15">
+          {play.analyst}
+        </span>
+      </div>
+
+      {/* Play title */}
+      <div className="text-center mb-2">
+        <span
+          className="text-[14px] font-bold uppercase tracking-[0.2em]"
+          style={{
+            fontFamily: 'var(--font-oswald), sans-serif',
+            color: `rgba(${rgb},0.35)`,
+          }}
+        >
+          {play.title}
+        </span>
+      </div>
+
+      {/* Half-court telestrator canvas */}
+      <div
+        className="relative w-full max-w-[320px] mx-auto overflow-hidden rounded-sm"
+        style={{
+          backgroundColor: 'rgba(20,25,37,0.5)',
+          border: `1px solid rgba(${rgb},0.1)`,
+          aspectRatio: '200/120',
+        }}
+      >
+        <svg
+          viewBox="0 0 200 120"
+          className="w-full h-full"
+          fill="none"
+          style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.6s ease-out' }}
+        >
+          {/* Court lines — faint baseline structure */}
+          <rect x="5" y="5" width="190" height="110" rx="1" stroke="white" strokeWidth="0.3" opacity="0.06" />
+          <line x1="5" y1="60" x2="195" y2="60" stroke="white" strokeWidth="0.3" opacity="0.04" />
+          {/* Paint */}
+          <rect x="70" y="5" width="60" height="50" rx="0.5" stroke="white" strokeWidth="0.3" opacity="0.06" />
+          {/* Free throw circle */}
+          <circle cx="100" cy="55" r="16" stroke="white" strokeWidth="0.3" opacity="0.05" />
+          {/* Three-point arc */}
+          <path d="M30 5 Q30 95,100 100 Q170 95,170 5" stroke="white" strokeWidth="0.3" opacity="0.05" />
+          {/* Rim */}
+          <circle cx="100" cy="14" r="3" stroke="white" strokeWidth="0.4" opacity="0.08" />
+
+          {/* Telestrator annotations — staggered reveal */}
+          {play.steps.map((step, i) => {
+            const enterDelay = step.delay;
+            const visible = isVisible;
+            const baseStyle = {
+              opacity: visible ? 1 : 0,
+              transition: `opacity 0.5s ease-out ${enterDelay}s, transform 0.5s ease-out ${enterDelay}s`,
+            };
+
+            if (step.type === 'circle') {
+              return (
+                <g key={i} style={baseStyle}>
+                  <circle
+                    cx={step.x} cy={step.y} r="8"
+                    stroke={moment.teamColors.primary}
+                    strokeWidth="1.2"
+                    fill="none"
+                    opacity="0.5"
+                    strokeDasharray="3 2"
+                  />
+                  {step.label && (
+                    <text
+                      x={step.x} y={step.y + 2}
+                      textAnchor="middle"
+                      fontSize="5"
+                      fontFamily="var(--font-oswald), sans-serif"
+                      fontWeight="700"
+                      fill="white"
+                      opacity="0.5"
+                      letterSpacing="0.5"
+                    >
+                      {step.label}
+                    </text>
+                  )}
+                </g>
+              );
+            }
+
+            if (step.type === 'arrow' && step.x2 !== undefined && step.y2 !== undefined) {
+              const dx = step.x2 - step.x;
+              const dy = step.y2 - step.y;
+              const len = Math.sqrt(dx * dx + dy * dy);
+              const ux = dx / len;
+              const uy = dy / len;
+              // Arrowhead
+              const ax = step.x2 - ux * 4;
+              const ay = step.y2 - uy * 4;
+              const px = -uy * 2.5;
+              const py = ux * 2.5;
+              return (
+                <g key={i} style={baseStyle}>
+                  <line
+                    x1={step.x} y1={step.y} x2={step.x2} y2={step.y2}
+                    stroke="#EF4444"
+                    strokeWidth="1.2"
+                    opacity="0.6"
+                    strokeLinecap="round"
+                  />
+                  <polygon
+                    points={`${step.x2},${step.y2} ${ax + px},${ay + py} ${ax - px},${ay - py}`}
+                    fill="#EF4444"
+                    opacity="0.6"
+                  />
+                  {step.label && (
+                    <text
+                      x={(step.x + step.x2) / 2 + 8}
+                      y={(step.y + step.y2) / 2 - 4}
+                      fontSize="4.5"
+                      fontFamily="var(--font-oswald), sans-serif"
+                      fontWeight="600"
+                      fill="#EF4444"
+                      opacity="0.45"
+                      letterSpacing="0.5"
+                    >
+                      {step.label}
+                    </text>
+                  )}
+                </g>
+              );
+            }
+
+            if (step.type === 'x') {
+              return (
+                <g key={i} style={baseStyle}>
+                  <line x1={step.x - 4} y1={step.y - 4} x2={step.x + 4} y2={step.y + 4} stroke="white" strokeWidth="1" opacity="0.25" strokeLinecap="round" />
+                  <line x1={step.x + 4} y1={step.y - 4} x2={step.x - 4} y2={step.y + 4} stroke="white" strokeWidth="1" opacity="0.25" strokeLinecap="round" />
+                </g>
+              );
+            }
+
+            if (step.type === 'text' && step.label) {
+              return (
+                <text
+                  key={i}
+                  x={step.x} y={step.y}
+                  fontSize="5"
+                  fontFamily="var(--font-oswald), sans-serif"
+                  fontWeight="700"
+                  fill="#F59E0B"
+                  opacity={isVisible ? 0.5 : 0}
+                  letterSpacing="0.8"
+                  style={{ transition: `opacity 0.5s ease-out ${enterDelay}s` }}
+                >
+                  {step.label}
+                </text>
+              );
+            }
+
+            return null;
+          })}
+
+          {/* Broadcast overlay label */}
+          <text x="10" y="114" fontSize="4" fill="white" opacity="0.12" fontFamily="monospace" letterSpacing="0.5">
+            TELESTRATOR · {play.analyst.toUpperCase()}
+          </text>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Tale of the Tape — ESPN head-to-head stat comparison (tonight vs season avg)
 // ---------------------------------------------------------------------------
 
@@ -6425,6 +6685,9 @@ export default function BroadcastPage() {
 
           {/* ESPN/TNT broadcast shot chart — half-court diagram with play locations */}
           <ShotChartGraphic moment={moment} rgb={rgb} />
+
+          {/* Telestrator Breakdown — analyst's hand-drawn play diagram */}
+          <TelestratorBreakdown moment={moment} rgb={rgb} />
 
           {/* ── GAME FLOW — ESPN win probability style momentum chart ── */}
           {/* Every ESPN/TNT broadcast shows a win probability or game     */}
